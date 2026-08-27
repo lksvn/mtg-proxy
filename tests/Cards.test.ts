@@ -2,7 +2,7 @@
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { parseCardList, serializeCardList } from '../src/cards.ts'
+import { parseCardList, serializeCardList } from '../src/Cards.ts'
 
 test('parses supported card-list syntax', () => {
 const cards = parseCardList(`
