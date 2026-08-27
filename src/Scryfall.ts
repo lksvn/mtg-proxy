@@ -11,16 +11,20 @@ export type ScryfallCard = {
 	type_line: string
 	image_uris?: {
 		normal: string
+		large: string
 		png: string
 	}
 	card_faces?: Array<{
 		name: string
 		image_uris?: {
 			normal: string
+			large: string
 			png: string
 		}
 	}>,
-	prints_search_uri: string
+	prints_search_uri: string,
+	artist: string,
+	scryfall_uri: string
 }
 
 export type CardLookup = {

@@ -1,6 +1,8 @@
 import { useState, type SubmitEvent } from 'react'
 import { parseCardList, serializeCardList, type ParsedCard } from './Cards'
 import { findCards, findPrintings, type ScryfallCard } from './Scryfall'
+import type { Paper } from './PdfLayout'
+import { createCalibrationPdf, createCardsPdf, type PrintSettings } from './Pdf'
 
 type CardEntry = {
 	parsed: ParsedCard
@@ -99,15 +101,95 @@ function CardResult({
 					)}
 				</div>
 				{imageLoading && <p role="status">Loading image</p>}
+				<small>
+					Artwork by {entry.card?.artist}.{' '}
+					<a
+						href={entry.card?.scryfall_uri}
+						target="_blank"
+						rel="noreferrer"
+					>
+						View on Scryfall
+					</a>
+				</small>
 			</div>
 		</article>
 	)
+}
+
+function downloadBlob(blob: Blob, filename: string) {
+	const url = URL.createObjectURL(blob)
+	const link = document.createElement('a')
+
+	link.href = url
+	link.download = filename
+	link.click()
+
+	URL.revokeObjectURL(url)
 }
 
 function App() {
 	const [cardList, setCardList] = useState('')
 	const [cards, setCards] = useState<CardEntry[]>([])
 	const [loading, setLoading] = useState(false)
+	const [printSettings, setPrintSettings] = useState<PrintSettings>({
+		paper: 'a4',
+		gap: 0.2,
+		cropMarks: false,
+		blackCorners: false,
+		bleed: false,
+		skipBasicLands: false,
+		deckList: false,
+		watermark: false,
+	})
+	const [exporting, setExporting] = useState(false)
+	const [pdfError, setPdfError] = useState('')
+
+	async function downloadCalibrationPdf() {
+		setExporting(true)
+		setPdfError('')
+
+		try {
+			const pdf = await createCalibrationPdf(
+				printSettings.paper,
+				printSettings.gap,
+			)
+			downloadBlob(pdf, 'mtg-proxy-calibration.pdf')
+		} catch (error) {
+			setPdfError(
+				error instanceof Error
+					? error.message
+					: 'Could not generate PDF',
+			)
+		} finally {
+			setExporting(false)
+		}
+	}
+
+	async function downloadCardsPdf() {
+		setExporting(true)
+		setPdfError('')
+
+		try {
+			const printableCards = cards.flatMap((entry) => entry.card ? [{ quantity: entry.parsed.quantity, card: entry.card, },] : [],)
+
+			const pdf = await createCardsPdf(printableCards,printSettings)
+
+			downloadBlob(
+				pdf,
+				`mtg-proxy-${new Intl.DateTimeFormat('en-CA').format(
+					new Date(),
+				)}.pdf`,
+			)
+		} catch (error) {
+			setPdfError(
+				error instanceof Error
+					? error.message
+					: 'Could not generate PDF',
+			)
+		} finally {
+			setExporting(false)
+		}
+	}
 
 	async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
 		event.preventDefault()
@@ -266,21 +348,15 @@ function App() {
 			}),
 		)
 
-		const url = URL.createObjectURL(
-			new Blob([backup], { type: 'text/plain;charset=utf-8' }),
+		downloadBlob(new Blob([backup], { type: 'text/plain;charset=utf-8' }),
+			`mtg-proxy-list-${new Intl.DateTimeFormat('en-CA').format(
+				new Date(),
+			)}.txt`,
 		)
-		const link = document.createElement('a')
-
-		link.href = url
-		link.download = `mtg-proxy-list-${new Intl.DateTimeFormat(
-			'en-CA',
-		).format(new Date())}.txt`
-		link.click()
-
-		URL.revokeObjectURL(url)
 	}
 
 	return (
+		<>
 		<main>
 			<h1>MTG Proxy</h1>
 
@@ -307,6 +383,160 @@ function App() {
 				>
 					Save card list
 				</button>
+
+				<fieldset>
+					<legend>Print settings</legend>
+
+					<p>
+						<label htmlFor="paper">Paper</label>{' '}
+						<select
+							id="paper"
+							value={printSettings.paper}
+							onChange={(event) =>
+								setPrintSettings({
+									...printSettings,
+									paper: event.target.value as Paper,
+								})
+							}
+						>
+							<option value="a4">A4</option>
+							<option value="a3">A3</option>
+							<option value="letter">Letter</option>
+							<option value="legal">Legal</option>
+						</select>
+					</p>
+
+					<p>
+						<label htmlFor="gap">Gap in millimetres</label>{' '}
+						<input
+							id="gap"
+							type="number"
+							min="0"
+							step="0.1"
+							value={printSettings.gap}
+							onChange={(event) =>
+								setPrintSettings({
+									...printSettings,
+									gap: Math.max(0, event.target.valueAsNumber || 0),
+								})
+							}
+						/>
+					</p>
+
+					<label>
+						<input
+							type="checkbox"
+							checked={printSettings.cropMarks}
+							onChange={(event) =>
+								setPrintSettings({
+									...printSettings,
+									cropMarks: event.target.checked,
+								})
+							}
+						/>
+						Crop marks
+					</label>
+
+					<br />
+
+					<label>
+						<input
+							type="checkbox"
+							checked={printSettings.blackCorners}
+							onChange={(event) =>
+								setPrintSettings({
+									...printSettings,
+									blackCorners: event.target.checked,
+								})
+							}
+						/>
+						Black corners
+					</label>
+
+					<br />
+
+					<label>
+						<input
+							type="checkbox"
+							checked={printSettings.bleed}
+							onChange={(event) =>
+								setPrintSettings({
+									...printSettings,
+									bleed: event.target.checked,
+								})
+							}
+						/>
+						Bleed
+					</label>
+
+					{printSettings.bleed && printSettings.gap < 3 && (
+						<p>Tip: use a 3 mm gap with bleed.</p>
+					)}
+
+					<label>
+						<input
+							type="checkbox"
+							checked={printSettings.skipBasicLands}
+							onChange={(event) =>
+								setPrintSettings({
+									...printSettings,
+									skipBasicLands: event.target.checked,
+								})
+							}
+						/>
+						Skip basic lands
+					</label>
+
+					<br />
+
+					<label>
+						<input
+							type="checkbox"
+							checked={printSettings.deckList}
+							onChange={(event) =>
+								setPrintSettings({
+									...printSettings,
+									deckList: event.target.checked,
+								})
+							}
+						/>
+						Print deck list
+					</label>
+
+					<br />
+
+					<label>
+						<input
+							type="checkbox"
+							checked={printSettings.watermark}
+							onChange={(event) =>
+								setPrintSettings({
+									...printSettings,
+									watermark: event.target.checked,
+								})
+							}
+						/>
+						Playtest watermark
+					</label>
+				</fieldset>
+				<button
+					type="button"
+					disabled={exporting}
+					onClick={downloadCalibrationPdf}
+				>
+					{exporting ? 'Generating…' : 'Download calibration PDF'}
+				</button>
+				<button
+					type="button"
+					disabled={
+						exporting || !cards.some((entry) => entry.card)
+					}
+					onClick={downloadCardsPdf}
+				>
+					{exporting ? 'Generating…' : 'Download card PDF'}
+				</button>
+
+				{pdfError && <p role="alert">{pdfError}</p>}
 			</form>
 
 			<section aria-labelledby="cards-heading">
@@ -315,9 +545,9 @@ function App() {
 				{cards.length === 0 ? (
 					<p>No cards loaded.</p>
 				) : (
-					<ul style={{display: 'flex', flexWrap: 'wrap', gap: '16px'}}>
+					<ul style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(244px, 1fr))', gap: '16px', listStyle: 'none', padding: '0'}}>
 						{cards.map((entry, index) => (
-							<li key={`${entry.parsed.sourceLine}-${index}`} style={{width: '250px'}}>
+							<li key={`${entry.parsed.sourceLine}-${index}`}>
 								<CardResult
 									entry={entry}
 									index={index}
@@ -330,6 +560,17 @@ function App() {
 				)}
 			</section>
 		</main>
+		<footer>
+			<p>
+				Card data and images provided by{' '}
+				<a href="https://scryfall.com/">Scryfall</a>.
+			</p>
+			<p>
+				For personal playtesting only. Not affiliated with or endorsed
+				by Wizards of the Coast.
+			</p>
+		</footer>
+		</>
 	)
 }
 
