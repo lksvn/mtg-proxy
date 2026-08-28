@@ -5,7 +5,7 @@ import test from 'node:test'
 import { parseCardList, serializeCardList } from '../src/Cards.ts'
 
 test('parses supported card-list syntax', () => {
-const cards = parseCardList(`
+    const cards = parseCardList(`
         4 Lightning Bolt
         Black Lotus (LEA) 232
         2 Delver of Secrets (isd)
@@ -61,5 +61,49 @@ test('serializes a restorable card list', () => {
 	assert.equal(
 		serializeCardList(cards),
 		'4 Lightning Bolt (2xm) 129\nMissing Card\n',
+	)
+})
+
+test('cleans Moxfield export metadata', () => {
+	const cards = parseCardList(`
+        About
+        Name The Unbeatable Squirrel Girl (cEDH)🐿🐿🐿🐿🐿
+
+        Commander:
+        1 Mox Opal (SLD) 1072 *E*
+        1 Lightning Bolt (2XM) 129 *F*
+        1 Invasion of Ikoria / Zilortha, Apex of Ikoria
+        1 Name Sticker Goblin
+	`)
+
+	assert.deepEqual(
+		cards.map(({ name, set, collectorNumber }) => ({
+			name,
+			set,
+			collectorNumber,
+		})),
+		[
+			{
+				name: 'Mox Opal',
+				set: 'sld',
+				collectorNumber: '1072',
+			},
+			{
+				name: 'Lightning Bolt',
+				set: '2xm',
+				collectorNumber: '129',
+			},
+			{
+				name:
+					'Invasion of Ikoria // Zilortha, Apex of Ikoria',
+				set: undefined,
+				collectorNumber: undefined,
+			},
+			{
+				name: 'Name Sticker Goblin',
+				set: undefined,
+				collectorNumber: undefined,
+			},
+		],
 	)
 })

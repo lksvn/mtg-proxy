@@ -3,6 +3,7 @@ import type { ParsedCard } from './Cards'
 export type ScryfallCard = {
 	id: string
 	name: string
+    flavor_name?: string
 	set: string
 	set_name: string
 	collector_number: string
@@ -43,6 +44,7 @@ let requestQueue = Promise.resolve()
 export async function findCards(
 	cards: ParsedCard[],
 ): Promise<CardLookup[]> {
+    const cardsByKey = new Map<string, ParsedCard>()
 	const results = new Map<string, CardLookup>()
 	const identifiers = new Map<string, Identifier>()
 	const individualCards: ParsedCard[] = []
@@ -50,6 +52,8 @@ export async function findCards(
 	for (const card of cards) {
 		const key = cardKey(card)
 		const cached = cache.get(key)
+
+        cardsByKey.set(key, card)
 
 		if (cached) {
 			results.set(key, { card: cached })
@@ -67,16 +71,34 @@ export async function findCards(
 		const response = await fetchCollection(chunk.map(([, value]) => value))
 
 		for (const [key, identifier] of chunk) {
-			const card = response.data.find((candidate) =>
-				matchesIdentifier(candidate, identifier),
-			)
+			const parsedCard = cardsByKey.get(key)
 
-			if (card) {
-				cache.set(key, card)
-				results.set(key, { card })
-			} else {
-				results.set(key, { error: 'Card not found' })
-			}
+            const identifiedCard = response.data.find((candidate) =>
+                matchesIdentifier(candidate, identifier),
+            )
+
+            const card =
+                identifiedCard &&
+                (!parsedCard ||
+                    matchesCardName(identifiedCard, parsedCard.name))
+                    ? identifiedCard
+                    : undefined
+
+            if (card) {
+                cache.set(key, card)
+                results.set(key, { card })
+            } else if ('name' in identifier && parsedCard) {
+                individualCards.push(parsedCard)
+            } else if (identifiedCard && parsedCard) {
+                results.set(key, {
+                    error:
+                        `${parsedCard.set?.toUpperCase()} ` +
+                        `${parsedCard.collectorNumber} is ` +
+                        `${identifiedCard.name}, not ${parsedCard.name}`,
+                })
+            } else {
+                results.set(key, { error: 'Card not found' })
+            }
 		}
 	}
 
@@ -174,8 +196,11 @@ function matchesIdentifier(
 	identifier: Identifier,
 ): boolean {
 	if ('name' in identifier) {
-		return card.name.toLowerCase() === identifier.name.toLowerCase()
-	}
+        return [card.name, card.flavor_name].some(
+            (name) =>
+                name?.toLowerCase() === identifier.name.toLowerCase(),
+        )
+    }
 
 	return (
 		card.set.toLowerCase() === identifier.set.toLowerCase() &&
@@ -293,4 +318,20 @@ async function loadPrintings(
 	}
 
 	return printings
+}
+
+function matchesCardName(
+	card: ScryfallCard,
+	name: string,
+): boolean {
+	const expected = name.toLowerCase()
+	const names = [
+		card.name,
+		card.flavor_name,
+		...(card.card_faces?.map((face) => face.name) ?? []),
+	]
+
+	return names.some(
+		(candidate) => candidate?.toLowerCase() === expected,
+	)
 }

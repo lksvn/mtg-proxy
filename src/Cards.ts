@@ -7,12 +7,49 @@ export type ParsedCard = {
     error?: string
 }
 
+const ABOUT_HEADER = /^about:{0,2}$/i
+const SECTION_HEADER =
+	/^(commander|companion|deck|mainboard|maybeboard|sideboard):{0,2}$/i
+
 export function parseCardList(input: string): ParsedCard[] {
-    return input
-        .split(/\r?\n/)
-        .map((sourceLine) => sourceLine.trim())
-        .filter(Boolean)
-        .map(parseCardLine)
+	const cards: ParsedCard[] = []
+	let expectingDeckName = false
+
+	for (const rawLine of input.split(/\r?\n/)) {
+		const line = cleanLine(rawLine)
+
+		if (!line) {
+			continue
+		}
+
+		if (ABOUT_HEADER.test(line)) {
+			expectingDeckName = true
+			continue
+		}
+
+		if (
+			expectingDeckName &&
+			/^name(?:\s|:)/i.test(line)
+		) {
+			expectingDeckName = false
+			continue
+		}
+
+		expectingDeckName = false
+
+		if (!SECTION_HEADER.test(line)) {
+			cards.push(parseCardLine(line))
+		}
+	}
+
+	return cards
+}
+
+function cleanLine(line: string): string {
+	return line
+		.trim()
+		.replace(/\s+\*(?:F|E)\*$/i, '')
+		.replace(' / ', ' // ')
 }
 
 function parseCardLine(sourceLine: string): ParsedCard {

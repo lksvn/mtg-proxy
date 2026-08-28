@@ -36,7 +36,7 @@ function CardResult({
 	if (entry.status === 'error') {
 		return (
 			<p>
-				{entry.parsed.sourceLine}: {entry.error}
+				{entry.parsed.sourceLine}: <br/> <span style={{color: '#f00'}}>{entry.error}</span>
 			</p>
 		)
 	}
