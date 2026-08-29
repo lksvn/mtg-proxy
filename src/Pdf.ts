@@ -38,30 +38,6 @@ function mm(value: number): number {
 	return value * POINTS_PER_MILLIMETRE
 }
 
-export async function createCalibrationPdf(
-	paper: Paper,
-	gap: number,
-): Promise<Blob> {
-	const pdf = await PDFDocument.create()
-	const layout = calculatePageLayout(paper, gap)
-	const page = addPage(pdf, layout)
-
-	for (let index = 0; index < layout.cardsPerPage; index += 1) {
-		const { x, y } = cardPosition(index, layout, gap)
-
-		page.drawRectangle({
-			x: mm(x),
-			y: mm(y),
-			width: mm(CARD_WIDTH),
-			height: mm(CARD_HEIGHT),
-			borderColor: rgb(0, 0, 0),
-			borderWidth: 0.5,
-		})
-	}
-
-	return pdfBlob(pdf)
-}
-
 export async function createCardsPdf(
 	cards: PrintableCard[],
 	settings: PrintSettings,
