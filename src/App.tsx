@@ -1,7 +1,7 @@
 import { useState, type SubmitEvent } from 'react'
 import { parseCardList, serializeCardList } from './Cards'
 import { findCards, findPrintings } from './Scryfall'
-import { createCardsPdf, type PrintSettings } from './Pdf'
+import type { PrintSettings } from './Pdf'
 import { PrintSettingsForm } from './components/PrintSettingsForm'
 import { CardResult, type CardEntry } from './components/CardResult'
 
@@ -40,6 +40,7 @@ function App() {
 		try {
 			const printableCards = cards.flatMap((entry) => entry.card ? [{ quantity: entry.parsed.quantity, card: entry.card, },] : [],)
 
+            const { createCardsPdf } = await import('./Pdf')
 			const pdf = await createCardsPdf(printableCards,printSettings)
 
 			downloadBlob(
