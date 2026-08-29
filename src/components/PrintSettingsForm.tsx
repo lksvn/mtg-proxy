@@ -8,7 +8,7 @@ type PrintSettingsFormProps = {
 
 export function PrintSettingsForm({
 	settings: printSettings,
-	onChange: setPrintSettings,
+	onChange: setPrintSettings
 }: PrintSettingsFormProps) {
 	return (
 		<fieldset>
@@ -97,6 +97,8 @@ export function PrintSettingsForm({
             </label>
 
             {printSettings.bleed && printSettings.gap < 3 && (<p>Tip: use a 3 mm gap with bleed.</p>)}
+
+            <br />
 
             <label>
                 <input

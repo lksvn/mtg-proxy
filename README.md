@@ -40,6 +40,16 @@ npm run lint
 
 Pushes to `main` are automatically deployed through GitHub Pages.
 
+## Roadmap
+
+- [x] Import deck lists from text files
+- [ ] Search available card printings
+- [ ] Keep a small list of previous deck lists in the browser
+- [ ] Improve accessibility, error handling, and mobile layout
+
+Importing directly from Moxfield URLs is deferred because its unofficial API
+is not reliably available to browser-only applications.
+
 ## Attribution
 
 Card data and images are provided by [Scryfall](https://scryfall.com/).

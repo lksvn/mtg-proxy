@@ -33,17 +33,14 @@ export type CardLookup = {
 	error?: string
 }
 
-type Identifier =
-	| { name: string }
-	| { set: string; collector_number: string }
+type Identifier = { name: string } | { set: string; collector_number: string }
 
 const cache = new Map<string, ScryfallCard>()
 const printingsCache = new Map<string, Promise<ScryfallCard[]>>()
+
 let requestQueue = Promise.resolve()
 
-export async function findCards(
-	cards: ParsedCard[],
-): Promise<CardLookup[]> {
+export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
     const cardsByKey = new Map<string, ParsedCard>()
 	const results = new Map<string, CardLookup>()
 	const identifiers = new Map<string, Identifier>()
@@ -73,16 +70,9 @@ export async function findCards(
 		for (const [key, identifier] of chunk) {
 			const parsedCard = cardsByKey.get(key)
 
-            const identifiedCard = response.data.find((candidate) =>
-                matchesIdentifier(candidate, identifier),
-            )
+            const identifiedCard = response.data.find((candidate) => matchesIdentifier(candidate, identifier))
 
-            const card =
-                identifiedCard &&
-                (!parsedCard ||
-                    matchesCardName(identifiedCard, parsedCard.name))
-                    ? identifiedCard
-                    : undefined
+            const card = identifiedCard && (!parsedCard || matchesCardName(identifiedCard, parsedCard.name)) ? identifiedCard : undefined
 
             if (card) {
                 cache.set(key, card)
@@ -91,10 +81,7 @@ export async function findCards(
                 individualCards.push(parsedCard)
             } else if (identifiedCard && parsedCard) {
                 results.set(key, {
-                    error:
-                        `${parsedCard.set?.toUpperCase()} ` +
-                        `${parsedCard.collectorNumber} is ` +
-                        `${identifiedCard.name}, not ${parsedCard.name}`,
+                    error: `${parsedCard.set?.toUpperCase()} ` + `${parsedCard.collectorNumber} is ` + `${identifiedCard.name}, not ${parsedCard.name}`
                 })
             } else {
                 results.set(key, { error: 'Card not found' })
@@ -111,13 +98,10 @@ export async function findCards(
 				results.set(key, { card })
 			} catch (error) {
 				results.set(key, {
-					error:
-						error instanceof Error
-							? error.message
-							: 'Unknown card lookup error',
+					error: error instanceof Error ? error.message : 'Unknown card lookup error'
 				})
 			}
-		}),
+		})
 	)
 
 	return cards.map((card) => {
@@ -133,16 +117,13 @@ export function findCard(card: ParsedCard): Promise<ScryfallCard> {
 		return Promise.resolve(cached)
 	}
 
-	const url =
-		card.set && card.collectorNumber
-			? `https://api.scryfall.com/cards/${encodeURIComponent(card.set)}/${encodeURIComponent(card.collectorNumber)}`
-			: namedCardUrl(card)
+	const url = card.set && card.collectorNumber
+        ? `https://api.scryfall.com/cards/${encodeURIComponent(card.set)}/${encodeURIComponent(card.collectorNumber)}`
+        : namedCardUrl(card)
 
 	return enqueueRequest(async () => {
 		const response = await fetch(url, {
-			headers: {
-				Accept: 'application/json',
-			},
+			headers: { Accept: 'application/json' }
 		})
 
 		if (!response.ok) {
@@ -156,20 +137,17 @@ export function findCard(card: ParsedCard): Promise<ScryfallCard> {
 	}, 100)
 }
 
-function fetchCollection(
-	identifiers: Identifier[],
-): Promise<{ data: ScryfallCard[] }> {
+function fetchCollection(identifiers: Identifier[]): Promise<{ data: ScryfallCard[] }> {
 	return enqueueRequest(async () => {
-		const response = await fetch(
-			'https://api.scryfall.com/cards/collection',
+		const response = await fetch('https://api.scryfall.com/cards/collection',
 			{
 				method: 'POST',
 				headers: {
 					Accept: 'application/json',
-					'Content-Type': 'application/json',
+					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ identifiers }),
-			},
+				body: JSON.stringify({ identifiers })
+			}
 		)
 
 		if (!response.ok) {
@@ -184,28 +162,23 @@ function identifierFor(card: ParsedCard): Identifier {
 	if (card.set && card.collectorNumber) {
 		return {
 			set: card.set,
-			collector_number: card.collectorNumber,
+			collector_number: card.collectorNumber
 		}
 	}
 
 	return { name: card.name }
 }
 
-function matchesIdentifier(
-	card: ScryfallCard,
-	identifier: Identifier,
-): boolean {
+function matchesIdentifier(card: ScryfallCard, identifier: Identifier): boolean {
 	if ('name' in identifier) {
         return [card.name, card.flavor_name].some(
-            (name) =>
-                name?.toLowerCase() === identifier.name.toLowerCase(),
+            (name) => name?.toLowerCase() === identifier.name.toLowerCase()
         )
     }
 
 	return (
 		card.set.toLowerCase() === identifier.set.toLowerCase() &&
-		card.collector_number.toLowerCase() ===
-			identifier.collector_number.toLowerCase()
+		card.collector_number.toLowerCase() === identifier.collector_number.toLowerCase()
 	)
 }
 
@@ -232,10 +205,7 @@ function namedCardUrl(card: ParsedCard): string {
 	return url.toString()
 }
 
-function enqueueRequest<T>(
-	request: () => Promise<T>,
-	delay: number,
-): Promise<T> {
+function enqueueRequest<T>(request: () => Promise<T>, delay: number): Promise<T> {
 	const queuedRequest = requestQueue.then(async () => {
 		await new Promise((resolve) => setTimeout(resolve, delay))
 		return request()
@@ -243,7 +213,7 @@ function enqueueRequest<T>(
 
 	requestQueue = queuedRequest.then(
 		() => undefined,
-		() => undefined,
+		() => undefined
 	)
 
 	return queuedRequest
@@ -259,9 +229,7 @@ async function responseError(response: Response): Promise<Error> {
 	)
 }
 
-export function findPrintings(
-	card: ScryfallCard,
-): Promise<ScryfallCard[]> {
+export function findPrintings(card: ScryfallCard): Promise<ScryfallCard[]> {
 	const cached = printingsCache.get(card.prints_search_uri)
 
 	if (cached) {
@@ -278,9 +246,7 @@ export function findPrintings(
 	return request
 }
 
-async function loadPrintings(
-	card: ScryfallCard,
-): Promise<ScryfallCard[]> {
+async function loadPrintings(card: ScryfallCard): Promise<ScryfallCard[]> {
 	const firstPage = new URL(card.prints_search_uri)
 	const query = firstPage.searchParams.get('q') ?? ''
 
@@ -297,9 +263,7 @@ async function loadPrintings(
 
 		const page = await enqueueRequest(async () => {
 			const response = await fetch(currentUrl, {
-				headers: {
-					Accept: 'application/json',
-				},
+				headers: { Accept: 'application/json' }
 			})
 
 			if (!response.ok) {
@@ -320,18 +284,15 @@ async function loadPrintings(
 	return printings
 }
 
-function matchesCardName(
-	card: ScryfallCard,
-	name: string,
-): boolean {
+function matchesCardName(card: ScryfallCard, name: string): boolean {
 	const expected = name.toLowerCase()
 	const names = [
 		card.name,
 		card.flavor_name,
-		...(card.card_faces?.map((face) => face.name) ?? []),
+		...(card.card_faces?.map((face) => face.name) ?? [])
 	]
 
 	return names.some(
-		(candidate) => candidate?.toLowerCase() === expected,
+		(candidate) => candidate?.toLowerCase() === expected
 	)
 }

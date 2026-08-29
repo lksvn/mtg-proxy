@@ -1,16 +1,5 @@
 import { useState } from 'react'
-import type { ParsedCard } from '../Cards'
-import type { ScryfallCard } from '../Scryfall'
-
-export type CardEntry = {
-	parsed: ParsedCard
-	status: 'loading' | 'ready' | 'error'
-	card?: ScryfallCard
-	error?: string
-	printings?: ScryfallCard[]
-	loadingPrintings?: boolean
-	printingsError?: string
-}
+import type { CardEntry } from '../hooks/useCards'
 
 type CardResultProps = {
 	entry: CardEntry
@@ -19,11 +8,11 @@ type CardResultProps = {
 	onSelectPrinting: (index: number, cardId: string) => void
 }
 
-export function CardResult({
+export function CardResultItem({
 	entry,
 	index,
 	onLoadPrintings,
-	onSelectPrinting,
+	onSelectPrinting
 }: CardResultProps) {
 	const [imageLoading, setImageLoading] = useState(false)
 
@@ -33,15 +22,13 @@ export function CardResult({
 
 	if (entry.status === 'error') {
 		return (
-			<p>
-				{entry.parsed.sourceLine}: <br/> <span style={{color: '#f00'}}>{entry.error}</span>
+			<p role="alert" style={{color: '#f00'}}>
+				{entry.parsed.sourceLine}: <br/> {entry.error}
 			</p>
 		)
 	}
 
-	const image =
-		entry.card?.image_uris?.normal ??
-		entry.card?.card_faces?.[0]?.image_uris?.normal
+	const image = entry.card?.image_uris?.normal ?? entry.card?.card_faces?.[0]?.image_uris?.normal
 
 	return (
 		<article>

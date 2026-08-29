@@ -8,8 +8,7 @@ export type ParsedCard = {
 }
 
 const ABOUT_HEADER = /^about:{0,2}$/i
-const SECTION_HEADER =
-	/^(commander|companion|deck|mainboard|maybeboard|sideboard):{0,2}$/i
+const SECTION_HEADER = /^(commander|companion|deck|mainboard|maybeboard|sideboard):{0,2}$/i
 
 export function parseCardList(input: string): ParsedCard[] {
 	const cards: ParsedCard[] = []
@@ -27,10 +26,7 @@ export function parseCardList(input: string): ParsedCard[] {
 			continue
 		}
 
-		if (
-			expectingDeckName &&
-			/^name(?:\s|:)/i.test(line)
-		) {
+		if ( expectingDeckName && /^name(?:\s|:)/i.test(line) ) {
 			expectingDeckName = false
 			continue
 		}
@@ -53,16 +49,14 @@ function cleanLine(line: string): string {
 }
 
 function parseCardLine(sourceLine: string): ParsedCard {
-    const match = sourceLine.match(
-        /^(?:(\d+)\s+)?(.+?)(?:\s+\(([a-zA-Z0-9]+)\)(?:\s+(\S+))?)?$/,
-    )
+    const match = sourceLine.match(/^(?:(\d+)\s+)?(.+?)(?:\s+\(([a-zA-Z0-9]+)\)(?:\s+(\S+))?)?$/)
 
     if (!match) {
         return {
             quantity: 1,
             name: sourceLine,
             sourceLine,
-            error: 'Invalid card line',
+            error: 'Invalid card line'
         }
     }
 
@@ -76,7 +70,7 @@ function parseCardLine(sourceLine: string): ParsedCard {
         set: set?.toLowerCase(),
         collectorNumber,
         sourceLine,
-        error: quantity < 1 ? 'Quantity must be at least 1' : undefined,
+        error: quantity < 1 ? 'Quantity must be at least 1' : undefined
     }
 }
 
@@ -86,19 +80,14 @@ export function serializeCardList(cards: ParsedCard[]): string {
 	}
 
 	return (
-		cards
-			.map((card) => {
-				if (card.error) {
-					return card.sourceLine
-				}
+		cards.map((card) => {
+            if (card.error) {
+                return card.sourceLine
+            }
 
-				const set = card.set ? ` (${card.set})` : ''
-				const collectorNumber = card.collectorNumber
-					? ` ${card.collectorNumber}`
-					: ''
-
-				return `${card.quantity} ${card.name}${set}${collectorNumber}`
-			})
-			.join('\n') + '\n'
+            const set = card.set ? ` (${card.set})` : ''
+            const collectorNumber = card.collectorNumber ? ` ${card.collectorNumber}` : ''
+            return `${card.quantity} ${card.name}${set}${collectorNumber}`
+        }).join('\n') + '\n'
 	)
 }
