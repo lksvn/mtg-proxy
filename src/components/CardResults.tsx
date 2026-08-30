@@ -23,7 +23,7 @@ export function CardResults({
 					style={{
 						display: 'grid',
 						gridTemplateColumns: 'repeat(auto-fill, minmax(244px, 1fr))',
-						gap: '16px',
+						gap: '32px 24px',
 						listStyle: 'none',
 						padding: '0'
 					}}

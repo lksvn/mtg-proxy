@@ -43,7 +43,7 @@ Pushes to `main` are automatically deployed through GitHub Pages.
 ## Roadmap
 
 - [x] Import deck lists from text files
-- [ ] Search available card printings
+- [x] Search available card printings
 - [ ] Keep a small list of previous deck lists in the browser
 - [ ] Improve accessibility, error handling, and mobile layout
 
