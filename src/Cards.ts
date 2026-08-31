@@ -91,3 +91,11 @@ export function serializeCardList(cards: ParsedCard[]): string {
         }).join('\n') + '\n'
 	)
 }
+
+export function addCardListToHistory(history: string[], cardList: string): string[] {
+	const list = cardList.trim()
+
+	if (!list) return history
+
+	return [list, ...history.filter((item) => item !== list)].slice(0, 5)
+}

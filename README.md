@@ -44,7 +44,7 @@ Pushes to `main` are automatically deployed through GitHub Pages.
 
 - [x] Import deck lists from text files
 - [x] Search available card printings
-- [ ] Keep a small list of previous deck lists in the browser
+- [x] Keep a small list of previous deck lists in the browser
 - [ ] Improve accessibility, error handling, and mobile layout
 
 Importing directly from Moxfield URLs is deferred because its unofficial API

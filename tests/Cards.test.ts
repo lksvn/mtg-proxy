@@ -2,7 +2,7 @@
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { parseCardList, serializeCardList } from '../src/Cards.ts'
+import { addCardListToHistory, parseCardList, serializeCardList } from '../src/Cards.ts'
 
 test('parses supported card-list syntax', () => {
     const cards = parseCardList(`
@@ -106,4 +106,17 @@ test('cleans Moxfield export metadata', () => {
 			},
 		],
 	)
+})
+
+test('keeps five unique recent card lists', () => {
+	const history = ['2 Counterspell', '3 Dark Ritual']
+	const updated = addCardListToHistory(history, '2 Counterspell')
+
+	assert.deepEqual(updated, ['2 Counterspell', '3 Dark Ritual'])
+
+	const capped = ['1 A', '1 B', '1 C', '1 D', '1 E']
+		.reduce<string[]>((items, list) => addCardListToHistory(items, list), [])
+
+	assert.equal(capped.length, 5)
+	assert.equal(capped[0], '1 E')
 })

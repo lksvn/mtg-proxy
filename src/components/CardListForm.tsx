@@ -2,8 +2,10 @@ import { useRef, useState, type SubmitEvent } from 'react'
 
 type CardListFormProps = {
 	value: string
+    history: string[]
 	loading: boolean
 	canSave: boolean
+    onClearHistory: () => void
 	onChange: (value: string) => void
 	onLoad: () => void
 	onSave: () => void
@@ -11,8 +13,10 @@ type CardListFormProps = {
 
 export function CardListForm({
 	value,
+    history,
 	loading,
 	canSave,
+    onClearHistory,
 	onChange,
 	onLoad,
 	onSave
@@ -47,15 +51,34 @@ export function CardListForm({
 		<form onSubmit={handleSubmit}>
             <fieldset>
 			    <legend>Card list</legend>
-                <textarea
-                    id="card-list"
-                    name="card-list"
-                    rows={12}
-                    cols={50}
-                    value={value}
-                    onChange={(event) => onChange(event.target.value)}
-                    placeholder={'4 Lightning Bolt\n1 Black Lotus (lea) 232'}
-                />
+                <div style={{display: 'flex', flexWrap: 'wrap', gap: '16px'}}>
+                    <textarea
+                        id="card-list"
+                        name="card-list"
+                        rows={12}
+                        cols={50}
+                        value={value}
+                        onChange={(event) => onChange(event.target.value)}
+                        placeholder={'4 Lightning Bolt\n1 Black Lotus (lea) 232'}
+                    />
+
+                    {history.length > 0 && (
+                        <div aria-labelledby="previous-lists-heading">
+                            <h4 id="previous-lists-heading" style={{ margin: 0, padding: 0}}>Previous lists <button type="button" onClick={onClearHistory}>❌</button></h4>
+
+                            <ol>
+                                {history.map((list, index) => (
+                                    <li key={list} style={{marginBottom: '4px'}}>
+                                        <button type="button" onClick={() => onChange(list)} style={{maxWidth: '260px', overflow: 'hidden'}}>
+                                            {list.split(/\r?\n/, 1)[0] || `List ${index + 1}`}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ol>
+                        </div>
+                    )}
+                </div>
+
 
                 <hr />
 
