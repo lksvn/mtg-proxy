@@ -1,0 +1,78 @@
+input[type="text"],
+input[type="search"],
+input[type="number"],
+textarea,
+select {
+    border: 1px solid var(--border);
+    border-radius: var(--small-radius);
+    padding: 0.25rem 0.5rem;
+    background-color: #f0f0f0;
+    color: #333;
+    max-width: 100%;
+    height: var(--input-height);
+
+    &:hover {
+        border-color: var(--accent)
+    }
+}
+input, select, textarea {
+    &:focus {
+        outline: 1px dashed var(--background);
+        outline-offset: -3px;
+    }
+}
+textarea {
+    width: 100%;
+    height: auto;
+    resize: vertical;
+}
+select {
+    option {
+        padding: 0.25rem 0.5rem;
+    }
+}
+button {
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+label {
+    font-weight: 600;
+}
+
+.file-input {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+
+	input {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+		overflow: hidden;
+	}
+
+	&:focus-within label {
+		outline: 1px dashed var(--background);
+		outline-offset: -3px;
+	}
+
+	label {
+		cursor: pointer;
+	}
+
+	.file-name {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}

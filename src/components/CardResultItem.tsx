@@ -1,5 +1,10 @@
 import { useState } from 'react'
 import type { CardEntry } from '../hooks/useCards'
+import { Icon } from './Icon'
+import placeholderUrl from '../assets/placeholder.webp'
+
+const placeholderImage = new Image()
+placeholderImage.src = placeholderUrl
 
 type CardResultProps = {
 	entry: CardEntry
@@ -14,11 +19,12 @@ export function CardResultItem({
 	onLoadPrintings,
 	onSelectPrinting
 }: CardResultProps) {
-	const [imageLoading, setImageLoading] = useState(false)
+	const [imageLoading, setImageLoading] = useState(true)
     const [printingSearch, setPrintingSearch] = useState('')
+    const [showPrintingForm, setShowPrintingForm] = useState(false)
 
 	if (entry.status === 'loading') {
-		return <p>{entry.parsed.name}: loading</p>
+		return <div style={{display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'}}><Icon name="loading" className="hourglass"/> Loading</div>
 	}
 
 	if (entry.status === 'error') {
@@ -29,7 +35,10 @@ export function CardResultItem({
 		)
 	}
 
-	const image = entry.card?.image_uris?.normal ?? entry.card?.card_faces?.[0]?.image_uris?.normal
+	const image = entry.card?.image_uris?.grid ??
+                entry.card?.image_uris?.normal ??
+                entry.card?.card_faces?.[0]?.image_uris?.grid ??
+                entry.card?.card_faces?.[0]?.image_uris?.normal
 
     const filteredPrintings = entry.printings?.filter((printing) => {
         const text = `${printing.set_name} ${printing.set} ${printing.collector_number} ${printing.released_at}`.toLowerCase()
@@ -41,36 +50,38 @@ export function CardResultItem({
 		: filteredPrintings
 
 	return (
-		<article>
-			<h3 style={{height: '46px', margin: '0 0 8px 0', overflow: 'hidden'}}>{entry.parsed.quantity} × {entry.card?.name}</h3>
-			<p style={{minHeight: '40px', margin: '0 0 8px 0'}}>
-				{entry.card?.set_name} ({entry.card?.set}){' '}
-				{entry.card?.collector_number}
+		<>
+			<p>
+			    <strong>{entry.card?.name.toUpperCase()}</strong>
+				<span>{entry.card?.set_name} ({entry.card?.set.toUpperCase()}){' '}{entry.card?.collector_number}</span>
 			</p>
-            <div style={{display: 'flex', alignItems: 'center', flexFlow: 'column', gap: '8px'}}>
-				<div style={{ width: '244px', height: '340px', position: 'relative'}}>
-					{image && (
-						<img
-                            key={image}
-                            src={image}
-                            alt={`${entry.card?.name} card`}
-                            width="244"
-                            height="340"
-                            aria-busy={imageLoading}
-                            onLoad={() => setImageLoading(false)}
-                            onError={() => setImageLoading(false)}
-                            style={{position: 'relative', zIndex: 1}}
-						/>
-					)}
-				    {imageLoading && <p role="status" style={{position: 'absolute', top: '50%', left: '50%', transform: 'translateX(-50%) translateY(-50%)', zIndex: 2, margin: 0, padding: 0}}>Loading image</p>}
-				</div>
-				<small>
-					<a href={entry.card?.scryfall_uri} target="_blank" rel="noreferrer">View on Scryfall </a>
-				</small>
-			</div>
-			<div style={{display: 'flex', flexFlow: 'column', gap: '4px', minHeight: '120px', padding: '4px'}}>
-                {entry.printings ? (
-                    <>
+            <div className="card-image">
+                {image && (
+                    <img
+                        key={image}
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
+                        src={image}
+                        alt={`${entry.card?.name} card`}
+                        width="244"
+                        height="340"
+                        aria-busy={imageLoading}
+                        onLoad={() => setImageLoading(false)}
+                        onError={() => setImageLoading(false)}
+                        style={{ transition: 'opacity var(--transition-fast)', opacity: imageLoading ? 0 : 1}}
+                    />
+                )}
+                {imageLoading && <span role="status" className="loading"><Icon name="loading" className="hourglass"/> Loading</span>}
+            </div>
+            <small>
+                <a href={entry.card?.scryfall_uri} target="_blank" rel="noreferrer">View on Scryfall </a>
+            </small>
+			<div className="change-printing">
+                <div id={`printing-form-${index}`}
+                    className={entry.printings && showPrintingForm ? 'form open': 'form'}>
+                    <button type="button" onClick={() => setShowPrintingForm(false)} aria-label='Close printing selection' className="btn md"><Icon name="chevron-down"/></button>
+                    <div className="form-group">
                         <label htmlFor={`printing-search-${index}`}>Search printings</label>
                         <input
                             id={`printing-search-${index}`}
@@ -79,7 +90,8 @@ export function CardResultItem({
                             placeholder="Set, code, number or date"
                             onChange={(event) => setPrintingSearch(event.target.value)}
                         />
-
+                    </div>
+                    <div className="form-group">
                         <label htmlFor={`printing-${index}`}>Printing</label>
                         <select
                             id={`printing-${index}`}
@@ -92,24 +104,27 @@ export function CardResultItem({
                             {visiblePrintings?.map((printing) => (
                                 <option key={printing.id} value={printing.id}>
                                     {printing.set_name} ({printing.set}){' '}
-                                    {printing.collector_number} — {printing.released_at}
+                                    {printing.collector_number} @ {printing.released_at}
                                 </option>
                             ))}
                         </select>
 
                         {filteredPrintings?.length === 0 && <p style={{margin: 0, padding: 0}}>No printings match this search.</p>}
-                    </>
-                ) : (
-                    <button
-                        type="button"
-                        disabled={entry.loadingPrintings}
-                        onClick={() => onLoadPrintings(index)}
-                    >
-                        {entry.loadingPrintings ? 'Loading printings' : '🔁 Change printing'}
-                    </button>
-                )}
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    disabled={entry.loadingPrintings}
+                    onClick={() => {
+                        setShowPrintingForm(true)
+                        onLoadPrintings(index)
+                    }}
+                    className="btn block"
+                >
+                    {entry.loadingPrintings ? (<><Icon name="loading" className="hourglass"/> Loading</>) : (<><Icon name="arrow-left-right"/> Change printing</>)}
+                </button>
                 {entry.printingsError && <p role="alert" style={{color: '#f00'}}>{entry.printingsError}</p>}
             </div>
-		</article>
+		</>
 	)
 }

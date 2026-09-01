@@ -1,0 +1,184 @@
+@use "sass:map";
+
+$headings: (
+    h1: (min: 2rem, max: 20rem, lh: 1.2),
+    h2: (min: 1.8rem, max: 18rem, lh: 1.25),
+    h3: (min: 1.6rem, max: 16rem, lh: 1.3),
+    h4: (min: 1.4rem, max: 14rem, lh: 1.3),
+    h5: (min: 1.1rem, max: 11rem, lh: 1.35),
+    h6: (min: 1rem, max: 10rem, lh: 1.4)
+);
+
+:root {
+    color-scheme: light dark;
+
+    --content-width: 55rem;
+    --page-gutter: 1rem;
+    --section-gap: 4rem;
+    --grid-gap: 1.5rem;
+    --card-padding: 1.25rem;
+    --card-radius: 0.625rem;
+    --card-image-width: 244px;
+    --card-image-height: 340px;
+    --card-image-radius: 4.75% / 3.5%;
+    --card-image-ratio: 244 / 340;
+    --small-radius: 0.25rem;
+    --control-height: 2.75rem;
+    --input-height: 2rem;
+    --transition-fast: .15s ease;
+
+    --background: light-dark(#6b4f97, #211e20);
+    --surface: light-dark(#7558a5, #2b282a);
+    --text: light-dark(#fff7c7, #e9efec);
+    --text-muted: light-dark(#e0d8ae, #9fa8a3);
+    --accent: light-dark(#97f6cb, #c4c4aa);
+    --accent-hover: light-dark(#68c49c, #a0a08b);
+    --accent-text: light-dark(#3f2d5f, #211e20);
+    --border: light-dark(rgb(255 255 255 / 18%), #555568);
+    --shadow: light-dark(rgb(45 28 70 / 35%), rgb(0 0 0 / 35%));
+}
+
+@media(prefers-reduced-motion: no-preference) {
+    html, body { scroll-behavior: smooth; }
+}
+
+body {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    background-color: var(--background);
+    color: var(--text);
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: var(--page-gutter)
+}
+
+@each $tag, $vals in $headings {
+    #{$tag} {
+        $lh: map.get($vals, lh);
+        font-size: map.get($vals, min);
+        line-height: $lh;
+        margin-top: 0;
+        margin-bottom: #{$lh}rem
+    }
+}
+
+a, summary {
+    color: var(--accent);
+    transition: color var(--transition-fast);
+    &:hover, &:focus {
+        color: var(--accent-hover);
+    }
+    &:focus, details[open] & {
+        outline: 1px dashed var(--accent-hover);
+        outline-offset: 3px;
+    }
+    &[href="#top"] {
+        position: sticky;
+        top: 3rem;
+        right: 0;
+        bottom: 1rem;
+        left: 100%;
+        padding: 0.125rem;
+        margin-bottom: 0;
+        z-index: 5;
+    }
+}
+
+a[href="#top"], .color-scheme-toggle {
+    font-size: 1.8rem;
+    transition: all var(--transition-fast);
+    border: none;
+    border-radius: var(--small-radius);
+    z-index: 1;
+    &:hover {
+        color: var(--background);
+        background-color: var(--accent-hover)
+    }
+}
+
+strong, b { font-weight: 900; }
+
+p {
+    margin-top: 0;
+    margin-bottom: 1.125rem
+}
+
+nav {
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    li {
+        margin: 0 0.625rem;
+        @media screen and (max-width: 42rem) {
+            margin: 0.625rem;
+        }
+    }
+    a {
+        text-decoration: none;
+        &:hover { text-decoration: underline; }
+    }
+}
+
+main { position: relative; }
+
+footer {
+    border-top: 1px dotted var(--border);
+    padding-top: 2rem;
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.875rem;
+    p { margin-bottom: 0.5rem }
+    nav { margin-bottom: .5rem }
+}
+
+section {
+    margin-bottom: var(--section-gap);
+    h1 { font-size: 3.5rem; }
+    h2 { font-size: 2.5em; }
+    h1, h2 {
+        text-align: center;
+        margin: 8vh 0 5vh
+    }
+}
+
+details {
+    &[open] summary {font-weight: 900; }
+    width: 100%;
+    > summary {
+        margin-bottom: 0;
+        cursor: pointer;
+    }
+}
+
+.icon {
+    --size: 1em;
+    display: inline-block;
+    flex: none;
+    vertical-align: -0.15em;
+    inline-size: var(--size);
+    block-size: var(--size);
+    &.md { --size: 2rem; }
+    &.lg { --size: 3rem; }
+
+    &.flip-h { transform: rotateY(180deg); }
+    &.flip-v { transform: rotateX(180deg); }
+    &.rot-90 { transform:  rotate(90deg); }
+    &.rot--90 { transform:  rotate(-90deg); }
+}
+
+@keyframes hourglass {
+    0%   { transform: rotate(0); }
+    50%  { transform: rotate(180deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.hourglass {
+    animation: hourglass var(--spin-duration, 3s) ease-in-out infinite;
+}
+

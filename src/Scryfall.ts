@@ -11,16 +11,22 @@ export type ScryfallCard = {
 	lang: string
 	type_line: string
 	image_uris?: {
-		normal: string
-		large: string
-		png: string
+        small: string
+        normal: string
+        grid?: string
+        crop?: string
+        large: string
+        png: string
 	}
 	card_faces?: Array<{
 		name: string
 		image_uris?: {
-			normal: string
-			large: string
-			png: string
+            small: string
+            normal: string
+            grid?: string
+            crop?: string
+            large: string
+            png: string
 		}
 	}>,
 	prints_search_uri: string,

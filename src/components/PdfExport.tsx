@@ -1,3 +1,5 @@
+import { Icon } from "./Icon"
+
 type PdfExportProps = {
 	exporting: boolean
 	canExport: boolean
@@ -17,8 +19,9 @@ export function PdfExport({
 				type="button"
 				disabled={exporting || !canExport}
 				onClick={onExport}
+                className="btn"
 			>
-				{exporting ? '🔄️ Generating' : '🖨️ Print'}
+				{exporting ? (<><Icon name="loading" className="hourglass"/> Generating</>) : (<><Icon name="printer"/> Download PDF</>)}
 			</button>
 
 			{error && (

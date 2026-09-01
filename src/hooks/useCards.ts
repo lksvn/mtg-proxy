@@ -12,11 +12,11 @@ export type CardEntry = {
 	printingsError?: string
 }
 
-export function useCards(cardList: string) {
+export function useCards() {
 	const [cards, setCards] = useState<CardEntry[]>([])
 	const [loading, setLoading] = useState(false)
 
-	async function loadCards() {
+	async function loadCards(cardList: string) {
 		const entries: CardEntry[] = parseCardList(cardList).map((parsed) => ({
 			parsed,
 			status: parsed.error ? 'error' : 'loading',

@@ -46,6 +46,7 @@ Pushes to `main` are automatically deployed through GitHub Pages.
 - [x] Search available card printings
 - [x] Keep a small list of previous deck lists in the browser
 - [ ] Improve accessibility, error handling, and mobile layout
+- [ ] Download list with options: clear list (no printings), current list (with all edits), no basic lands
 
 Importing directly from Moxfield URLs is deferred because its unofficial API
 is not reliably available to browser-only applications.

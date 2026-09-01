@@ -7,6 +7,10 @@ export type ParsedCard = {
     error?: string
 }
 
+export const EXAMPLE_CARD_LIST = `Shock
+4 Lightning Bolt
+1 Black Lotus (lea) 232
+Blood Artist (sld)`
 const ABOUT_HEADER = /^about:{0,2}$/i
 const SECTION_HEADER = /^(commander|companion|deck|mainboard|maybeboard|sideboard):{0,2}$/i
 

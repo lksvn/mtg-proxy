@@ -1,0 +1,20 @@
+$spacing: (
+	0: 0,
+	1: 0.25rem,
+	2: 0.5rem,
+	3: 1rem,
+	4: 1.5rem,
+	5: 2rem
+);
+
+@each $size, $value in $spacing {
+	.m-#{$size} { margin: $value !important; }
+	.mt-#{$size} { margin-top: $value !important; }
+	.mb-#{$size} { margin-bottom: $value !important; }
+	.p-#{$size} { padding: $value !important; }
+	.pt-#{$size} { padding-top: $value !important; }
+	.pb-#{$size} { padding-bottom: $value !important; }
+	.gap-#{$size} { gap: $value !important; }
+}
+
+.text-muted { color: var(--text-muted) }

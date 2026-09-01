@@ -13,23 +13,13 @@ export function CardResults({
 	onSelectPrinting
 }: CardResultsProps) {
 	return (
-		<section aria-labelledby="cards-heading">
-			<h2 id="cards-heading">Cards</h2>
+		<section aria-labelledby="cards-heading" id="cards-result">
+			{/* <h2 id="cards-heading">Cards</h2> */}
 
-			{cards.length === 0 ? (
-				<p>No cards loaded.</p>
-			) : (
-				<ul
-					style={{
-						display: 'grid',
-						gridTemplateColumns: 'repeat(auto-fill, minmax(244px, 1fr))',
-						gap: '32px 24px',
-						listStyle: 'none',
-						padding: '0'
-					}}
-				>
+			{cards.length > 0 && (
+				<ul className="cardList">
 					{cards.map((entry, index) => (
-						<li key={`${entry.parsed.sourceLine}-${index}`}>
+						<li key={`${entry.parsed.sourceLine}-${index}`} className="card">
 							<CardResultItem
 								entry={entry}
 								index={index}

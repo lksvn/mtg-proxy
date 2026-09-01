@@ -1,4 +1,7 @@
-import { useRef, useState, type SubmitEvent } from 'react'
+import { useState, type SubmitEvent } from 'react'
+import { Icon } from './Icon'
+import { EXAMPLE_CARD_LIST } from '../Cards'
+import { FileInput } from './FileInput'
 
 type CardListFormProps = {
 	value: string
@@ -7,7 +10,7 @@ type CardListFormProps = {
 	canSave: boolean
     onClearHistory: () => void
 	onChange: (value: string) => void
-	onLoad: () => void
+	onLoad: (cardList: string) => void
 	onSave: () => void
 }
 
@@ -21,14 +24,10 @@ export function CardListForm({
 	onLoad,
 	onSave
 }: CardListFormProps) {
-	const fileInput = useRef<HTMLInputElement>(null)
 	const [importError, setImportError] = useState('')
 
-	async function importCardList(file?: File) {
-		if (!file) return
-
+	async function importCardList(file: File) {
 		setImportError('')
-
 		try {
 			onChange(await file.text())
 		} catch {
@@ -38,77 +37,73 @@ export function CardListForm({
 
 	function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
 		event.preventDefault()
-		onLoad()
-	}
-
-	function clearFile() {
-		if (fileInput.current) {
-			fileInput.current.value = ''
-		}
+        const list = value.trim() || EXAMPLE_CARD_LIST
+        if (!value.trim()) onChange(list)
+		onLoad(list)
 	}
 
 	return (
 		<form onSubmit={handleSubmit}>
-            <fieldset>
-			    <legend>Card list</legend>
-                <div style={{display: 'flex', flexWrap: 'wrap', gap: '16px'}}>
-                    <textarea
-                        id="card-list"
-                        name="card-list"
-                        rows={12}
-                        cols={50}
-                        value={value}
-                        onChange={(event) => onChange(event.target.value)}
-                        placeholder={'4 Lightning Bolt\n1 Black Lotus (lea) 232'}
-                    />
+            <div>
+                <div className="meh">
+                    <div>
+                        <p className='text-muted'>One card per line: [quantity] card name [(set)] [collector number]. Only the card name is required.</p>
+                        <div className="card-list-input mb-2">
+                            <button type="button" onClick={() => onChange('')} className="btn danger"><Icon name="trash-can"/> Clear</button>
+                            <textarea
+                                id="card-list"
+                                name="card-list"
+                                rows={16}
+                                cols={50}
+                                value={value}
+                                onChange={(event) => onChange(event.target.value)}
+                                placeholder={EXAMPLE_CARD_LIST}
+                            />
+                        </div>
+
+                        <FileInput
+                            id="card-list-file"
+                            accept=".txt,text/plain"
+                            onSelect={importCardList}
+                        />
+                        {importError && <p role="alert" style={{color: '#f00'}}>{importError}</p>}
+
+                        <div className="actions">
+                            <button type="submit" disabled={loading} className="btn">
+                                {loading ? (<><Icon name="loading" className="hourglass"/> Loading</>) : (<><Icon name="refresh-cw" /> Load cards</>)}
+                            </button>
+
+                            <button
+                                type="button"
+                                disabled={!canSave || loading}
+                                onClick={onSave}
+                                className={`btn${loading ? ' load' : ''}`}
+                            >
+                                <Icon name={loading ? 'loading' : 'file-down'} className={loading ? 'hourglass' : ''}/> Save card list
+                            </button>
+                        </div>
+
+                    </div>
 
                     {history.length > 0 && (
-                        <div aria-labelledby="previous-lists-heading">
-                            <h4 id="previous-lists-heading" style={{ margin: 0, padding: 0}}>Previous lists <button type="button" onClick={onClearHistory}>❌</button></h4>
+                        <div aria-labelledby="previous-lists-heading" className="previous-lists">
+                            <h4 id="previous-lists-heading" className="mb-1"><Icon name="list-clock"/> Previous lists</h4>
+                            <p className="text-muted">Saved only in this browser.</p>
 
-                            <ol>
+                            <ul className="p-0 m-0 mb-2">
                                 {history.map((list, index) => (
-                                    <li key={list} style={{marginBottom: '4px'}}>
-                                        <button type="button" onClick={() => onChange(list)} style={{maxWidth: '260px', overflow: 'hidden'}}>
-                                            {list.split(/\r?\n/, 1)[0] || `List ${index + 1}`}
+                                    <li key={list}>
+                                        <button type="button" onClick={() => onChange(list)} className="btn block">
+                                            <Icon name="arrow-right" className="flip-h" />{list.split(/\r?\n/, 1)[0] || `List ${index + 1}`}
                                         </button>
                                     </li>
                                 ))}
-                            </ol>
+                            </ul>
+                            <button type="button" onClick={onClearHistory} className="btn sm danger"><Icon name="trash-can" /> Clear history</button>
                         </div>
                     )}
                 </div>
-
-
-                <hr />
-
-                <label htmlFor="card-list-file">📤 Import from file (.txt) </label>
-                <input
-                    ref={fileInput}
-                    id="card-list-file"
-                    type="file"
-                    accept=".txt,text/plain"
-                    onChange={(event) =>
-                        importCardList(event.target.files?.[0])
-                    }
-                />
-                <button type="button" onClick={clearFile} style={{color: '#f00', border: 'none', background: 'transparent'}}>❌</button>
-                {importError && <p role="alert" style={{color: '#f00'}}>{importError}</p>}
-
-                <hr />
-
-                <button type="submit" disabled={loading}>
-                    {loading ? '🔄️ Loading' : '🔄️ Load cards'}
-                </button>
-                {' '}
-                <button
-                    type="button"
-                    disabled={!canSave || loading}
-                    onClick={onSave}
-                >
-                    ⬇️ Download current list
-                </button>
-            </fieldset>
+            </div>
 		</form>
 	)
 }

@@ -1,0 +1,242 @@
+body {
+    font-family: 'Inconsolata', monospace;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+}
+
+.btn {
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--small-radius);
+    padding: 0.25rem 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+
+    color: var(--accent-text);
+    background-color: var(--accent);
+
+    &.block { width: 100%; }
+    &.sm { font-size: 0.75em }
+    &.md { font-size: 1.125em }
+    &.danger {
+		color: var(--text);
+		background-color: light-dark(#a6425b, #7f394b);
+		border-color: light-dark(#c7657b, #ad596d);
+
+        &:hover:not(:disabled),&:focus:not(:disabled) {
+            color: var(--text);
+			background-color: light-dark(#8f354d, #98455a);
+			border-color: light-dark(#b95168, #c56c80);
+        }
+    }
+
+    &:hover:not(:disabled),&:focus:not(:disabled) {
+        color: var(--text);
+        background-color: var(--accent-hover);
+        border-color: var(--accent);
+    }
+    &:focus:not(:disabled) {
+        outline: 1px dashed var(--background);
+        outline-offset: -3px;
+    }
+    &:disabled {
+        background-color: var(--surface);
+        color: var(--text);
+        cursor: not-allowed;
+        &.load {
+            cursor: wait;
+        }
+    }
+}
+
+#cards-result,.printing-settings {
+    width: calc(100vw - var(--page-gutter) - var(--page-gutter));
+    margin-inline: calc(50% - 50vw + var(--page-gutter));
+}
+
+.cardList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(min(100%, calc(var(--card-image-width) + 2rem)), 1fr));
+    gap: 2rem 1rem;
+    list-style: none;
+    position: relative;
+    padding: 0;
+    margin: 0;
+
+    p {
+        strong, span {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        strong {
+            height: 1.5rem;
+        }
+        margin: 0;
+        padding: 0;
+        span {
+            font-size: .8em;
+            color: var(--text-muted);
+            height: 1rem;
+        }
+    }
+
+    .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--card-radius);
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.675rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-image {
+        position: relative;
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: var(--card-image-radius);
+        box-shadow: 10px 5px 15px 0px var(--shadow);
+		background: var(--surface) url('./placeholder.webp') center / cover;
+
+        width: min(100%, var(--card-image-width));
+        height: auto;
+        aspect-ratio: var(--card-image-ratio);
+
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--card-image-radius);
+            position: inherit;
+            z-index: 1;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            color: var(--accent-text)
+        }
+    }
+
+    small {
+        display: inline-block;
+        text-align: center;
+    }
+
+    .change-printing {
+        position: relative;
+        .btn.block { justify-content: center; }
+    }
+
+    .form {
+        width: 100%;
+        border-radius: var(--small-radius);
+        background-color: rgba($color: #000000, $alpha: 0.85);
+        z-index: 3;
+        position: absolute;
+        bottom: 0;
+        pointer-events: none;
+
+        max-height: 0;
+        padding: 0 1rem;
+        overflow: hidden;
+        transition:
+            max-height 0.2s ease,
+            padding 0.2s ease,
+            opacity 0.15s ease,
+            transform 0.2s ease;
+        opacity: 0;
+
+        &.open {
+            opacity: 1;
+            padding: 1rem;
+            pointer-events: auto;
+            max-height: 20rem;
+        }
+
+        button {
+            position: absolute;
+            right: -1px;
+            top: -1px;
+        }
+    }
+}
+.card-list-input {
+    position: relative;
+    button {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: 1;
+    }
+}
+
+.meh {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    .actions {
+        display: flex;
+        gap: 1rem;
+        border-top: 1px dotted var(--border);
+        padding-top: 1rem;
+        margin-top: 1rem;
+        .btn {
+            flex-grow: 1;
+            justify-content: center;
+        }
+    }
+}
+
+.printing-settings {
+    position: sticky;
+    z-index: 4;
+    top: 0;
+    padding: 0.5rem 0;
+    display: inline-flex;
+    gap: 1rem;
+    align-items: center;
+    background-color: var(--background);
+
+    details {
+        summary { width: 100%;}
+        width: 100%;
+        .wrapper {
+            display: flex;
+            align-items: center;
+            padding-top: 0.5rem;
+            gap: 1rem;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+    }
+}
+
+.previous-lists {
+    ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.form {
+		transition: none;
+	}
+    .hourglass { animation: none; }
+}

@@ -7,6 +7,9 @@ import { PrintSettingsForm } from './components/PrintSettingsForm'
 import { CardListForm } from './components/CardListForm'
 import { CardResults } from './components/CardResults'
 import { PdfExport } from './components/PdfExport'
+import { BackToTop } from './components/BackToTop'
+import { Footer } from './components/Footer'
+import { Icon } from './components/Icon'
 
 const HISTORY_KEY = 'mtg-proxy-card-list-history'
 
@@ -22,7 +25,7 @@ function App() {
             return []
         }
     })
-    const { cards, loading, loadCards, loadCardPrintings, selectPrinting } = useCards(cardList)
+    const { cards, loading, loadCards, loadCardPrintings, selectPrinting } = useCards()
 	const [printSettings, setPrintSettings] = useState<PrintSettings>({
 		paper: 'a4',
 		gap: 0.2,
@@ -49,7 +52,7 @@ function App() {
         }
     }
 
-    function loadAndRememberCards() {
+    function loadAndRememberCards(cardList: string) {
         const nextHistory = addCardListToHistory(history, cardList)
 
         setHistory(nextHistory)
@@ -60,7 +63,7 @@ function App() {
             // Card loading should still work if browser storage is unavailable.
         }
 
-        loadCards()
+        loadCards(cardList)
     }
 
 	async function downloadCardsPdf() {
@@ -106,8 +109,11 @@ function App() {
 
 	return (
 		<>
+        <header>
+            <h1 className="mb-2"><Icon name="cards-fan"/> MTG Proxy</h1>
+            <p>Create printable playtest cards from a deck list.</p>
+        </header>
 		<main>
-			<h1>MTG Proxy</h1>
 
             <CardListForm
                 value={cardList}
@@ -119,41 +125,40 @@ function App() {
                 onLoad={loadAndRememberCards}
                 onSave={saveCardList}
             />
-            <PrintSettingsForm
-                settings={printSettings}
-                onChange={setPrintSettings}
-            />
 
-            <PdfExport
-                exporting={exporting}
-                canExport={canExport}
-                error={pdfError}
-                onExport={downloadCardsPdf}
-            />
+            {cards.length > 0 && (<div className="printing-settings">
+                <div style={{minWidth: '160px'}}>
+                    <PdfExport
+                        exporting={exporting}
+                        canExport={canExport}
+                        error={pdfError}
+                        onExport={downloadCardsPdf}
+                    />
+                </div>
+
+                <PrintSettingsForm
+                    settings={printSettings}
+                    onChange={setPrintSettings}
+                />
+            </div>)}
 
             <CardResults
                 cards={cards}
                 onLoadPrintings={loadCardPrintings}
                 onSelectPrinting={selectPrinting}
             />
+            {cards.length > 0 && (<div style={{display: 'flex', justifyContent: 'center'}}>
+                <PdfExport
+                    exporting={exporting}
+                    canExport={canExport}
+                    error={pdfError}
+                    onExport={downloadCardsPdf}
+                />
+            </div>)}
 
-            <PdfExport
-                exporting={exporting}
-                canExport={canExport}
-                error={pdfError}
-                onExport={downloadCardsPdf}
-            />
+            <BackToTop />
 		</main>
-		<footer>
-			<p>
-				Card data and images provided by{' '}
-				<a href="https://scryfall.com/">Scryfall</a>.
-			</p>
-			<p>
-				For personal playtesting only. Not affiliated with or endorsed
-				by Wizards of the Coast.
-			</p>
-		</footer>
+		<Footer />
 		</>
 	)
 }
