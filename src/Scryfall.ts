@@ -43,6 +43,7 @@ type Identifier = { name: string } | { set: string; collector_number: string }
 
 const cache = new Map<string, ScryfallCard>()
 const printingsCache = new Map<string, Promise<ScryfallCard[]>>()
+const translatedNamesCache = new Map<string, Promise<string>>()
 
 let requestQueue = Promise.resolve()
 
@@ -50,7 +51,11 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
     const cardsByKey = new Map<string, ParsedCard>()
 	const results = new Map<string, CardLookup>()
 	const identifiers = new Map<string, Identifier>()
-	const individualCards: ParsedCard[] = []
+	const individualCards: Array<{
+            parsedCard: ParsedCard
+            identifiedCard?: ScryfallCard
+            skipNamedLookup?: boolean
+        }> = []
 
 	for (const card of cards) {
 		const key = cardKey(card)
@@ -61,7 +66,7 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
 		if (cached) {
 			results.set(key, { card: cached })
 		} else if (card.set && !card.collectorNumber) {
-			individualCards.push(card)
+			individualCards.push({ parsedCard: card })
 		} else {
 			identifiers.set(key, identifierFor(card))
 		}
@@ -83,12 +88,8 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
             if (card) {
                 cache.set(key, card)
                 results.set(key, { card })
-            } else if ('name' in identifier && parsedCard) {
-                individualCards.push(parsedCard)
-            } else if (identifiedCard && parsedCard) {
-                results.set(key, {
-                    error: `${parsedCard.set?.toUpperCase()} ` + `${parsedCard.collectorNumber} is ` + `${identifiedCard.name}, not ${parsedCard.name}`
-                })
+            } else if (parsedCard) {
+                individualCards.push({ parsedCard, identifiedCard, skipNamedLookup: true })
             } else {
                 results.set(key, { error: 'Card not found' })
             }
@@ -96,23 +97,99 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
 	}
 
 	await Promise.all(
-		individualCards.map(async (parsedCard) => {
-			const key = cardKey(parsedCard)
+        individualCards.map(async ({ parsedCard, identifiedCard, skipNamedLookup }) => {
+            const key = cardKey(parsedCard)
 
-			try {
-				const card = await findCard(parsedCard)
-				results.set(key, { card })
-			} catch (error) {
-				results.set(key, {
-					error: error instanceof Error ? error.message : 'Unknown card lookup error'
-				})
-			}
-		})
-	)
+            try {
+                const card = await findCardInAnyLanguage(parsedCard, identifiedCard, skipNamedLookup)
+
+                cache.set(key, card)
+                results.set(key, { card })
+            } catch (error) {
+                results.set(key, {
+                    error: error instanceof Error ? error.message : 'Unknown card lookup error'
+                })
+            }
+        })
+    )
 
 	return cards.map((card) => {
 		return results.get(cardKey(card)) ?? { error: 'Card not found' }
 	})
+}
+
+async function findCardInAnyLanguage(
+	card: ParsedCard,
+	identifiedCard?: ScryfallCard,
+	skipNamedLookup = false
+): Promise<ScryfallCard> {
+	if (!identifiedCard && !skipNamedLookup) {
+		try {
+			return await findCard(card)
+		} catch {
+			// Try the exact name in other languages.
+		}
+	}
+
+	const canonicalName = await findCanonicalName(card.name)
+	const foundCard = identifiedCard ?? await findCard({
+		...card,
+		name: canonicalName
+	})
+
+	if (!matchesCardName(foundCard, canonicalName)) {
+		throw new Error(
+			`${card.set?.toUpperCase()} ${card.collectorNumber} is ` +
+			`${foundCard.name}, not ${card.name}`
+		)
+	}
+
+	return foundCard
+}
+
+function findCanonicalName(name: string): Promise<string> {
+	const key = name.toLowerCase()
+	const cached = translatedNamesCache.get(key)
+
+	if (cached) return cached
+
+	const request = loadCanonicalName(name)
+	translatedNamesCache.set(key, request)
+
+	request.catch(() => translatedNamesCache.delete(key))
+
+	return request
+}
+
+async function loadCanonicalName(name: string): Promise<string> {
+	const escapedName = name
+		.replaceAll('\\', '\\\\')
+		.replaceAll('"', '\\"')
+
+	const url = new URL('https://api.scryfall.com/cards/search')
+	url.searchParams.set('q', `!"${escapedName}"`)
+	url.searchParams.set('include_multilingual', 'true')
+	url.searchParams.set('unique', 'cards')
+
+	return enqueueRequest(async () => {
+		const response = await fetch(url, {
+			headers: { Accept: 'application/json' }
+		})
+
+		if (!response.ok) throw await responseError(response)
+
+		const result = await response.json() as {
+			data: Array<{ name: string }>
+		}
+
+		const names = [...new Set(result.data.map((card) => card.name))]
+
+		if (names.length !== 1) {
+			throw new Error(`Ambiguous card name: ${name}`)
+		}
+
+		return names[0]
+	}, 100)
 }
 
 export function findCard(card: ParsedCard): Promise<ScryfallCard> {
