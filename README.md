@@ -1,58 +1,80 @@
 # MTG Proxy
 
-A browser-based tool for turning Magic: The Gathering deck lists into printable playtest card PDFs.
+Create printable Magic: The Gathering playtest cards from a deck list, directly in your browser.
 
-Try it at [lksvn.com.br/mtg-proxy](https://lksvn.com.br/mtg-proxy/).
+[Open MTG Proxy](https://lksvn.com.br/mtg-proxy/)
+
+![MTG Proxy interface](docs/mtg-proxy.png)
 
 ## Features
 
-- Loads card names and specific printings from Scryfall
-- Supports quantities, set codes, and collector numbers
-- Lets you preview cards and change their printing
-- Saves the selected card list as a text backup
-- Exports PDFs for common paper sizes
-- Supports gaps, bleed, crop marks, black corners, basic-land filtering, deck lists, and playtest watermarks
+- Parse deck lists with optional quantities, set codes, and collector numbers
+- Import plain-text deck lists
+- Resolve cards and English printings through Scryfall
+- Search available printings and update card previews
+- Keep up to five recent deck lists in browser storage
+- Save the current card list as a text backup
+- Export printable PDFs for A4, A3, Letter, and Legal paper
+- Configure gaps, crop marks, black corners, bleed, basic-land filtering, a deck-list page, and playtest watermarks
+- Export both faces of double-faced cards
+- Use light and dark color schemes
 
-Example input:
+The application is client-only. Deck lists remain in the browser except for card lookups sent to Scryfall.
+
+## Card list format
+
+Only the card name is required. Add one card per line:
 
 ```text
+[quantity] card name [(set)] [collector number]
+```
+
+Examples:
+
+```text
+Lightning Bolt
 4 Lightning Bolt
 1 Black Lotus (lea) 232
 2 Delver of Secrets (isd)
 ```
 
+After loading a list, review the card previews, change any printings, choose the print settings, and download the PDF.
+
+![Search and change a card printing](docs/printing-selection.png)
+
 ## Development
 
-Requires Node.js and npm.
+Built with React, TypeScript, Vite, Sass, and pdf-lib.
+
+Requires Node.js and npm:
 
 ```sh
 npm install
 npm run dev
 ```
 
-Useful checks:
+Available checks:
 
 ```sh
 npm test
-npm run build
 npm run lint
+npm run build
 ```
 
-Pushes to `main` are automatically deployed through GitHub Pages.
+SVG icon types are generated automatically before development and production builds. To generate them manually:
+
+```sh
+npm run generate:icons
+```
 
 ## Roadmap
 
-- [x] Import deck lists from text files
-- [x] Search available card printings
-- [x] Keep a small list of previous deck lists in the browser
-- [ ] Improve accessibility, error handling, and mobile layout
-- [ ] Download list with options: clear list (no printings), current list (with all edits), no basic lands
+- Improve accessibility and keyboard testing
+- Improve network and image error feedback
+- Add card-list download options for selected printings and basic-land filtering
 
-Importing directly from Moxfield URLs is deferred because its unofficial API
-is not reliably available to browser-only applications.
-
-## Attribution
+## Attribution and disclaimer
 
 Card data and images are provided by [Scryfall](https://scryfall.com/).
 
-This project is intended for personal playtesting. It is not affiliated with or endorsed by Wizards of the Coast.
+This project is intended for personal, non-commercial playtesting. It is not affiliated with or endorsed by Wizards of the Coast.
