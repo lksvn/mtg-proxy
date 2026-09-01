@@ -63,6 +63,18 @@ body {
     }
 }
 
+mark {
+    background-color: var(--text);
+    color: var(--background);
+    padding: 0.125rem 0.25rem;
+    font-weight: 900;
+    border-radius: var(--small-radius);
+    transition: background-color var(--transition-fast);
+    &:hover {
+        background-color: var(--accent);
+    }
+}
+
 a, summary {
     color: var(--accent);
     transition: color var(--transition-fast);

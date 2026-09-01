@@ -2,6 +2,7 @@ import { useState, type SubmitEvent } from 'react'
 import { Icon } from './Icon'
 import { EXAMPLE_CARD_LIST } from '../Cards'
 import { FileInput } from './FileInput'
+import { CardListInput } from './CardListInput'
 
 type CardListFormProps = {
 	value: string
@@ -48,18 +49,12 @@ export function CardListForm({
                 <div className="meh">
                     <div>
                         <p className='text-muted'>One card per line: [quantity] card name [(set)] [collector number]. Only the card name is required.</p>
-                        <div className="card-list-input mb-2">
-                            <button type="button" onClick={() => onChange('')} className="btn danger"><Icon name="trash-can"/> Clear</button>
-                            <textarea
-                                id="card-list"
-                                name="card-list"
-                                rows={16}
-                                cols={50}
-                                value={value}
-                                onChange={(event) => onChange(event.target.value)}
-                                placeholder={EXAMPLE_CARD_LIST}
-                            />
-                        </div>
+                        <p className='text-muted'>
+                            <mark>Autocomplete: English only</mark> <br/>
+                            Start a line with <mark>@</mark> to search. For example, <mark>@lightning bolt</mark> will show suggestions for cards with <em>"lightning bolt"</em> in their name.
+                        </p>
+
+                        <CardListInput value={value} onChange={onChange} />
 
                         <FileInput
                             id="card-list-file"
@@ -82,10 +77,9 @@ export function CardListForm({
                                 <Icon name={loading ? 'loading' : 'file-down'} className={loading ? 'hourglass' : ''}/> Save card list
                             </button>
                         </div>
+					</div>
 
-                    </div>
-
-                    {history.length > 0 && (
+					{history.length > 0 && (
                         <div aria-labelledby="previous-lists-heading" className="previous-lists">
                             <h4 id="previous-lists-heading" className="mb-1"><Icon name="list-clock"/> Previous lists</h4>
                             <p className="text-muted">Saved only in this browser.</p>

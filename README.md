@@ -10,7 +10,8 @@ Create printable Magic: The Gathering playtest cards from a deck list, directly 
 
 - Parse deck lists with optional quantities, set codes, and collector numbers
 - Import plain-text deck lists
-- Resolve cards and English printings through Scryfall
+- Accept card names in any language and resolve them to English printings through Scryfall
+- Autocomplete English card names by typing `@` followed by at least two characters
 - Search available printings and update card previews
 - Keep up to five recent deck lists in browser storage
 - Save the current card list as a text backup
@@ -37,6 +38,15 @@ Lightning Bolt
 1 Black Lotus (lea) 232
 2 Delver of Secrets (isd)
 ```
+
+Card names may be supplied in any language. To search while typing, start a line with an optional quantity followed by `@`:
+
+```text
+@lightning
+4 @counter
+```
+
+Autocomplete suggestions are currently available in English and support the mouse, arrow keys, Enter, and Escape.
 
 After loading a list, review the card previews, change any printings, choose the print settings, and download the PDF.
 
@@ -71,7 +81,6 @@ npm run generate:icons
 
 - Improve accessibility and keyboard testing
 - Improve network and image error feedback
-- Add card-list download options for selected printings and basic-land filtering
 
 ## Attribution and disclaimer
 
