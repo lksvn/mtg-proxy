@@ -167,8 +167,9 @@ async function loadCanonicalName(name: string): Promise<string> {
 		.replaceAll('"', '\\"')
 
 	const url = new URL('https://api.scryfall.com/cards/search')
-	url.searchParams.set('q', `!"${escapedName}"`)
+	url.searchParams.set('q', `!"${escapedName}" -layout:art_series`)
 	url.searchParams.set('include_multilingual', 'true')
+	url.searchParams.set('include_extras', 'true')
 	url.searchParams.set('unique', 'cards')
 
 	return enqueueRequest(async () => {
@@ -331,9 +332,7 @@ export function findPrintings(card: ScryfallCard): Promise<ScryfallCard[]> {
 
 async function loadPrintings(card: ScryfallCard): Promise<ScryfallCard[]> {
 	const firstPage = new URL(card.prints_search_uri)
-	const query = firstPage.searchParams.get('q') ?? ''
 
-	firstPage.searchParams.set('q', `${query} lang:en`)
 	firstPage.searchParams.set('order', 'released')
 	firstPage.searchParams.set('dir', 'desc')
 	firstPage.searchParams.set('unique', 'prints')

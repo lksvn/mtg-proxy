@@ -79,6 +79,10 @@ npm run generate:icons
 
 ## Roadmap
 
+- Support English (US) and Portuguese (Brazil) interfaces based on the user's language preference
+- Add card-list download options: as entered, without basic lands, or cleaned of set codes and collector numbers
+- Remove individual lists from history while keeping the option to clear all history
+- Show both card faces when available, with the back face behind the front and revealed on hover
 - Improve accessibility and keyboard testing
 - Improve network and image error feedback
 
