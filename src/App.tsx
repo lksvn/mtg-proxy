@@ -38,7 +38,7 @@ function App() {
 	})
 	const [exporting, setExporting] = useState(false)
 	const [pdfError, setPdfError] = useState('')
-    const canExport = cards.some((entry) => entry.card)
+    const canExport = cards.length > 0 && cards.every((entry) => entry.card)
 
     function clearHistory() {
         if (!window.confirm('Clear all previous lists?')) return
@@ -147,14 +147,6 @@ function App() {
                 onLoadPrintings={loadCardPrintings}
                 onSelectPrinting={selectPrinting}
             />
-            {cards.length > 0 && (<div style={{display: 'flex', justifyContent: 'center'}}>
-                <PdfExport
-                    exporting={exporting}
-                    canExport={canExport}
-                    error={pdfError}
-                    onExport={downloadCardsPdf}
-                />
-            </div>)}
 
             <BackToTop />
 		</main>
