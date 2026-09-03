@@ -13,9 +13,7 @@ export function CardResults({
 	onSelectPrinting
 }: CardResultsProps) {
 	return (
-		<section aria-labelledby="cards-heading" id="cards-result">
-			{/* <h2 id="cards-heading">Cards</h2> */}
-
+		<section id="cards-result">
 			{cards.length > 0 && (
 				<ul className="cardList">
 					{cards.map((entry, index) => (

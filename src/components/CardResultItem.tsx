@@ -68,7 +68,11 @@ export function CardResultItem({
                         height="340"
                         aria-busy={imageLoading}
                         onLoad={() => setImageLoading(false)}
-                        onError={() => setImageLoading(false)}
+                        onError={(event) => {
+                            event.currentTarget.onerror = null
+                            event.currentTarget.src = placeholderUrl
+                            setImageLoading(false)
+                        }}
                         style={{ transition: 'opacity var(--transition-fast)', opacity: imageLoading ? 0 : 1}}
                     />
                 )}

@@ -220,6 +220,7 @@ export function CardListInput({value, onChange}: CardListInputProps) {
                 onChange={handleCardListChange}
                 placeholder={EXAMPLE_CARD_LIST}
                 onKeyDown={handleAutocompleteKeyDown}
+                aria-label="Card list"
             />
 
             {suggestions.length > 0 && (

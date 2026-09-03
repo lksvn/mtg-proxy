@@ -6,17 +6,18 @@ import { addCardListToHistory, parseCardList, serializeCardList } from '../src/C
 
 test('parses supported card-list syntax', () => {
     const cards = parseCardList(`
-        4 Lightning Bolt
+        4x Lightning Bolt
         Black Lotus (LEA) 232
         2 Delver of Secrets (isd)
         0 Island
+        1x Lightning Bolt (2XM) 129 *F* [Burn] ^Removal^
     `)
 
     assert.deepEqual(cards, [
         {
             quantity: 4,
             name: 'Lightning Bolt',
-            sourceLine: '4 Lightning Bolt',
+            sourceLine: '4x Lightning Bolt',
             set: undefined,
             collectorNumber: undefined,
             error: undefined,
@@ -45,6 +46,14 @@ test('parses supported card-list syntax', () => {
             collectorNumber: undefined,
             error: 'Quantity must be at least 1',
         },
+        {
+            quantity: 1,
+            name: 'Lightning Bolt',
+            sourceLine: '1x Lightning Bolt (2XM) 129',
+            set: '2xm',
+            collectorNumber: '129',
+            error: undefined
+        }
     ])
 })
 

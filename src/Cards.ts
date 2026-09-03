@@ -48,12 +48,12 @@ export function parseCardList(input: string): ParsedCard[] {
 function cleanLine(line: string): string {
 	return line
 		.trim()
-		.replace(/\s+\*(?:F|E)\*$/i, '')
+		.replace(/(?:\s+(?:\*(?:F|E)\*|\[[^\]]+\]|\^[^^]+\^))+$/i, '')
 		.replace(' / ', ' // ')
 }
 
 function parseCardLine(sourceLine: string): ParsedCard {
-    const match = sourceLine.match(/^(?:(\d+)\s+)?(.+?)(?:\s+\(([a-zA-Z0-9]+)\)(?:\s+(\S+))?)?$/)
+    const match = sourceLine.match(/^(?:(\d+)[xX]?\s+)?(.+?)(?:\s+\(([a-zA-Z0-9]+)\)(?:\s+(\S+))?)?$/)
 
     if (!match) {
         return {
