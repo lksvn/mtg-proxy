@@ -76,7 +76,20 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
 
 	for (let index = 0; index < identifierEntries.length; index += 75) {
 		const chunk = identifierEntries.slice(index, index + 75)
-		const response = await fetchCollection(chunk.map(([, value]) => value))
+		let response: { data: ScryfallCard[] }
+
+		try {
+			response = await fetchCollection(chunk.map(([, value]) => value))
+		} catch (error) {
+			if (!(error instanceof TypeError)) throw error
+
+			for (const [key] of chunk) {
+				const parsedCard = cardsByKey.get(key)
+				if (parsedCard) individualCards.push({ parsedCard })
+			}
+
+			continue
+		}
 
 		for (const [key, identifier] of chunk) {
 			const parsedCard = cardsByKey.get(key)

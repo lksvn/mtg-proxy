@@ -123,3 +123,25 @@ test('ignores Art Series cards when resolving a face name', async () => {
 		globalThis.fetch = originalFetch
 	}
 })
+
+test('falls back to individual lookups when the collection request cannot be fetched', async () => {
+	const originalFetch = globalThis.fetch
+	const shock = { id: 'shock', name: 'Shock' } as ScryfallCard
+
+	globalThis.fetch = (async (input) => {
+		const url = String(input)
+
+		if (url.endsWith('/cards/collection')) throw new TypeError('Failed to fetch')
+		if (url.includes('/cards/named')) return Response.json(shock)
+
+		return Response.json({}, { status: 404 })
+	}) as typeof fetch
+
+	try {
+		const [result] = await findCards([{ quantity: 1, name: shock.name, sourceLine: shock.name }])
+
+		assert.equal(result.card?.id, shock.id)
+	} finally {
+		globalThis.fetch = originalFetch
+	}
+})
