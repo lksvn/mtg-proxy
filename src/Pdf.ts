@@ -63,7 +63,7 @@ export async function createCardsPdf(cards: PrintableCard[], settings: PrintSett
         : undefined
 
 	const layout = calculatePageLayout(settings.paper, settings.gap)
-	const images = await embedImages(pdf, imageUrls, settings.blackCorners)
+	const images = await embedImages(pdf, imageUrls, settings.blackCorners, printableCards)
 
 	let page: PDFPage | undefined
 
@@ -145,35 +145,61 @@ function cardImageUrls(card: ScryfallCard): string[] {
 	)
 }
 
-async function embedImages(pdf: PDFDocument, urls: string[], blackCorners: boolean): Promise<Map<string, PDFImage>> {
+async function fetchImage(url: string): Promise<Response> {
+	try {
+		const response = await fetch(url, {
+			signal: AbortSignal.timeout(15_000)
+		})
+
+		if (response.ok) return response
+	} catch {
+		// Retry once below.
+	}
+
+	return fetch(url, {
+		signal: AbortSignal.timeout(15_000)
+	})
+}
+
+async function embedImages(pdf: PDFDocument, urls: string[], blackCorners: boolean, cards: PrintableCard[]): Promise<Map<string, PDFImage>> {
 	const uniqueUrls = [...new Set(urls)]
 
 	const images = await Promise.all(
 		uniqueUrls.map(async (url) => {
-			const response = await fetch(url)
+			const cardName = cards.find(({ card }) =>
+				cardImageUrls(card).includes(url)
+			)?.card.name ?? 'card'
+
+			let response: Response
+
+			try {
+				response = await fetchImage(url)
+			} catch {
+				throw new Error(`Could not download image for ${cardName}`)
+			}
 
 			if (!response.ok) {
 				throw new Error(
-					`Could not download card image: ${response.status}`,
+					`Could not download image for ${cardName}: ${response.status}`
 				)
 			}
 
-            if (blackCorners) {
-                const bytes = await addBlackCorners(await response.blob())
-                const image = await pdf.embedJpg(bytes)
+			if (blackCorners) {
+				const bytes = await addBlackCorners(await response.blob())
+				const image = await pdf.embedJpg(bytes)
 
-                return [url, image] as const
-            }
+				return [url, image] as const
+			}
 
-            const bytes = await response.arrayBuffer()
-            const contentType = response.headers.get('content-type')
-            const image = contentType?.includes('png') || url.includes('.png')
-                ? await pdf.embedPng(bytes)
-                : await pdf.embedJpg(bytes)
+			const bytes = await response.arrayBuffer()
+			const contentType = response.headers.get('content-type')
+			const image = contentType?.includes('png') || url.includes('.png')
+				? await pdf.embedPng(bytes)
+				: await pdf.embedJpg(bytes)
 
-            return [url, image] as const
+			return [url, image] as const
 		})
-    )
+	)
 
 	return new Map(images)
 }
