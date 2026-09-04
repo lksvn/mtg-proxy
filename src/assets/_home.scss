@@ -45,7 +45,7 @@ body {
         outline: 1px dashed var(--background);
         outline-offset: -3px;
     }
-    &:disabled {
+    &:disabled, details[inert] & {
         background-color: var(--surface);
         color: var(--text);
         cursor: not-allowed;
