@@ -1,0 +1,91 @@
+.btn {
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--small-radius);
+    padding: 0.25rem 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    text-align: left;
+    transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+
+    color: var(--accent-text);
+    background-color: var(--accent);
+
+    &.block { width: 100%; }
+    &.sm { font-size: 0.75em }
+    &.md { font-size: 1.125em }
+    &.center { justify-content: center; }
+    &.danger {
+		color: var(--text);
+		background-color: light-dark(#a6425b, #7f394b);
+		border-color: light-dark(#c7657b, #ad596d);
+
+        &:hover:not(:disabled),&:focus:not(:disabled) {
+            color: var(--text);
+			background-color: light-dark(#8f354d, #98455a);
+			border-color: light-dark(#b95168, #c56c80);
+        }
+    }
+
+    &:hover:not(:disabled),&:focus:not(:disabled) {
+        color: var(--text);
+        background-color: var(--accent-hover);
+        border-color: var(--accent);
+    }
+    &:focus:not(:disabled) {
+        outline: 1px dashed var(--background);
+        outline-offset: -3px;
+    }
+    &:disabled, details[inert] & {
+        background-color: var(--surface);
+        color: var(--text);
+        cursor: not-allowed;
+        &.load {
+            cursor: wait;
+        }
+    }
+}
+
+.split-button {
+    position: relative;
+    display: inline-flex;
+    gap: 0;
+
+    > .btn {
+        justify-content: center;
+        white-space: nowrap;
+        border-radius: var(--small-radius) 0 0 var(--small-radius);
+    }
+
+    details {
+        position: relative;
+
+        summary {
+            height: 100%;
+            padding-inline: 0.5rem;
+            list-style: none;
+            border-radius: 0 var(--small-radius) var(--small-radius) 0;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+    }
+}
+
+.split-button-options {
+    position: absolute;
+    z-index: 5;
+    top: calc(100% + 0.25rem);
+    right: 0;
+    display: grid;
+    gap: 0.25rem;
+    min-width: max-content;
+
+    .btn {
+        width: 100%;
+        white-space: nowrap;
+    }
+}

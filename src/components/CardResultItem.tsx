@@ -22,6 +22,7 @@ export function CardResultItem({
 	const [imageLoading, setImageLoading] = useState(true)
     const [printingSearch, setPrintingSearch] = useState('')
     const [showPrintingForm, setShowPrintingForm] = useState(false)
+    const [showBackFace, setShowBackFace] = useState(false)
 
 	if (entry.status === 'loading') {
 		return <div style={{display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'}}><Icon name="loading" className="hourglass"/> Loading</div>
@@ -35,10 +36,15 @@ export function CardResultItem({
 		)
 	}
 
-	const image = entry.card?.image_uris?.grid ??
-                entry.card?.image_uris?.normal ??
-                entry.card?.card_faces?.[0]?.image_uris?.grid ??
-                entry.card?.card_faces?.[0]?.image_uris?.normal
+	const frontImage =
+        entry.card?.image_uris?.grid ??
+        entry.card?.image_uris?.normal ??
+        entry.card?.card_faces?.[0]?.image_uris?.grid ??
+        entry.card?.card_faces?.[0]?.image_uris?.normal
+
+    const backImage =
+        entry.card?.card_faces?.[1]?.image_uris?.grid ??
+        entry.card?.card_faces?.[1]?.image_uris?.normal
 
     const filteredPrintings = entry.printings?.filter((printing) => {
         const text = `${printing.set_name} ${printing.set} ${printing.collector_number} ${printing.released_at}`.toLowerCase()
@@ -65,14 +71,16 @@ export function CardResultItem({
 					{entry.card?.set_name} ({entry.card?.set.toUpperCase()}){' '}{entry.card?.collector_number}
 				</span>
 			</p>
-            <div className="card-image">
-                {image && (
+            <div
+                className={`card-image${backImage ? ' has-back' : ''}${showBackFace ? ' show-back' : ''}`}
+            >
+                {frontImage && (
                     <img
-                        key={image}
+                        key={frontImage}
                         loading="lazy"
                         decoding="async"
                         fetchPriority="low"
-                        src={image}
+                        src={frontImage}
                         alt={`${entry.card?.name} card`}
                         width="244"
                         height="340"
@@ -83,8 +91,36 @@ export function CardResultItem({
                             event.currentTarget.src = placeholderUrl
                             setImageLoading(false)
                         }}
-                        style={{ transition: 'opacity var(--transition-fast)', opacity: imageLoading ? 0 : 1}}
+                        className={`front-face${imageLoading ? ' is-loading' : ''}`}
                     />
+                )}
+                {backImage && (
+                    <img
+                        key={backImage}
+                        className="back-face"
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
+                        src={backImage}
+                        alt={`${entry.card?.name} back face`}
+                        width="244"
+                        height="340"
+                        onError={(event) => {
+                            event.currentTarget.onerror = null
+                            event.currentTarget.src = placeholderUrl
+                        }}
+                    />
+                )}
+                {backImage && (
+                    <button
+                        type="button"
+                        className="flip-card btn sm"
+                        aria-pressed={showBackFace}
+                        onClick={() => setShowBackFace((current) => !current)}
+                    >
+                        <Icon name="arrow-left-right"/>
+                        {showBackFace ? 'Front face' : 'Back face'}
+                    </button>
                 )}
                 {imageLoading && <span role="status" className="loading"><Icon name="loading" className="hourglass"/> Loading</span>}
             </div>
@@ -127,6 +163,7 @@ export function CardResultItem({
                             value={entry.card?.id}
                             onChange={(event) => {
                                 setImageLoading(true)
+                                setShowBackFace(false)
                                 onSelectPrinting(index, event.target.value)
                             }}
                         >

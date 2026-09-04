@@ -145,3 +145,37 @@ test('falls back to individual lookups when the collection request cannot be fet
 		globalThis.fetch = originalFetch
 	}
 })
+
+test('matches card-face names returned by collection lookup', async () => {
+	const originalFetch = globalThis.fetch
+	const card = {
+		id: 'bala-ged-recovery',
+		name: 'Bala Ged Recovery // Bala Ged Sanctuary',
+		card_faces: [
+			{ name: 'Bala Ged Recovery' },
+			{ name: 'Bala Ged Sanctuary' }
+		]
+	} as ScryfallCard
+
+	globalThis.fetch = (async (input) => {
+		const url = String(input)
+
+		if (url.endsWith('/cards/collection')) {
+			return Response.json({ data: [card] })
+		}
+
+		throw new Error(`Unexpected fallback request: ${url}`)
+	}) as typeof fetch
+
+	try {
+		const [result] = await findCards([{
+			quantity: 1,
+			name: 'Bala Ged Recovery',
+			sourceLine: 'Bala Ged Recovery'
+		}])
+
+		assert.equal(result.card?.id, card.id)
+	} finally {
+		globalThis.fetch = originalFetch
+	}
+})

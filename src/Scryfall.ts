@@ -32,6 +32,7 @@ export type ScryfallCard = {
 	prints_search_uri: string,
 	artist: string,
 	scryfall_uri: string
+    layout: string
 }
 
 export type CardLookup = {
@@ -268,9 +269,7 @@ function identifierFor(card: ParsedCard): Identifier {
 
 function matchesIdentifier(card: ScryfallCard, identifier: Identifier): boolean {
 	if ('name' in identifier) {
-        return [card.name, card.flavor_name].some(
-            (name) => name?.toLowerCase() === identifier.name.toLowerCase()
-        )
+        return matchesCardName(card, identifier.name)
     }
 
 	return (

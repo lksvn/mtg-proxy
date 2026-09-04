@@ -1,0 +1,143 @@
+.cardList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(min(100%, calc(var(--card-image-width) + 2rem)), 1fr));
+    gap: 2rem 1rem;
+    position: relative;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    p {
+        margin: 0;
+        padding: 0;
+
+        strong,
+        span { display: block; }
+
+        strong { height: 1.5rem; }
+
+        span {
+            height: 1rem;
+            color: var(--text-muted);
+            font-size: .8em;
+        }
+    }
+
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 0.675rem;
+        padding: 1rem;
+        overflow: hidden;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--card-radius);
+    }
+
+    .card-image {
+        position: relative;
+        width: min(100%, var(--card-image-width));
+        height: auto;
+        aspect-ratio: var(--card-image-ratio);
+        margin: 0 auto;
+        overflow: hidden;
+        background: var(--surface) url('./placeholder.webp') center / cover;
+        border-radius: var(--card-image-radius);
+        box-shadow: 10px 5px 15px 0px var(--shadow);
+
+        img {
+            position: inherit;
+            z-index: 1;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--card-image-radius);
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 2;
+            color: var(--accent-text);
+            transform: translate(-50%, -50%);
+        }
+
+        .front-face,
+        .back-face { transition: opacity var(--transition-fast); }
+
+        .front-face {
+            opacity: 1;
+
+            &.is-loading { opacity: 0; }
+        }
+
+        .back-face {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+        }
+
+        &.has-back:hover:not(:has(.flip-card:hover)),
+        &.has-back.show-back {
+            .front-face { opacity: 0; }
+            .back-face { opacity: 1; }
+        }
+
+        .flip-card {
+            position: absolute;
+            right: 0.5rem;
+            bottom: 0.5rem;
+            z-index: 3;
+        }
+    }
+
+    small {
+        display: inline-block;
+        text-align: center;
+    }
+
+    .change-printing {
+        position: relative;
+
+        .btn.block { justify-content: center; }
+    }
+
+    .form {
+        position: absolute;
+        bottom: 0;
+        z-index: 3;
+        width: 100%;
+        max-height: 0;
+        padding: 0 1rem;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        background-color: rgba($color: #000000, $alpha: 0.85);
+        border-radius: var(--small-radius);
+        transition:
+            max-height 0.2s ease,
+            padding 0.2s ease,
+            opacity 0.15s ease,
+            transform 0.2s ease;
+
+        &.open {
+            max-height: 20rem;
+            padding: 1rem;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        button {
+            position: absolute;
+            top: -1px;
+            right: -1px;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cardList .form { transition: none; }
+}
