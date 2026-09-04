@@ -14,11 +14,12 @@ export function BackToTop({ label }: BackToTopProps) {
         }
         checkScroll()
         window.addEventListener('scroll', checkScroll, { passive: true })
+        return () => window.removeEventListener('scroll', checkScroll)
     }, [])
 
     if (!visible) return null
 
     return(
-        <a href="#top" aria-label={label ? label : 'Back to top'}><Icon name="corner-up"/></a>
+        <a href="#top" aria-label={label || 'Back to top'}><Icon name="corner-up"/></a>
     );
 }

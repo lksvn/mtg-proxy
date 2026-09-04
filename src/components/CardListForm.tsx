@@ -47,7 +47,7 @@ export function CardListForm({
 
 	return (
 		<form onSubmit={handleSubmit}>
-            <div>
+            <fieldset disabled={loading}>
                 <div className="meh">
                     <div>
                         <p className='text-muted'>One card per line: [quantity] card name [(set)] [collector number]. Only the card name is required.</p>
@@ -108,7 +108,7 @@ export function CardListForm({
                         </div>
                     )}
                 </div>
-            </div>
+            </fieldset>
 		</form>
 	)
 }

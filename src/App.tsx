@@ -14,18 +14,18 @@ import { Icon } from './components/Icon'
 const HISTORY_KEY = 'mtg-proxy-card-list-history'
 
 function App() {
-    const [cardList, setCardList] = useState('')
-    const [history, setHistory] = useState<string[]>(() => {
-        try {
-            const stored = JSON.parse(localStorage.getItem(HISTORY_KEY) ?? '[]')
-            return Array.isArray(stored)
-                ? stored.filter((item): item is string => typeof item === 'string').slice(0, 5)
-                : []
-        } catch {
-            return []
-        }
-    })
-    const { cards, loading, loadCards, loadCardPrintings, selectPrinting } = useCards()
+	const [cardList, setCardList] = useState('')
+	const [history, setHistory] = useState<string[]>(() => {
+		try {
+			const stored = JSON.parse(localStorage.getItem(HISTORY_KEY) ?? '[]')
+			return Array.isArray(stored)
+				? stored.filter((item): item is string => typeof item === 'string').slice(0, 5)
+				: []
+		} catch {
+			return []
+		}
+	})
+	const { cards, loading, loadCards, loadCardPrintings, selectPrinting } = useCards()
 	const [printSettings, setPrintSettings] = useState<PrintSettings>({
 		paper: 'a4',
 		gap: 0.2,
@@ -38,45 +38,47 @@ function App() {
 	})
 	const [exporting, setExporting] = useState(false)
 	const [pdfError, setPdfError] = useState('')
-    const canExport = cards.length > 0 && cards.every((entry) => entry.card)
+	const canExport = cards.length > 0 && cards.every((entry) => entry.card)
 
-    function clearHistory() {
-        if (!window.confirm('Clear all previous lists?')) return
+	function clearHistory() {
+		if (!window.confirm('Clear all previous lists?')) return
 
-        setHistory([])
+		setHistory([])
 
-        try {
-            localStorage.removeItem(HISTORY_KEY)
-        } catch {
-            // History is still cleared for the current tab.
-        }
-    }
+		try {
+			localStorage.removeItem(HISTORY_KEY)
+		} catch {
+			// History is still cleared for the current tab.
+		}
+	}
 
-    function removeHistoryItem(list: string) {
-        const nextHistory = removeCardListFromHistory(history, list)
+	function removeHistoryItem(list: string) {
+		const nextHistory = removeCardListFromHistory(history, list)
 
-        setHistory(nextHistory)
+		setHistory(nextHistory)
 
-        try {
-            localStorage.setItem(HISTORY_KEY, JSON.stringify(nextHistory))
-        } catch {
-            // History is still updated for the current tab.
-        }
-    }
+		try {
+			localStorage.setItem(HISTORY_KEY, JSON.stringify(nextHistory))
+		} catch {
+			// History is still updated for the current tab.
+		}
+	}
 
-    function loadAndRememberCards(cardList: string) {
-        const nextHistory = addCardListToHistory(history, cardList)
+	function loadAndRememberCards(cardList: string) {
+		setPdfError('')
 
-        setHistory(nextHistory)
+		const nextHistory = addCardListToHistory(history, cardList)
 
-        try {
-            localStorage.setItem(HISTORY_KEY, JSON.stringify(nextHistory))
-        } catch {
-            // Card loading should still work if browser storage is unavailable.
-        }
+		setHistory(nextHistory)
 
-        loadCards(cardList)
-    }
+		try {
+			localStorage.setItem(HISTORY_KEY, JSON.stringify(nextHistory))
+		} catch {
+			// Card loading should still work if browser storage is unavailable.
+		}
+
+		loadCards(cardList)
+	}
 
 	async function downloadCardsPdf() {
 		setExporting(true)
@@ -85,7 +87,7 @@ function App() {
 		try {
 			const printableCards = cards.flatMap((entry) => entry.card ? [{ quantity: entry.parsed.quantity, card: entry.card }] : [])
 
-            const { createCardsPdf } = await import('./Pdf')
+			const { createCardsPdf } = await import('./Pdf')
 			const pdf = await createCardsPdf(printableCards,printSettings)
 
 			downloadBlob( pdf, `mtg-proxy-${new Intl.DateTimeFormat('en-CA').format(new Date(),)}.pdf` )
@@ -121,47 +123,47 @@ function App() {
 
 	return (
 		<>
-        <header>
-            <h1 className="mb-2"><Icon name="cards-fan"/> MTG Proxy</h1>
-            <p>Create printable playtest cards from a deck list.</p>
-        </header>
+		<header>
+			<h1 className="mb-2"><Icon name="cards-fan"/> MTG Proxy</h1>
+			<p>Create printable playtest cards from a deck list.</p>
+		</header>
 		<main>
 
-            <CardListForm
-                value={cardList}
-                history={history}
-                onClearHistory={clearHistory}
-                onRemoveHistory={removeHistoryItem}
-                loading={loading}
-                canSave={cards.length > 0}
-                onChange={setCardList}
-                onLoad={loadAndRememberCards}
-                onSave={saveCardList}
-            />
+			<CardListForm
+				value={cardList}
+				history={history}
+				onClearHistory={clearHistory}
+				onRemoveHistory={removeHistoryItem}
+				loading={loading}
+				canSave={cards.length > 0}
+				onChange={setCardList}
+				onLoad={loadAndRememberCards}
+				onSave={saveCardList}
+			/>
 
-            {cards.length > 0 && (<div className="printing-settings">
-                <div style={{minWidth: '160px'}}>
-                    <PdfExport
-                        exporting={exporting}
-                        canExport={canExport}
-                        error={pdfError}
-                        onExport={downloadCardsPdf}
-                    />
-                </div>
+			{cards.length > 0 && (<div className="printing-settings">
+				<div style={{minWidth: '160px'}}>
+					<PdfExport
+						exporting={exporting}
+						canExport={canExport}
+						error={pdfError}
+						onExport={downloadCardsPdf}
+					/>
+				</div>
 
-                <PrintSettingsForm
-                    settings={printSettings}
-                    onChange={setPrintSettings}
-                />
-            </div>)}
+				<PrintSettingsForm
+					settings={printSettings}
+					onChange={setPrintSettings}
+				/>
+			</div>)}
 
-            <CardResults
-                cards={cards}
-                onLoadPrintings={loadCardPrintings}
-                onSelectPrinting={selectPrinting}
-            />
+			<CardResults
+				cards={cards}
+				onLoadPrintings={loadCardPrintings}
+				onSelectPrinting={selectPrinting}
+			/>
 
-            <BackToTop />
+			<BackToTop />
 		</main>
 		<Footer />
 		</>

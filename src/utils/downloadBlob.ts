@@ -6,5 +6,5 @@ export function downloadBlob(blob: Blob, filename: string) {
 	link.download = filename
 	link.click()
 
-	URL.revokeObjectURL(url)
+	window.setTimeout(() => URL.revokeObjectURL(url), 0)
 }

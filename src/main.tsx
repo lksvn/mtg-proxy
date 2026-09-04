@@ -5,8 +5,8 @@ import { ColorSchemeToggle } from './components/ColorSchemeToggle.tsx'
 import './assets/main.scss'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ColorSchemeToggle />
-    <App />
-  </StrictMode>,
+	<StrictMode>
+		<ColorSchemeToggle />
+		<App />
+	</StrictMode>
 )

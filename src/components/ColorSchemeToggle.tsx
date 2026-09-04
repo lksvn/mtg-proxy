@@ -13,10 +13,14 @@ const defaultLabels: Record<ColorScheme, string> = {
 };
 
 function getInitialColorScheme(): ColorScheme {
-    const stored = localStorage.getItem("color-scheme");
+    try {
+        const stored = localStorage.getItem("color-scheme");
 
-    if (stored === "light" || stored === "dark") {
-        return stored;
+        if (stored === "light" || stored === "dark") {
+            return stored;
+        }
+    } catch {
+        // Use the system preference if localStorage is not available.
     }
 
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -28,7 +32,11 @@ export function ColorSchemeToggle({ labels = defaultLabels }: ColorSchemeToggleP
 
     useEffect(() => {
         document.documentElement.dataset.theme = colorScheme;
-        localStorage.setItem("color-scheme", colorScheme);
+        try {
+            localStorage.setItem("color-scheme", colorScheme);
+        } catch {
+            // The theme still works for the current tab
+        }
     }, [colorScheme]);
 
     return (
