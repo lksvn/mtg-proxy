@@ -63,7 +63,7 @@ export function CardListForm({
                             accept=".txt,text/plain"
                             onSelect={importCardList}
                         />
-                        {importError && <p role="alert" style={{color: '#f00'}}>{importError}</p>}
+                        {importError && <p role="alert" className="error">{importError}</p>}
 
                         <div className="actions">
                             <button type="submit" disabled={loading} className="btn">

@@ -221,19 +221,29 @@ export function CardListInput({value, onChange}: CardListInputProps) {
                 placeholder={EXAMPLE_CARD_LIST}
                 onKeyDown={handleAutocompleteKeyDown}
                 aria-label="Card list"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded={suggestions.length > 0}
+                aria-controls={suggestions.length > 0 ? 'card-suggestions' : undefined}
+                aria-activedescendant={activeSuggestion >= 0 ? `card-suggestion-${activeSuggestion}` : undefined}
             />
 
             {suggestions.length > 0 && (
                 <ul
-                    className="card-suggestions"
+                    id="card-suggestions"
+                    role="listbox"
                     aria-label="Card suggestions"
+                    className="card-suggestions"
                     style={{ top: suggestionTop }}
                 >
                     {suggestions.map((cardName, index) => (
-                        <li key={cardName}>
+                        <li key={cardName} role="presentation">
                             <button
                                 type="button"
+                                role="option"
                                 id={`card-suggestion-${index}`}
+                                aria-selected={index === activeSuggestion}
+                                tabIndex={-1}
                                 className={`${index === activeSuggestion ? ' active' : ''}`}
                                 onMouseEnter={() => setActiveSuggestion(index)}
                                 onClick={() => selectSuggestion(cardName)}

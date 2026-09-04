@@ -25,7 +25,7 @@ export function PdfExport({
 			</button>
 
 			{error && (
-				<p role="alert" style={{ color: '#f00' }}>
+				<p role="alert" className="error">
 					{error}
 				</p>
 			)}

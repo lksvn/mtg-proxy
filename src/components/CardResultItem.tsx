@@ -29,7 +29,7 @@ export function CardResultItem({
 
 	if (entry.status === 'error') {
 		return (
-			<p role="alert" style={{color: '#f00'}}>
+			<p role="alert" className="error">
 				{entry.parsed.sourceLine}: <br/> {entry.error}
 			</p>
 		)
@@ -92,9 +92,24 @@ export function CardResultItem({
                 <a href={entry.card?.scryfall_uri} target="_blank" rel="noreferrer">View on Scryfall </a>
             </small>
 			<div className="change-printing">
-                <div id={`printing-form-${index}`}
-                    className={entry.printings && showPrintingForm ? 'form open': 'form'}>
-                    <button type="button" onClick={() => setShowPrintingForm(false)} aria-label='Close printing selection' className="btn md"><Icon name="chevron-down"/></button>
+                <button
+                    type="button"
+                    disabled={entry.loadingPrintings}
+                    onClick={() => {
+                        setShowPrintingForm(true)
+                        onLoadPrintings(index)
+                    }}
+                    className="btn block center"
+                    aria-expanded={Boolean(entry.printings && showPrintingForm)}
+                    aria-controls={`printing-form-${index}`}
+                >
+                    {entry.loadingPrintings ? (<><Icon name="loading" className="hourglass"/> Loading</>) : (<><Icon name="arrow-left-right"/> Change printing</>)}
+                </button>
+                <div
+                    id={`printing-form-${index}`}
+                    inert={!entry.printings || !showPrintingForm}
+                    className={entry.printings && showPrintingForm ? 'form open': 'form'}
+                >
                     <div className="form-group">
                         <label htmlFor={`printing-search-${index}`}>Search printings</label>
                         <input
@@ -125,19 +140,9 @@ export function CardResultItem({
 
                         {filteredPrintings?.length === 0 && <p style={{margin: 0, padding: 0}}>No printings match this search.</p>}
                     </div>
+                    <button type="button" onClick={() => setShowPrintingForm(false)} aria-label='Close printing selection' className="btn md"><Icon name="chevron-down"/></button>
                 </div>
-                <button
-                    type="button"
-                    disabled={entry.loadingPrintings}
-                    onClick={() => {
-                        setShowPrintingForm(true)
-                        onLoadPrintings(index)
-                    }}
-                    className="btn block center"
-                >
-                    {entry.loadingPrintings ? (<><Icon name="loading" className="hourglass"/> Loading</>) : (<><Icon name="arrow-left-right"/> Change printing</>)}
-                </button>
-                {entry.printingsError && <p role="alert" style={{color: '#f00'}}>{entry.printingsError}</p>}
+                {entry.printingsError && <p role="alert" className="error">{entry.printingsError}</p>}
             </div>
 		</>
 	)

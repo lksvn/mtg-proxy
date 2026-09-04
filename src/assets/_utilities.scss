@@ -18,3 +18,9 @@ $spacing: (
 }
 
 .text-muted { color: var(--text-muted) }
+.error {
+    padding: 0.75rem !important;
+    color: var(--text);
+    background-color: light-dark(#A6425B, #7F394B);
+    border-radius: var(--small-radius);
+}
