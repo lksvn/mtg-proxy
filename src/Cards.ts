@@ -103,3 +103,7 @@ export function addCardListToHistory(history: string[], cardList: string): strin
 
 	return [list, ...history.filter((item) => item !== list)].slice(0, 5)
 }
+
+export function removeCardListFromHistory(history: string[], cardList: string): string[] {
+	return history.filter((item) => item !== cardList)
+}

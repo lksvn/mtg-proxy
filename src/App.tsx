@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { serializeCardList, addCardListToHistory } from './Cards'
+import { serializeCardList, addCardListToHistory, removeCardListFromHistory } from './Cards'
 import { useCards } from './hooks/useCards'
 import { downloadBlob } from './utils/downloadBlob'
 import type { PrintSettings } from './Pdf'
@@ -49,6 +49,18 @@ function App() {
             localStorage.removeItem(HISTORY_KEY)
         } catch {
             // History is still cleared for the current tab.
+        }
+    }
+
+    function removeHistoryItem(list: string) {
+        const nextHistory = removeCardListFromHistory(history, list)
+
+        setHistory(nextHistory)
+
+        try {
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(nextHistory))
+        } catch {
+            // History is still updated for the current tab.
         }
     }
 
@@ -119,6 +131,7 @@ function App() {
                 value={cardList}
                 history={history}
                 onClearHistory={clearHistory}
+                onRemoveHistory={removeHistoryItem}
                 loading={loading}
                 canSave={cards.length > 0}
                 onChange={setCardList}

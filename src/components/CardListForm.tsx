@@ -10,6 +10,7 @@ type CardListFormProps = {
 	loading: boolean
 	canSave: boolean
     onClearHistory: () => void
+    onRemoveHistory: (list: string) => void
 	onChange: (value: string) => void
 	onLoad: (cardList: string) => void
 	onSave: () => void
@@ -21,6 +22,7 @@ export function CardListForm({
 	loading,
 	canSave,
     onClearHistory,
+    onRemoveHistory,
 	onChange,
 	onLoad,
 	onSave
@@ -88,7 +90,16 @@ export function CardListForm({
                                 {history.map((list, index) => (
                                     <li key={list}>
                                         <button type="button" onClick={() => onChange(list)} className="btn block">
-                                            <Icon name="arrow-right" className="flip-h" />{list.split(/\r?\n/, 1)[0] || `List ${index + 1}`}
+                                            <Icon name="arrow-right" className="flip-h" />
+                                            <span className="truncate">{list.split(/\r?\n/, 1)[0] || `List ${index + 1}`}</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => onRemoveHistory(list)}
+                                            className="btn sm danger"
+                                            aria-label={`Remove ${list.split(/\r?\n/, 1)[0] || `List ${index + 1}`} from history`}
+                                        >
+                                            <Icon name="trash-can" />
                                         </button>
                                     </li>
                                 ))}

@@ -2,7 +2,7 @@
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { addCardListToHistory, parseCardList, serializeCardList } from '../src/Cards.ts'
+import { addCardListToHistory, parseCardList, removeCardListFromHistory, serializeCardList } from '../src/Cards.ts'
 
 test('parses supported card-list syntax', () => {
     const cards = parseCardList(`
@@ -128,4 +128,13 @@ test('keeps five unique recent card lists', () => {
 
 	assert.equal(capped.length, 5)
 	assert.equal(capped[0], '1 E')
+})
+
+test('removes one card list from history', () => {
+	const history = ['1 Shock', '1 Counterspell']
+
+	assert.deepEqual(
+		removeCardListFromHistory(history, '1 Shock'),
+		['1 Counterspell']
+	)
 })

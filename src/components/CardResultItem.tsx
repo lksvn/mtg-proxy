@@ -52,8 +52,18 @@ export function CardResultItem({
 	return (
 		<>
 			<p>
-			    <strong>{entry.card?.name.toUpperCase()}</strong>
-				<span>{entry.card?.set_name} ({entry.card?.set.toUpperCase()}){' '}{entry.card?.collector_number}</span>
+			    <strong
+                    title={entry.card?.name}
+                    className="truncate"
+                >
+					{entry.card?.name.toUpperCase()}
+				</strong>
+				<span
+                    title={`${entry.card?.set_name} (${entry.card?.set.toUpperCase()}) ${entry.card?.collector_number}`}
+                    className="truncate"
+                >
+					{entry.card?.set_name} ({entry.card?.set.toUpperCase()}){' '}{entry.card?.collector_number}
+				</span>
 			</p>
             <div className="card-image">
                 {image && (
@@ -123,7 +133,7 @@ export function CardResultItem({
                         setShowPrintingForm(true)
                         onLoadPrintings(index)
                     }}
-                    className="btn block"
+                    className="btn block center"
                 >
                     {entry.loadingPrintings ? (<><Icon name="loading" className="hourglass"/> Loading</>) : (<><Icon name="arrow-left-right"/> Change printing</>)}
                 </button>

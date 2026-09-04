@@ -13,6 +13,8 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+
+    text-align: left;
     transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
 
     color: var(--accent-text);
@@ -21,6 +23,7 @@ body {
     &.block { width: 100%; }
     &.sm { font-size: 0.75em }
     &.md { font-size: 1.125em }
+    &.center { justify-content: center; }
     &.danger {
 		color: var(--text);
 		background-color: light-dark(#a6425b, #7f394b);
@@ -69,9 +72,6 @@ body {
     p {
         strong, span {
             display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
         strong {
             height: 1.5rem;
@@ -270,6 +270,15 @@ body {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
+
+        li {
+            display: flex;
+            gap: 0.5rem;
+            > button:first-child {
+                min-width: 0;
+                flex-grow: 1;
+            }
+        }
     }
 }
 
