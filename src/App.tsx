@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { serializeCardList, addCardListToHistory, removeCardListFromHistory } from './Cards'
+import { serializeCardList, addCardListToHistory, removeCardListFromHistory, isBasicLand, type CardListSaveMode } from './Cards'
 import { useCards } from './hooks/useCards'
 import { downloadBlob } from './utils/downloadBlob'
 import type { PrintSettings } from './Pdf'
@@ -98,27 +98,51 @@ function App() {
 		}
 	}
 
-	function saveCardList() {
+	function saveCardList(mode: CardListSaveMode) {
+        const savedCards = cards.filter(
+            (entry) => mode !== 'without-basic-lands' || !entry.card || !isBasicLand(entry.card)
+        )
+
 		const backup = serializeCardList(
-			cards.map((entry) => {
+            savedCards.map((entry) => {
 				if (!entry.card) {
-					return {
-						...entry.parsed,
-						error: entry.error ?? entry.parsed.error
-					}
-				}
+                    return {
+                        ...entry.parsed,
+                        set: mode === 'clean' ? undefined : entry.parsed.set,
+                        collectorNumber:
+                            mode === 'clean'
+                                ? undefined
+                                : entry.parsed.collectorNumber,
+                        error:
+                            mode === 'clean'
+                                ? entry.parsed.error
+                                : entry.error ?? entry.parsed.error
+                    }
+                }
 
 				return {
 					...entry.parsed,
 					name: entry.card.name,
-					set: entry.card.set,
-					collectorNumber: entry.card.collector_number,
+					set: mode === 'clean' ? undefined : entry.card.set,
+					collectorNumber:
+                        mode === 'clean'
+                            ? undefined
+                            : entry.card.collector_number,
 					error: undefined
 				}
 			})
 		)
 
-		downloadBlob(new Blob([backup], { type: 'text/plain;charset=utf-8' }), `mtg-proxy-list-${new Intl.DateTimeFormat('en-CA').format(new Date())}.txt`)
+		const suffix = {
+            complete: '',
+            'without-basic-lands': '-no-basics',
+            clean: '-names-only'
+        }[mode]
+
+        downloadBlob(
+            new Blob([backup], { type: 'text/plain;charset=utf-8' }),
+            `mtg-proxy-list${suffix}-${new Intl.DateTimeFormat('en-CA').format(new Date())}.txt`
+        )
 	}
 
 	return (

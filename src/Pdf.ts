@@ -15,6 +15,7 @@ import {
 	type Paper
 } from './PdfLayout'
 import type { ScryfallCard } from './Scryfall'
+import { isBasicLand } from './Cards'
 
 const POINTS_PER_MILLIMETRE = 72 / 25.4
 
@@ -39,9 +40,9 @@ function mm(value: number): number {
 }
 
 export async function createCardsPdf(cards: PrintableCard[], settings: PrintSettings): Promise<Blob> {
-	const printableCards = settings.skipBasicLands ? cards.filter(
-            ({ card }) => !card.type_line.startsWith('Basic Land')
-        ) : cards
+	const printableCards = settings.skipBasicLands
+        ? cards.filter(({ card }) => !isBasicLand(card))
+        : cards
 
 	const imageUrls = printableCards.flatMap(({ quantity, card }) => {
 		const urls = cardImageUrls(card)

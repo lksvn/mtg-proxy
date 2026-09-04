@@ -7,12 +7,18 @@ export type ParsedCard = {
     error?: string
 }
 
+export type CardListSaveMode = 'complete' | 'without-basic-lands' | 'clean'
+
 export const EXAMPLE_CARD_LIST = `Shock
 4 Lightning Bolt
 1 Black Lotus (lea) 232
 Blood Artist (sld)`
 const ABOUT_HEADER = /^about:{0,2}$/i
 const SECTION_HEADER = /^(commander|companion|deck|mainboard|maybeboard|sideboard|stickers?):{0,2}$/i
+
+export function isBasicLand(card: { type_line: string }): boolean {
+	return /^Basic(?: Snow)? Land\b/.test(card.type_line)
+}
 
 export function parseCardList(input: string): ParsedCard[] {
 	const cards: ParsedCard[] = []

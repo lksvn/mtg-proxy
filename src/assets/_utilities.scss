@@ -23,4 +23,5 @@ $spacing: (
     color: var(--text);
     background-color: light-dark(#A6425B, #7F394B);
     border-radius: var(--small-radius);
+    overflow-wrap: anywhere;
 }

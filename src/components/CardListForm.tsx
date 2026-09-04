@@ -1,6 +1,6 @@
 import { useState, type SubmitEvent } from 'react'
 import { Icon } from './Icon'
-import { EXAMPLE_CARD_LIST } from '../Cards'
+import { EXAMPLE_CARD_LIST, type CardListSaveMode } from '../Cards'
 import { FileInput } from './FileInput'
 import { CardListInput } from './CardListInput'
 
@@ -13,7 +13,7 @@ type CardListFormProps = {
     onRemoveHistory: (list: string) => void
 	onChange: (value: string) => void
 	onLoad: (cardList: string) => void
-	onSave: () => void
+	onSave: (mode: CardListSaveMode) => void
 }
 
 export function CardListForm({
@@ -70,14 +70,45 @@ export function CardListForm({
                                 {loading ? (<><Icon name="loading" className="hourglass"/> Loading</>) : (<><Icon name="refresh-cw" /> Load cards</>)}
                             </button>
 
-                            <button
-                                type="button"
-                                disabled={!canSave || loading}
-                                onClick={onSave}
-                                className={`btn${loading ? ' load' : ''}`}
-                            >
-                                <Icon name={loading ? 'loading' : 'file-down'} className={loading ? 'hourglass' : ''}/> Save card list
-                            </button>
+                            <div className="split-button">
+                                <button
+                                    type="button"
+                                    disabled={!canSave || loading}
+                                    onClick={() => onSave('complete')}
+                                    className="btn"
+                                >
+                                    <Icon name="file-down"/>
+                                    Download list
+                                </button>
+
+                                <details inert={!canSave || loading}>
+                                    <summary
+                                        className="btn"
+                                        aria-label="More download options"
+                                        title="More download options"
+                                    >
+                                        <Icon name="chevron-down"/>
+                                    </summary>
+
+                                    <div className="split-button-options">
+                                        <button
+                                            type="button"
+                                            onClick={() => onSave('without-basic-lands')}
+                                            className="btn"
+                                        >
+                                            No basic lands
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => onSave('clean')}
+                                            className="btn"
+                                        >
+                                            Names only
+                                        </button>
+                                    </div>
+                                </details>
+                            </div>
                         </div>
 					</div>
 

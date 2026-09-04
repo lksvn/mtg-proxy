@@ -227,13 +227,52 @@ body {
     gap: 1rem;
     .actions {
         display: flex;
+        flex-wrap: wrap;
         gap: 1rem;
         border-top: 1px dotted var(--border);
         padding-top: 1rem;
         margin-top: 1rem;
-        .btn {
-            flex-grow: 1;
-            justify-content: center;
+
+        .split-button {
+            position: relative;
+            display: inline-flex;
+            gap: 0;
+
+            > .btn {
+                justify-content: center;
+                white-space: nowrap;
+                border-radius: var(--small-radius) 0 0 var(--small-radius);
+            }
+
+            details {
+                position: relative;
+
+                summary {
+                    height: 100%;
+                    padding-inline: 0.5rem;
+                    list-style: none;
+                    border-radius: 0 var(--small-radius) var(--small-radius) 0;
+                }
+
+                summary::-webkit-details-marker {
+                    display: none;
+                }
+            }
+        }
+
+        .split-button-options {
+            position: absolute;
+            z-index: 5;
+            top: calc(100% + 0.25rem);
+            right: 0;
+            display: grid;
+            gap: 0.25rem;
+            min-width: max-content;
+
+            .btn {
+                width: 100%;
+                white-space: nowrap;
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { addCardListToHistory, parseCardList, removeCardListFromHistory, serializeCardList } from '../src/Cards.ts'
+import { addCardListToHistory, parseCardList, removeCardListFromHistory, serializeCardList, isBasicLand } from '../src/Cards.ts'
 
 test('parses supported card-list syntax', () => {
     const cards = parseCardList(`
@@ -137,4 +137,28 @@ test('removes one card list from history', () => {
 		removeCardListFromHistory(history, '1 Shock'),
 		['1 Counterspell']
 	)
+})
+
+test('parses MTGO text with a blank-line sideboard', () => {
+	const cards = parseCardList(`
+		4 Lightning Bolt
+		2 Counterspell
+
+		1 Pyroblast
+	`)
+
+	assert.deepEqual(
+		cards.map(({ quantity, name }) => ({ quantity, name })),
+		[
+			{ quantity: 4, name: 'Lightning Bolt' },
+			{ quantity: 2, name: 'Counterspell' },
+			{ quantity: 1, name: 'Pyroblast' }
+		]
+	)
+})
+
+test('identifies regular and snow basic lands', () => {
+	assert.equal(isBasicLand({ type_line: 'Basic Land — Island' }), true)
+	assert.equal(isBasicLand({ type_line: 'Basic Snow Land — Forest' }), true)
+	assert.equal(isBasicLand({ type_line: 'Land Creature — Dryad' }), false)
 })
