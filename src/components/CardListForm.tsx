@@ -111,33 +111,37 @@ export function CardListForm({
                             </div>
                         </div>
 					</div>
+                    <div aria-labelledby="previous-lists-heading" className="previous-lists">
+                        <h4 id="previous-lists-heading" className="mb-1"><Icon name="list-clock"/> Previous lists</h4>
+                    {history.length === 0 ?
+                        (
+                            <p className="text-muted">No saved lists yet.</p>
+                        ) : (
+                            <>
+                                <p className="text-muted">Saved only in this browser.</p>
 
-					{history.length > 0 && (
-                        <div aria-labelledby="previous-lists-heading" className="previous-lists">
-                            <h4 id="previous-lists-heading" className="mb-1"><Icon name="list-clock"/> Previous lists</h4>
-                            <p className="text-muted">Saved only in this browser.</p>
-
-                            <ul className="p-0 m-0 mb-2">
-                                {history.map((list, index) => (
-                                    <li key={list}>
-                                        <button type="button" onClick={() => onChange(list)} className="btn block">
-                                            <Icon name="arrow-right" className="flip-h" />
-                                            <span className="truncate">{list.split(/\r?\n/, 1)[0] || `List ${index + 1}`}</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => onRemoveHistory(list)}
-                                            className="btn sm danger"
-                                            aria-label={`Remove ${list.split(/\r?\n/, 1)[0] || `List ${index + 1}`} from history`}
-                                        >
-                                            <Icon name="trash-can" />
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                            <button type="button" onClick={onClearHistory} className="btn sm danger"><Icon name="trash-can" /> Clear history</button>
-                        </div>
-                    )}
+                                <ul className="p-0 m-0 mb-2">
+                                    {history.map((list, index) => (
+                                        <li key={list}>
+                                            <button type="button" onClick={() => onChange(list)} className="btn block">
+                                                <Icon name="arrow-right" className="flip-h" />
+                                                <span className="truncate">{list.split(/\r?\n/, 1)[0] || `List ${index + 1}`}</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => onRemoveHistory(list)}
+                                                className="btn sm danger"
+                                                aria-label={`Remove ${list.split(/\r?\n/, 1)[0] || `List ${index + 1}`} from history`}
+                                            >
+                                                <Icon name="trash-can" />
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <button type="button" onClick={onClearHistory} className="btn sm danger"><Icon name="trash-can" /> Clear history</button>
+                            </>
+                        )}
+                    </div>
                 </div>
             </fieldset>
 		</form>

@@ -17,7 +17,10 @@ $spacing: (
 	.gap-#{$size} { gap: $value !important; }
 }
 
-.text-muted { color: var(--text-muted) }
+.text-{
+    &muted { color: var(--text-muted) }
+    &center { text-align: center }
+}
 .error {
     padding: 0.75rem !important;
     color: var(--text);

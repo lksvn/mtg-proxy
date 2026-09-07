@@ -16,7 +16,9 @@ export function CardResults({
 }: CardResultsProps) {
 	return (
 		<section id="cards-result">
-			{cards.length > 0 && (
+			{cards.length === 0 ? (
+				<p className="text-muted mt-5 pt-5 text-center">Load a deck list to preview cards.</p>
+			) : (
 				<ul className="cardList">
 					{cards.map((entry, index) => (
 						<li key={`${entry.parsed.sourceLine}-${index}`} className="card">
