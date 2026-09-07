@@ -25,7 +25,7 @@ function App() {
 			return []
 		}
 	})
-	const { cards, loading, loadCards, loadCardPrintings, selectPrinting } = useCards()
+	const { cards, loading, loadCards, loadCardPrintings, selectPrinting, retryCard } = useCards()
 	const [printSettings, setPrintSettings] = useState<PrintSettings>({
 		paper: 'a4',
 		gap: 0.2,
@@ -185,6 +185,7 @@ function App() {
 				cards={cards}
 				onLoadPrintings={loadCardPrintings}
 				onSelectPrinting={selectPrinting}
+				onRetry={retryCard}
 			/>
 
 			<BackToTop />

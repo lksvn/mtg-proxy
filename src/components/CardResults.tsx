@@ -5,12 +5,14 @@ type CardResultsProps = {
 	cards: CardEntry[]
 	onLoadPrintings: (index: number) => void
 	onSelectPrinting: (index: number, cardId: string) => void
+	onRetry: (index: number) => void
 }
 
 export function CardResults({
 	cards,
 	onLoadPrintings,
-	onSelectPrinting
+	onSelectPrinting,
+	onRetry
 }: CardResultsProps) {
 	return (
 		<section id="cards-result">
@@ -23,6 +25,7 @@ export function CardResults({
 								index={index}
 								onLoadPrintings={onLoadPrintings}
 								onSelectPrinting={onSelectPrinting}
+								onRetry={onRetry}
 							/>
 						</li>
 					))}

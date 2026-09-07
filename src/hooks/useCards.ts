@@ -63,6 +63,48 @@ export function useCards() {
 		}
 	}
 
+	async function retryCard(index: number) {
+		const entry = cards[index]
+
+		if (!entry || entry.status !== 'error' || entry.parsed.error) return
+
+		const parsed = entry.parsed
+
+		setCards((current) =>
+			current.map((item, itemIndex) =>
+				itemIndex === index && item.parsed === parsed
+					? { ...item, status: 'loading', error: undefined }
+					: item
+			)
+		)
+
+		try {
+			const [lookup] = await findCards([parsed])
+
+			setCards((current) =>
+				current.map((item, itemIndex) => {
+					if (itemIndex !== index || item.parsed !== parsed) return item
+
+					return lookup?.card
+						? { ...item, status: 'ready', card: lookup.card, error: undefined }
+						: { ...item, status: 'error', error: lookup?.error ?? 'Card not found' }
+				})
+			)
+		} catch (error) {
+			const message = error instanceof Error
+				? error.message
+				: 'Unknown card lookup error'
+
+			setCards((current) =>
+				current.map((item, itemIndex) =>
+					itemIndex === index && item.parsed === parsed
+						? { ...item, status: 'error', error: message }
+						: item
+				)
+			)
+		}
+	}
+
 	async function loadCardPrintings(index: number) {
 		const entry = cards[index]
 
@@ -116,5 +158,5 @@ export function useCards() {
 		)
 	}
 
-	return { cards, loading, loadCards, loadCardPrintings, selectPrinting }
+	return { cards, loading, loadCards, loadCardPrintings, selectPrinting, retryCard }
 }
