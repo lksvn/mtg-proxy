@@ -41,7 +41,7 @@ export function PrintSettingsForm({
                     <input
                         id="gap"
                         type="number"
-                        min="0"
+                        min="0.3"
                         step="0.1"
                         value={printSettings.gap}
                         onChange={(event) =>
@@ -99,7 +99,6 @@ export function PrintSettingsForm({
                         />
                         {t('bleed')}
                     </label>
-                    {printSettings.bleed && printSettings.gap < 3 && (<p>{t('bleedTip')}</p>)}
                 </div>
 
                 <div className="form-group mb-0">

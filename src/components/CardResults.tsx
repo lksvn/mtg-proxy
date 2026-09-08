@@ -24,7 +24,7 @@ export function CardResults({
 			) : (
 				<ul className="cardList">
 					{cards.map((entry, index) => (
-						<li key={`${entry.parsed.sourceLine}-${index}`} className="card">
+						<li key={`${entry.parsed.sourceLine}-${index}`} className={`card${entry.status === 'error' ? ' has-error' : ''}`}>
 							<CardResultItem
 								entry={entry}
 								index={index}

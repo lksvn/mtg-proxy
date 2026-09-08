@@ -3,6 +3,14 @@ import type { CardEntry } from '../hooks/useCards'
 import { Icon } from './Icon'
 import placeholderUrl from '../assets/placeholder.webp'
 import { useI18n } from '../i18n/context'
+import type { TranslationKey } from '../i18n/messages'
+
+const ERROR_TRANSLATIONS: Record<string, TranslationKey> = {
+	'Invalid card line': 'invalidCardLine',
+	'Quantity must be at least 1': 'quantityAtLeastOne',
+	'Card not found': 'cardNotFound',
+	'Your query didn’t match any cards. Adjust your search terms or refer to the syntax guide at https://scryfall.com/docs/reference': 'cardNotFound'
+}
 
 const placeholderImage = new Image()
 placeholderImage.src = placeholderUrl
@@ -35,10 +43,11 @@ export function CardResultItem({
 	}
 
 	if (entry.status === 'error') {
+        const errorKey = entry.error && ERROR_TRANSLATIONS[entry.error]
 		return (
 			<>
 				<p role="alert" className="error">
-					<strong>{entry.parsed.sourceLine}</strong> <br/> {entry.error}
+					<strong>{entry.parsed.sourceLine}</strong> <br/> {errorKey ? t(errorKey) : entry.error}
 				</p>
 				{!entry.parsed.error && (
 					<button

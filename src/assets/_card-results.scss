@@ -6,7 +6,6 @@
     padding: 0;
     margin: 0;
     list-style: none;
-
     p {
         margin: 0;
         padding: 0;
@@ -33,6 +32,7 @@
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--card-radius);
+        &.has-error { justify-content: center; }
     }
 
     .card-image {

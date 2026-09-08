@@ -30,7 +30,7 @@ function App() {
 	const { cards, loading, loadCards, loadCardPrintings, selectPrinting, retryCard } = useCards()
 	const [printSettings, setPrintSettings] = useState<PrintSettings>({
 		paper: 'a4',
-		gap: 0.2,
+		gap: 0.3,
 		cropMarks: false,
 		blackCorners: false,
 		bleed: false,
