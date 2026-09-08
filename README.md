@@ -4,7 +4,7 @@ Create printable Magic: The Gathering playtest cards from a deck list, directly 
 
 [Open MTG Proxy](https://lksvn.com.br/mtg-proxy/)
 
-![MTG Proxy interface](docs/mtg-proxy.png)
+![MTG Proxy interface](docs/mtg-proxy.gif)
 
 ## Features
 
@@ -48,12 +48,13 @@ Card names may be supplied in any language. To search while typing, start a line
 @lightning
 4 @counter
 ```
+![Autocomplete card names](docs/autocomplete.gif)
 
 Autocomplete suggestions are currently available in English and support the mouse, arrow keys, Enter, and Escape.
 
 After loading a list, review the card previews, change any printings, choose the print settings, and download the PDF.
 
-![Search and change a card printing](docs/printing-selection.png)
+![Search and change a card printing](docs/printing-selection.gif)
 
 ## Development
 
