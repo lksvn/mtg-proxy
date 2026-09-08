@@ -204,7 +204,7 @@ async function loadCanonicalName(name: string): Promise<string> {
 		}
 
 		return names[0]
-	}, 100)
+	}, 125)
 }
 
 export function findCard(card: ParsedCard): Promise<ScryfallCard> {
@@ -232,7 +232,7 @@ export function findCard(card: ParsedCard): Promise<ScryfallCard> {
 		cache.set(key, foundCard)
 
 		return foundCard
-	}, 100)
+	}, 125)
 }
 
 function fetchCollection(identifiers: Identifier[]): Promise<{ data: ScryfallCard[] }> {
@@ -369,7 +369,7 @@ async function loadPrintings(card: ScryfallCard): Promise<ScryfallCard[]> {
 				has_more: boolean
 				next_page: string | null
 			}
-		}, 100)
+		}, 125)
 
 		printings.push(...page.data)
 		pageUrl = page.has_more ? page.next_page : null

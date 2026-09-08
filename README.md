@@ -81,11 +81,6 @@ SVG icon types are generated automatically before development and production bui
 npm run generate:icons
 ```
 
-## Roadmap
-
-- Confirm Scryfall API identification and rate-limit compliance
-- Add a lightweight, privacy-respecting usage counter if demand warrants it
-
 ## Attribution and disclaimer
 
 Card data and images are provided by [Scryfall](https://scryfall.com/).

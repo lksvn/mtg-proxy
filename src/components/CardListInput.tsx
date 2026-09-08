@@ -185,7 +185,10 @@ export function CardListInput({value, onChange}: CardListInputProps) {
 			try {
 				const response = await fetch(
 					`https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(autocompleteQuery)}`,
-					{ signal: controller.signal }
+					{
+						signal: controller.signal,
+						headers: { Accept: 'application/json' }
+					}
 				)
 
 				if (!response.ok) throw new Error()
