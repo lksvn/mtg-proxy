@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { CardEntry } from '../hooks/useCards'
 import { Icon } from './Icon'
 import placeholderUrl from '../assets/placeholder.webp'
+import { useI18n } from '../i18n/context'
 
 const placeholderImage = new Image()
 placeholderImage.src = placeholderUrl
@@ -21,6 +22,7 @@ export function CardResultItem({
 	onSelectPrinting,
 	onRetry
 }: CardResultProps) {
+	const { t } = useI18n()
 	const [imageLoading, setImageLoading] = useState(true)
 	const [frontImageError, setFrontImageError] = useState(false)
 	const [backImageError, setBackImageError] = useState(false)
@@ -29,7 +31,7 @@ export function CardResultItem({
 	const [showBackFace, setShowBackFace] = useState(false)
 
 	if (entry.status === 'loading') {
-		return <div style={{display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'}}><Icon name="loading" className="hourglass"/> Loading</div>
+		return <div style={{display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'}}><Icon name="loading" className="hourglass"/> {t('loading')}</div>
 	}
 
 	if (entry.status === 'error') {
@@ -44,7 +46,7 @@ export function CardResultItem({
 						className="btn center"
 						onClick={() => onRetry(index)}
 					>
-						<Icon name="refresh-cw"/> Retry
+						<Icon name="refresh-cw"/> {t('reload')}
 					</button>
 				)}
 			</>
@@ -96,7 +98,7 @@ export function CardResultItem({
 						decoding="async"
 						fetchPriority="low"
 						src={frontImageError ? placeholderUrl : frontImage}
-						alt={`${entry.card?.name} card`}
+						alt={`${entry.card?.name} — ${t('frontFace')}`}
 						width="244"
 						height="340"
 						aria-busy={imageLoading}
@@ -116,7 +118,7 @@ export function CardResultItem({
 						decoding="async"
 						fetchPriority="low"
 						src={backImageError ? placeholderUrl : backImage}
-						alt={`${entry.card?.name} back face`}
+						alt={`${entry.card?.name} — ${t('backFace')}`}
 						width="244"
 						height="340"
 						onError={() => setBackImageError(true)}
@@ -130,7 +132,7 @@ export function CardResultItem({
 						onClick={() => setShowBackFace((current) => !current)}
 					>
 						<Icon name="arrow-left-right"/>
-						{showBackFace ? 'Front face' : 'Back face'}
+						{showBackFace ? t('frontFace') : t('backFace')}
 					</button>
 				)}
 				{frontImageError || backImageError ? (
@@ -143,14 +145,14 @@ export function CardResultItem({
 							setBackImageError(false)
 						}}
 					>
-						<Icon name="refresh-cw"/> Retry
+						<Icon name="refresh-cw"/> {t('reload')}
 					</button>
 				) : imageLoading && (
-					<span role="status" className="loading"><Icon name="loading" className="hourglass"/> Loading</span>)
+					<span role="status" className="loading"><Icon name="loading" className="hourglass"/> {t('loading')}</span>)
 				}
 			</div>
 			<small>
-				<a href={entry.card?.scryfall_uri} target="_blank" rel="noreferrer">View on Scryfall </a>
+				<a href={entry.card?.scryfall_uri} target="_blank" rel="noreferrer">{t('viewOnScryfall')}</a>
 			</small>
 			<div className="change-printing">
 				<button
@@ -164,7 +166,7 @@ export function CardResultItem({
 					aria-expanded={Boolean(entry.printings && showPrintingForm)}
 					aria-controls={`printing-form-${index}`}
 				>
-					{entry.loadingPrintings ? (<><Icon name="loading" className="hourglass"/> Loading</>) : (<><Icon name="arrow-left-right"/> Change printing</>)}
+					{entry.loadingPrintings ? (<><Icon name="loading" className="hourglass"/> {t('loading')}</>) : (<><Icon name="arrow-left-right"/> {t('changePrinting')}</>)}
 				</button>
 				<div
 					id={`printing-form-${index}`}
@@ -172,17 +174,17 @@ export function CardResultItem({
 					className={entry.printings && showPrintingForm ? 'form open': 'form'}
 				>
 					<div className="form-group">
-						<label htmlFor={`printing-search-${index}`}>Search printings</label>
+						<label htmlFor={`printing-search-${index}`}>{t('searchPrintings')}</label>
 						<input
 							id={`printing-search-${index}`}
 							type="search"
 							value={printingSearch}
-							placeholder="Set, code, number or date"
+							placeholder={t('printingSearchPlaceholder')}
 							onChange={(event) => setPrintingSearch(event.target.value)}
 						/>
 					</div>
 					<div className="form-group">
-						<label htmlFor={`printing-${index}`}>Printing</label>
+						<label htmlFor={`printing-${index}`}>{t('printing')}</label>
 						<select
 							id={`printing-${index}`}
 							value={entry.card?.id}
@@ -202,9 +204,9 @@ export function CardResultItem({
 							))}
 						</select>
 
-						{filteredPrintings?.length === 0 && <p style={{margin: 0, padding: 0}}>No printings match this search.</p>}
+						{filteredPrintings?.length === 0 && <p style={{margin: 0, padding: 0}}>{t('noMatchingPrintings')}</p>}
 					</div>
-					<button type="button" onClick={() => setShowPrintingForm(false)} aria-label='Close printing selection' className="btn md"><Icon name="chevron-down"/></button>
+					<button type="button" onClick={() => setShowPrintingForm(false)} aria-label={t('closePrintingSelection')} className="btn md"><Icon name="chevron-down"/></button>
 				</div>
 				{entry.printingsError && (
 					<>
@@ -214,7 +216,7 @@ export function CardResultItem({
 							className="btn center"
 							onClick={() => onLoadPrintings(index)}
 						>
-							<Icon name="refresh-cw"/> Retry
+							<Icon name="refresh-cw"/> {t('reload')}
 						</button>
 					</>
 				)}

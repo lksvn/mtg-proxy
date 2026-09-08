@@ -14,10 +14,13 @@ Create printable Magic: The Gathering playtest cards from a deck list, directly 
 - Autocomplete English card names by typing `@` followed by at least two characters
 - Search available printings and update card previews
 - Keep up to five recent deck lists in browser storage
-- Save the current card list as a text backup
+- Remove individual saved lists or clear the complete history
+- Download card lists as entered, without basic lands, or with names only
 - Export printable PDFs for A4, A3, Letter, and Legal paper
 - Configure gaps, crop marks, black corners, bleed, basic-land filtering, a deck-list page, and playtest watermarks
-- Export both faces of double-faced cards
+- Preview and export both faces of double-faced cards
+- Retry failed card, printing, and preview-image requests independently
+- Switch between English (US) and Portuguese (Brazil) interfaces
 - Use light and dark color schemes
 
 The application is client-only. Deck lists remain in the browser except for card lookups sent to Scryfall.
@@ -79,12 +82,8 @@ npm run generate:icons
 
 ## Roadmap
 
-- Support English (US) and Portuguese (Brazil) interfaces based on the user's language preference
-- Add card-list download options: as entered, without basic lands, or cleaned of set codes and collector numbers
-- Remove individual lists from history while keeping the option to clear all history
-- Show both card faces when available, with the back face behind the front and revealed on hover
-- Improve accessibility and keyboard testing
-- Improve network and image error feedback
+- Confirm Scryfall API identification and rate-limit compliance
+- Add a lightweight, privacy-respecting usage counter if demand warrants it
 
 ## Attribution and disclaimer
 

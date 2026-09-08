@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { Icon } from './Icon'
+import { useI18n } from '../i18n/context'
 
 type FileInputProps = {
 	id: string
@@ -8,6 +9,7 @@ type FileInputProps = {
 }
 
 export function FileInput({ id, accept, onSelect }: FileInputProps) {
+    const { t } = useI18n()
 	const input = useRef<HTMLInputElement>(null)
 	const [fileName, setFileName] = useState('')
 
@@ -34,18 +36,18 @@ export function FileInput({ id, accept, onSelect }: FileInputProps) {
 			/>
 
 			<label htmlFor={id} className="btn">
-				<Icon name="file-up"/> Import .txt list
+				<Icon name="file-up"/> {t('importTextList')}
 			</label>
 
 			<span className="file-name" aria-live="polite">
-				{fileName || 'No file selected'}
+				{fileName || t('noFileSelected')}
 			</span>
 
 			<button
 				type="button"
 				className="btn danger"
 				disabled={!fileName}
-				aria-label="Clear selected file"
+				aria-label={t('clearSelectedFile')}
 				onClick={clearFile}
 			>
 				<Icon name="trash-can"/>

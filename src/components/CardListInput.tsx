@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent, type FocusEvent } from 'react'
 import { Icon } from './Icon'
 import { EXAMPLE_CARD_LIST } from '../Cards'
+import { useI18n } from '../i18n/context'
 
 type CardListInputProps = {
 	value: string
@@ -45,6 +46,7 @@ function getCaretTop(textarea: HTMLTextAreaElement): number {
 }
 
 export function CardListInput({value, onChange}: CardListInputProps) {
+    const { t } = useI18n()
 	const [autocompleteQuery, setAutocompleteQuery] = useState('')
 	const [autocompleteLoading, setAutocompleteLoading] = useState(false)
 	const autocompleteRangeRef = useRef<{ start: number; end: number } | null>(null)
@@ -214,8 +216,10 @@ export function CardListInput({value, onChange}: CardListInputProps) {
 					}
 				}
 				className="btn danger"
+                style={{ opacity: value ? 1 : 0 }}
+                disabled={!value}
 			>
-					<Icon name="trash-can"/> Clear
+					<Icon name="trash-can"/> {t('clear')}
 			</button>
 			<textarea
 				ref={textareaRef}
@@ -227,7 +231,7 @@ export function CardListInput({value, onChange}: CardListInputProps) {
 				onChange={handleCardListChange}
 				placeholder={EXAMPLE_CARD_LIST}
 				onKeyDown={handleAutocompleteKeyDown}
-				aria-label="Card list"
+				aria-label={t('cardList')}
 				role="combobox"
 				aria-autocomplete="list"
 				aria-expanded={suggestions.length > 0}
@@ -241,14 +245,14 @@ export function CardListInput({value, onChange}: CardListInputProps) {
 					className="card-suggestions"
 					style={{ top: suggestionTop }}
 				>
-					<Icon name="loading" className="hourglass"/> Searching
+					<Icon name="loading" className="hourglass"/> {t('searching')}
 				</p>
 			)}
 			{!autocompleteLoading && suggestions.length > 0 && (
 				<ul
 					id="card-suggestions"
 					role="listbox"
-					aria-label="Card suggestions"
+					aria-label={t('cardSuggestions')}
 					className="card-suggestions"
 					style={{ top: suggestionTop }}
 				>

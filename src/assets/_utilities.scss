@@ -11,9 +11,17 @@ $spacing: (
 	.m-#{$size} { margin: $value !important; }
 	.mt-#{$size} { margin-top: $value !important; }
 	.mb-#{$size} { margin-bottom: $value !important; }
+    .ml-#{$size} { margin-left: $value !important; }
+    .mr-#{$size} { margin-right: $value !important; }
+    .mx-#{$size} { margin-right: $value !important; margin-left: $value !important; }
+    .my-#{$size} { margin-top: $value !important; margin-bottom: $value !important; }
 	.p-#{$size} { padding: $value !important; }
 	.pt-#{$size} { padding-top: $value !important; }
 	.pb-#{$size} { padding-bottom: $value !important; }
+    .pl-#{$size} { padding-left: $value !important; }
+    .pr-#{$size} { padding-right: $value !important; }
+    .px-#{$size} { padding-right: $value !important; padding-left: $value !important; }
+    .py-#{$size} { padding-top: $value !important; padding-bottom: $value !important; }
 	.gap-#{$size} { gap: $value !important; }
 }
 

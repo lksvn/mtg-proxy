@@ -7,12 +7,12 @@
 }
 
 .color-scheme-toggle {
-    position: fixed;
-    inset-block-end: 1rem;
-    inset-inline-start: 1rem;
     padding: 0.25rem 0.75rem;
     background: transparent;
     color: var(--accent);
     cursor: pointer;
     z-index: 5;
+    display: flex;
+    align-items: center;
+    small { font-size: .5em }
 }

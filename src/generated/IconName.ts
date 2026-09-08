@@ -11,6 +11,7 @@ export type IconName =
 	| "file-up"
 	| "github"
 	| "images"
+	| "language"
 	| "list-clock"
 	| "loading"
 	| "printer"

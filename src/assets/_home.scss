@@ -28,7 +28,8 @@ body {
 
         .wrapper {
             display: flex;
-            align-items: center;
+            flex-wrap: balance;
+            align-items: end;
             gap: 1rem;
             padding-top: 0.5rem;
         }
@@ -41,4 +42,13 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
     .hourglass { animation: none; }
+}
+
+.display-controls {
+	position: fixed;
+	inset-block-end: 1rem;
+	inset-inline-start: 1rem;
+	display: flex;
+	gap: 0.25rem;
+	z-index: 5;
 }

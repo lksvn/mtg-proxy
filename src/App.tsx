@@ -10,10 +10,12 @@ import { PdfExport } from './components/PdfExport'
 import { BackToTop } from './components/BackToTop'
 import { Footer } from './components/Footer'
 import { Icon } from './components/Icon'
+import { useI18n } from './i18n/context'
 
 const HISTORY_KEY = 'mtg-proxy-card-list-history'
 
 function App() {
+	const { t } = useI18n()
 	const [cardList, setCardList] = useState('')
 	const [history, setHistory] = useState<string[]>(() => {
 		try {
@@ -40,8 +42,29 @@ function App() {
 	const [pdfError, setPdfError] = useState('')
 	const canExport = cards.length > 0 && cards.every((entry) => entry.card)
 
+    function translatePdfError(error: unknown) {
+        if (!(error instanceof Error)) return t('couldNotGeneratePdf')
+
+        if (error.message === 'Could not prepare a card image') {
+            return t('couldNotPrepareCardImage')
+        }
+
+        if (error.message === 'Could not process card image') {
+            return t('couldNotProcessCardImage')
+        }
+
+        if (error.message.startsWith('Could not download image for ')) {
+            return error.message.replace(
+                'Could not download image for ',
+                `${t('couldNotDownloadImageFor')} `
+            )
+        }
+
+        return error.message
+    }
+
 	function clearHistory() {
-		if (!window.confirm('Clear all previous lists?')) return
+		if (!window.confirm(t('confirmClearHistory'))) return
 
 		setHistory([])
 
@@ -92,64 +115,64 @@ function App() {
 
 			downloadBlob( pdf, `mtg-proxy-${new Intl.DateTimeFormat('en-CA').format(new Date(),)}.pdf` )
 		} catch (error) {
-			setPdfError( error instanceof Error ? error.message : 'Could not generate PDF' )
+			setPdfError(translatePdfError(error))
 		} finally {
 			setExporting(false)
 		}
 	}
 
 	function saveCardList(mode: CardListSaveMode) {
-        const savedCards = cards.filter(
-            (entry) => mode !== 'without-basic-lands' || !entry.card || !isBasicLand(entry.card)
-        )
+		const savedCards = cards.filter(
+			(entry) => mode !== 'without-basic-lands' || !entry.card || !isBasicLand(entry.card)
+		)
 
 		const backup = serializeCardList(
-            savedCards.map((entry) => {
+			savedCards.map((entry) => {
 				if (!entry.card) {
-                    return {
-                        ...entry.parsed,
-                        set: mode === 'clean' ? undefined : entry.parsed.set,
-                        collectorNumber:
-                            mode === 'clean'
-                                ? undefined
-                                : entry.parsed.collectorNumber,
-                        error:
-                            mode === 'clean'
-                                ? entry.parsed.error
-                                : entry.error ?? entry.parsed.error
-                    }
-                }
+					return {
+						...entry.parsed,
+						set: mode === 'clean' ? undefined : entry.parsed.set,
+						collectorNumber:
+							mode === 'clean'
+								? undefined
+								: entry.parsed.collectorNumber,
+						error:
+							mode === 'clean'
+								? entry.parsed.error
+								: entry.error ?? entry.parsed.error
+					}
+				}
 
 				return {
 					...entry.parsed,
 					name: entry.card.name,
 					set: mode === 'clean' ? undefined : entry.card.set,
 					collectorNumber:
-                        mode === 'clean'
-                            ? undefined
-                            : entry.card.collector_number,
+						mode === 'clean'
+							? undefined
+							: entry.card.collector_number,
 					error: undefined
 				}
 			})
 		)
 
 		const suffix = {
-            complete: '',
-            'without-basic-lands': '-no-basics',
-            clean: '-names-only'
-        }[mode]
+			complete: '',
+			'without-basic-lands': '-no-basics',
+			clean: '-names-only'
+		}[mode]
 
-        downloadBlob(
-            new Blob([backup], { type: 'text/plain;charset=utf-8' }),
-            `mtg-proxy-list${suffix}-${new Intl.DateTimeFormat('en-CA').format(new Date())}.txt`
-        )
+		downloadBlob(
+			new Blob([backup], { type: 'text/plain;charset=utf-8' }),
+			`mtg-proxy-list${suffix}-${new Intl.DateTimeFormat('en-CA').format(new Date())}.txt`
+		)
 	}
 
 	return (
 		<>
 		<header>
 			<h1 className="mb-2"><Icon name="cards-fan"/> MTG Proxy</h1>
-			<p>Create printable playtest cards from a deck list.</p>
+			<p>{t('tagline')}</p>
 		</header>
 		<main>
 

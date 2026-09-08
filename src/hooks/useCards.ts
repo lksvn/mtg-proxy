@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { parseCardList, type ParsedCard } from '../Cards'
 import { findCards, findPrintings, type ScryfallCard } from '../Scryfall'
+import { useI18n } from '../i18n/context'
 
 export type CardEntry = {
 	parsed: ParsedCard
@@ -11,16 +12,33 @@ export type CardEntry = {
 	loadingPrintings?: boolean
 	printingsError?: string
 }
+const ERROR_TRANSLATIONS = {
+	'Invalid card line': 'invalidCardLine',
+	'Quantity must be at least 1': 'quantityAtLeastOne',
+	'Card not found': 'cardNotFound',
+	'Your query didn’t match any cards. Adjust your search terms or refer to the syntax guide at https://scryfall.com/docs/reference': 'cardNotFound'
+} as const
 
 export function useCards() {
+    const { t } = useI18n()
 	const [cards, setCards] = useState<CardEntry[]>([])
 	const [loading, setLoading] = useState(false)
+
+    function translateError(error?: string) {
+        if (!error) return
+
+        const key = ERROR_TRANSLATIONS[
+            error as keyof typeof ERROR_TRANSLATIONS
+        ]
+
+        return key ? t(key) : error
+    }
 
 	async function loadCards(cardList: string) {
 		const entries: CardEntry[] = parseCardList(cardList).map((parsed) => ({
 			parsed,
 			status: parsed.error ? 'error' : 'loading',
-			error: parsed.error
+			error: translateError(parsed.error)
 		}))
 
 		setCards(entries)
@@ -45,13 +63,15 @@ export function useCards() {
 				return {
 					...entry,
 					status: 'error',
-					error: lookup.error ?? 'Card not found'
+					error: translateError(lookup.error) ?? t('cardNotFound')
 				}
 			})
 
 			setCards(resolvedCards)
 		} catch (error) {
-			const message = error instanceof Error ? error.message : 'Unknown card lookup error'
+			const message = error instanceof Error
+                ? error.message
+                : t('unknownCardLookupError')
 
 			setCards(entries.map((entry) =>
 				entry.status === 'error'
@@ -87,13 +107,13 @@ export function useCards() {
 
 					return lookup?.card
 						? { ...item, status: 'ready', card: lookup.card, error: undefined }
-						: { ...item, status: 'error', error: lookup?.error ?? 'Card not found' }
+						: { ...item, status: 'error', error: translateError(lookup?.error) ?? t('cardNotFound') }
 				})
 			)
 		} catch (error) {
 			const message = error instanceof Error
 				? error.message
-				: 'Unknown card lookup error'
+				: t('unknownCardLookupError')
 
 			setCards((current) =>
 				current.map((item, itemIndex) =>
@@ -139,7 +159,7 @@ export function useCards() {
 							loadingPrintings: false,
 							printingsError: error instanceof Error
 								? error.message
-								: 'Could not load printings'
+								: t('couldNotLoadPrintings')
 						}
 						: item
 				)
