@@ -8,6 +8,7 @@ export function Footer() {
 			<nav aria-label={t('footerNavigation')}>
 				<ul>
 					<li><a href="https://lksvn.com.br"><Icon name="arrow-right" className="flip-h"/> {t('home')}</a></li>
+					<li><a href="https://github.com/lksvn/mtg-proxy/#editor" target="_blank" rel="noopener noreferrer"><Icon name="cards-fan" /> {t('customCard')}</a></li>
 					<li><a href="https://github.com/lksvn/mtg-proxy" target="_blank" rel="noopener noreferrer"><Icon name="github" /> {t('githubRepository')}</a></li>
 				</ul>
 			</nav>

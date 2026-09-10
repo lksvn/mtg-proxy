@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { serializeCardList, addCardListToHistory, removeCardListFromHistory, isBasicLand, type CardListSaveMode } from './Cards'
 import { useCards } from './hooks/useCards'
 import { downloadBlob } from './utils/downloadBlob'
@@ -10,12 +10,14 @@ import { PdfExport } from './components/PdfExport'
 import { BackToTop } from './components/BackToTop'
 import { Footer } from './components/Footer'
 import { Icon } from './components/Icon'
+import { CustomCardEditor } from './components/cardEditor/CustomCardEditor'
 import { useI18n } from './i18n/context'
 
 const HISTORY_KEY = 'mtg-proxy-card-list-history'
 
 function App() {
 	const { t } = useI18n()
+    const [hash, setHash] = useState(window.location.hash)
 	const [cardList, setCardList] = useState('')
 	const [history, setHistory] = useState<string[]>(() => {
 		try {
@@ -41,6 +43,12 @@ function App() {
 	const [exporting, setExporting] = useState(false)
 	const [pdfError, setPdfError] = useState('')
 	const canExport = cards.length > 0 && cards.every((entry) => entry.card)
+
+    useEffect(() => {
+        const updateHash = () => setHash(window.location.hash)
+        window.addEventListener('hashchange', updateHash)
+        return () => window.removeEventListener('hashchange', updateHash)
+    }, [])
 
     function translatePdfError(error: unknown) {
         if (!(error instanceof Error)) return t('couldNotGeneratePdf')
@@ -174,45 +182,47 @@ function App() {
 			<h1 className="mb-2"><Icon name="cards-fan"/> MTG Proxy</h1>
 			<p>{t('tagline')}</p>
 		</header>
-		<main>
+        {hash === '#editor' ? (<CustomCardEditor />) : (
+            <main>
 
-			<CardListForm
-				value={cardList}
-				history={history}
-				onClearHistory={clearHistory}
-				onRemoveHistory={removeHistoryItem}
-				loading={loading}
-				canSave={cards.length > 0}
-				onChange={setCardList}
-				onLoad={loadAndRememberCards}
-				onSave={saveCardList}
-			/>
+                <CardListForm
+                    value={cardList}
+                    history={history}
+                    onClearHistory={clearHistory}
+                    onRemoveHistory={removeHistoryItem}
+                    loading={loading}
+                    canSave={cards.length > 0}
+                    onChange={setCardList}
+                    onLoad={loadAndRememberCards}
+                    onSave={saveCardList}
+                />
 
-			{cards.length > 0 && (<div className="printing-settings">
-				<div style={{minWidth: '160px'}}>
-					<PdfExport
-						exporting={exporting}
-						canExport={canExport}
-						error={pdfError}
-						onExport={downloadCardsPdf}
-					/>
-				</div>
+                {cards.length > 0 && (<div className="printing-settings">
+                    <div style={{minWidth: '160px'}}>
+                        <PdfExport
+                            exporting={exporting}
+                            canExport={canExport}
+                            error={pdfError}
+                            onExport={downloadCardsPdf}
+                        />
+                    </div>
 
-				<PrintSettingsForm
-					settings={printSettings}
-					onChange={setPrintSettings}
-				/>
-			</div>)}
+                    <PrintSettingsForm
+                        settings={printSettings}
+                        onChange={setPrintSettings}
+                    />
+                </div>)}
 
-			<CardResults
-				cards={cards}
-				onLoadPrintings={loadCardPrintings}
-				onSelectPrinting={selectPrinting}
-				onRetry={retryCard}
-			/>
+                <CardResults
+                    cards={cards}
+                    onLoadPrintings={loadCardPrintings}
+                    onSelectPrinting={selectPrinting}
+                    onRetry={retryCard}
+                />
 
-			<BackToTop />
-		</main>
+                <BackToTop />
+            </main>
+        )}
 		<Footer />
 		</>
 	)
