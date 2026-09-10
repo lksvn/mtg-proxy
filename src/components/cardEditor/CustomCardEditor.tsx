@@ -6,6 +6,7 @@ import { CardDetailsForm } from './CardDetailsForm'
 import type { CustomCardData } from './types'
 import { useI18n } from '../../i18n/context'
 import { downloadBlob } from '../../utils/downloadBlob'
+import { Icon } from '../Icon'
 
 const SAMPLE_ARTWORK_URL = `${import.meta.env.BASE_URL}img/samples/marrow-gnawer.jpg`
 const SAMPLE_SET_SYMBOL_URL = `${import.meta.env.BASE_URL}img/setSymbols/chk.svg`
@@ -25,7 +26,6 @@ export function CustomCardEditor() {
         manaCost: '3bb',
         typeLine: 'Legendary Creature — Rat Rogue',
         rulesText: `All Rats have fear.
-
 {T}, Sacrifice a Rat: Create X 1/1 black Rat creature tokens, where X is the number of Rats you control.`,
         flavorText: 'Marrow-Gnawer united three nezumi gangs when he slew their leaders in a single night. Now they call him their first lord.',
         powerToughness: '2/3',
@@ -44,7 +44,7 @@ export function CustomCardEditor() {
 
 	return (
 		<section>
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem'}}>
+            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '1rem'}}>
                 <div className="form-group gap-2">
                     <FileInput
                         id="custom-card-artwork"
@@ -79,9 +79,10 @@ export function CustomCardEditor() {
                         transform={artworkTransform}
                         onChange={setArtworkTransform}
                         onReset={() => setArtworkTransform(createDefaultArtworkTransform())}
-                        />}
+                        />
+                    }
 					<button type="button" className="btn mt-3" onClick={downloadPng}>
-						{t('downloadPng')}
+						<Icon name="file-down"/> {t('downloadPng')}
 					</button>
                 </div>
             </div>

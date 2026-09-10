@@ -7,12 +7,13 @@ import { useI18n } from '../../i18n/context'
 
 const WIDTH = 1500
 const HEIGHT = 2100
+const DEBUG_CANVAS = import.meta.env.DEV
 const FRAME_URL = `${import.meta.env.BASE_URL}img/frames/m15/boxTopper/m15BoxTopperFrameA.png`
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
 const PT_URL = `${import.meta.env.BASE_URL}img/frames/m15/regular/m15PTA.png`
 const PT_OFFSET = {
 	x: 0,
-	y: 0
+	y: 45
 }
 const PT_BOUNDS = {
 	x: 1136,
@@ -344,7 +345,7 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
             context.textBaseline = 'middle'
             // Name
             context.fillStyle = '#111'
-            context.font = '64px belerenb, serif'
+            context.font = '70px belerenb, serif'
             context.textAlign = 'left'
             context.fillText(card.name, 115, 160, 1000)
             // Mana cost
@@ -352,11 +353,11 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
             drawManaCost(context, manaRuns, manaSymbols, 1390, 160)
             // Type
             context.fillStyle = '#fff'
-            context.font = '48px belerenb, serif'
+            context.font = '54px belerenb, serif'
             context.textAlign = 'left'
             context.fillText(card.typeLine, 115, 1245, 1120)
             // Rules and flavor text
-            drawRulesText(context, cardTextRuns, manaSymbols, 135, 1370, 1230, 470)
+            drawRulesText(context, cardTextRuns, manaSymbols, 135, 1350, 1230, 540)
             // Power and Toughness
             // Draw the frame
             if (card.powerToughness) {
@@ -382,7 +383,7 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
             }
             // Rarity and Artist
             context.fillStyle = '#fff'
-            context.font = '34px mplantin, serif'
+            context.font = '38px mplantin, serif'
             context.textAlign = 'left'
             context.fillText(
                 `${RARITY_CODES[card.rarity]}${card.number ? ' • ' + card.number : ''}${card.artist ? ' • ' + card.artist : ''}`,
@@ -395,6 +396,7 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
             context.font = '34px mplantin, serif'
             context.textAlign = 'left'
             context.fillText('NOT FOR SALE • Made on MTG Proxy', 115, 2025, 1050)
+
 		}
 
 		void render()
@@ -405,6 +407,7 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
 	}, [artwork, setSymbol, transform, card, canvasRef])
 
 	return (
+		<div style={{ position: 'relative', lineHeight: 0 }}>
 		<canvas
 			ref={canvasRef}
 			width={WIDTH}
@@ -423,7 +426,30 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
                 boxShadow: '10px 5px 15px 0px var(--shadow)',
                 cursor: artwork ? dragging ? 'grabbing' : 'grab' : 'default',
                 userSelect: 'none'
-            }}
+			}}
 		/>
+		{DEBUG_CANVAS && (
+			<svg
+				viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+				aria-hidden="true"
+				style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+			>
+				<g fill="none" stroke="#ff00ff" strokeWidth="4" strokeDasharray="12 8">
+					<rect x="115" y="110" width="1000" height="100" />
+					<rect x="1050" y="110" width="340" height="100" />
+					<rect x="115" y="1205" width="1120" height="80" />
+					<rect x="1285" y="1195" width="100" height="100" />
+					<rect x="135" y="1370" width="1230" height="320" />
+					<rect x="135" y="1690" width="1230" height="190" />
+					<rect
+						x={PT_OFFSET.x + PT_BOUNDS.x}
+						y={PT_OFFSET.y + PT_BOUNDS.y}
+						width={PT_BOUNDS.width}
+						height={PT_BOUNDS.height}
+					/>
+				</g>
+			</svg>
+		)}
+		</div>
 	)
 }

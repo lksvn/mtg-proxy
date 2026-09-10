@@ -6,6 +6,11 @@ type Atom =
 	| { type: 'symbol'; value: string }
 	| { type: 'newline' }
 
+type Line = {
+	atoms: Atom[]
+	gapBefore: number
+}
+
 function atomize(runs: CardTextRun[]): Atom[] {
 	return runs.flatMap((run): Atom[] => {
 		if (run.type === 'symbol') return [run]
@@ -36,12 +41,15 @@ function layout(
 	maxWidth: number,
 	fontSize: number,
 ) {
-	const lines: Atom[][] = [[]]
+	const lines: Line[] = [{ atoms: [], gapBefore: 0 }]
 	let width = 0
 
 	for (const atom of atoms) {
 		if (atom.type === 'newline') {
-			lines.push([])
+			lines.push({
+				atoms: [],
+				gapBefore: lines.at(-1)!.atoms.length ? fontSize * 0.15 : 0,
+			})
 			width = 0
 			continue
 		}
@@ -56,14 +64,14 @@ function layout(
 				? fontSize
 				: context.measureText(atom.value).width
 
-		const line = lines.at(-1)!
+		const line = lines.at(-1)!.atoms
 
 		if (
 			width > 0 &&
 			width + atomWidth > maxWidth &&
 			!(atom.type === 'text' && atom.value === ' ')
 		) {
-			lines.push([atom])
+			lines.push({ atoms: [atom], gapBefore: 0 })
 			width = atomWidth
 		} else if (!(width === 0 && atom.type === 'text' && atom.value === ' ')) {
 			line.push(atom)
@@ -83,30 +91,35 @@ export function drawRulesText(
 	maxWidth: number,
 	maxHeight: number,
 ) {
-	let fontSize = 74
-	let lines: Atom[][] = []
+	let fontSize = 80
+	let lines: Line[] = []
 	let lineHeight = 0
 
 	for (; fontSize >= 32; fontSize--) {
-		lineHeight = Math.round(fontSize * 1.15)
+		lineHeight = Math.round(fontSize * 1.1)
 		lines = layout(context, atomize(runs), maxWidth, fontSize)
 
-		if (lines.length * lineHeight <= maxHeight) break
+		const height = lines.length * lineHeight +
+			lines.reduce((total, line) => total + line.gapBefore, 0)
+
+		if (height <= maxHeight) break
 	}
 
 	fontSize = Math.max(fontSize, 32)
-	lineHeight = Math.round(fontSize * 1.15)
+	lineHeight = Math.round(fontSize * 1.1)
 
 	context.save()
 	context.fillStyle = '#111'
 	context.textAlign = 'left'
 	context.textBaseline = 'top'
 
-	lines.forEach((line, lineIndex) => {
-		let cursorX = x
-		const lineY = y + lineIndex * lineHeight
+	let lineY = y
 
-		for (const atom of line) {
+	lines.forEach((line) => {
+		let cursorX = x
+		lineY += line.gapBefore
+
+		for (const atom of line.atoms) {
 			if (atom.type === 'symbol') {
                 const symbolSize = fontSize
                 drawManaSymbol(
@@ -125,6 +138,8 @@ export function drawRulesText(
 				cursorX += context.measureText(atom.value).width
 			}
 		}
+
+		lineY += lineHeight
 	})
 
 	context.restore()

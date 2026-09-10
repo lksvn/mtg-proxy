@@ -23,7 +23,7 @@ export function ArtworkControls({
 		<fieldset className="mt-3">
 			<strong style={{ display: 'block' }}>{t('artworkPosition')}</strong>
 
-            <div className="form-group gap-3" style={{ flexDirection: 'row' }}>
+            <div className="form-group gap-2" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                 <label>
                     {t('horizontal')} ({transform.x.toFixed(0)})
                     <input
