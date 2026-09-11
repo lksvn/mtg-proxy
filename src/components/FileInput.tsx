@@ -6,11 +6,12 @@ type FileInputProps = {
 	id: string
 	accept?: string
     label?: string
+	hasValue?: boolean
 	onSelect: (file: File) => void
     onClear?: () => void
 }
 
-export function FileInput({ id, accept, label, onSelect, onClear }: FileInputProps) {
+export function FileInput({ id, accept, label, hasValue, onSelect, onClear }: FileInputProps) {
     const { t } = useI18n()
 	const input = useRef<HTMLInputElement>(null)
 	const [fileName, setFileName] = useState('')
@@ -49,7 +50,7 @@ export function FileInput({ id, accept, label, onSelect, onClear }: FileInputPro
 			<button
 				type="button"
 				className="btn danger"
-				disabled={!fileName}
+				disabled={!fileName && !hasValue}
 				aria-label={t('clearSelectedFile')}
 				onClick={clearFile}
 			>

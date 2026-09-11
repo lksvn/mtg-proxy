@@ -91,7 +91,7 @@ export function drawRulesText(
 	maxWidth: number,
 	maxHeight: number,
 ) {
-	let fontSize = 80
+	let fontSize = 64
 	let lines: Line[] = []
 	let lineHeight = 0
 

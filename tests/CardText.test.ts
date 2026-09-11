@@ -55,11 +55,13 @@ test('parses loyalty symbols inside italic text', () => {
 	])
 })
 
-test('italicizes ability labels ending with an em dash', () => {
-	assert.deepEqual(
-		parseRulesText('Exhaust — {5}{B}: Return target creature.')[0],
-		{ type: 'text', value: 'Exhaust —', italic: true },
-	)
+test('italicizes ability labels ending with an em dash or hyphen', () => {
+	for (const separator of ['—', '-']) {
+		assert.deepEqual(
+			parseRulesText(`Exhaust ${separator} {5}{B}: Return target creature.`)[0],
+			{ type: 'text', value: `Exhaust ${separator}`, italic: true },
+		)
+	}
 })
 
 test('parses compact and spaced mana costs', () => {

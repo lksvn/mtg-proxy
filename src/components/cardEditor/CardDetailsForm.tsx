@@ -45,10 +45,11 @@ export function CardDetailsForm({ card, onChange }: CardDetailsFormProps) {
 					id="card-type-line"
 					type="text"
 					value={card.typeLine}
-					onChange={(event) =>
+						onChange={(event) =>
 						update({ typeLine: event.target.value })
 					}
 				/>
+				<small>{t('typeLineHelp')}</small>
 			</div>
 
 			<div className="form-group">

@@ -116,7 +116,7 @@ export function parseRulesText(text: string): CardTextRun[] {
 	const lines = text.split('\n')
 
 	return lines.flatMap((line, index) => {
-		const ability = line.match(/^(.+? —)(.*)$/)
+		const ability = line.match(/^(.+? (?:—|-))(.*)$/)
 		const runs: CardTextRun[] = ability
 			? [
                 {

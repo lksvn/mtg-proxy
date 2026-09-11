@@ -20,8 +20,8 @@ const PT_BOUNDS = {
 	y: 1858,
 	width: 282,
 	height: 154,
-	textX: 1290,
-	textY: 1925
+	textX: 1295,
+	textY: 1930
 }
 const RARITY_COLORS: Record<CustomCardData['rarity'], string> = {
     common: '#ffffff',
@@ -213,15 +213,7 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
                         : run,
             )
 
-            const cardTextRuns: CardTextRun[] = [
-                ...rulesRuns,
-                ...(card.rulesText && card.flavorText
-                    ? [{ type: 'text', value: '\n\n', italic: false } as CardTextRun]
-                    : []),
-                ...flavorRuns,
-            ]
-
-            const allRuns = [...manaRuns, ...cardTextRuns]
+            const allRuns = [...manaRuns, ...rulesRuns, ...flavorRuns]
 
             const manaFiles = [
                 ...new Set(
@@ -355,9 +347,10 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
             context.fillStyle = '#fff'
             context.font = '54px belerenb, serif'
             context.textAlign = 'left'
-            context.fillText(card.typeLine, 115, 1245, 1120)
+            context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), 115, 1245, 1120)
             // Rules and flavor text
-            drawRulesText(context, cardTextRuns, manaSymbols, 135, 1350, 1230, 540)
+            drawRulesText(context, rulesRuns, manaSymbols, 125, 1345, 1240, 340)
+            drawRulesText(context, flavorRuns, manaSymbols, 125, 1690, 1240, 210)
             // Power and Toughness
             // Draw the frame
             if (card.powerToughness) {
@@ -372,7 +365,7 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
             // text
             if (card.powerToughness) {
                 context.fillStyle = '#111'
-                context.font = '64px belerenbsc, serif'
+                context.font = '70px belerenbsc, serif'
                 context.textAlign = 'center'
                 context.fillText(
                     card.powerToughness,
@@ -434,13 +427,15 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
 				aria-hidden="true"
 				style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
 			>
-				<g fill="none" stroke="#ff00ff" strokeWidth="4" strokeDasharray="12 8">
+				<g fill="#000" stroke="#ff00ff" fillOpacity="0.25" strokeWidth="4" strokeDasharray="12 8">
 					<rect x="115" y="110" width="1000" height="100" />
 					<rect x="1050" y="110" width="340" height="100" />
-					<rect x="115" y="1205" width="1120" height="80" />
-					<rect x="1285" y="1195" width="100" height="100" />
-					<rect x="135" y="1370" width="1230" height="320" />
-					<rect x="135" y="1690" width="1230" height="190" />
+					<rect x="115" y="1200" width="1155" height="100" />
+
+                    <rect x="1285" y="1195" width="100" height="100" />
+
+					<rect x="125" y="1345" width="1240" height="340" />
+					<rect x="125" y="1690" width="1240" height="210" />
 					<rect
 						x={PT_OFFSET.x + PT_BOUNDS.x}
 						y={PT_OFFSET.y + PT_BOUNDS.y}

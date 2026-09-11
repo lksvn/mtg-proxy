@@ -60,6 +60,7 @@ export function CustomCardEditor() {
                         id="custom-card-set-symbol"
                         accept="image/*"
                         label={t('chooseSetSymbol')}
+						hasValue={Boolean(setSymbol)}
                         onSelect={setSetSymbol}
                         onClear={() => setSetSymbol(undefined)}
                     />

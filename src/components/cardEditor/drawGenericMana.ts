@@ -53,8 +53,8 @@ export function drawManaSymbol(
 		context.save()
 		if (shadow) {
 			context.shadowColor = '#000'
-			context.shadowOffsetX = 4
-			context.shadowOffsetY = 5
+			context.shadowOffsetX = 2
+			context.shadowOffsetY = 6
 		}
 		context.drawImage(image, x, centerY - size / 2, size, size)
 		context.restore()
