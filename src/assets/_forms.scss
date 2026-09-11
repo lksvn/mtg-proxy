@@ -21,6 +21,7 @@ select {
         border-color: var(--accent)
     }
 }
+input[type="range"] { width: 100% }
 input, select, textarea {
     &:focus {
         outline: 1px dashed var(--background);

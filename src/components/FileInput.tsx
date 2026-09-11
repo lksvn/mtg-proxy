@@ -5,10 +5,13 @@ import { useI18n } from '../i18n/context'
 type FileInputProps = {
 	id: string
 	accept?: string
+    label?: string
+	hasValue?: boolean
 	onSelect: (file: File) => void
+    onClear?: () => void
 }
 
-export function FileInput({ id, accept, onSelect }: FileInputProps) {
+export function FileInput({ id, accept, label, hasValue, onSelect, onClear }: FileInputProps) {
     const { t } = useI18n()
 	const input = useRef<HTMLInputElement>(null)
 	const [fileName, setFileName] = useState('')
@@ -23,6 +26,7 @@ export function FileInput({ id, accept, onSelect }: FileInputProps) {
 	function clearFile() {
 		if (input.current) input.current.value = ''
 		setFileName('')
+        onClear?.()
 	}
 
 	return (
@@ -36,7 +40,7 @@ export function FileInput({ id, accept, onSelect }: FileInputProps) {
 			/>
 
 			<label htmlFor={id} className="btn">
-				<Icon name="file-up"/> {t('importTextList')}
+				<Icon name="file-up"/> {label ?? t('importTextList')}
 			</label>
 
 			<span className="file-name" aria-live="polite">
@@ -46,7 +50,7 @@ export function FileInput({ id, accept, onSelect }: FileInputProps) {
 			<button
 				type="button"
 				className="btn danger"
-				disabled={!fileName}
+				disabled={!fileName && !hasValue}
 				aria-label={t('clearSelectedFile')}
 				onClick={clearFile}
 			>
