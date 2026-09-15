@@ -46,10 +46,12 @@ function layout(
 
 	for (const atom of atoms) {
 		if (atom.type === 'newline') {
-			lines.push({
-				atoms: [],
-				gapBefore: lines.at(-1)!.atoms.length ? fontSize * 0.15 : 0,
-			})
+			const line = lines.at(-1)!
+			if (line.atoms.length) {
+				lines.push({ atoms: [], gapBefore: fontSize * 0.15 })
+			} else {
+				line.gapBefore = fontSize * 0.45
+			}
 			width = 0
 			continue
 		}
@@ -110,6 +112,8 @@ export function drawRulesText(
 
 	context.save()
 	context.fillStyle = '#111'
+	context.strokeStyle = '#111'
+	context.lineWidth = 0.75
 	context.textAlign = 'left'
 	context.textBaseline = 'top'
 
@@ -132,8 +136,9 @@ export function drawRulesText(
                 )
 
                 cursorX += symbolSize
-            } else if (atom.type === 'text') {
+			} else if (atom.type === 'text') {
 				context.font = font(fontSize, atom.italic)
+				context.strokeText(atom.value, cursorX, lineY)
 				context.fillText(atom.value, cursorX, lineY)
 				cursorX += context.measureText(atom.value).width
 			}

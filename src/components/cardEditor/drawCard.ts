@@ -69,7 +69,9 @@ export function drawCard(
 	context.drawImage(frame, 0, 0)
 
 	if (symbol) {
-		const boxSize = 100
+		const boxSize = 85
+		const centerX = 1335
+		const centerY = 1248
 		const scale = Math.min(boxSize / symbol.width, boxSize / symbol.height)
 		const width = symbol.width * scale
 		const height = symbol.height * scale
@@ -86,10 +88,10 @@ export function drawCard(
 				tintedContext.globalCompositeOperation = 'source-in'
 				tintedContext.fillStyle = RARITY_COLORS[card.rarity]
 				tintedContext.fillRect(0, 0, boxSize, boxSize)
-				context.drawImage(tinted, 1285, 1195)
+				context.drawImage(tinted, centerX - boxSize / 2, centerY - boxSize / 2)
 			}
 		} else {
-			context.drawImage(symbol, 1335 - width / 2, 1245 - height / 2, width, height)
+			context.drawImage(symbol, centerX - width / 2, centerY - height / 2, width, height)
 		}
 	}
 
@@ -106,8 +108,10 @@ export function drawCard(
 	context.font = '54px belerenb, serif'
 	context.textAlign = 'left'
 	context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), 115, 1245, 1120)
-	drawRulesText(context, rulesRuns, manaSymbols, 125, 1345, 1240, 340)
-	drawRulesText(context, flavorRuns, manaSymbols, 125, 1690, 1240, 210)
+	const textRuns: CardTextRun[] = rulesRuns.length && flavorRuns.length
+		? [...rulesRuns, { type: 'text', value: '\n\n', italic: false }, ...flavorRuns]
+		: [...rulesRuns, ...flavorRuns]
+	drawRulesText(context, textRuns, manaSymbols, 125, 1345, 1240, 555)
 
 	if (card.powerToughness) {
 		context.drawImage(
