@@ -10,6 +10,8 @@ const DEBUG_CANVAS = import.meta.env.DEV
 const FRAME_ROOT = `${import.meta.env.BASE_URL}img/frames/m15/boxTopper/`
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
 const PT_ROOT = `${import.meta.env.BASE_URL}img/frames/m15/regular/`
+const ARTWORK_DRAG_TOP = 210
+const ARTWORK_DRAG_BOTTOM = 1200
 export type ArtworkTransform = {
 	x: number
 	y: number
@@ -34,6 +36,7 @@ export function CardCanvas({ artwork, setSymbol, frameVariant, transform, card, 
 	const internalCanvasRef = useRef<HTMLCanvasElement>(null)
 	const canvasRef = externalCanvasRef ?? internalCanvasRef
     const [dragging, setDragging] = useState(false)
+	const [showDebug, setShowDebug] = useState(false)
     const dragRef = useRef<{
         pointerId: number
         clientX: number
@@ -44,6 +47,10 @@ export function CardCanvas({ artwork, setSymbol, frameVariant, transform, card, 
 
     function startDragging(event: ReactPointerEvent<HTMLCanvasElement>) {
         if (!artwork) return
+
+		const bounds = event.currentTarget.getBoundingClientRect()
+		const y = (event.clientY - bounds.top) * (HEIGHT / bounds.height)
+		if (y < ARTWORK_DRAG_TOP || y > ARTWORK_DRAG_BOTTOM) return
 
         setDragging(true)
         event.currentTarget.setPointerCapture(event.pointerId)
@@ -203,51 +210,63 @@ export function CardCanvas({ artwork, setSymbol, frameVariant, transform, card, 
 	}, [artwork, setSymbol, frameVariant, transform, card, canvasRef])
 
 	return (
-		<div style={{ position: 'relative', lineHeight: 0 }}>
-		<canvas
-			ref={canvasRef}
-			width={WIDTH}
-			height={HEIGHT}
-			aria-label={t('customCardPreview')}
-            onPointerDown={startDragging}
-            onPointerMove={dragArtwork}
-            onPointerUp={stopDragging}
-            onPointerCancel={stopDragging}
-			style={{
-                width: '100%',
-                height: 'auto',
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
-                borderRadius: 'var(--card-image-radius)',
-                boxShadow: '10px 5px 15px 0px var(--shadow)',
-                cursor: artwork ? dragging ? 'grabbing' : 'grab' : 'default',
-                userSelect: 'none'
-			}}
-		/>
-		{DEBUG_CANVAS && (
-			<svg
-				viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-				aria-hidden="true"
-				style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
-			>
-				<g fill="#000" stroke="#ff00ff" fillOpacity="0.25" strokeWidth="4" strokeDasharray="12 8">
-					<rect x="115" y="110" width="1000" height="100" />
-					<rect x="1050" y="110" width="340" height="100" />
-					<rect x="115" y="1200" width="1155" height="100" />
+		<div>
+            {DEBUG_CANVAS && (
+                <label style={{ display: 'block', marginBottom: '0.5rem' }}>
+                    <input
+                        type="checkbox"
+                        checked={showDebug}
+                        onChange={(event) => setShowDebug(event.target.checked)}
+                    />{' '}
+                    {t('showCanvasGuides')}
+                </label>
+            )}
+            <div style={{ position: 'relative', lineHeight: 0 }}>
+                <canvas
+                    ref={canvasRef}
+                    width={WIDTH}
+                    height={HEIGHT}
+                    aria-label={t('customCardPreview')}
+                    onPointerDown={startDragging}
+                    onPointerMove={dragArtwork}
+                    onPointerUp={stopDragging}
+                    onPointerCancel={stopDragging}
+                    style={{
+                        width: '100%',
+                        height: 'auto',
+                        background: 'var(--surface)',
+                        border: '1px solid var(--border)',
+                        borderRadius: 'var(--card-image-radius)',
+                        boxShadow: '10px 5px 15px 0px var(--shadow)',
+                        cursor: artwork ? dragging ? 'grabbing' : 'grab' : 'default',
+                        userSelect: 'none'
+                    }}
+                />
+                {DEBUG_CANVAS && showDebug && (
+                    <svg
+                        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+                        aria-hidden="true"
+                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+                    >
+                        <g fill="#000" stroke="#ff00ff" fillOpacity="0.25" strokeWidth="4" strokeDasharray="12 8">
+                            <rect x="115" y="110" width="1000" height="100" />
+                            <rect x="1050" y="110" width="340" height="100" />
+                            <rect x="115" y="1200" width="1155" height="100" />
 
-                    <rect x="1285" y="1195" width="100" height="100" />
+                            <rect x="1285" y="1195" width="100" height="100" />
 
-					<rect x="125" y="1345" width="1240" height="340" />
-					<rect x="125" y="1690" width="1240" height="210" />
-					<rect
-						x={PT_OFFSET.x + PT_BOUNDS.x}
-						y={PT_OFFSET.y + PT_BOUNDS.y}
-						width={PT_BOUNDS.width}
-						height={PT_BOUNDS.height}
-					/>
-				</g>
-			</svg>
-		)}
+                            <rect x="125" y="1345" width="1240" height="555" />
+                            <rect
+                                x={PT_OFFSET.x + PT_BOUNDS.x}
+                                y={PT_OFFSET.y + PT_BOUNDS.y}
+                                width={PT_BOUNDS.width}
+                                height={PT_BOUNDS.height}
+                            />
+                        </g>
+                    </svg>
+                )}
+            </div>
+            <small className="text-center text-muted block mt-2" style={{ display: 'block' }}>{t('dragImageHelp')}</small>
 		</div>
 	)
 }

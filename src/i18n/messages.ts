@@ -98,6 +98,7 @@ const en = {
 	frameMulticoloredLand: 'Multicolored land',
 	frameVehicle: 'Vehicle',
 	customCardPreview: 'Custom card preview',
+	showCanvasGuides: 'Show canvas guides',
 	artworkPosition: 'Artwork position',
 	horizontal: 'Horizontal',
 	vertical: 'Vertical',
@@ -131,7 +132,8 @@ const en = {
 	tintSetSymbolByRarity: 'Tint set symbol by rarity',
 	backgroundColor: 'Background color',
 	backgroundColorHelp: "Fills the area around the image when it doesn't cover the whole card",
-    headerNavigation: 'Header navigation'
+    headerNavigation: 'Header navigation',
+    dragImageHelp: 'Try dragging the image to position it'
 }
 
 const pt: Record<keyof typeof en, string> = {
@@ -232,6 +234,7 @@ const pt: Record<keyof typeof en, string> = {
 	frameMulticoloredLand: 'Terreno multicolorido',
 	frameVehicle: 'Veículo',
 	customCardPreview: 'Prévia da carta personalizada',
+	showCanvasGuides: 'Mostrar guias do canvas',
 	artworkPosition: 'Posição da arte',
 	horizontal: 'Horizontal',
 	vertical: 'Vertical',
@@ -265,7 +268,8 @@ const pt: Record<keyof typeof en, string> = {
 	tintSetSymbolByRarity: 'Colorir símbolo da coleção conforme a raridade',
 	backgroundColor: 'Cor de fundo',
 	backgroundColorHelp: 'Preenche a área ao redor da imagem quando ela não cobre toda a carta',
-    headerNavigation: 'Navegação do cabeçalho'
+    headerNavigation: 'Navegação do cabeçalho',
+    dragImageHelp: 'Experimente arrastar a imagem para posicioná-la'
 }
 
 export const messages = {

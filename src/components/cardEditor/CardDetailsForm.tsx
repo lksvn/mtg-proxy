@@ -36,7 +36,7 @@ export function CardDetailsForm({ card, onChange }: CardDetailsFormProps) {
 						update({ manaCost: event.target.value })
 					}
 				/>
-				<small>{t('manaCostHelp')}</small>
+				<small className="text-muted">{t('manaCostHelp')}</small>
 			</div>
 
 			<div className="form-group">
@@ -49,7 +49,7 @@ export function CardDetailsForm({ card, onChange }: CardDetailsFormProps) {
 						update({ typeLine: event.target.value })
 					}
 				/>
-				<small>{t('typeLineHelp')}</small>
+				<small className="text-muted">{t('typeLineHelp')}</small>
 			</div>
 
 			<div className="form-group">
@@ -160,7 +160,7 @@ export function CardDetailsForm({ card, onChange }: CardDetailsFormProps) {
                         }
                         style={{ width: '100%' }}
                     />
-                    <small>{t('backgroundColorHelp')}</small>
+                    <small className="text-muted">{t('backgroundColorHelp')}</small>
                 </div>
 			</div>
 		</fieldset>
