@@ -7,6 +7,7 @@ import type { CustomCardData, FrameVariant } from './types'
 import { inferFrameVariant } from './cardText'
 import { useI18n } from '../../i18n/context'
 import { downloadBlob } from '../../utils/downloadBlob'
+import { setPngDpi } from '../../utils/pngDpi'
 import { Icon } from '../Icon'
 
 const SAMPLE_ARTWORK_URL = `${import.meta.env.BASE_URL}img/samples/marrow-gnawer.jpg`
@@ -41,9 +42,17 @@ export function CustomCardEditor() {
 		? inferFrameVariant(card.manaCost, card.typeLine)
 		: frameSelection
 
-	function downloadPng() {
-		canvasRef.current?.toBlob((blob) => {
-			if (blob) downloadBlob(blob, 'mtg-proxy-custom-card.png')
+	function downloadPng(dpi?: number) {
+		canvasRef.current?.toBlob(async (blob) => {
+			if (!blob) return
+
+			if (!dpi) {
+				downloadBlob(blob, 'mtg-proxy-custom-card.png')
+				return
+			}
+
+			const png = setPngDpi(new Uint8Array(await blob.arrayBuffer()), dpi)
+			downloadBlob(new Blob([png.buffer as ArrayBuffer], { type: 'image/png' }), `mtg-proxy-custom-card-${dpi}dpi.png`)
 		}, 'image/png')
 	}
 
@@ -112,9 +121,20 @@ export function CustomCardEditor() {
                         onReset={() => setArtworkTransform(createDefaultArtworkTransform())}
                         />
                     }
-					<button type="button" className="btn mt-3" onClick={downloadPng}>
-						<Icon name="file-down"/> {t('downloadPng')}
-					</button>
+					<div className="split-button mt-3">
+						<button type="button" className="btn" onClick={() => downloadPng()}>
+							<Icon name="file-down"/> {t('downloadPng')}
+						</button>
+						<details>
+							<summary className="btn" aria-label={t('moreDownloadOptions')} title={t('moreDownloadOptions')}>
+								<Icon name="chevron-down"/>
+							</summary>
+							<div className="split-button-options">
+								<button type="button" className="btn" onClick={() => downloadPng(300)}>300 DPI</button>
+								<button type="button" className="btn" onClick={() => downloadPng(600)}>600 DPI</button>
+							</div>
+						</details>
+					</div>
                 </div>
             </div>
 
