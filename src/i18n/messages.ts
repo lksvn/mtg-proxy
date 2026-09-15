@@ -79,6 +79,24 @@ const en = {
 	downloadPng: 'Download PNG',
 	chooseArtwork: 'Choose artwork',
 	chooseSetSymbol: 'Choose set symbol',
+	frame: 'Frame',
+	frameAuto: 'Auto',
+	frameWhite: 'White',
+	frameBlue: 'Blue',
+	frameBlack: 'Black',
+	frameRed: 'Red',
+	frameGreen: 'Green',
+	frameMulticolored: 'Multicolored',
+	frameArtifact: 'Artifact',
+	frameColorless: 'Colorless',
+	frameLand: 'Land',
+	frameWhiteLand: 'White land',
+	frameBlueLand: 'Blue land',
+	frameBlackLand: 'Black land',
+	frameRedLand: 'Red land',
+	frameGreenLand: 'Green land',
+	frameMulticoloredLand: 'Multicolored land',
+	frameVehicle: 'Vehicle',
 	customCardPreview: 'Custom card preview',
 	artworkPosition: 'Artwork position',
 	horizontal: 'Horizontal',
@@ -112,7 +130,8 @@ const en = {
 	mythicRare: 'Mythic rare',
 	tintSetSymbolByRarity: 'Tint set symbol by rarity',
 	backgroundColor: 'Background color',
-	backgroundColorHelp: "Fills the area around the image when it doesn't cover the whole card"
+	backgroundColorHelp: "Fills the area around the image when it doesn't cover the whole card",
+    headerNavigation: 'Header navigation'
 }
 
 const pt: Record<keyof typeof en, string> = {
@@ -194,6 +213,24 @@ const pt: Record<keyof typeof en, string> = {
 	downloadPng: 'Baixar PNG',
 	chooseArtwork: 'Selecionar arte',
 	chooseSetSymbol: 'Selecionar símbolo da coleção',
+	frame: 'Moldura',
+	frameAuto: 'Automática',
+	frameWhite: 'Branca',
+	frameBlue: 'Azul',
+	frameBlack: 'Preta',
+	frameRed: 'Vermelha',
+	frameGreen: 'Verde',
+	frameMulticolored: 'Multicolorida',
+	frameArtifact: 'Artefato',
+	frameColorless: 'Incolor',
+	frameLand: 'Terreno',
+	frameWhiteLand: 'Terreno branco',
+	frameBlueLand: 'Terreno azul',
+	frameBlackLand: 'Terreno preto',
+	frameRedLand: 'Terreno vermelho',
+	frameGreenLand: 'Terreno verde',
+	frameMulticoloredLand: 'Terreno multicolorido',
+	frameVehicle: 'Veículo',
 	customCardPreview: 'Prévia da carta personalizada',
 	artworkPosition: 'Posição da arte',
 	horizontal: 'Horizontal',
@@ -227,7 +264,8 @@ const pt: Record<keyof typeof en, string> = {
 	mythicRare: 'Rara mítica',
 	tintSetSymbolByRarity: 'Colorir símbolo da coleção conforme a raridade',
 	backgroundColor: 'Cor de fundo',
-	backgroundColorHelp: 'Preenche a área ao redor da imagem quando ela não cobre toda a carta'
+	backgroundColorHelp: 'Preenche a área ao redor da imagem quando ela não cobre toda a carta',
+    headerNavigation: 'Navegação do cabeçalho'
 }
 
 export const messages = {

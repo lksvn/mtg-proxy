@@ -1,3 +1,5 @@
+import { DUAL_FRAME_VARIANTS, type FrameVariant } from './types.ts'
+
 export type CardTextRun =
 	| {
 			type: 'text'
@@ -175,5 +177,47 @@ export function parseManaCost(text: string): CardTextRun[] {
         /^\d+$/.test(value) || getSymbolFile(value)
             ? { type: 'symbol', value }
             : { type: 'text', value, italic: false },
-    )
+	)
+}
+
+export function hasHybridManaSymbol(manaCost: string) {
+	return parseManaCost(manaCost).some((run) =>
+		run.type === 'symbol' && run.value.split('/').filter((part) => /^[WUBRG]$/.test(part)).length === 2,
+	)
+}
+
+export function inferFrameVariant(manaCost: string, typeLine: string): FrameVariant {
+	const type = typeLine.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+	if (/\b(Vehicle|Veiculo)\b/i.test(type)) return 'V'
+	if (/\b(Land|Terreno)\b/i.test(type)) {
+		const landFrames: Record<string, FrameVariant> = {
+			plains: 'WL', planicie: 'WL',
+			island: 'UL', ilha: 'UL',
+			swamp: 'BL', pantano: 'BL',
+			mountain: 'RL', montanha: 'RL',
+			forest: 'GL', floresta: 'GL',
+		}
+		const basicTypes = new Set(
+			type.match(/\b(Plains|Planicie|Island|Ilha|Swamp|Pantano|Mountain|Montanha|Forest|Floresta)\b/gi)
+				?.map((type) => landFrames[type.toLowerCase()]),
+		)
+		if (basicTypes.size > 1) return 'ML'
+		return basicTypes.size === 1 ? [...basicTypes][0] : 'L'
+	}
+	if (/\b(Artifact|Artefato)\b/i.test(type)) return 'A'
+
+	const colors = new Set(
+		parseManaCost(manaCost).flatMap((run) =>
+			run.type === 'symbol'
+				? run.value.split('/').filter((part) => /^[WUBRG]$/.test(part))
+				: [],
+		),
+	)
+
+	if (colors.size === 2) {
+		return DUAL_FRAME_VARIANTS.find((pair) => colors.has(pair[0]) && colors.has(pair[1])) ?? 'M'
+	}
+	return colors.size === 0 ? 'C' : colors.size === 1
+		? [...colors][0] as FrameVariant
+		: 'M'
 }

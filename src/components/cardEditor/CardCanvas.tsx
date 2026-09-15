@@ -1,41 +1,15 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
-import type { CustomCardData } from './types'
-import { getRunSymbolFile, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
-import { drawRulesText } from './drawRulesText'
-import { drawManaCost } from './drawManaCost'
+import { DUAL_FRAME_VARIANTS, type CustomCardData, type FrameVariant } from './types'
+import { getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
+import { drawCard, HEIGHT, PT_BOUNDS, PT_OFFSET, WIDTH } from './drawCard'
+import { loadImage, loadImageSource } from './loadImage'
+import { loadDualFrame } from './composeDualFrame'
 import { useI18n } from '../../i18n/context'
 
-const WIDTH = 1500
-const HEIGHT = 2100
 const DEBUG_CANVAS = import.meta.env.DEV
-const FRAME_URL = `${import.meta.env.BASE_URL}img/frames/m15/boxTopper/m15BoxTopperFrameA.png`
+const FRAME_ROOT = `${import.meta.env.BASE_URL}img/frames/m15/boxTopper/`
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
-const PT_URL = `${import.meta.env.BASE_URL}img/frames/m15/regular/m15PTA.png`
-const PT_OFFSET = {
-	x: 0,
-	y: 45
-}
-const PT_BOUNDS = {
-	x: 1136,
-	y: 1858,
-	width: 282,
-	height: 154,
-	textX: 1295,
-	textY: 1930
-}
-const RARITY_COLORS: Record<CustomCardData['rarity'], string> = {
-    common: '#ffffff',
-    uncommon: '#c0c0c0',
-    rare: '#d4af37',
-    mythic: '#e05a2a'
-}
-const RARITY_CODES: Record<CustomCardData['rarity'], string> = {
-	common: 'C',
-	uncommon: 'U',
-	rare: 'R',
-	mythic: 'M'
-}
-
+const PT_ROOT = `${import.meta.env.BASE_URL}img/frames/m15/regular/`
 export type ArtworkTransform = {
 	x: number
 	y: number
@@ -48,64 +22,14 @@ export type ArtworkTransform = {
 type CardCanvasProps = {
 	artwork?: File | string
     setSymbol?: File | string
+	frameVariant: FrameVariant
 	transform: ArtworkTransform,
     card: CustomCardData,
     onTransformChange: (transform: ArtworkTransform) => void,
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
 
-const imageCache = new Map<string, Promise<HTMLImageElement>>()
-const fileImageCache = new WeakMap<File, Promise<HTMLImageElement>>()
-
-function loadImage(src: string) {
-	const cached = imageCache.get(src)
-	if (cached) return cached
-
-	const loading = new Promise<HTMLImageElement>((resolve, reject) => {
-		const image = new Image()
-
-		image.onload = () => resolve(image)
-		image.onerror = () => {
-			imageCache.delete(src)
-			reject(new Error(`Could not load image: ${src}`))
-		}
-
-		image.src = src
-	})
-
-	imageCache.set(src, loading)
-	return loading
-}
-
-function loadFileImage(file: File) {
-	const cached = fileImageCache.get(file)
-	if (cached) return cached
-
-	const loading = new Promise<HTMLImageElement>((resolve, reject) => {
-		const url = URL.createObjectURL(file)
-		const image = new Image()
-
-		image.onload = () => {
-			URL.revokeObjectURL(url)
-			resolve(image)
-		}
-		image.onerror = () => {
-			URL.revokeObjectURL(url)
-			fileImageCache.delete(file)
-			reject(new Error(`Could not load image: ${file.name}`))
-		}
-		image.src = url
-	})
-
-	fileImageCache.set(file, loading)
-	return loading
-}
-
-function loadImageSource(source: File | string) {
-	return typeof source === 'string' ? loadImage(source) : loadFileImage(source)
-}
-
-export function CardCanvas({ artwork, setSymbol, transform, card, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
+export function CardCanvas({ artwork, setSymbol, frameVariant, transform, card, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
 	const { t } = useI18n()
 	const internalCanvasRef = useRef<HTMLCanvasElement>(null)
 	const canvasRef = externalCanvasRef ?? internalCanvasRef
@@ -226,9 +150,16 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
                 ),
             ]
 
+			const dualPair = DUAL_FRAME_VARIANTS.find((pair) => pair === frameVariant)
+			const hybrid = Boolean(dualPair && hasHybridManaSymbol(card.manaCost))
+			const ptVariant = hybrid ? 'C' : dualPair ? 'M' : frameVariant === 'L' ? 'C' : frameVariant.endsWith('L')
+				? frameVariant[0]
+				: frameVariant
 			const [frame, ptBackground, art, symbol] = await Promise.all([
-				loadImage(FRAME_URL),
-				loadImage(PT_URL),
+				dualPair
+					? loadDualFrame(dualPair, hybrid)
+					: loadImage(`${FRAME_ROOT}${frameVariant === 'C' ? 'c.png' : `m15BoxTopperFrame${frameVariant}.png`}`),
+				loadImage(`${PT_ROOT}m15PT${ptVariant}.png`),
 				artwork ? loadImageSource(artwork) : undefined,
                 setSymbol ? loadImageSource(setSymbol) : undefined
 			])
@@ -254,141 +185,13 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
 
 			if (!canvas || !context) return
 
-            // Canvas background
-			context.fillStyle = card.backgroundColor
-			context.fillRect(0, 0, WIDTH, HEIGHT)
-
-            // Draw the artwork
-			if (art) {
-				const scale =
-					Math.max(WIDTH / art.width, HEIGHT / art.height) *
-					(1 + transform.scale)
-
-				const width = art.width * scale
-				const height = art.height * scale
-
-				context.save()
-				context.translate(
-					WIDTH / 2 + transform.x,
-					HEIGHT / 2 + transform.y,
-				)
-
-                context.rotate(transform.rotation * Math.PI / 180)
-
-				context.scale(
-					transform.flipX ? -1 : 1,
-					transform.flipY ? -1 : 1,
-				)
-				context.drawImage(art, -width / 2, -height / 2, width, height)
-				context.restore()
-			}
-
-            // Draw the card frame
-			context.drawImage(frame, 0, 0)
-
-            // Draw the set symbol
-            // Tint the icon with the rarity colours
-            if (symbol) {
-                const boxSize = 100
-                const scale = Math.min(
-                    boxSize / symbol.width,
-                    boxSize / symbol.height,
-                )
-
-                const width = symbol.width * scale
-                const height = symbol.height * scale
-
-                if (card.tintSetSymbol) {
-                    const tinted = document.createElement('canvas')
-                    const tintedContext = tinted.getContext('2d')
-
-                    tinted.width = boxSize
-                    tinted.height = boxSize
-
-                    if (tintedContext) {
-                        tintedContext.drawImage(
-                            symbol,
-                            (boxSize - width) / 2,
-                            (boxSize - height) / 2,
-                            width,
-                            height,
-                        )
-
-                        tintedContext.globalCompositeOperation = 'source-in'
-                        tintedContext.fillStyle = RARITY_COLORS[card.rarity]
-                        tintedContext.fillRect(0, 0, boxSize, boxSize)
-
-                        context.drawImage(tinted, 1285, 1195)
-                    }
-                } else {
-                    context.drawImage(
-                        symbol,
-                        1335 - width / 2,
-                        1245 - height / 2,
-                        width,
-                        height,
-                    )
-                }
-            }
-
-            // Card inputs
-            context.fontKerning = 'normal'
-            context.textRendering = 'optimizeLegibility'
-            context.textBaseline = 'middle'
-            // Name
-            context.fillStyle = '#111'
-            context.font = '70px belerenb, serif'
-            context.textAlign = 'left'
-            context.fillText(card.name, 115, 160, 1000)
-            // Mana cost
-            context.textAlign = 'right'
-            drawManaCost(context, manaRuns, manaSymbols, 1390, 160)
-            // Type
-            context.fillStyle = '#fff'
-            context.font = '54px belerenb, serif'
-            context.textAlign = 'left'
-            context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), 115, 1245, 1120)
-            // Rules and flavor text
-            drawRulesText(context, rulesRuns, manaSymbols, 125, 1345, 1240, 340)
-            drawRulesText(context, flavorRuns, manaSymbols, 125, 1690, 1240, 210)
-            // Power and Toughness
-            // Draw the frame
-            if (card.powerToughness) {
-                context.drawImage(
-                    ptBackground,
-                    PT_OFFSET.x + PT_BOUNDS.x,
-                    PT_OFFSET.y + PT_BOUNDS.y,
-                    PT_BOUNDS.width,
-                    PT_BOUNDS.height
-                )
-            }
-            // text
-            if (card.powerToughness) {
-                context.fillStyle = '#111'
-                context.font = '70px belerenbsc, serif'
-                context.textAlign = 'center'
-                context.fillText(
-                    card.powerToughness,
-                    PT_OFFSET.x + PT_BOUNDS.textX,
-                    PT_OFFSET.y + PT_BOUNDS.textY,
-                    PT_BOUNDS.width
-                )
-            }
-            // Rarity and Artist
-            context.fillStyle = '#fff'
-            context.font = '38px mplantin, serif'
-            context.textAlign = 'left'
-            context.fillText(
-                `${RARITY_CODES[card.rarity]}${card.number ? ' • ' + card.number : ''}${card.artist ? ' • ' + card.artist : ''}`,
-                115,
-                1985,
-                1050
-            )
-            //
-            context.fillStyle = '#fff'
-            context.font = '34px mplantin, serif'
-            context.textAlign = 'left'
-            context.fillText('NOT FOR SALE • Made on MTG Proxy', 115, 2025, 1050)
+			drawCard(
+				context,
+				card,
+				transform,
+				{ frame, ptBackground, art, symbol, manaSymbols },
+				{ manaRuns, rulesRuns, flavorRuns },
+			)
 
 		}
 
@@ -397,7 +200,7 @@ export function CardCanvas({ artwork, setSymbol, transform, card, onTransformCha
 		return () => {
 			cancelled = true
 		}
-	}, [artwork, setSymbol, transform, card, canvasRef])
+	}, [artwork, setSymbol, frameVariant, transform, card, canvasRef])
 
 	return (
 		<div style={{ position: 'relative', lineHeight: 0 }}>

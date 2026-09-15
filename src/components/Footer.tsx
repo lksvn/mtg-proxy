@@ -1,18 +1,11 @@
-import { Icon } from "./Icon";
 import { useI18n } from '../i18n/context';
+import { NavigationBar } from "./navigationBar";
 
 export function Footer() {
 	const { t } = useI18n();
 	return (
 		<footer>
-			<nav aria-label={t('footerNavigation')}>
-				<ul>
-					<li><a href="https://lksvn.com.br"><Icon name="arrow-right" className="flip-h"/> {t('home')}</a></li>
-					<li><a href="#">{t('deckLists')} (v0.7.1)</a></li>
-					<li><a href="#editor">{t('customCard')} (v0.1.1)</a></li>
-					<li><a href="https://github.com/lksvn/mtg-proxy" target="_blank" rel="noopener noreferrer"><Icon name="github" /> {t('githubRepository')}</a></li>
-				</ul>
-			</nav>
+            <NavigationBar label={t('footerNavigation')} />
 			<p>
 				{t('cardDataProvidedBy')}{' '}
 				<a href="https://scryfall.com/">Scryfall</a>.

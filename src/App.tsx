@@ -12,6 +12,7 @@ import { Footer } from './components/Footer'
 import { Icon } from './components/Icon'
 import { CustomCardEditor } from './components/cardEditor/CustomCardEditor'
 import { useI18n } from './i18n/context'
+import { NavigationBar } from './components/navigationBar'
 
 const HISTORY_KEY = 'mtg-proxy-card-list-history'
 
@@ -178,6 +179,7 @@ function App() {
 
 	return (
 		<>
+        <NavigationBar label={t('headerNavigation')} className="mb-3"/>
 		<header>
 			<h1 className="mb-2"><Icon name="cards-fan"/> MTG Proxy</h1>
 			<p>{t('tagline')}</p>

@@ -3,7 +3,8 @@ import { CardCanvas, type ArtworkTransform } from './CardCanvas'
 import { FileInput } from '../FileInput'
 import { ArtworkControls } from './ArtworkControls'
 import { CardDetailsForm } from './CardDetailsForm'
-import type { CustomCardData } from './types'
+import type { CustomCardData, FrameVariant } from './types'
+import { inferFrameVariant } from './cardText'
 import { useI18n } from '../../i18n/context'
 import { downloadBlob } from '../../utils/downloadBlob'
 import { Icon } from '../Icon'
@@ -21,6 +22,7 @@ export function CustomCardEditor() {
 	const [artwork, setArtwork] = useState<File | string | undefined>(SAMPLE_ARTWORK_URL)
     const [artworkTransform, setArtworkTransform] = useState(createDefaultArtworkTransform)
     const [setSymbol, setSetSymbol] = useState<File | string | undefined>(SAMPLE_SET_SYMBOL_URL)
+	const [frameSelection, setFrameSelection] = useState<FrameVariant | 'auto'>('auto')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -35,6 +37,9 @@ export function CustomCardEditor() {
         tintSetSymbol: false,
         backgroundColor: '#000000'
     })
+	const frameVariant = frameSelection === 'auto'
+		? inferFrameVariant(card.manaCost, card.typeLine)
+		: frameSelection
 
 	function downloadPng() {
 		canvasRef.current?.toBlob((blob) => {
@@ -64,6 +69,30 @@ export function CustomCardEditor() {
                         onSelect={setSetSymbol}
                         onClear={() => setSetSymbol(undefined)}
                     />
+					<label htmlFor="card-frame">{t('frame')}</label>
+					<select
+						id="card-frame"
+						value={frameSelection}
+						onChange={(event) => setFrameSelection(event.target.value as FrameVariant | 'auto')}
+					>
+						<option value="auto">{t('frameAuto')}</option>
+						<option value="W">{t('frameWhite')}</option>
+						<option value="U">{t('frameBlue')}</option>
+						<option value="B">{t('frameBlack')}</option>
+						<option value="R">{t('frameRed')}</option>
+						<option value="G">{t('frameGreen')}</option>
+						<option value="M">{t('frameMulticolored')}</option>
+						<option value="A">{t('frameArtifact')}</option>
+						<option value="C">{t('frameColorless')}</option>
+						<option value="L">{t('frameLand')}</option>
+						<option value="WL">{t('frameWhiteLand')}</option>
+						<option value="UL">{t('frameBlueLand')}</option>
+						<option value="BL">{t('frameBlackLand')}</option>
+						<option value="RL">{t('frameRedLand')}</option>
+						<option value="GL">{t('frameGreenLand')}</option>
+						<option value="ML">{t('frameMulticoloredLand')}</option>
+						<option value="V">{t('frameVehicle')}</option>
+					</select>
                     <CardDetailsForm card={card} onChange={setCard} />
                 </div>
 
@@ -75,6 +104,7 @@ export function CustomCardEditor() {
                         onTransformChange={setArtworkTransform}
                         card={card}
                         setSymbol={setSymbol}
+						frameVariant={frameVariant}
                     />
                     {artwork && <ArtworkControls
                         transform={artworkTransform}

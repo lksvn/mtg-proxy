@@ -5,10 +5,56 @@ import test from 'node:test'
 import {
 	getLoyaltySymbolFile,
 	getSymbolFile,
+	hasHybridManaSymbol,
+	inferFrameVariant,
 	parseCardText,
 	parseManaCost,
 	parseRulesText,
 } from '../src/components/cardEditor/cardText.ts'
+
+test('identifies two-color hybrid mana symbols', () => {
+	assert.equal(hasHybridManaSymbol('{W/U}'), true)
+	assert.equal(hasHybridManaSymbol('2/W'), false)
+	assert.equal(hasHybridManaSymbol('{B/P}'), false)
+	assert.equal(hasHybridManaSymbol('{W}{U}'), false)
+})
+
+test('infers the frame from mana colors and card type', () => {
+	assert.equal(inferFrameVariant('3BB', 'Legendary Creature — Rat Rogue'), 'B')
+	assert.equal(inferFrameVariant('{W/U}', 'Creature'), 'WU')
+	for (const pair of ['WU', 'WB', 'UB', 'UR', 'BR', 'BG', 'RG', 'RW', 'GW', 'GU']) {
+		assert.equal(inferFrameVariant(pair, 'Creature'), pair)
+		assert.equal(inferFrameVariant([...pair].reverse().join(''), 'Creature'), pair)
+	}
+	assert.equal(inferFrameVariant('{2}{B/P}', 'Creature'), 'B')
+	assert.equal(inferFrameVariant('{W}{U}{B}', 'Creature'), 'M')
+	assert.equal(inferFrameVariant('3', 'Artifact Creature'), 'A')
+	assert.equal(inferFrameVariant('3W', 'Artifact — Equipment'), 'A')
+	assert.equal(inferFrameVariant('3', 'Artifact — Vehicle'), 'V')
+	assert.equal(inferFrameVariant('', 'Land'), 'L')
+	assert.equal(inferFrameVariant('', 'Artifact Land'), 'L')
+	assert.equal(inferFrameVariant('', 'Basic Land — Plains'), 'WL')
+	assert.equal(inferFrameVariant('', 'Basic Land - Island'), 'UL')
+	assert.equal(inferFrameVariant('', 'Basic Land — Swamp'), 'BL')
+	assert.equal(inferFrameVariant('', 'Basic Land — Mountain'), 'RL')
+	assert.equal(inferFrameVariant('', 'Basic Land — Forest'), 'GL')
+	assert.equal(inferFrameVariant('', 'Land — Island Forest'), 'ML')
+	assert.equal(inferFrameVariant('', 'Land — Forest Forest'), 'GL')
+	assert.equal(inferFrameVariant('3W', 'Artefato — Equipamento'), 'A')
+	assert.equal(inferFrameVariant('3', 'Artefato — Veículo'), 'V')
+	assert.equal(inferFrameVariant('', 'Terreno'), 'L')
+	assert.equal(inferFrameVariant('', 'Terreno Artefato — Planície'), 'WL')
+	assert.equal(inferFrameVariant('', 'Terreno Básico — Ilha'), 'UL')
+	assert.equal(inferFrameVariant('', 'Terreno Básico — Pântano'), 'BL')
+	assert.equal(inferFrameVariant('', 'Terreno Básico — Montanha'), 'RL')
+	assert.equal(inferFrameVariant('', 'Terreno Básico — Floresta'), 'GL')
+	assert.equal(inferFrameVariant('', 'Terreno — Ilha Floresta'), 'ML')
+	assert.equal(inferFrameVariant('', 'Terreno — Forest Floresta'), 'GL')
+	assert.equal(inferFrameVariant('', 'Terreno Basico — Planicie'), 'WL')
+	assert.equal(inferFrameVariant('', 'Terreno — Pa\u0302ntano'), 'BL')
+	assert.equal(inferFrameVariant('3', 'Artefato — Veiculo'), 'V')
+	assert.equal(inferFrameVariant('3', 'Creature'), 'C')
+})
 
 test('maps card symbols to bundled asset names', () => {
 	assert.equal(getSymbolFile('W'), 'w.svg')
