@@ -1,0 +1,5 @@
+# M15 frame assets
+
+These frame images, power/toughness backgrounds, and masks were copied from the local Card Conjurer clone at `D:\www\cardconjurer`, revision `d3c6706692898d596ec6a5be0be44f63062c9e12` ([repository](https://github.com/joshbirnholz/cardconjurer)). The Box Topper frame definitions are in `js/frames/packM15BoxTopper.js`; the masks and two-color layering behavior are described in `js/autoFrame.js` and `js/creator-23.js`.
+
+The clone does not include an explicit license file for these assets. Its `legal/index.html` states that Magic-related images and other material are trademarks and copyrights of Wizards of the Coast, and that the service is intended for personal, non-commercial use. This source note is attribution, not a license grant.
