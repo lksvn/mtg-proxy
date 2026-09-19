@@ -28,6 +28,7 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	const regular = FRAME_FAMILIES['m15-regular']
 	assert.equal(resolveFrameVariant(regular, 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(regular, 'V'), 'V')
+	assert.equal(resolveFrameVariant(FRAME_FAMILIES['m15-extended'], 'WU'), 'WU')
 
 	const limited: FrameFamily = {
 		...regular,

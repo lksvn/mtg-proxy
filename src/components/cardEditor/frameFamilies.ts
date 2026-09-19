@@ -1,6 +1,6 @@
 import { DUAL_FRAME_VARIANTS, type FrameVariant } from './types.ts'
 
-export type FrameFamilyId = 'box-topper' | 'm15-regular'
+export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended'
 
 type TextStyle = {
 	font: string
@@ -207,6 +207,66 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 			type: { x: 125, y: 1242, maxWidth: 1244, font: '54px belerenb, serif', color: '#111' },
 			rules: { x: 129, y: 1328, width: 1242, height: 604, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
 			symbol: { centerX: 1335, centerY: 1241, boxSize: 85 },
+			pt: { x: 1136, y: 1858, width: 282, height: 154, textX: 1292, textY: 1933, font: '70px belerenbsc, serif', color: '#111' },
+			footer: {
+				x: 115,
+				maxWidth: 1050,
+				metadataY: 1985,
+				metadata: { font: '38px mplantin, serif', color: '#fff' },
+				disclaimerY: 2025,
+				disclaimer: { font: '34px mplantin, serif', color: '#fff' },
+			},
+		},
+		fonts: commonFonts,
+	},
+	'm15-extended': {
+		id: 'm15-extended',
+		frames: {
+			W: 'img/frames/m15/new/extended/w.png',
+			U: 'img/frames/m15/new/extended/u.png',
+			B: 'img/frames/m15/new/extended/b.png',
+			R: 'img/frames/m15/new/extended/r.png',
+			G: 'img/frames/m15/new/extended/g.png',
+			M: 'img/frames/m15/new/extended/m.png',
+			A: 'img/frames/m15/new/extended/a.png',
+			C: 'img/frames/m15/new/extended/c.png',
+			L: 'img/frames/m15/new/extended/l.png',
+			WL: 'img/frames/m15/new/extended/lw.png',
+			UL: 'img/frames/m15/new/extended/lu.png',
+			BL: 'img/frames/m15/new/extended/lb.png',
+			RL: 'img/frames/m15/new/extended/lr.png',
+			GL: 'img/frames/m15/new/extended/lg.png',
+			ML: 'img/frames/m15/new/extended/lm.png',
+			V: 'img/frames/m15/new/extended/v.png',
+		},
+		pt: {
+			W: 'img/frames/m15/regular/m15PTW.png',
+			U: 'img/frames/m15/regular/m15PTU.png',
+			B: 'img/frames/m15/regular/m15PTB.png',
+			R: 'img/frames/m15/regular/m15PTR.png',
+			G: 'img/frames/m15/regular/m15PTG.png',
+			M: 'img/frames/m15/regular/m15PTM.png',
+			A: 'img/frames/m15/regular/m15PTA.png',
+			C: 'img/frames/m15/regular/m15PTC.png',
+			V: 'img/frames/m15/regular/m15PTV.png',
+		},
+		fallbacks: commonFallbacks,
+		dual: {
+			neutralVariant: 'L',
+			rulesMask: 'img/frames/m15/new/rules.png',
+			pinlineMask: 'img/frames/m15/new/extended/pinline.png',
+			titleMask: 'img/frames/m15/new/title.png',
+			typeMask: 'img/frames/m15/new/type.png',
+			frameMask: 'img/frames/m15/new/frame.png',
+			rightHalfMask: 'img/frames/m15/regular/maskRightHalf.png',
+		},
+		layout: {
+			artwork: { dragTop: 176, dragBottom: 1318 },
+			title: { x: 125, y: 165, maxWidth: 1244, font: '70px belerenb, serif', color: '#111' },
+			mana: { right: 1391, centerY: 167, symbolSize: 64, gap: 4, font: '48px belerenb, serif', color: '#111' },
+			type: { x: 125, y: 1253, maxWidth: 1244, font: '54px belerenb, serif', color: '#fff' },
+			rules: { x: 129, y: 1328, width: 1242, height: 604, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
+			symbol: { centerX: 1335, centerY: 1249, boxSize: 85 },
 			pt: { x: 1136, y: 1858, width: 282, height: 154, textX: 1292, textY: 1933, font: '70px belerenbsc, serif', color: '#111' },
 			footer: {
 				x: 115,
