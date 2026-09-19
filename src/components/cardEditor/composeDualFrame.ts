@@ -1,18 +1,20 @@
 import { HEIGHT, WIDTH } from './drawCard'
+import type { FrameFamily } from './frameFamilies'
 import { loadImage } from './loadImage'
-import type { DualFrameVariant } from './types'
-
-const FRAME_ROOT = `${import.meta.env.BASE_URL}img/frames/m15/boxTopper/`
-const MASK_ROOT = `${import.meta.env.BASE_URL}img/frames/m15/regular/`
+import type { DualFrameVariant, FrameVariant } from './types'
 
 const frameCache = new Map<string, Promise<HTMLCanvasElement>>()
 
-export function loadDualFrame(pair: DualFrameVariant, hybrid: boolean) {
-	const key = `${pair}:${hybrid}`
+function url(path: string) {
+	return `${import.meta.env.BASE_URL}${path}`
+}
+
+export function loadDualFrame(family: FrameFamily, pair: DualFrameVariant, hybrid: boolean) {
+	const key = `${family.id}:${pair}:${hybrid}`
 	const cached = frameCache.get(key)
 	if (cached) return cached
 
-	const loading = composeDualFrame(pair, hybrid).catch((error) => {
+	const loading = composeDualFrame(family, pair, hybrid).catch((error) => {
 		frameCache.delete(key)
 		throw error
 	})
@@ -20,18 +22,21 @@ export function loadDualFrame(pair: DualFrameVariant, hybrid: boolean) {
 	return loading
 }
 
-async function composeDualFrame(pair: DualFrameVariant, hybrid: boolean) {
+async function composeDualFrame(family: FrameFamily, pair: DualFrameVariant, hybrid: boolean) {
+	const dual = family.dual
+	if (!dual) throw new Error(`Frame family ${family.id} does not support dual frames`)
+
 	const [multicolored, left, right, neutral, rulesMask, pinlineMask, titleMask, typeMask, frameMask, rightHalf] = await Promise.all([
-		loadImage(`${FRAME_ROOT}m15BoxTopperFrameM.png`),
-		loadImage(`${FRAME_ROOT}m15BoxTopperFrame${pair[0]}.png`),
-		loadImage(`${FRAME_ROOT}m15BoxTopperFrame${pair[1]}.png`),
-		loadImage(`${FRAME_ROOT}m15BoxTopperFrameL.png`),
-		loadImage(`${MASK_ROOT}m15MaskRules.png`),
-		loadImage(`${MASK_ROOT}m15MaskPinlineSuper.png`),
-		loadImage(`${MASK_ROOT}m15MaskTitle.png`),
-		loadImage(`${MASK_ROOT}m15MaskType.png`),
-		loadImage(`${MASK_ROOT}m15MaskFrame.png`),
-		loadImage(`${MASK_ROOT}maskRightHalf.png`),
+		loadImage(url(family.frames.M!)),
+		loadImage(url(family.frames[pair[0] as FrameVariant]!)),
+		loadImage(url(family.frames[pair[1] as FrameVariant]!)),
+		loadImage(url(family.frames[dual.neutralVariant]!)),
+		loadImage(url(dual.rulesMask)),
+		loadImage(url(dual.pinlineMask)),
+		loadImage(url(dual.titleMask)),
+		loadImage(url(dual.typeMask)),
+		loadImage(url(dual.frameMask)),
+		loadImage(url(dual.rightHalfMask)),
 	])
 
 	const frame = document.createElement('canvas')
@@ -49,14 +54,14 @@ async function composeDualFrame(pair: DualFrameVariant, hybrid: boolean) {
 	function drawMasked(image: HTMLImageElement, mask: HTMLImageElement, rightSide = false) {
 		maskContext.clearRect(0, 0, WIDTH, HEIGHT)
 		maskContext.globalCompositeOperation = 'source-over'
-		maskContext.drawImage(image, 0, 0)
+		maskContext.drawImage(image, 0, 0, WIDTH, HEIGHT)
 		maskContext.globalCompositeOperation = 'destination-in'
 		maskContext.drawImage(mask, 0, 0, WIDTH, HEIGHT)
 		if (rightSide) maskContext.drawImage(rightHalf, 0, 0, WIDTH, HEIGHT)
 		output.drawImage(layer, 0, 0)
 	}
 
-	output.drawImage(hybrid ? left : multicolored, 0, 0)
+	output.drawImage(hybrid ? left : multicolored, 0, 0, WIDTH, HEIGHT)
 	if (hybrid) {
 		drawMasked(right, frameMask, true)
 		drawMasked(neutral, titleMask)

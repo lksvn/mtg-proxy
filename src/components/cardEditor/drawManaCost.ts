@@ -6,14 +6,14 @@ export function drawManaCost(
 	runs: CardTextRun[],
 	symbols: ReadonlyMap<string, HTMLImageElement>,
 	right: number,
-	centerY: number
+	centerY: number,
+	style: { symbolSize: number; gap: number; font: string; color: string },
 ) {
-	const symbolSize = 64
-	const gap = 4
+	const { symbolSize, gap } = style
 
 	context.save()
-	context.fillStyle = '#111'
-	context.font = '48px belerenb, serif'
+	context.fillStyle = style.color
+	context.font = style.font
 	context.textAlign = 'left'
 	context.textBaseline = 'middle'
 

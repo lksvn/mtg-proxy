@@ -31,8 +31,18 @@ function atomize(runs: CardTextRun[]): Atom[] {
 	})
 }
 
-function font(fontSize: number, italic: boolean) {
-	return `${fontSize}px ${italic ? 'mplantini' : 'mplantin'}, serif`
+type RulesTextStyle = {
+	fontFamily: string
+	italicFontFamily: string
+	color: string
+	strokeColor: string
+	strokeWidth: number
+	maxFontSize: number
+	minFontSize: number
+}
+
+function font(fontSize: number, italic: boolean, style: RulesTextStyle) {
+	return `${fontSize}px ${italic ? style.italicFontFamily : style.fontFamily}, serif`
 }
 
 function layout(
@@ -40,6 +50,7 @@ function layout(
 	atoms: Atom[],
 	maxWidth: number,
 	fontSize: number,
+	style: RulesTextStyle,
 ) {
 	const lines: Line[] = [{ atoms: [], gapBefore: 0 }]
 	let width = 0
@@ -58,8 +69,8 @@ function layout(
 
 		context.font =
 			atom.type === 'text'
-				? font(fontSize, atom.italic)
-				: font(fontSize, false)
+				? font(fontSize, atom.italic, style)
+				: font(fontSize, false, style)
 
 		const atomWidth =
 			atom.type === 'symbol'
@@ -92,14 +103,15 @@ export function drawRulesText(
 	y: number,
 	maxWidth: number,
 	maxHeight: number,
+	style: RulesTextStyle,
 ) {
-	let fontSize = 64
+	let fontSize = style.maxFontSize
 	let lines: Line[] = []
 	let lineHeight = 0
 
-	for (; fontSize >= 32; fontSize--) {
+	for (; fontSize >= style.minFontSize; fontSize--) {
 		lineHeight = Math.round(fontSize * 1.1)
-		lines = layout(context, atomize(runs), maxWidth, fontSize)
+		lines = layout(context, atomize(runs), maxWidth, fontSize, style)
 
 		const height = lines.length * lineHeight +
 			lines.reduce((total, line) => total + line.gapBefore, 0)
@@ -107,13 +119,16 @@ export function drawRulesText(
 		if (height <= maxHeight) break
 	}
 
-	fontSize = Math.max(fontSize, 32)
+	fontSize = Math.max(fontSize, style.minFontSize)
 	lineHeight = Math.round(fontSize * 1.1)
 
 	context.save()
-	context.fillStyle = '#111'
-	context.strokeStyle = '#111'
-	context.lineWidth = 0.75
+	context.fillStyle = style.color
+	context.strokeStyle = style.strokeColor
+	context.lineWidth = style.strokeWidth
+	context.shadowColor = 'transparent'
+	context.shadowOffsetX = 0
+	context.shadowOffsetY = 0
 	context.textAlign = 'left'
 	context.textBaseline = 'top'
 
@@ -137,8 +152,8 @@ export function drawRulesText(
 
                 cursorX += symbolSize
 			} else if (atom.type === 'text') {
-				context.font = font(fontSize, atom.italic)
-				context.strokeText(atom.value, cursorX, lineY)
+				context.font = font(fontSize, atom.italic, style)
+				if (style.strokeWidth) context.strokeText(atom.value, cursorX, lineY)
 				context.fillText(atom.value, cursorX, lineY)
 				cursorX += context.measureText(atom.value).width
 			}

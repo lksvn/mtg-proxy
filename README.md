@@ -4,6 +4,8 @@ Create printable Magic: The Gathering playtest cards from a deck list, directly 
 
 [Open MTG Proxy](https://lksvn.com.br/mtg-proxy/)
 
+[Open the Custom Card Editor](https://lksvn.com.br/mtg-proxy/#editor)
+
 ![MTG Proxy interface](docs/mtg-proxy.gif)
 
 ## Features
@@ -22,8 +24,20 @@ Create printable Magic: The Gathering playtest cards from a deck list, directly 
 - Retry failed card, printing, and preview-image requests independently
 - Switch between English (US) and Portuguese (Brazil) interfaces
 - Use light and dark color schemes
+- Design a custom card in a native 1500 × 2100 Canvas preview
+- Choose Box Topper, M15 Regular, or M15 Extended Art frames with automatic or manual colors
+- Position artwork by dragging, wheel zoom, or transform controls
+- Render card fonts, mana and loyalty symbols, reminder text, set symbols, and P/T
+- Download custom cards as PNG at the default resolution or with 300/600 DPI metadata
 
 The application is client-only. Deck lists remain in the browser except for card lookups sent to Scryfall.
+Custom-card artwork and editor state remain in the current browser tab.
+
+## Custom Card Editor
+
+Open `#editor` or use the navigation link. The editor currently supports ordinary single-faced cards. Specialized layouts such as planeswalkers, Sagas, Battles, split cards, and double-faced cards are not yet supported.
+
+Frame assets are sourced from Card Conjurer and documented in [`public/img/frames/m15/SOURCE.md`](public/img/frames/m15/SOURCE.md).
 
 ## Card list format
 
