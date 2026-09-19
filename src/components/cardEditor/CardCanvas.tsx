@@ -36,6 +36,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
 	const internalCanvasRef = useRef<HTMLCanvasElement>(null)
 	const canvasRef = externalCanvasRef ?? internalCanvasRef
     const [dragging, setDragging] = useState(false)
+	const [artworkHovered, setArtworkHovered] = useState(false)
 	const [showDebug, setShowDebug] = useState(false)
     const dragRef = useRef<{
         pointerId: number
@@ -52,6 +53,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
 		const y = (event.clientY - bounds.top) * (HEIGHT / bounds.height)
 		if (y < family.layout.artwork.dragTop || y > family.layout.artwork.dragBottom) return
 
+		setArtworkHovered(true)
         setDragging(true)
         event.currentTarget.setPointerCapture(event.pointerId)
 
@@ -65,11 +67,13 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
     }
 
     function dragArtwork(event: ReactPointerEvent<HTMLCanvasElement>) {
+		const bounds = event.currentTarget.getBoundingClientRect()
+		const y = (event.clientY - bounds.top) * (HEIGHT / bounds.height)
+		setArtworkHovered(y >= family.layout.artwork.dragTop && y <= family.layout.artwork.dragBottom)
+
         const drag = dragRef.current
 
         if (!drag || drag.pointerId !== event.pointerId) return
-
-        const bounds = event.currentTarget.getBoundingClientRect()
 
         onTransformChange({
             ...transform,
@@ -101,9 +105,13 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
+		const target = canvas
 
         function zoomArtwork(event: WheelEvent) {
             if (!artwork) return
+			const bounds = target.getBoundingClientRect()
+			const y = (event.clientY - bounds.top) * (HEIGHT / bounds.height)
+			if (y < family.layout.artwork.dragTop || y > family.layout.artwork.dragBottom) return
 
             event.preventDefault()
 
@@ -121,14 +129,14 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
             })
         }
 
-        canvas.addEventListener('wheel', zoomArtwork, {
+        target.addEventListener('wheel', zoomArtwork, {
             passive: false,
         })
 
         return () => {
-            canvas.removeEventListener('wheel', zoomArtwork)
+            target.removeEventListener('wheel', zoomArtwork)
         }
-    }, [artwork, canvasRef, onTransformChange])
+    }, [artwork, canvasRef, family, onTransformChange])
 
 	useEffect(() => {
 		let cancelled = false
@@ -228,6 +236,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
                     onPointerMove={dragArtwork}
                     onPointerUp={stopDragging}
                     onPointerCancel={stopDragging}
+					onPointerLeave={() => !dragging && setArtworkHovered(false)}
                     style={{
                         width: '100%',
                         height: 'auto',
@@ -235,7 +244,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
                         border: '1px solid var(--border)',
                         borderRadius: 'var(--card-image-radius)',
                         boxShadow: '10px 5px 15px 0px var(--shadow)',
-                        cursor: artwork ? dragging ? 'grabbing' : 'grab' : 'default',
+                        cursor: dragging ? 'grabbing' : artwork && artworkHovered ? 'grab' : 'default',
                         userSelect: 'none'
                     }}
                 />
