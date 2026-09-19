@@ -1,20 +1,12 @@
 import type { ArtworkTransform } from './CardCanvas'
 import type { CardTextRun } from './cardText'
+import type { FrameLayout } from './frameFamilies'
 import type { CustomCardData } from './types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
 
 export const WIDTH = 1500
 export const HEIGHT = 2100
-export const PT_OFFSET = { x: 0, y: 45 }
-export const PT_BOUNDS = {
-	x: 1136,
-	y: 1858,
-	width: 282,
-	height: 154,
-	textX: 1295,
-	textY: 1930,
-}
 
 const RARITY_COLORS: Record<CustomCardData['rarity'], string> = {
 	common: '#ffffff',
@@ -49,6 +41,7 @@ export function drawCard(
 	transform: ArtworkTransform,
 	{ frame, ptBackground, art, symbol, manaSymbols }: CardImages,
 	{ manaRuns, rulesRuns, flavorRuns }: CardRuns,
+	layout: FrameLayout,
 ) {
 	context.fillStyle = card.backgroundColor
 	context.fillRect(0, 0, WIDTH, HEIGHT)
@@ -66,12 +59,10 @@ export function drawCard(
 		context.restore()
 	}
 
-	context.drawImage(frame, 0, 0)
+	context.drawImage(frame, 0, 0, WIDTH, HEIGHT)
 
 	if (symbol) {
-		const boxSize = 85
-		const centerX = 1335
-		const centerY = 1248
+		const { boxSize, centerX, centerY } = layout.symbol
 		const scale = Math.min(boxSize / symbol.width, boxSize / symbol.height)
 		const width = symbol.width * scale
 		const height = symbol.height * scale
@@ -98,49 +89,56 @@ export function drawCard(
 	context.fontKerning = 'normal'
 	context.textRendering = 'optimizeLegibility'
 	context.textBaseline = 'middle'
-	context.fillStyle = '#111'
-	context.font = '70px belerenb, serif'
+	applyTextStyle(context, layout.title)
 	context.textAlign = 'left'
-	context.fillText(card.name, 115, 160, 1000)
+	context.fillText(card.name, layout.title.x, layout.title.y, layout.title.maxWidth)
 	context.textAlign = 'right'
-	drawManaCost(context, manaRuns, manaSymbols, 1390, 160)
-	context.fillStyle = '#fff'
-	context.font = '54px belerenb, serif'
+	drawManaCost(context, manaRuns, manaSymbols, layout.mana.right, layout.mana.centerY, layout.mana)
+	applyTextStyle(context, layout.type)
 	context.textAlign = 'left'
-	context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), 115, 1245, 1120)
+	context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), layout.type.x, layout.type.y, layout.type.maxWidth)
 	const textRuns: CardTextRun[] = rulesRuns.length && flavorRuns.length
 		? [...rulesRuns, { type: 'text', value: '\n\n', italic: false }, ...flavorRuns]
 		: [...rulesRuns, ...flavorRuns]
-	drawRulesText(context, textRuns, manaSymbols, 125, 1345, 1240, 555)
+	drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, layout.rules)
 
 	if (card.powerToughness) {
 		context.drawImage(
 			ptBackground,
-			PT_OFFSET.x + PT_BOUNDS.x,
-			PT_OFFSET.y + PT_BOUNDS.y,
-			PT_BOUNDS.width,
-			PT_BOUNDS.height,
+			layout.pt.x,
+			layout.pt.y,
+			layout.pt.width,
+			layout.pt.height,
 		)
-		context.fillStyle = '#111'
-		context.font = '70px belerenbsc, serif'
+		applyTextStyle(context, layout.pt)
 		context.textAlign = 'center'
 		context.fillText(
 			card.powerToughness,
-			PT_OFFSET.x + PT_BOUNDS.textX,
-			PT_OFFSET.y + PT_BOUNDS.textY,
-			PT_BOUNDS.width,
+			layout.pt.textX,
+			layout.pt.textY,
+			layout.pt.width,
 		)
 	}
 
-	context.fillStyle = '#fff'
-	context.font = '38px mplantin, serif'
+	applyTextStyle(context, layout.footer.metadata)
 	context.textAlign = 'left'
 	context.fillText(
 		`${RARITY_CODES[card.rarity]}${card.number ? ' • ' + card.number : ''}${card.artist ? ' • ' + card.artist : ''}`,
-		115,
-		1985,
-		1050,
+		layout.footer.x,
+		layout.footer.metadataY,
+		layout.footer.maxWidth,
 	)
-	context.font = '34px mplantin, serif'
-	context.fillText('NOT FOR SALE • Made on MTG Proxy', 115, 2025, 1050)
+	applyTextStyle(context, layout.footer.disclaimer)
+	context.fillText('NOT FOR SALE • Made on MTG Proxy', layout.footer.x, layout.footer.disclaimerY, layout.footer.maxWidth)
+}
+
+function applyTextStyle(
+	context: CanvasRenderingContext2D,
+	style: { font: string; color: string; shadowColor?: string; shadowOffsetX?: number; shadowOffsetY?: number },
+) {
+	context.font = style.font
+	context.fillStyle = style.color
+	context.shadowColor = style.shadowColor ?? 'transparent'
+	context.shadowOffsetX = style.shadowOffsetX ?? 0
+	context.shadowOffsetY = style.shadowOffsetY ?? 0
 }

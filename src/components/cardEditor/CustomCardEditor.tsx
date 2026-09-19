@@ -9,6 +9,7 @@ import { useI18n } from '../../i18n/context'
 import { downloadBlob } from '../../utils/downloadBlob'
 import { setPngDpi } from '../../utils/pngDpi'
 import { Icon } from '../Icon'
+import type { FrameFamilyId } from './frameFamilies'
 
 const SAMPLE_ARTWORK_URL = `${import.meta.env.BASE_URL}img/samples/marrow-gnawer.jpg`
 const SAMPLE_SET_SYMBOL_URL = `${import.meta.env.BASE_URL}img/setSymbols/chk.svg`
@@ -24,6 +25,7 @@ export function CustomCardEditor() {
     const [artworkTransform, setArtworkTransform] = useState(createDefaultArtworkTransform)
     const [setSymbol, setSetSymbol] = useState<File | string | undefined>(SAMPLE_SET_SYMBOL_URL)
 	const [frameSelection, setFrameSelection] = useState<FrameVariant | 'auto'>('auto')
+	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -78,6 +80,15 @@ export function CustomCardEditor() {
                         onSelect={setSetSymbol}
                         onClear={() => setSetSymbol(undefined)}
                     />
+					<label htmlFor="card-frame-style">{t('frameStyle')}</label>
+					<select
+						id="card-frame-style"
+						value={frameFamily}
+						onChange={(event) => setFrameFamily(event.target.value as FrameFamilyId)}
+					>
+						<option value="box-topper">{t('frameStyleBoxTopper')}</option>
+						<option value="m15-regular">{t('frameStyleM15Regular')}</option>
+					</select>
 					<label htmlFor="card-frame">{t('frame')}</label>
 					<select
 						id="card-frame"
@@ -112,7 +123,8 @@ export function CustomCardEditor() {
                         transform={artworkTransform}
                         onTransformChange={setArtworkTransform}
                         card={card}
-                        setSymbol={setSymbol}
+						setSymbol={setSymbol}
+						frameFamily={frameFamily}
 						frameVariant={frameVariant}
                     />
                     {artwork && <ArtworkControls

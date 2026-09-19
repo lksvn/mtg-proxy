@@ -1,17 +1,15 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
 import { DUAL_FRAME_VARIANTS, type CustomCardData, type FrameVariant } from './types'
 import { getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
-import { drawCard, HEIGHT, PT_BOUNDS, PT_OFFSET, WIDTH } from './drawCard'
+import { drawCard, HEIGHT, WIDTH } from './drawCard'
 import { loadImage, loadImageSource } from './loadImage'
 import { loadDualFrame } from './composeDualFrame'
 import { useI18n } from '../../i18n/context'
+import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameFamilyId } from './frameFamilies'
 
 const DEBUG_CANVAS = import.meta.env.DEV
-const FRAME_ROOT = `${import.meta.env.BASE_URL}img/frames/m15/boxTopper/`
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
-const PT_ROOT = `${import.meta.env.BASE_URL}img/frames/m15/regular/`
-const ARTWORK_DRAG_TOP = 210
-const ARTWORK_DRAG_BOTTOM = 1200
+const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`
 export type ArtworkTransform = {
 	x: number
 	y: number
@@ -23,7 +21,8 @@ export type ArtworkTransform = {
 
 type CardCanvasProps = {
 	artwork?: File | string
-    setSymbol?: File | string
+	setSymbol?: File | string
+	frameFamily: FrameFamilyId
 	frameVariant: FrameVariant
 	transform: ArtworkTransform,
     card: CustomCardData,
@@ -31,8 +30,9 @@ type CardCanvasProps = {
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
 
-export function CardCanvas({ artwork, setSymbol, frameVariant, transform, card, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
+export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, transform, card, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
 	const { t } = useI18n()
+	const family = getFrameFamily(frameFamily)
 	const internalCanvasRef = useRef<HTMLCanvasElement>(null)
 	const canvasRef = externalCanvasRef ?? internalCanvasRef
     const [dragging, setDragging] = useState(false)
@@ -50,7 +50,7 @@ export function CardCanvas({ artwork, setSymbol, frameVariant, transform, card, 
 
 		const bounds = event.currentTarget.getBoundingClientRect()
 		const y = (event.clientY - bounds.top) * (HEIGHT / bounds.height)
-		if (y < ARTWORK_DRAG_TOP || y > ARTWORK_DRAG_BOTTOM) return
+		if (y < family.layout.artwork.dragTop || y > family.layout.artwork.dragBottom) return
 
         setDragging(true)
         event.currentTarget.setPointerCapture(event.pointerId)
@@ -157,16 +157,17 @@ export function CardCanvas({ artwork, setSymbol, frameVariant, transform, card, 
                 ),
             ]
 
-			const dualPair = DUAL_FRAME_VARIANTS.find((pair) => pair === frameVariant)
+			const resolvedVariant = resolveFrameVariant(family, frameVariant)
+			const dualPair = DUAL_FRAME_VARIANTS.find((pair) => pair === resolvedVariant)
 			const hybrid = Boolean(dualPair && hasHybridManaSymbol(card.manaCost))
-			const ptVariant = hybrid ? 'C' : dualPair ? 'M' : frameVariant === 'L' ? 'C' : frameVariant.endsWith('L')
-				? frameVariant[0]
-				: frameVariant
+			const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
+			const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
+			if (!ptPath) throw new Error(`Frame family ${family.id} has no power/toughness asset`)
 			const [frame, ptBackground, art, symbol] = await Promise.all([
 				dualPair
-					? loadDualFrame(dualPair, hybrid)
-					: loadImage(`${FRAME_ROOT}${frameVariant === 'C' ? 'c.png' : `m15BoxTopperFrame${frameVariant}.png`}`),
-				loadImage(`${PT_ROOT}m15PT${ptVariant}.png`),
+					? loadDualFrame(family, dualPair, hybrid)
+					: loadImage(assetUrl(family.frames[resolvedVariant]!)),
+				loadImage(assetUrl(ptPath)),
 				artwork ? loadImageSource(artwork) : undefined,
                 setSymbol ? loadImageSource(setSymbol) : undefined
 			])
@@ -178,12 +179,7 @@ export function CardCanvas({ artwork, setSymbol, frameVariant, transform, card, 
                     ] as const),
                 ),
 			)
-			await Promise.all([
-                document.fonts.load('64px belerenb'),
-                document.fonts.load('64px belerenbsc'),
-                document.fonts.load('74px mplantin'),
-                document.fonts.load('74px mplantini'),
-            ])
+			await Promise.all(family.fonts.map((font) => document.fonts.load(font)))
 
 			if (cancelled) return
 
@@ -198,6 +194,7 @@ export function CardCanvas({ artwork, setSymbol, frameVariant, transform, card, 
 				transform,
 				{ frame, ptBackground, art, symbol, manaSymbols },
 				{ manaRuns, rulesRuns, flavorRuns },
+				family.layout,
 			)
 
 		}
@@ -207,7 +204,7 @@ export function CardCanvas({ artwork, setSymbol, frameVariant, transform, card, 
 		return () => {
 			cancelled = true
 		}
-	}, [artwork, setSymbol, frameVariant, transform, card, canvasRef])
+	}, [artwork, setSymbol, frameVariant, transform, card, canvasRef, family])
 
 	return (
 		<div>
@@ -249,18 +246,15 @@ export function CardCanvas({ artwork, setSymbol, frameVariant, transform, card, 
                         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
                     >
                         <g fill="#000" stroke="#ff00ff" fillOpacity="0.25" strokeWidth="4" strokeDasharray="12 8">
-                            <rect x="115" y="110" width="1000" height="100" />
-                            <rect x="1050" y="110" width="340" height="100" />
-                            <rect x="115" y="1200" width="1155" height="100" />
-
-                            <rect x="1285" y="1195" width="100" height="100" />
-
-                            <rect x="125" y="1345" width="1240" height="555" />
-                            <rect
-                                x={PT_OFFSET.x + PT_BOUNDS.x}
-                                y={PT_OFFSET.y + PT_BOUNDS.y}
-                                width={PT_BOUNDS.width}
-                                height={PT_BOUNDS.height}
+							<rect x={family.layout.title.x} y={family.layout.title.y - 50} width={family.layout.title.maxWidth} height="100" />
+							<rect x={family.layout.type.x} y={family.layout.type.y - 50} width={family.layout.type.maxWidth} height="100" />
+							<rect x={family.layout.symbol.centerX - family.layout.symbol.boxSize / 2} y={family.layout.symbol.centerY - family.layout.symbol.boxSize / 2} width={family.layout.symbol.boxSize} height={family.layout.symbol.boxSize} />
+							<rect x={family.layout.rules.x} y={family.layout.rules.y} width={family.layout.rules.width} height={family.layout.rules.height} />
+							<rect
+								x={family.layout.pt.x}
+								y={family.layout.pt.y}
+								width={family.layout.pt.width}
+								height={family.layout.pt.height}
                             />
                         </g>
                     </svg>
