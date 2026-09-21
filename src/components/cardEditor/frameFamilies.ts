@@ -30,6 +30,7 @@ export type FrameLayout = {
 		y: number
 		width: number
 		height: number
+		verticalAlign?: 'top' | 'middle'
 		fontFamily: string
 		italicFontFamily: string
 		color: string

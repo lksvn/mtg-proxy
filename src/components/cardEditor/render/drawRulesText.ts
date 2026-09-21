@@ -1,5 +1,5 @@
 import type { CardTextRun } from '../cardText'
-import { drawManaSymbol } from './drawGenericMana'
+import { drawManaSymbol } from './drawGenericMana.ts'
 
 type Atom =
 	| { type: 'text'; value: string; italic: boolean }
@@ -32,6 +32,7 @@ function atomize(runs: CardTextRun[]): Atom[] {
 }
 
 type RulesTextStyle = {
+	verticalAlign?: 'top' | 'middle'
 	fontFamily: string
 	italicFontFamily: string
 	color: string
@@ -121,6 +122,8 @@ export function drawRulesText(
 
 	fontSize = Math.max(fontSize, style.minFontSize)
 	lineHeight = Math.round(fontSize * 1.1)
+	const blockHeight = lines.length * lineHeight +
+		lines.reduce((total, line) => total + line.gapBefore, 0)
 
 	context.save()
 	context.fillStyle = style.color
@@ -132,7 +135,7 @@ export function drawRulesText(
 	context.textAlign = 'left'
 	context.textBaseline = 'top'
 
-	let lineY = y
+	let lineY = y + (style.verticalAlign === 'middle' ? Math.max(0, (maxHeight - blockHeight) / 2) : 0)
 
 	lines.forEach((line) => {
 		let cursorX = x
