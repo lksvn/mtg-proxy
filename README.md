@@ -30,6 +30,8 @@ After loading a list, you can search for a different printing before downloading
 
 [Open the editor](https://lksvn.com.br/mtg-proxy/#editor) to make an ordinary single-faced card. Add artwork, choose a frame and color, then enter the card text. Drag or zoom the artwork on the preview and download a 1500 × 2100 PNG, with optional 300 or 600 DPI metadata. Specialized card layouts are not supported yet.
 
+![Custom Card Editor](docs/custom-card-editor.png)
+
 ## Development
 
 Requires Node.js and npm.
