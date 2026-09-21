@@ -7,6 +7,7 @@ import test from 'node:test'
 import {
 	FRAME_FAMILIES,
 	resolveFrameVariant,
+	resolvePtTextColor,
 	type FrameFamily,
 } from '../src/components/cardEditor/frameFamilies.ts'
 
@@ -56,7 +57,8 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(universesBeyond, 'C'), 'A')
 	assert.equal(resolveFrameVariant(universesBeyond, 'WL'), 'WL')
 	assert.equal(resolveFrameVariant(universesBeyond, 'ML'), 'ML')
-	assert.equal(universesBeyond.layout.pt.colorByVariant?.V, '#fff')
+	assert.equal(resolvePtTextColor('V', '#111'), '#fff')
+	assert.equal(resolvePtTextColor('A', '#111'), '#111')
 
 	const limited: FrameFamily = {
 		...regular,

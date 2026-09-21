@@ -1,6 +1,7 @@
 import type { ArtworkTransform } from './CardCanvas'
 import type { CardTextRun } from './cardText'
 import type { FrameLayout } from './frameFamilies'
+import { resolvePtTextColor } from './frameFamilies'
 import type { CustomCardData, FrameVariant } from './types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
@@ -112,7 +113,7 @@ export function drawCard(
 			layout.pt.height,
 		)
 		applyTextStyle(context, layout.pt)
-		context.fillStyle = layout.pt.colorByVariant?.[variant] ?? layout.pt.color
+		context.fillStyle = resolvePtTextColor(variant, layout.pt.color)
 		context.textAlign = 'center'
 		context.fillText(
 			card.powerToughness,

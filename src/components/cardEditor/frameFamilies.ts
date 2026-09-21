@@ -39,7 +39,6 @@ export type FrameLayout = {
 	}
 	symbol: { centerX: number; centerY: number; boxSize: number }
 	pt: TextStyle & {
-		colorByVariant?: Partial<Record<FrameVariant, string>>
 		x: number
 		y: number
 		width: number
@@ -95,4 +94,8 @@ export function resolvePtVariant(variant: FrameVariant, hybrid: boolean): FrameV
 	if (variant === 'L') return 'C'
 	if (variant.endsWith('L')) return variant[0] as FrameVariant
 	return variant
+}
+
+export function resolvePtTextColor(variant: FrameVariant, defaultColor: string) {
+	return variant === 'V' ? '#fff' : defaultColor
 }
