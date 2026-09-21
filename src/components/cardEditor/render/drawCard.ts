@@ -24,7 +24,7 @@ const RARITY_CODES: Record<CustomCardData['rarity'], string> = {
 
 type CardImages = {
 	frame: CanvasImageSource
-	ptBackground: HTMLImageElement
+	ptBackground?: HTMLImageElement
 	art?: HTMLImageElement
 	symbol?: HTMLImageElement
 	manaSymbols: Map<string, HTMLImageElement>
@@ -105,7 +105,7 @@ export function drawCard(
 	drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, layout.rules)
 
 	if (card.powerToughness) {
-		context.drawImage(
+		if (ptBackground) context.drawImage(
 			ptBackground,
 			layout.pt.x,
 			layout.pt.y,

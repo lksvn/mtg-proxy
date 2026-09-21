@@ -25,6 +25,7 @@ test('frame family assets exist', () => {
 	}
 	assert.equal(existsSync(resolve('src/assets/fonts/matrix-b.ttf')), true)
 	assert.equal(existsSync(resolve('src/assets/fonts/matrix-bsc.ttf')), true)
+	assert.equal(existsSync(resolve('src/assets/fonts/goudy-medieval.ttf')), true)
 })
 
 test('frame variants stay in the selected family and use declared fallbacks', () => {
@@ -68,6 +69,12 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(eighth, 'V'), 'A')
 	assert.equal(eighth.pt.C, 'img/frames/8th/pt/l.png')
 	assert.equal(eighth.layout.footer.colorByVariant?.B, '#fff')
+	const seventh = FRAME_FAMILIES['seventh-edition']
+	assert.equal(resolveFrameVariant(seventh, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(seventh, 'WL'), 'WL')
+	assert.equal(resolveFrameVariant(seventh, 'ML'), 'L')
+	assert.equal(resolveFrameVariant(seventh, 'V'), 'A')
+	assert.deepEqual(seventh.pt, {})
 
 	const limited: FrameFamily = {
 		...regular,

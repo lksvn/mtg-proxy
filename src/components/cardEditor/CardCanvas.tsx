@@ -170,12 +170,11 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
 			const hybrid = Boolean(dualPair && hasHybridManaSymbol(card.manaCost))
 			const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 			const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
-			if (!ptPath) throw new Error(`Frame family ${family.id} has no power/toughness asset`)
 			const [frame, ptBackground, art, symbol] = await Promise.all([
 				dualPair
 					? loadDualFrame(family, dualPair, hybrid)
 					: loadImage(assetUrl(family.frames[resolvedVariant]!)),
-				loadImage(assetUrl(ptPath)),
+				ptPath ? loadImage(assetUrl(ptPath)) : undefined,
 				artwork ? loadImageSource(artwork) : undefined,
                 setSymbol ? loadImageSource(setSymbol) : undefined
 			])
