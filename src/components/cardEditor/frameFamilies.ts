@@ -49,6 +49,7 @@ export type FrameLayout = {
 	}
 	footer: {
 		colorByVariant?: Partial<Record<FrameVariant, string>>
+		align?: CanvasTextAlign
 		x: number
 		maxWidth: number
 		metadataY: number

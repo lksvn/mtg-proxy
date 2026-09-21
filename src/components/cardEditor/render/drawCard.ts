@@ -127,7 +127,7 @@ export function drawCard(
 
 	applyTextStyle(context, layout.footer.metadata)
 	context.fillStyle = layout.footer.colorByVariant?.[variant] ?? layout.footer.metadata.color
-	context.textAlign = 'left'
+	context.textAlign = layout.footer.align ?? 'left'
 	context.fillText(
 		`${RARITY_CODES[card.rarity]}${card.number ? ' • ' + card.number : ''}${card.artist ? ' • ' + card.artist : ''}`,
 		layout.footer.x,

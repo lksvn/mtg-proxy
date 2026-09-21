@@ -78,6 +78,9 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(seventh, 'V'), 'A')
 	assert.deepEqual(seventh.pt, {})
 	assert.equal(seventh.borderMask, 'img/frames/seventh/border.svg')
+	assert.equal(seventh.layout.footer.align, 'center')
+	assert.equal(seventh.layout.footer.x, 750)
+	assert.equal(eighth.layout.footer.align, undefined)
 
 	const limited: FrameFamily = {
 		...regular,
