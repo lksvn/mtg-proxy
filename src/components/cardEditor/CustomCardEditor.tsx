@@ -19,6 +19,7 @@ const FRAME_STYLE_GROUPS = [
 		{ id: 'box-topper', label: 'frameStyleBoxTopper' },
 		{ id: 'm15-regular', label: 'frameStyleM15Regular' },
 		{ id: 'm15-extended', label: 'frameStyleM15Extended' },
+		{ id: 'snow', label: 'frameStyleSnow' },
 	] },
 	{ label: 'frameStyleGroupShowcase', options: [
 		{ id: 'borderless', label: 'frameStyleBorderless' },

@@ -38,6 +38,12 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(promo, 'V'), 'A')
 	assert.equal(resolveFrameVariant(promo, 'C'), 'A')
 	assert.equal(resolveFrameVariant(promo, 'UL'), 'L')
+	const snow = FRAME_FAMILIES.snow
+	assert.equal(resolveFrameVariant(snow, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(snow, 'WL'), 'WL')
+	assert.equal(resolveFrameVariant(snow, 'ML'), 'ML')
+	assert.equal(resolveFrameVariant(snow, 'V'), 'A')
+	assert.equal(resolveFrameVariant(snow, 'C'), 'A')
 
 	const limited: FrameFamily = {
 		...regular,

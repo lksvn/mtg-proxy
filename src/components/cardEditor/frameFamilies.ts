@@ -3,7 +3,7 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'borderless' | 'promo-regular'
+export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'borderless' | 'promo-regular'
 
 type TextStyle = {
 	font: string
