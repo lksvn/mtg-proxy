@@ -79,7 +79,8 @@ export function CustomCardEditor() {
 		<section>
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '1rem'}}>
                 <div>
-                    <div className="form-group gap-2">
+                    <h5>1. {t('cardImageSection')}</h5>
+                    <div className="form-group gap-2 mb-5">
                         <FileInput
                             id="custom-card-artwork"
                             accept="image/*"
@@ -99,6 +100,7 @@ export function CustomCardEditor() {
                             onClear={() => setSetSymbol(undefined)}
                         />
                     </div>
+                    <h5>2. {t('cardEditionSection')}</h5>
                     <div style={{display:'flex'}} className="gap-3">
                         <div className="form-group gap-2">
                             <label htmlFor="card-frame-style-search">{t('searchFrameStyles')}</label>
@@ -134,9 +136,10 @@ export function CustomCardEditor() {
                             </select>
                         </div>
                     </div>
-                    <div className="form-group gap-2">
+                    <div className="form-group gap-2 mb-5">
                         <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
                     </div>
+                    <h5>3. {t('cardInformationSection')}</h5>
                     <CardDetailsForm card={card} onChange={setCard} />
                 </div>
 
