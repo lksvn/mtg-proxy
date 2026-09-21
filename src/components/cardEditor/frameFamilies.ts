@@ -1,6 +1,6 @@
 import { DUAL_FRAME_VARIANTS, type FrameVariant } from './types.ts'
 
-export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended'
+export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'borderless'
 
 type TextStyle = {
 	font: string
@@ -268,6 +268,58 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 			rules: { x: 129, y: 1328, width: 1242, height: 604, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
 			symbol: { centerX: 1335, centerY: 1249, boxSize: 85 },
 			pt: { x: 1136, y: 1858, width: 282, height: 154, textX: 1292, textY: 1933, font: '70px belerenbsc, serif', color: '#111' },
+			footer: {
+				x: 115,
+				maxWidth: 1050,
+				metadataY: 1985,
+				metadata: { font: '38px mplantin, serif', color: '#fff' },
+				disclaimerY: 2025,
+				disclaimer: { font: '34px mplantin, serif', color: '#fff' },
+			},
+		},
+		fonts: commonFonts,
+	},
+	borderless: {
+		id: 'borderless',
+		frames: {
+			W: 'img/frames/m15/borderless/m15GenericShowcaseFrameW.png',
+			U: 'img/frames/m15/borderless/m15GenericShowcaseFrameU.png',
+			B: 'img/frames/m15/borderless/m15GenericShowcaseFrameB.png',
+			R: 'img/frames/m15/borderless/m15GenericShowcaseFrameR.png',
+			G: 'img/frames/m15/borderless/m15GenericShowcaseFrameG.png',
+			M: 'img/frames/m15/borderless/m15GenericShowcaseFrameM.png',
+			A: 'img/frames/m15/borderless/m15GenericShowcaseFrameA.png',
+			C: 'img/frames/m15/borderless/m15GenericShowcaseFrameC.png',
+			L: 'img/frames/m15/borderless/m15GenericShowcaseFrameL.png',
+		},
+		pt: {
+			W: 'img/frames/m15/borderless/pt/w.png',
+			U: 'img/frames/m15/borderless/pt/u.png',
+			B: 'img/frames/m15/borderless/pt/b.png',
+			R: 'img/frames/m15/borderless/pt/r.png',
+			G: 'img/frames/m15/borderless/pt/g.png',
+			M: 'img/frames/m15/borderless/pt/m.png',
+			A: 'img/frames/m15/borderless/pt/a.png',
+			C: 'img/frames/m15/borderless/pt/l.png',
+		},
+		fallbacks: commonFallbacks,
+		dual: {
+			neutralVariant: 'L',
+			rulesMask: 'img/frames/m15/regular/m15MaskRules.png',
+			pinlineMask: 'img/frames/m15/borderless/m15GenericShowcaseMaskPinline.png',
+			titleMask: 'img/frames/m15/regular/m15MaskTitle.png',
+			typeMask: 'img/frames/m15/regular/m15MaskType.png',
+			frameMask: 'img/frames/m15/regular/m15MaskFrame.png',
+			rightHalfMask: 'img/frames/m15/regular/maskRightHalf.png',
+		},
+		layout: {
+			artwork: { dragTop: 210, dragBottom: 1160 },
+			title: { x: 128, y: 165, maxWidth: 1244, font: '70px belerenb, serif', color: '#fff' },
+			mana: { right: 1391, centerY: 167, symbolSize: 64, gap: 4, font: '48px belerenb, serif', color: '#fff' },
+			type: { x: 128, y: 1245, maxWidth: 1244, font: '54px belerenb, serif', color: '#fff' },
+			rules: { x: 129, y: 1324, width: 1242, height: 604, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#fff', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
+			symbol: { centerX: 1335, centerY: 1241, boxSize: 85 },
+			pt: { x: 1146, y: 1861, width: 274, height: 140, textX: 1283, textY: 1932, font: '70px belerenbsc, serif', color: '#fff' },
 			footer: {
 				x: 115,
 				maxWidth: 1050,

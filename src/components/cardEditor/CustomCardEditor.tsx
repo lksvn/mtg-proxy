@@ -89,6 +89,7 @@ export function CustomCardEditor() {
 						<option value="box-topper">{t('frameStyleBoxTopper')}</option>
 						<option value="m15-regular">{t('frameStyleM15Regular')}</option>
 						<option value="m15-extended">{t('frameStyleM15Extended')}</option>
+						<option value="borderless">{t('frameStyleBorderless')}</option>
 					</select>
 					<label htmlFor="card-frame">{t('frame')}</label>
 					<select
