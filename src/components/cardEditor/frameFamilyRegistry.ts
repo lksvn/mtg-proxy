@@ -366,6 +366,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	},
 	'eighth-edition': {
 		id: 'eighth-edition',
+		borderMask: 'img/frames/8th/border.png',
 		frames: {
 			W: 'img/frames/8th/w.png',
 			U: 'img/frames/8th/u.png',
@@ -425,6 +426,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	},
 	'seventh-edition': {
 		id: 'seventh-edition',
+		borderMask: 'img/frames/seventh/border.svg',
 		frames: {
 			W: 'img/frames/seventh/w.png',
 			U: 'img/frames/seventh/u.png',

@@ -24,6 +24,7 @@ const RARITY_CODES: Record<CustomCardData['rarity'], string> = {
 
 type CardImages = {
 	frame: CanvasImageSource
+	border?: CanvasImageSource
 	ptBackground?: HTMLImageElement
 	art?: HTMLImageElement
 	symbol?: HTMLImageElement
@@ -40,7 +41,7 @@ export function drawCard(
 	context: CanvasRenderingContext2D,
 	card: CustomCardData,
 	transform: ArtworkTransform,
-	{ frame, ptBackground, art, symbol, manaSymbols }: CardImages,
+	{ frame, border, ptBackground, art, symbol, manaSymbols }: CardImages,
 	{ manaRuns, rulesRuns, flavorRuns }: CardRuns,
 	layout: FrameLayout,
 	variant: FrameVariant,
@@ -62,6 +63,7 @@ export function drawCard(
 	}
 
 	context.drawImage(frame, 0, 0, WIDTH, HEIGHT)
+	if (border) context.drawImage(border, 0, 0, WIDTH, HEIGHT)
 
 	if (symbol) {
 		const { boxSize, centerX, centerY } = layout.symbol

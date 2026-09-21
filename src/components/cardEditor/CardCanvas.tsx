@@ -4,8 +4,9 @@ import { getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, p
 import { drawCard, HEIGHT, WIDTH } from './render/drawCard'
 import { loadImage, loadImageSource } from './render/loadImage'
 import { loadDualFrame } from './render/composeDualFrame'
+import { loadBorderOverlay } from './render/composeBorder'
 import { useI18n } from '../../i18n/context'
-import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameFamilyId } from './frameFamilies'
+import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
 
 const DEBUG_CANVAS = import.meta.env.DEV
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
@@ -23,6 +24,7 @@ type CardCanvasProps = {
 	artwork?: File | string
 	setSymbol?: File | string
 	frameFamily: FrameFamilyId
+	borderStyle: FrameBorderStyle
 	frameVariant: FrameVariant
 	transform: ArtworkTransform,
     card: CustomCardData,
@@ -30,7 +32,7 @@ type CardCanvasProps = {
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
 
-export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, transform, card, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
+export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, borderStyle, transform, card, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
 	const { t } = useI18n()
 	const family = getFrameFamily(frameFamily)
 	const internalCanvasRef = useRef<HTMLCanvasElement>(null)
@@ -170,10 +172,11 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
 			const hybrid = Boolean(dualPair && hasHybridManaSymbol(card.manaCost))
 			const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 			const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
-			const [frame, ptBackground, art, symbol] = await Promise.all([
+			const [frame, border, ptBackground, art, symbol] = await Promise.all([
 				dualPair
 					? loadDualFrame(family, dualPair, hybrid)
 					: loadImage(assetUrl(family.frames[resolvedVariant]!)),
+				family.borderMask && borderStyle !== 'black' ? loadBorderOverlay(family.borderMask, borderStyle) : undefined,
 				ptPath ? loadImage(assetUrl(ptPath)) : undefined,
 				artwork ? loadImageSource(artwork) : undefined,
                 setSymbol ? loadImageSource(setSymbol) : undefined
@@ -199,7 +202,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
 				context,
 				card,
 				transform,
-				{ frame, ptBackground, art, symbol, manaSymbols },
+				{ frame, border, ptBackground, art, symbol, manaSymbols },
 				{ manaRuns, rulesRuns, flavorRuns },
 				family.layout,
 				resolvedVariant,
@@ -212,7 +215,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
 		return () => {
 			cancelled = true
 		}
-	}, [artwork, setSymbol, frameVariant, transform, card, canvasRef, family])
+	}, [artwork, setSymbol, frameVariant, borderStyle, transform, card, canvasRef, family])
 
 	return (
 		<div style={{position: 'sticky', top: 0, zIndex: 2}}>

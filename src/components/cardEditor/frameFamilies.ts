@@ -4,6 +4,7 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition'
+export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
 type TextStyle = {
 	font: string
@@ -59,6 +60,7 @@ export type FrameLayout = {
 
 export type FrameFamily = {
 	id: FrameFamilyId
+	borderMask?: string
 	frames: Partial<Record<FrameVariant, string>>
 	pt: Partial<Record<FrameVariant, string>>
 	fallbacks: Partial<Record<FrameVariant, FrameVariant>>

@@ -16,6 +16,7 @@ test('frame family assets exist', () => {
 		const paths = [
 			...Object.values(family.frames),
 			...Object.values(family.pt),
+			...(family.borderMask ? [family.borderMask] : []),
 			...Object.values(family.dual ?? {}).filter((value) => typeof value === 'string' && value.includes('/')),
 		]
 
@@ -69,12 +70,14 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(eighth, 'V'), 'A')
 	assert.equal(eighth.pt.C, 'img/frames/8th/pt/l.png')
 	assert.equal(eighth.layout.footer.colorByVariant?.B, '#fff')
+	assert.equal(eighth.borderMask, 'img/frames/8th/border.png')
 	const seventh = FRAME_FAMILIES['seventh-edition']
 	assert.equal(resolveFrameVariant(seventh, 'WU'), 'M')
 	assert.equal(resolveFrameVariant(seventh, 'WL'), 'WL')
 	assert.equal(resolveFrameVariant(seventh, 'ML'), 'L')
 	assert.equal(resolveFrameVariant(seventh, 'V'), 'A')
 	assert.deepEqual(seventh.pt, {})
+	assert.equal(seventh.borderMask, 'img/frames/seventh/border.svg')
 
 	const limited: FrameFamily = {
 		...regular,
