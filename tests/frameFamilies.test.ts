@@ -56,6 +56,7 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(universesBeyond, 'C'), 'A')
 	assert.equal(resolveFrameVariant(universesBeyond, 'WL'), 'WL')
 	assert.equal(resolveFrameVariant(universesBeyond, 'ML'), 'ML')
+	assert.equal(universesBeyond.layout.pt.colorByVariant?.V, '#fff')
 
 	const limited: FrameFamily = {
 		...regular,

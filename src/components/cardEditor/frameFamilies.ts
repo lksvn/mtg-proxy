@@ -39,6 +39,7 @@ export type FrameLayout = {
 	}
 	symbol: { centerX: number; centerY: number; boxSize: number }
 	pt: TextStyle & {
+		colorByVariant?: Partial<Record<FrameVariant, string>>
 		x: number
 		y: number
 		width: number

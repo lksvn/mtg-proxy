@@ -203,6 +203,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
 				{ frame, ptBackground, art, symbol, manaSymbols },
 				{ manaRuns, rulesRuns, flavorRuns },
 				family.layout,
+				resolvedVariant,
 			)
 
 		}

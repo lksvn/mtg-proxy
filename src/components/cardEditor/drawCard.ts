@@ -1,7 +1,7 @@
 import type { ArtworkTransform } from './CardCanvas'
 import type { CardTextRun } from './cardText'
 import type { FrameLayout } from './frameFamilies'
-import type { CustomCardData } from './types'
+import type { CustomCardData, FrameVariant } from './types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
 
@@ -42,6 +42,7 @@ export function drawCard(
 	{ frame, ptBackground, art, symbol, manaSymbols }: CardImages,
 	{ manaRuns, rulesRuns, flavorRuns }: CardRuns,
 	layout: FrameLayout,
+	variant: FrameVariant,
 ) {
 	context.fillStyle = card.backgroundColor
 	context.fillRect(0, 0, WIDTH, HEIGHT)
@@ -111,6 +112,7 @@ export function drawCard(
 			layout.pt.height,
 		)
 		applyTextStyle(context, layout.pt)
+		context.fillStyle = layout.pt.colorByVariant?.[variant] ?? layout.pt.color
 		context.textAlign = 'center'
 		context.fillText(
 			card.powerToughness,

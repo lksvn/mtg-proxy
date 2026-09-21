@@ -366,7 +366,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 			type: { x: 125, y: 1242, maxWidth: 1244, font: '54px belerenb, serif', color: '#111' },
 			rules: { x: 129, y: 1328, width: 1242, height: 604, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
 			symbol: { centerX: 1335, centerY: 1241, boxSize: 85 },
-			pt: { x: 1136, y: 1858, width: 282, height: 154, textX: 1292, textY: 1933, font: '70px belerenbsc, serif', color: '#111' },
+			pt: { x: 1136, y: 1858, width: 282, height: 154, textX: 1292, textY: 1933, font: '70px belerenbsc, serif', color: '#111', colorByVariant: { V: '#fff' } },
 			footer: {
 				x: 115,
 				maxWidth: 1050,
