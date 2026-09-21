@@ -33,6 +33,11 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(borderless, 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(borderless, 'V'), 'A')
 	assert.equal(resolveFrameVariant(borderless, 'UL'), 'L')
+	const promo = FRAME_FAMILIES['promo-regular']
+	assert.equal(resolveFrameVariant(promo, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(promo, 'V'), 'A')
+	assert.equal(resolveFrameVariant(promo, 'C'), 'A')
+	assert.equal(resolveFrameVariant(promo, 'UL'), 'L')
 
 	const limited: FrameFamily = {
 		...regular,

@@ -22,6 +22,9 @@ const FRAME_STYLE_GROUPS = [
 	{ label: 'frameStyleGroupShowcase', options: [
 		{ id: 'borderless', label: 'frameStyleBorderless' },
 	] },
+	{ label: 'frameStyleGroupPromo', options: [
+		{ id: 'promo-regular', label: 'frameStylePromoRegular' },
+	] },
 ] as const
 
 function createDefaultArtworkTransform(): ArtworkTransform {

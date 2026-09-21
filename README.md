@@ -25,7 +25,7 @@ Create printable Magic: The Gathering playtest cards from a deck list, directly 
 - Switch between English (US) and Portuguese (Brazil) interfaces
 - Use light and dark color schemes
 - Design a custom card in a native 1500 × 2100 Canvas preview
-- Choose Box Topper, M15 Regular, M15 Extended Art, or Borderless frames with automatic or manual colors
+- Choose Box Topper, M15 Regular, M15 Extended Art, Borderless, or Promo Regular frames with automatic or manual colors
 - Position artwork by dragging, wheel zoom, or transform controls
 - Render card fonts, mana and loyalty symbols, reminder text, set symbols, and P/T
 - Download custom cards as PNG at the default resolution or with 300/600 DPI metadata
@@ -37,7 +37,7 @@ Custom-card artwork and editor state remain in the current browser tab.
 
 Open `#editor` or use the navigation link. The editor currently supports ordinary single-faced cards. Specialized layouts such as planeswalkers, Sagas, Battles, split cards, and double-faced cards are not yet supported.
 
-Frame assets are sourced from Card Conjurer and documented in [`public/img/frames/m15/SOURCE.md`](public/img/frames/m15/SOURCE.md).
+Frame assets are sourced from Card Conjurer and documented alongside each family under [`public/img/frames`](public/img/frames).
 
 ## Card list format
 
