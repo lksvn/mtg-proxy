@@ -29,6 +29,9 @@ const FRAME_STYLE_GROUPS = [
 	{ label: 'frameStyleGroupPromo', options: [
 		{ id: 'promo-regular', label: 'frameStylePromoRegular' },
 	] },
+	{ label: 'frameStyleGroupHistorical', options: [
+		{ id: 'eighth-edition', label: 'frameStyleEighthEdition' },
+	] },
 ] as const
 
 function createDefaultArtworkTransform(): ArtworkTransform {

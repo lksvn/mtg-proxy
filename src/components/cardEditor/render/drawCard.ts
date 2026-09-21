@@ -124,6 +124,7 @@ export function drawCard(
 	}
 
 	applyTextStyle(context, layout.footer.metadata)
+	context.fillStyle = layout.footer.colorByVariant?.[variant] ?? layout.footer.metadata.color
 	context.textAlign = 'left'
 	context.fillText(
 		`${RARITY_CODES[card.rarity]}${card.number ? ' • ' + card.number : ''}${card.artist ? ' • ' + card.artist : ''}`,
@@ -132,6 +133,7 @@ export function drawCard(
 		layout.footer.maxWidth,
 	)
 	applyTextStyle(context, layout.footer.disclaimer)
+	context.fillStyle = layout.footer.colorByVariant?.[variant] ?? layout.footer.disclaimer.color
 	context.fillText('NOT FOR SALE • Made on MTG Proxy', layout.footer.x, layout.footer.disclaimerY, layout.footer.maxWidth)
 }
 

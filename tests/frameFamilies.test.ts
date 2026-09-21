@@ -23,6 +23,8 @@ test('frame family assets exist', () => {
 			assert.equal(existsSync(resolve('public', path)), true, `${family.id}: ${path}`)
 		}
 	}
+	assert.equal(existsSync(resolve('src/assets/fonts/matrix-b.ttf')), true)
+	assert.equal(existsSync(resolve('src/assets/fonts/matrix-bsc.ttf')), true)
 })
 
 test('frame variants stay in the selected family and use declared fallbacks', () => {
@@ -59,6 +61,13 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(universesBeyond, 'ML'), 'ML')
 	assert.equal(resolvePtTextColor('V', '#111'), '#fff')
 	assert.equal(resolvePtTextColor('A', '#111'), '#111')
+	const eighth = FRAME_FAMILIES['eighth-edition']
+	assert.equal(resolveFrameVariant(eighth, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(eighth, 'WL'), 'WL')
+	assert.equal(resolveFrameVariant(eighth, 'C'), 'C')
+	assert.equal(resolveFrameVariant(eighth, 'V'), 'A')
+	assert.equal(eighth.pt.C, 'img/frames/8th/pt/l.png')
+	assert.equal(eighth.layout.footer.colorByVariant?.B, '#fff')
 
 	const limited: FrameFamily = {
 		...regular,

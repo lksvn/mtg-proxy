@@ -3,7 +3,7 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular'
+export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition'
 
 type TextStyle = {
 	font: string
@@ -47,6 +47,7 @@ export type FrameLayout = {
 		textY: number
 	}
 	footer: {
+		colorByVariant?: Partial<Record<FrameVariant, string>>
 		x: number
 		maxWidth: number
 		metadataY: number
