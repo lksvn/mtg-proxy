@@ -25,7 +25,7 @@ Create printable Magic: The Gathering playtest cards from a deck list, directly 
 - Switch between English (US) and Portuguese (Brazil) interfaces
 - Use light and dark color schemes
 - Design a custom card in a native 1500 × 2100 Canvas preview
-- Choose Box Topper, M15 Regular, M15 Extended Art, Snow, Borderless, or Promo Regular frames with automatic or manual colors
+- Choose Box Topper, M15 Regular, M15 Extended Art, Snow, Nyx, Borderless, or Promo Regular frames with automatic or manual colors
 - Position artwork by dragging, wheel zoom, or transform controls
 - Render card fonts, mana and loyalty symbols, reminder text, set symbols, and P/T
 - Download custom cards as PNG at the default resolution or with 300/600 DPI metadata
