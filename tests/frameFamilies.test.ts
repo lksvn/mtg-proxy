@@ -50,6 +50,12 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(nyx, 'C'), 'A')
 	assert.equal(resolveFrameVariant(nyx, 'L'), 'M')
 	assert.equal(resolveFrameVariant(nyx, 'UL'), 'M')
+	const universesBeyond = FRAME_FAMILIES['universes-beyond']
+	assert.equal(resolveFrameVariant(universesBeyond, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(universesBeyond, 'V'), 'V')
+	assert.equal(resolveFrameVariant(universesBeyond, 'C'), 'A')
+	assert.equal(resolveFrameVariant(universesBeyond, 'WL'), 'WL')
+	assert.equal(resolveFrameVariant(universesBeyond, 'ML'), 'ML')
 
 	const limited: FrameFamily = {
 		...regular,
