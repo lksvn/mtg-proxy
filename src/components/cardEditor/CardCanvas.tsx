@@ -215,7 +215,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, tran
 	}, [artwork, setSymbol, frameVariant, transform, card, canvasRef, family])
 
 	return (
-		<div>
+		<div style={{position: 'sticky', top: 0, zIndex: 2}}>
             {DEBUG_CANVAS && (
                 <label style={{ display: 'block', marginBottom: '0.5rem' }}>
                     <input
