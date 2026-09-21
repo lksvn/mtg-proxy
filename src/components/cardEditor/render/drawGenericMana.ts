@@ -1,4 +1,4 @@
-import { getRunSymbolFile } from './cardText'
+import { getRunSymbolFile } from '../cardText'
 
 export function drawGenericMana(
 	context: CanvasRenderingContext2D,

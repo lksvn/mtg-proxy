@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import { CardCanvas, type ArtworkTransform } from './CardCanvas'
 import { FileInput } from '../FileInput'
-import { ArtworkControls } from './ArtworkControls'
-import { CardDetailsForm } from './CardDetailsForm'
+import { ArtworkControls } from './ui/ArtworkControls'
+import { CardDetailsForm } from './ui/CardDetailsForm'
 import type { CustomCardData, FrameVariant } from './types'
 import { inferFrameVariant } from './cardText'
 import { useI18n } from '../../i18n/context'
@@ -10,7 +10,7 @@ import { downloadBlob } from '../../utils/downloadBlob'
 import { setPngDpi } from '../../utils/pngDpi'
 import { Icon } from '../Icon'
 import type { FrameFamilyId } from './frameFamilies'
-import { FrameColorPicker } from './FrameColorPicker'
+import { FrameColorPicker } from './ui/FrameColorPicker'
 
 const SAMPLE_ARTWORK_URL = `${import.meta.env.BASE_URL}img/samples/marrow-gnawer.jpg`
 const SAMPLE_SET_SYMBOL_URL = `${import.meta.env.BASE_URL}img/setSymbols/chk.svg`

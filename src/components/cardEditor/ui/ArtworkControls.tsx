@@ -1,6 +1,6 @@
-import { Icon } from '../Icon'
-import type { ArtworkTransform } from './CardCanvas'
-import { useI18n } from '../../i18n/context'
+import { Icon } from '../../Icon'
+import type { ArtworkTransform } from '../CardCanvas'
+import { useI18n } from '../../../i18n/context'
 
 type ArtworkControlsProps = {
 	transform: ArtworkTransform

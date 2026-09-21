@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
-import { Icon } from '../Icon'
-import { useI18n } from '../../i18n/context'
-import type { TranslationKey } from '../../i18n/messages'
-import type { FrameVariant } from './types'
+import { Icon } from '../../Icon'
+import { useI18n } from '../../../i18n/context'
+import type { TranslationKey } from '../../../i18n/messages'
+import type { FrameVariant } from '../types'
 
 type FrameChoice = FrameVariant | 'auto'
 

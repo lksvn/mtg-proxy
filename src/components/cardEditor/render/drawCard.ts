@@ -1,8 +1,8 @@
-import type { ArtworkTransform } from './CardCanvas'
-import type { CardTextRun } from './cardText'
-import type { FrameLayout } from './frameFamilies'
-import { resolvePtTextColor } from './frameFamilies'
-import type { CustomCardData, FrameVariant } from './types'
+import type { ArtworkTransform } from '../CardCanvas'
+import type { CardTextRun } from '../cardText'
+import type { FrameLayout } from '../frameFamilies'
+import { resolvePtTextColor } from '../frameFamilies'
+import type { CustomCardData, FrameVariant } from '../types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
 

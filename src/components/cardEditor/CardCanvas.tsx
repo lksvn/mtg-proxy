@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
 import { DUAL_FRAME_VARIANTS, type CustomCardData, type FrameVariant } from './types'
 import { getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
-import { drawCard, HEIGHT, WIDTH } from './drawCard'
-import { loadImage, loadImageSource } from './loadImage'
-import { loadDualFrame } from './composeDualFrame'
+import { drawCard, HEIGHT, WIDTH } from './render/drawCard'
+import { loadImage, loadImageSource } from './render/loadImage'
+import { loadDualFrame } from './render/composeDualFrame'
 import { useI18n } from '../../i18n/context'
 import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameFamilyId } from './frameFamilies'
 
