@@ -450,7 +450,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 			type: { x: 161, y: 1209, maxWidth: 1178, font: '67px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
 			rules: { x: 192, y: 1274, width: 1116, height: 572, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 72, minFontSize: 32 },
 			symbol: { centerX: 1290, centerY: 1244, boxSize: 78 },
-			pt: { x: 1211, y: 1899, width: 205, height: 90, textX: 1314, textY: 1944, font: '90px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+			pt: { x: 1211, y: 1899, width: 205, height: 90, textX: 1314, textY: 1944, font: '90px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
 			footer: {
 				x: 150,
 				maxWidth: 1200,
