@@ -29,6 +29,27 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(regular, 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(regular, 'V'), 'V')
 	assert.equal(resolveFrameVariant(FRAME_FAMILIES['m15-extended'], 'WU'), 'WU')
+	const borderless = FRAME_FAMILIES.borderless
+	assert.equal(resolveFrameVariant(borderless, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(borderless, 'V'), 'A')
+	assert.equal(resolveFrameVariant(borderless, 'UL'), 'L')
+	const promo = FRAME_FAMILIES['promo-regular']
+	assert.equal(resolveFrameVariant(promo, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(promo, 'V'), 'A')
+	assert.equal(resolveFrameVariant(promo, 'C'), 'A')
+	assert.equal(resolveFrameVariant(promo, 'UL'), 'L')
+	const snow = FRAME_FAMILIES.snow
+	assert.equal(resolveFrameVariant(snow, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(snow, 'WL'), 'WL')
+	assert.equal(resolveFrameVariant(snow, 'ML'), 'ML')
+	assert.equal(resolveFrameVariant(snow, 'V'), 'A')
+	assert.equal(resolveFrameVariant(snow, 'C'), 'A')
+	const nyx = FRAME_FAMILIES.nyx
+	assert.equal(resolveFrameVariant(nyx, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(nyx, 'V'), 'A')
+	assert.equal(resolveFrameVariant(nyx, 'C'), 'A')
+	assert.equal(resolveFrameVariant(nyx, 'L'), 'M')
+	assert.equal(resolveFrameVariant(nyx, 'UL'), 'M')
 
 	const limited: FrameFamily = {
 		...regular,

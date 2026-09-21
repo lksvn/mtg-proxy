@@ -10,9 +10,25 @@ import { downloadBlob } from '../../utils/downloadBlob'
 import { setPngDpi } from '../../utils/pngDpi'
 import { Icon } from '../Icon'
 import type { FrameFamilyId } from './frameFamilies'
+import { FrameColorPicker } from './FrameColorPicker'
 
 const SAMPLE_ARTWORK_URL = `${import.meta.env.BASE_URL}img/samples/marrow-gnawer.jpg`
 const SAMPLE_SET_SYMBOL_URL = `${import.meta.env.BASE_URL}img/setSymbols/chk.svg`
+const FRAME_STYLE_GROUPS = [
+	{ label: 'frameStyleGroupM15', options: [
+		{ id: 'box-topper', label: 'frameStyleBoxTopper' },
+		{ id: 'm15-regular', label: 'frameStyleM15Regular' },
+		{ id: 'm15-extended', label: 'frameStyleM15Extended' },
+		{ id: 'snow', label: 'frameStyleSnow' },
+		{ id: 'nyx', label: 'frameStyleNyx' },
+	] },
+	{ label: 'frameStyleGroupShowcase', options: [
+		{ id: 'borderless', label: 'frameStyleBorderless' },
+	] },
+	{ label: 'frameStyleGroupPromo', options: [
+		{ id: 'promo-regular', label: 'frameStylePromoRegular' },
+	] },
+] as const
 
 function createDefaultArtworkTransform(): ArtworkTransform {
 	return { x: 0, y: 0, flipX: false, flipY: false, scale: 0, rotation: 0 }
@@ -26,6 +42,7 @@ export function CustomCardEditor() {
     const [setSymbol, setSetSymbol] = useState<File | string | undefined>(SAMPLE_SET_SYMBOL_URL)
 	const [frameSelection, setFrameSelection] = useState<FrameVariant | 'auto'>('auto')
 	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
+	const [frameStyleSearch, setFrameStyleSearch] = useState('')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -43,6 +60,7 @@ export function CustomCardEditor() {
 	const frameVariant = frameSelection === 'auto'
 		? inferFrameVariant(card.manaCost, card.typeLine)
 		: frameSelection
+	const search = frameStyleSearch.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 
 	function downloadPng(dpi?: number) {
 		canvasRef.current?.toBlob(async (blob) => {
@@ -61,63 +79,72 @@ export function CustomCardEditor() {
 	return (
 		<section>
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '1rem'}}>
-                <div className="form-group gap-2">
-                    <FileInput
-                        id="custom-card-artwork"
-                        accept="image/*"
-                        label={t('chooseArtwork')}
-                        onSelect={(file) => {
-                            setArtwork(file)
-                            setArtworkTransform(createDefaultArtworkTransform())
-                        }}
-                        onClear={() => setArtwork(undefined)}
-                    />
-                    <FileInput
-                        id="custom-card-set-symbol"
-                        accept="image/*"
-                        label={t('chooseSetSymbol')}
-						hasValue={Boolean(setSymbol)}
-                        onSelect={setSetSymbol}
-                        onClear={() => setSetSymbol(undefined)}
-                    />
-					<label htmlFor="card-frame-style">{t('frameStyle')}</label>
-					<select
-						id="card-frame-style"
-						value={frameFamily}
-						onChange={(event) => setFrameFamily(event.target.value as FrameFamilyId)}
-					>
-						<option value="box-topper">{t('frameStyleBoxTopper')}</option>
-						<option value="m15-regular">{t('frameStyleM15Regular')}</option>
-						<option value="m15-extended">{t('frameStyleM15Extended')}</option>
-					</select>
-					<label htmlFor="card-frame">{t('frame')}</label>
-					<select
-						id="card-frame"
-						value={frameSelection}
-						onChange={(event) => setFrameSelection(event.target.value as FrameVariant | 'auto')}
-					>
-						<option value="auto">{t('frameAuto')}</option>
-						<option value="W">{t('frameWhite')}</option>
-						<option value="U">{t('frameBlue')}</option>
-						<option value="B">{t('frameBlack')}</option>
-						<option value="R">{t('frameRed')}</option>
-						<option value="G">{t('frameGreen')}</option>
-						<option value="M">{t('frameMulticolored')}</option>
-						<option value="A">{t('frameArtifact')}</option>
-						<option value="C">{t('frameColorless')}</option>
-						<option value="L">{t('frameLand')}</option>
-						<option value="WL">{t('frameWhiteLand')}</option>
-						<option value="UL">{t('frameBlueLand')}</option>
-						<option value="BL">{t('frameBlackLand')}</option>
-						<option value="RL">{t('frameRedLand')}</option>
-						<option value="GL">{t('frameGreenLand')}</option>
-						<option value="ML">{t('frameMulticoloredLand')}</option>
-						<option value="V">{t('frameVehicle')}</option>
-					</select>
+                <div>
+                    <h5>1. {t('cardImageSection')}</h5>
+                    <div className="form-group gap-2 mb-5">
+                        <FileInput
+                            id="custom-card-artwork"
+                            accept="image/*"
+                            label={t('chooseArtwork')}
+                            onSelect={(file) => {
+                                setArtwork(file)
+                                setArtworkTransform(createDefaultArtworkTransform())
+                            }}
+                            onClear={() => setArtwork(undefined)}
+                        />
+                        <FileInput
+                            id="custom-card-set-symbol"
+                            accept="image/*"
+                            label={t('chooseSetSymbol')}
+                            hasValue={Boolean(setSymbol)}
+                            onSelect={setSetSymbol}
+                            onClear={() => setSetSymbol(undefined)}
+                        />
+                    </div>
+                    <h5>2. {t('cardEditionSection')}</h5>
+                    <div style={{display:'flex'}} className="gap-3">
+                        <div className="form-group gap-2">
+                            <label htmlFor="card-frame-style-search">{t('searchFrameStyles')}</label>
+                            <input
+                                id="card-frame-style-search"
+                                type="search"
+                                value={frameStyleSearch}
+                                onChange={(event) => setFrameStyleSearch(event.target.value)}
+                            />
+                        </div>
+                        <div className="form-group gap-2">
+                            <label htmlFor="card-frame-style">{t('frameStyle')}</label>
+                            <select
+                                id="card-frame-style"
+                                value={frameFamily}
+                                onChange={(event) => {
+                                    setFrameFamily(event.target.value as FrameFamilyId)
+                                    setFrameStyleSearch('')
+                                }}
+                            >
+                                {FRAME_STYLE_GROUPS.map((group) => {
+                                    const options = group.options.filter((option) =>
+                                        option.id === frameFamily ||
+                                        t(option.label).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().includes(search) ||
+                                        option.id.includes(search),
+                                    )
+                                    return options.length > 0 && (
+                                        <optgroup key={group.label} label={t(group.label)}>
+                                            {options.map((option) => <option key={option.id} value={option.id}>{t(option.label)}</option>)}
+                                        </optgroup>
+                                    )
+                                })}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="form-group gap-2 mb-5">
+                        <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
+                    </div>
+                    <h5>3. {t('cardInformationSection')}</h5>
                     <CardDetailsForm card={card} onChange={setCard} />
                 </div>
 
-                <div>
+                <div style={{position:'relative'}}>
                     <CardCanvas
 						canvasRef={canvasRef}
                         artwork={artwork}
