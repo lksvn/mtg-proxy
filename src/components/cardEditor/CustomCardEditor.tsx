@@ -13,6 +13,16 @@ import type { FrameFamilyId } from './frameFamilies'
 
 const SAMPLE_ARTWORK_URL = `${import.meta.env.BASE_URL}img/samples/marrow-gnawer.jpg`
 const SAMPLE_SET_SYMBOL_URL = `${import.meta.env.BASE_URL}img/setSymbols/chk.svg`
+const FRAME_STYLE_GROUPS = [
+	{ label: 'frameStyleGroupM15', options: [
+		{ id: 'box-topper', label: 'frameStyleBoxTopper' },
+		{ id: 'm15-regular', label: 'frameStyleM15Regular' },
+		{ id: 'm15-extended', label: 'frameStyleM15Extended' },
+	] },
+	{ label: 'frameStyleGroupShowcase', options: [
+		{ id: 'borderless', label: 'frameStyleBorderless' },
+	] },
+] as const
 
 function createDefaultArtworkTransform(): ArtworkTransform {
 	return { x: 0, y: 0, flipX: false, flipY: false, scale: 0, rotation: 0 }
@@ -26,6 +36,7 @@ export function CustomCardEditor() {
     const [setSymbol, setSetSymbol] = useState<File | string | undefined>(SAMPLE_SET_SYMBOL_URL)
 	const [frameSelection, setFrameSelection] = useState<FrameVariant | 'auto'>('auto')
 	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
+	const [frameStyleSearch, setFrameStyleSearch] = useState('')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -43,6 +54,7 @@ export function CustomCardEditor() {
 	const frameVariant = frameSelection === 'auto'
 		? inferFrameVariant(card.manaCost, card.typeLine)
 		: frameSelection
+	const search = frameStyleSearch.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 
 	function downloadPng(dpi?: number) {
 		canvasRef.current?.toBlob(async (blob) => {
@@ -80,16 +92,34 @@ export function CustomCardEditor() {
                         onSelect={setSetSymbol}
                         onClear={() => setSetSymbol(undefined)}
                     />
+					<label htmlFor="card-frame-style-search">{t('searchFrameStyles')}</label>
+					<input
+						id="card-frame-style-search"
+						type="search"
+						value={frameStyleSearch}
+						onChange={(event) => setFrameStyleSearch(event.target.value)}
+					/>
 					<label htmlFor="card-frame-style">{t('frameStyle')}</label>
 					<select
 						id="card-frame-style"
 						value={frameFamily}
-						onChange={(event) => setFrameFamily(event.target.value as FrameFamilyId)}
+						onChange={(event) => {
+							setFrameFamily(event.target.value as FrameFamilyId)
+							setFrameStyleSearch('')
+						}}
 					>
-						<option value="box-topper">{t('frameStyleBoxTopper')}</option>
-						<option value="m15-regular">{t('frameStyleM15Regular')}</option>
-						<option value="m15-extended">{t('frameStyleM15Extended')}</option>
-						<option value="borderless">{t('frameStyleBorderless')}</option>
+						{FRAME_STYLE_GROUPS.map((group) => {
+							const options = group.options.filter((option) =>
+								option.id === frameFamily ||
+								t(option.label).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().includes(search) ||
+								option.id.includes(search),
+							)
+							return options.length > 0 && (
+								<optgroup key={group.label} label={t(group.label)}>
+									{options.map((option) => <option key={option.id} value={option.id}>{t(option.label)}</option>)}
+								</optgroup>
+							)
+						})}
 					</select>
 					<label htmlFor="card-frame">{t('frame')}</label>
 					<select
