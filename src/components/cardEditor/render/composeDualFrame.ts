@@ -1,7 +1,7 @@
 import { HEIGHT, WIDTH } from './drawCard'
-import type { FrameFamily } from './frameFamilies'
+import type { FrameFamily } from '../frameFamilies'
 import { loadImage } from './loadImage'
-import type { DualFrameVariant, FrameVariant } from './types'
+import type { DualFrameVariant, FrameVariant } from '../types'
 
 const frameCache = new Map<string, Promise<HTMLCanvasElement>>()
 

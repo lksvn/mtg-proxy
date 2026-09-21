@@ -1,4 +1,4 @@
-import type { CardTextRun } from './cardText'
+import type { CardTextRun } from '../cardText'
 import { drawManaSymbol } from './drawGenericMana'
 
 export function drawManaCost(

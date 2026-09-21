@@ -1,7 +1,8 @@
-import type { ArtworkTransform } from './CardCanvas'
-import type { CardTextRun } from './cardText'
-import type { FrameLayout } from './frameFamilies'
-import type { CustomCardData } from './types'
+import type { ArtworkTransform } from '../CardCanvas'
+import type { CardTextRun } from '../cardText'
+import type { FrameLayout } from '../frameFamilies'
+import { resolvePtTextColor } from '../frameFamilies'
+import type { CustomCardData, FrameVariant } from '../types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
 
@@ -23,7 +24,8 @@ const RARITY_CODES: Record<CustomCardData['rarity'], string> = {
 
 type CardImages = {
 	frame: CanvasImageSource
-	ptBackground: HTMLImageElement
+	border?: CanvasImageSource
+	ptBackground?: HTMLImageElement
 	art?: HTMLImageElement
 	symbol?: HTMLImageElement
 	manaSymbols: Map<string, HTMLImageElement>
@@ -39,9 +41,10 @@ export function drawCard(
 	context: CanvasRenderingContext2D,
 	card: CustomCardData,
 	transform: ArtworkTransform,
-	{ frame, ptBackground, art, symbol, manaSymbols }: CardImages,
+	{ frame, border, ptBackground, art, symbol, manaSymbols }: CardImages,
 	{ manaRuns, rulesRuns, flavorRuns }: CardRuns,
 	layout: FrameLayout,
+	variant: FrameVariant,
 ) {
 	context.fillStyle = card.backgroundColor
 	context.fillRect(0, 0, WIDTH, HEIGHT)
@@ -60,6 +63,7 @@ export function drawCard(
 	}
 
 	context.drawImage(frame, 0, 0, WIDTH, HEIGHT)
+	if (border) context.drawImage(border, 0, 0, WIDTH, HEIGHT)
 
 	if (symbol) {
 		const { boxSize, centerX, centerY } = layout.symbol
@@ -103,7 +107,7 @@ export function drawCard(
 	drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, layout.rules)
 
 	if (card.powerToughness) {
-		context.drawImage(
+		if (ptBackground) context.drawImage(
 			ptBackground,
 			layout.pt.x,
 			layout.pt.y,
@@ -111,6 +115,7 @@ export function drawCard(
 			layout.pt.height,
 		)
 		applyTextStyle(context, layout.pt)
+		context.fillStyle = resolvePtTextColor(variant, layout.pt.color)
 		context.textAlign = 'center'
 		context.fillText(
 			card.powerToughness,
@@ -121,7 +126,8 @@ export function drawCard(
 	}
 
 	applyTextStyle(context, layout.footer.metadata)
-	context.textAlign = 'left'
+	context.fillStyle = layout.footer.colorByVariant?.[variant] ?? layout.footer.metadata.color
+	context.textAlign = layout.footer.align ?? 'left'
 	context.fillText(
 		`${RARITY_CODES[card.rarity]}${card.number ? ' • ' + card.number : ''}${card.artist ? ' • ' + card.artist : ''}`,
 		layout.footer.x,
@@ -129,6 +135,7 @@ export function drawCard(
 		layout.footer.maxWidth,
 	)
 	applyTextStyle(context, layout.footer.disclaimer)
+	context.fillStyle = layout.footer.colorByVariant?.[variant] ?? layout.footer.disclaimer.color
 	context.fillText('NOT FOR SALE • Made on MTG Proxy', layout.footer.x, layout.footer.disclaimerY, layout.footer.maxWidth)
 }
 

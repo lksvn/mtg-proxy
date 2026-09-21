@@ -1,16 +1,16 @@
 import { useRef, useState } from 'react'
 import { CardCanvas, type ArtworkTransform } from './CardCanvas'
 import { FileInput } from '../FileInput'
-import { ArtworkControls } from './ArtworkControls'
-import { CardDetailsForm } from './CardDetailsForm'
+import { ArtworkControls } from './ui/ArtworkControls'
+import { CardDetailsForm } from './ui/CardDetailsForm'
 import type { CustomCardData, FrameVariant } from './types'
 import { inferFrameVariant } from './cardText'
 import { useI18n } from '../../i18n/context'
 import { downloadBlob } from '../../utils/downloadBlob'
 import { setPngDpi } from '../../utils/pngDpi'
 import { Icon } from '../Icon'
-import type { FrameFamilyId } from './frameFamilies'
-import { FrameColorPicker } from './FrameColorPicker'
+import { getFrameFamily, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
+import { FrameColorPicker } from './ui/FrameColorPicker'
 
 const SAMPLE_ARTWORK_URL = `${import.meta.env.BASE_URL}img/samples/marrow-gnawer.jpg`
 const SAMPLE_SET_SYMBOL_URL = `${import.meta.env.BASE_URL}img/setSymbols/chk.svg`
@@ -21,12 +21,17 @@ const FRAME_STYLE_GROUPS = [
 		{ id: 'm15-extended', label: 'frameStyleM15Extended' },
 		{ id: 'snow', label: 'frameStyleSnow' },
 		{ id: 'nyx', label: 'frameStyleNyx' },
+		{ id: 'universes-beyond', label: 'frameStyleUniversesBeyond' },
 	] },
 	{ label: 'frameStyleGroupShowcase', options: [
 		{ id: 'borderless', label: 'frameStyleBorderless' },
 	] },
 	{ label: 'frameStyleGroupPromo', options: [
 		{ id: 'promo-regular', label: 'frameStylePromoRegular' },
+	] },
+	{ label: 'frameStyleGroupHistorical', options: [
+		{ id: 'eighth-edition', label: 'frameStyleEighthEdition' },
+		{ id: 'seventh-edition', label: 'frameStyleSeventhEdition' },
 	] },
 ] as const
 
@@ -42,6 +47,7 @@ export function CustomCardEditor() {
     const [setSymbol, setSetSymbol] = useState<File | string | undefined>(SAMPLE_SET_SYMBOL_URL)
 	const [frameSelection, setFrameSelection] = useState<FrameVariant | 'auto'>('auto')
 	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
+	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
@@ -137,6 +143,17 @@ export function CustomCardEditor() {
                             </select>
                         </div>
                     </div>
+					{getFrameFamily(frameFamily).borderMask && (
+						<div className="form-group gap-2">
+							<label htmlFor="card-frame-border">{t('frameBorder')}</label>
+							<select id="card-frame-border" value={borderStyle} onChange={(event) => setBorderStyle(event.target.value as FrameBorderStyle)}>
+								<option value="black">{t('frameBorderBlack')}</option>
+								<option value="white">{t('frameBorderWhite')}</option>
+								<option value="silver">{t('frameBorderSilver')}</option>
+								<option value="gold">{t('frameBorderGold')}</option>
+							</select>
+						</div>
+					)}
                     <div className="form-group gap-2 mb-5">
                         <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
                     </div>
@@ -153,6 +170,7 @@ export function CustomCardEditor() {
                         card={card}
 						setSymbol={setSymbol}
 						frameFamily={frameFamily}
+						borderStyle={borderStyle}
 						frameVariant={frameVariant}
                     />
                     {artwork && <ArtworkControls

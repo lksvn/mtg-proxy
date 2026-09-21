@@ -1,87 +1,45 @@
 # MTG Proxy
 
-Create printable Magic: The Gathering playtest cards from a deck list, directly in your browser.
+Create printable Magic: The Gathering playtest cards in your browser.
 
-[Open MTG Proxy](https://lksvn.com.br/mtg-proxy/)
-
-[Open the Custom Card Editor](https://lksvn.com.br/mtg-proxy/#editor)
+[Open MTG Proxy](https://lksvn.com.br/mtg-proxy/) · [Open the Custom Card Editor](https://lksvn.com.br/mtg-proxy/#editor)
 
 ![MTG Proxy interface](docs/mtg-proxy.gif)
 
-## Features
+Load a deck list to find card images through Scryfall, choose printings, and download a print-ready PDF. Or use the custom editor to make an ordinary single-faced card and export a 1500 × 2100 PNG. The interface supports English and Brazilian Portuguese.
 
-- Parse deck lists with optional quantities, set codes, and collector numbers
-- Import plain-text deck lists
-- Accept card names in any language and resolve them to English printings through Scryfall
-- Autocomplete English card names by typing `@` followed by at least two characters
-- Search available printings and update card previews
-- Keep up to five recent deck lists in browser storage
-- Remove individual saved lists or clear the complete history
-- Download card lists as entered, without basic lands, or with names only
-- Export printable PDFs for A4, A3, Letter, and Legal paper
-- Configure gaps, crop marks, black corners, bleed, basic-land filtering, a deck-list page, and playtest watermarks
-- Preview and export both faces of double-faced cards
-- Retry failed card, printing, and preview-image requests independently
-- Switch between English (US) and Portuguese (Brazil) interfaces
-- Use light and dark color schemes
-- Design a custom card in a native 1500 × 2100 Canvas preview
-- Choose Box Topper, M15 Regular, M15 Extended Art, Snow, Nyx, Borderless, or Promo Regular frames with automatic or manual colors
-- Position artwork by dragging, wheel zoom, or transform controls
-- Render card fonts, mana and loyalty symbols, reminder text, set symbols, and P/T
-- Download custom cards as PNG at the default resolution or with 300/600 DPI metadata
+## Deck-list format
 
-The application is client-only. Deck lists remain in the browser except for card lookups sent to Scryfall.
-Custom-card artwork and editor state remain in the current browser tab.
-
-## Custom Card Editor
-
-Open `#editor` or use the navigation link. The editor currently supports ordinary single-faced cards. Specialized layouts such as planeswalkers, Sagas, Battles, split cards, and double-faced cards are not yet supported.
-
-Frame assets are sourced from Card Conjurer and documented alongside each family under [`public/img/frames`](public/img/frames).
-
-## Card list format
-
-Only the card name is required. Add one card per line:
-
-```text
-[quantity] card name [(set)] [collector number]
-```
-
-Examples:
+Enter one card per line. Quantity, set, and collector number are optional:
 
 ```text
 Lightning Bolt
 4 Lightning Bolt
 1 Black Lotus (lea) 232
-2 Delver of Secrets (isd)
 ```
 
-Card names may be supplied in any language. To search while typing, start a line with an optional quantity followed by `@`:
+Type `@` before a name for English autocomplete, for example `4 @counter`.
 
-```text
-@lightning
-4 @counter
-```
 ![Autocomplete card names](docs/autocomplete.gif)
 
-Autocomplete suggestions are currently available in English and support the mouse, arrow keys, Enter, and Escape.
-
-After loading a list, review the card previews, change any printings, choose the print settings, and download the PDF.
+After loading a list, you can search for a different printing before downloading the PDF.
 
 ![Search and change a card printing](docs/printing-selection.gif)
 
+## Custom Card Editor
+
+[Open the editor](https://lksvn.com.br/mtg-proxy/#editor) to make an ordinary single-faced card. Add artwork, choose a frame and color, then enter the card text. Drag or zoom the artwork on the preview and download a 1500 × 2100 PNG, with optional 300 or 600 DPI metadata. Specialized card layouts are not supported yet.
+
+![Custom Card Editor](docs/custom-card-editor.png)
+
 ## Development
 
-Built with React, TypeScript, Vite, Sass, and pdf-lib.
-
-Requires Node.js and npm:
+Requires Node.js and npm.
 
 ```sh
 npm install
 npm run dev
 ```
-
-Available checks:
 
 ```sh
 npm test
@@ -89,14 +47,8 @@ npm run lint
 npm run build
 ```
 
-SVG icon types are generated automatically before development and production builds. To generate them manually:
+## Credits
 
-```sh
-npm run generate:icons
-```
+Card data and images come from [Scryfall](https://scryfall.com/). Custom frame assets are credited in [`public/img/frames`](public/img/frames).
 
-## Attribution and disclaimer
-
-Card data and images are provided by [Scryfall](https://scryfall.com/).
-
-This project is intended for personal, non-commercial playtesting. It is not affiliated with or endorsed by Wizards of the Coast.
+For personal, non-commercial playtesting. Not affiliated with or endorsed by Wizards of the Coast. Deck lists stay in your browser except for card lookups; custom-editor artwork and state stay in the current tab.

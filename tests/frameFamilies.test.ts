@@ -7,6 +7,7 @@ import test from 'node:test'
 import {
 	FRAME_FAMILIES,
 	resolveFrameVariant,
+	resolvePtTextColor,
 	type FrameFamily,
 } from '../src/components/cardEditor/frameFamilies.ts'
 
@@ -15,6 +16,7 @@ test('frame family assets exist', () => {
 		const paths = [
 			...Object.values(family.frames),
 			...Object.values(family.pt),
+			...(family.borderMask ? [family.borderMask] : []),
 			...Object.values(family.dual ?? {}).filter((value) => typeof value === 'string' && value.includes('/')),
 		]
 
@@ -22,6 +24,9 @@ test('frame family assets exist', () => {
 			assert.equal(existsSync(resolve('public', path)), true, `${family.id}: ${path}`)
 		}
 	}
+	assert.equal(existsSync(resolve('src/assets/fonts/matrix-b.ttf')), true)
+	assert.equal(existsSync(resolve('src/assets/fonts/matrix-bsc.ttf')), true)
+	assert.equal(existsSync(resolve('src/assets/fonts/goudy-medieval.ttf')), true)
 })
 
 test('frame variants stay in the selected family and use declared fallbacks', () => {
@@ -50,6 +55,32 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(nyx, 'C'), 'A')
 	assert.equal(resolveFrameVariant(nyx, 'L'), 'M')
 	assert.equal(resolveFrameVariant(nyx, 'UL'), 'M')
+	const universesBeyond = FRAME_FAMILIES['universes-beyond']
+	assert.equal(resolveFrameVariant(universesBeyond, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(universesBeyond, 'V'), 'V')
+	assert.equal(resolveFrameVariant(universesBeyond, 'C'), 'A')
+	assert.equal(resolveFrameVariant(universesBeyond, 'WL'), 'WL')
+	assert.equal(resolveFrameVariant(universesBeyond, 'ML'), 'ML')
+	assert.equal(resolvePtTextColor('V', '#111'), '#fff')
+	assert.equal(resolvePtTextColor('A', '#111'), '#111')
+	const eighth = FRAME_FAMILIES['eighth-edition']
+	assert.equal(resolveFrameVariant(eighth, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(eighth, 'WL'), 'WL')
+	assert.equal(resolveFrameVariant(eighth, 'C'), 'C')
+	assert.equal(resolveFrameVariant(eighth, 'V'), 'A')
+	assert.equal(eighth.pt.C, 'img/frames/8th/pt/l.png')
+	assert.equal(eighth.layout.footer.colorByVariant?.B, '#fff')
+	assert.equal(eighth.borderMask, 'img/frames/8th/border.png')
+	const seventh = FRAME_FAMILIES['seventh-edition']
+	assert.equal(resolveFrameVariant(seventh, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(seventh, 'WL'), 'WL')
+	assert.equal(resolveFrameVariant(seventh, 'ML'), 'L')
+	assert.equal(resolveFrameVariant(seventh, 'V'), 'A')
+	assert.deepEqual(seventh.pt, {})
+	assert.equal(seventh.borderMask, 'img/frames/seventh/border.svg')
+	assert.equal(seventh.layout.footer.align, 'center')
+	assert.equal(seventh.layout.footer.x, 750)
+	assert.equal(eighth.layout.footer.align, undefined)
 
 	const limited: FrameFamily = {
 		...regular,

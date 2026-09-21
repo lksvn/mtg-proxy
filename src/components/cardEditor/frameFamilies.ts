@@ -3,7 +3,8 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'borderless' | 'promo-regular'
+export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition'
+export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
 type TextStyle = {
 	font: string
@@ -29,6 +30,7 @@ export type FrameLayout = {
 		y: number
 		width: number
 		height: number
+		verticalAlign?: 'top' | 'middle'
 		fontFamily: string
 		italicFontFamily: string
 		color: string
@@ -47,6 +49,8 @@ export type FrameLayout = {
 		textY: number
 	}
 	footer: {
+		colorByVariant?: Partial<Record<FrameVariant, string>>
+		align?: CanvasTextAlign
 		x: number
 		maxWidth: number
 		metadataY: number
@@ -58,6 +62,7 @@ export type FrameLayout = {
 
 export type FrameFamily = {
 	id: FrameFamilyId
+	borderMask?: string
 	frames: Partial<Record<FrameVariant, string>>
 	pt: Partial<Record<FrameVariant, string>>
 	fallbacks: Partial<Record<FrameVariant, FrameVariant>>
@@ -94,4 +99,8 @@ export function resolvePtVariant(variant: FrameVariant, hybrid: boolean): FrameV
 	if (variant === 'L') return 'C'
 	if (variant.endsWith('L')) return variant[0] as FrameVariant
 	return variant
+}
+
+export function resolvePtTextColor(variant: FrameVariant, defaultColor: string) {
+	return variant === 'V' ? '#fff' : defaultColor
 }
