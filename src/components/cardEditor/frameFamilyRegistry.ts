@@ -60,6 +60,25 @@ const m15RegularLayout: FrameLayout = {
 	footer: commonFooter,
 }
 
+const seventhLayout: FrameLayout = {
+	artwork: { dragTop: 208, dragBottom: 1138 },
+	title: { x: 170, y: 144, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	mana: { right: 1386, centerY: 149, symbolSize: 68, gap: 4, font: '48px goudymedieval, serif', color: '#fff' },
+	type: { x: 161, y: 1209, maxWidth: 1178, font: '65px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	rules: { x: 192, y: 1285, width: 1116, height: 565, verticalAlign: 'middle', fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 72, minFontSize: 32 },
+	symbol: { centerX: 1290, centerY: 1209, boxSize: 78 },
+	pt: { x: 1211, y: 1899, width: 205, height: 90, textX: 1314, textY: 1944, font: '90px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	footer: {
+		align: 'center',
+		x: 750,
+		maxWidth: 1200,
+		metadataY: 1925,
+		metadata: { font: '42px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 2 },
+		disclaimerY: 1975,
+		disclaimer: { font: '30px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 2, shadowOffsetY: 2 },
+	},
+}
+
 export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	'box-topper': {
 		id: 'box-topper',
@@ -445,24 +464,30 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		pt: {},
 		fallbacks: commonFallbacks,
-		layout: {
-			artwork: { dragTop: 208, dragBottom: 1138 },
-			title: { x: 170, y: 144, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
-			mana: { right: 1386, centerY: 149, symbolSize: 68, gap: 4, font: '48px goudymedieval, serif', color: '#fff' },
-			type: { x: 161, y: 1209, maxWidth: 1178, font: '65px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
-			rules: { x: 192, y: 1285, width: 1116, height: 565, verticalAlign: 'middle', fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 72, minFontSize: 32 },
-			symbol: { centerX: 1290, centerY: 1209, boxSize: 78 },
-			pt: { x: 1211, y: 1899, width: 205, height: 90, textX: 1314, textY: 1944, font: '90px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
-			footer: {
-				align: 'center',
-				x: 750,
-				maxWidth: 1200,
-				metadataY: 1925,
-				metadata: { font: '42px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 2 },
-				disclaimerY: 1975,
-				disclaimer: { font: '30px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 2, shadowOffsetY: 2 },
-			},
-		},
+		layout: seventhLayout,
 		fonts: ['86px goudymedieval', '67px goudymedieval', '72px mplantin', '72px mplantini'],
+	},
+	'old-floating': {
+		id: 'old-floating',
+		frames: {
+			W: 'img/frames/old/floating/w.png',
+			U: 'img/frames/old/floating/u.png',
+			B: 'img/frames/old/floating/b.png',
+			R: 'img/frames/old/floating/r.png',
+			G: 'img/frames/old/floating/g.png',
+			M: 'img/frames/old/floating/m.png',
+			A: 'img/frames/old/floating/a.png',
+			C: 'img/frames/old/floating/c.png',
+			L: 'img/frames/old/floating/l.png',
+			WL: 'img/frames/old/floating/land/w.png',
+			UL: 'img/frames/old/floating/land/u.png',
+			BL: 'img/frames/old/floating/land/b.png',
+			RL: 'img/frames/old/floating/land/r.png',
+			GL: 'img/frames/old/floating/land/g.png',
+		},
+		pt: {},
+		fallbacks: commonFallbacks,
+		layout: { ...seventhLayout, footer: { ...seventhLayout.footer, metadataY: 1889 } },
+		fonts: ['80px goudymedieval', '65px goudymedieval', '72px mplantin', '72px mplantini'],
 	},
 }

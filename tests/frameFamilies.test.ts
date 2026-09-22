@@ -81,6 +81,13 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(seventh.layout.footer.align, 'center')
 	assert.equal(seventh.layout.footer.x, 750)
 	assert.equal(eighth.layout.footer.align, undefined)
+	const oldFloating = FRAME_FAMILIES['old-floating']
+	assert.equal(resolveFrameVariant(oldFloating, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(oldFloating, 'WL'), 'WL')
+	assert.equal(resolveFrameVariant(oldFloating, 'ML'), 'L')
+	assert.equal(resolveFrameVariant(oldFloating, 'V'), 'A')
+	assert.equal(oldFloating.layout.rules, seventh.layout.rules)
+	assert.equal(oldFloating.layout.footer.metadataY, 1889)
 
 	const limited: FrameFamily = {
 		...regular,
