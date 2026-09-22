@@ -1,21 +1,23 @@
 import { getRunSymbolFile } from '../cardText.ts'
 
+export type SymbolShadow = Partial<Pick<CanvasRenderingContext2D, 'shadowColor' | 'shadowOffsetX' | 'shadowOffsetY'>>
+
 export function drawGenericMana(
 	context: CanvasRenderingContext2D,
 	value: string,
 	x: number,
 	y: number,
 	size: number,
-    shadow = true
+    shadow?: SymbolShadow
 ) {
 	const radius = size / 2
 
 	context.save()
 	context.fillStyle = '#cbc2bf'
     if (shadow) {
-        context.shadowColor = '#000'
-        context.shadowOffsetX = 4
-        context.shadowOffsetY = 5
+        context.shadowColor = shadow.shadowColor ?? '#000'
+        context.shadowOffsetX = shadow.shadowOffsetX ?? 4
+        context.shadowOffsetY = shadow.shadowOffsetY ?? 5
     }
 
 	context.beginPath()
@@ -44,7 +46,7 @@ export function drawManaSymbol(
 	x: number,
 	centerY: number,
 	size: number,
-	shadow = false,
+	shadow?: SymbolShadow,
 ) {
 	const file = getRunSymbolFile(value)
 	const image = file ? symbols.get(file) : undefined
@@ -52,9 +54,9 @@ export function drawManaSymbol(
 	if (image) {
 		context.save()
 		if (shadow) {
-			context.shadowColor = '#000'
-			context.shadowOffsetX = 2
-			context.shadowOffsetY = 6
+			context.shadowColor = shadow.shadowColor ?? '#000'
+			context.shadowOffsetX = shadow.shadowOffsetX ?? 2
+			context.shadowOffsetY = shadow.shadowOffsetY ?? 6
 		}
 		context.drawImage(image, x, centerY - size / 2, size, size)
 		context.restore()

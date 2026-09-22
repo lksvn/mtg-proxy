@@ -1,5 +1,5 @@
 import type { CardTextRun } from '../cardText'
-import { drawManaSymbol } from './drawGenericMana'
+import { drawManaSymbol, type SymbolShadow } from './drawGenericMana'
 
 export function drawManaCost(
 	context: CanvasRenderingContext2D,
@@ -7,7 +7,7 @@ export function drawManaCost(
 	symbols: ReadonlyMap<string, HTMLImageElement>,
 	right: number,
 	centerY: number,
-	style: { symbolSize: number; gap: number; font: string; color: string },
+	style: { symbolSize: number; gap: number; font: string; color: string } & SymbolShadow,
 ) {
 	const { symbolSize, gap } = style
 
@@ -29,7 +29,7 @@ export function drawManaCost(
 
 	runs.forEach((run, index) => {
 		if (run.type === 'symbol') {
-			drawManaSymbol(context, run.value, symbols, x, centerY, symbolSize, true)
+			drawManaSymbol(context, run.value, symbols, x, centerY, symbolSize, style)
 		} else {
 			context.fillText(run.value, x, centerY)
 		}
