@@ -62,8 +62,8 @@ const m15RegularLayout: FrameLayout = {
 
 const seventhLayout: FrameLayout = {
 	artwork: { dragTop: 208, dragBottom: 1138 },
-	title: { x: 170, y: 144, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
-	mana: { right: 1386, centerY: 149, symbolSize: 68, gap: 4, font: '48px goudymedieval, serif', color: '#fff' },
+	title: { x: 170, y: 148, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	mana: { right: 1386, centerY: 140, symbolSize: 68, gap: 4, font: '48px goudymedieval, serif', color: '#fff' },
 	type: { x: 161, y: 1209, maxWidth: 1178, font: '65px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
 	rules: { x: 192, y: 1285, width: 1116, height: 565, verticalAlign: 'middle', fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 72, minFontSize: 32 },
 	symbol: { centerX: 1290, centerY: 1209, boxSize: 78 },
@@ -464,7 +464,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		pt: {},
 		fallbacks: commonFallbacks,
-		layout: seventhLayout,
+		layout: { ...seventhLayout, mana: { ...seventhLayout.mana, shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 } },
 		fonts: ['86px goudymedieval', '67px goudymedieval', '72px mplantin', '72px mplantini'],
 	},
 	'old-floating': {
