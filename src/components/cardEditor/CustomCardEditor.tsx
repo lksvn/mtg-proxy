@@ -109,7 +109,7 @@ export function CustomCardEditor() {
                         />
                     </div>
                     <h5>2. {t('cardEditionSection')}</h5>
-                    <div style={{display:'flex'}} className="gap-3">
+                    <div style={{display:'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gridAutoFlow:'dense'}} className="gap-3">
                         <div className="form-group gap-2">
                             <label htmlFor="card-frame-style-search">{t('searchFrameStyles')}</label>
                             <input

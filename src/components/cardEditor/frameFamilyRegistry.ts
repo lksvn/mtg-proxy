@@ -487,7 +487,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		pt: {},
 		fallbacks: commonFallbacks,
-		layout: { ...seventhLayout, footer: { ...seventhLayout.footer, metadataY: 1889 } },
+		layout: { ...seventhLayout, footer: { ...seventhLayout.footer, metadataY: 1915, disclaimerY: 1965 } },
 		fonts: ['80px goudymedieval', '65px goudymedieval', '72px mplantin', '72px mplantini'],
 	},
 }
