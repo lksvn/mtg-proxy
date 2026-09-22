@@ -135,7 +135,7 @@ export function drawCard(
 		layout.footer.maxWidth,
 	)
 	applyTextStyle(context, layout.footer.disclaimer)
-	context.fillStyle = layout.footer.colorByVariant?.[variant] ?? layout.footer.disclaimer.color
+	context.fillStyle = layout.footer.disclaimerColorByVariant?.[variant] ?? layout.footer.colorByVariant?.[variant] ?? layout.footer.disclaimer.color
 	context.fillText('NOT FOR SALE • Made on MTG Proxy', layout.footer.x, layout.footer.disclaimerY, layout.footer.maxWidth)
 }
 
