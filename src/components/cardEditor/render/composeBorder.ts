@@ -2,7 +2,8 @@ import type { FrameBorderStyle } from '../frameFamilies'
 import { HEIGHT, WIDTH } from './drawCard'
 import { loadImage } from './loadImage'
 
-const BORDER_COLORS: Record<Exclude<FrameBorderStyle, 'black'>, string> = {
+const BORDER_COLORS: Record<FrameBorderStyle, string> = {
+	black: '#000000',
 	white: '#ffffff',
 	silver: '#a3aeb7',
 	gold: '#a6884c',
@@ -10,7 +11,7 @@ const BORDER_COLORS: Record<Exclude<FrameBorderStyle, 'black'>, string> = {
 
 const cache = new Map<string, Promise<HTMLCanvasElement>>()
 
-export function loadBorderOverlay(maskPath: string, style: Exclude<FrameBorderStyle, 'black'>) {
+export function loadBorderOverlay(maskPath: string, style: FrameBorderStyle) {
 	const key = `${maskPath}:${style}`
 	const cached = cache.get(key)
 	if (cached) return cached

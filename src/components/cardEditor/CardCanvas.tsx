@@ -182,7 +182,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					: dualPair
 					? loadDualFrame(family, dualPair, hybrid)
 					: loadImage(assetUrl(family.frames[resolvedVariant]!)),
-				family.borderMask && borderStyle !== 'black' ? loadBorderOverlay(family.borderMask, borderStyle) : undefined,
+				family.borderMask && borderStyle !== (family.baseBorderStyle ?? 'black') ? loadBorderOverlay(family.borderMask, borderStyle) : undefined,
 				ptPath ? loadImage(assetUrl(ptPath)) : undefined,
 				artwork ? loadImageSource(artwork) : undefined,
                 setSymbol ? loadImageSource(setSymbol) : undefined
