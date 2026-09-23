@@ -99,8 +99,14 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(abu, 'ML'), 'L')
 	assert.equal(resolveFrameVariant(abu, 'V'), 'A')
 	assert.equal(abu.manaSymbolOverrides?.['b.svg'], 'old/oldb.svg')
-	assert.equal(abu.manaSymbolOverrides?.['t.svg'], 'oldtap.svg')
+	assert.equal(abu.manaSymbolOverrides?.['t.svg'], undefined)
 	assert.match(abu.layout.type.font, /mplantin/)
+	const revised = FRAME_FAMILIES.revised
+	assert.equal(revised.defaultBorderStyle, 'white')
+	assert.equal(revised.manaSymbolOverrides?.['b.svg'], 'old/oldb.svg')
+	assert.equal(revised.manaSymbolOverrides?.['t.svg'], 'originaltap.svg')
+	assert.equal(resolveFrameVariant(revised, 'WU'), 'A')
+	assert.equal(resolveFrameVariant(revised, 'WL'), 'WL')
 
 	const limited: FrameFamily = {
 		...regular,

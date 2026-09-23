@@ -34,6 +34,7 @@ const FRAME_STYLE_GROUPS = [
 		{ id: 'seventh-edition', label: 'frameStyleSeventhEdition' },
 		{ id: 'old-floating', label: 'frameStyleOldFloating' },
 		{ id: 'abu', label: 'frameStyleAbu' },
+		{ id: 'revised', label: 'frameStyleRevised' },
 	] },
 ] as const
 
@@ -126,7 +127,9 @@ export function CustomCardEditor() {
                                 id="card-frame-style"
                                 value={frameFamily}
                                 onChange={(event) => {
-                                    setFrameFamily(event.target.value as FrameFamilyId)
+                                    const family = event.target.value as FrameFamilyId
+                                    setFrameFamily(family)
+                                    setBorderStyle(getFrameFamily(family).defaultBorderStyle ?? 'black')
                                     setFrameStyleSearch('')
                                 }}
                             >
