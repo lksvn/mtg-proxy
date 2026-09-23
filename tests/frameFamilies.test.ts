@@ -107,6 +107,13 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(revised.manaSymbolOverrides?.['t.svg'], 'originaltap.svg')
 	assert.equal(resolveFrameVariant(revised, 'WU'), 'A')
 	assert.equal(resolveFrameVariant(revised, 'WL'), 'WL')
+	const fourth = FRAME_FAMILIES['fourth-era']
+	assert.equal(fourth.baseBorderStyle, 'white')
+	assert.equal(fourth.defaultBorderStyle, 'white')
+	assert.equal(fourth.manaSymbolOverrides?.['t.svg'], 'oldtap.svg')
+	assert.equal(resolveFrameVariant(fourth, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(fourth, 'WL'), 'L')
+	assert.equal(resolveFrameVariant(fourth, 'V'), 'A')
 
 	const limited: FrameFamily = {
 		...regular,

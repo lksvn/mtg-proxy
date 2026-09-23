@@ -35,6 +35,7 @@ const FRAME_STYLE_GROUPS = [
 		{ id: 'old-floating', label: 'frameStyleOldFloating' },
 		{ id: 'abu', label: 'frameStyleAbu' },
 		{ id: 'revised', label: 'frameStyleRevised' },
+		{ id: 'fourth-era', label: 'frameStyleFourthEra' },
 	] },
 ] as const
 
