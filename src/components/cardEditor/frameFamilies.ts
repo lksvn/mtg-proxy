@@ -3,7 +3,7 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era'
+export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted'
 export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
 type TextStyle = {

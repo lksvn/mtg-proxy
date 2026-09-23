@@ -580,4 +580,33 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		fonts: ['86px goudymedieval', '90px mplantin', '72px mplantini'],
 	},
+	colorshifted: {
+		id: 'colorshifted',
+		frames: {
+			W: 'img/frames/m15/colorshifted/w.png', U: 'img/frames/m15/colorshifted/u.png',
+			B: 'img/frames/m15/colorshifted/b.png', R: 'img/frames/m15/colorshifted/r.png',
+			G: 'img/frames/m15/colorshifted/g.png',
+		},
+		pt: {
+			W: 'img/frames/m15/colorshifted/wpt.png', U: 'img/frames/m15/colorshifted/upt.png',
+			B: 'img/frames/m15/colorshifted/bpt.png', R: 'img/frames/m15/colorshifted/rpt.png',
+			G: 'img/frames/m15/colorshifted/gpt.png',
+		},
+		fallbacks: {
+			M: 'W', A: 'W', C: 'W', L: 'W', V: 'W',
+			WL: 'W', UL: 'W', BL: 'W', RL: 'W', GL: 'W', ML: 'W',
+			WU: 'W', WB: 'W', UB: 'W', UR: 'W', BR: 'W', BG: 'W', RG: 'W', RW: 'W', GW: 'W', GU: 'W',
+		},
+		layout: {
+			artwork: { dragTop: 237, dragBottom: 1167 },
+			title: { x: 128, y: 167, maxWidth: 1244, font: '80px belerenb, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+			mana: { right: 1394, centerY: 164, symbolSize: 71, gap: 4, font: '48px belerenb, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: -2, shadowOffsetY: 6 },
+			type: { x: 128, y: 1246, maxWidth: 1244, font: '68px belerenb, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+			rules: { x: 129, y: 1324, width: 1242, height: 604, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
+			symbol: { centerX: 1335, centerY: 1248, boxSize: 85 },
+			pt: { x: 1136, y: 1858, width: 282, height: 154, textX: 1292, textY: 1933, font: '70px belerenbsc, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+			footer: commonFooter,
+		},
+		fonts: commonFonts,
+	},
 }

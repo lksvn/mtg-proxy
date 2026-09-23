@@ -114,6 +114,12 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(fourth, 'WU'), 'M')
 	assert.equal(resolveFrameVariant(fourth, 'WL'), 'L')
 	assert.equal(resolveFrameVariant(fourth, 'V'), 'A')
+	const colorshifted = FRAME_FAMILIES.colorshifted
+	assert.equal(resolveFrameVariant(colorshifted, 'B'), 'B')
+	assert.equal(resolveFrameVariant(colorshifted, 'WU'), 'W')
+	assert.equal(resolveFrameVariant(colorshifted, 'A'), 'W')
+	assert.equal(resolveFrameVariant(colorshifted, 'GL'), 'W')
+	assert.equal(colorshifted.dual, undefined)
 
 	const limited: FrameFamily = {
 		...regular,
