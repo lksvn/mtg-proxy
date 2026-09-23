@@ -1,7 +1,7 @@
 import type { ArtworkTransform } from '../CardCanvas'
 import type { CardTextRun } from '../cardText'
 import type { FrameLayout } from '../frameFamilies'
-import { resolvePtTextColor, resolveTextColor } from '../frameFamilies'
+import { resolveFooterX, resolvePtTextColor, resolveTextColor } from '../frameFamilies'
 import type { CustomCardData, FrameVariant } from '../types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
@@ -139,18 +139,19 @@ export function drawCard(
 		)
 	}
 
+	const footerX = resolveFooterX(layout, Boolean(card.powerToughness))
 	applyTextStyle(context, layout.footer.metadata)
 	context.fillStyle = layout.footer.colorByVariant?.[variant] ?? layout.footer.metadata.color
 	context.textAlign = layout.footer.align ?? 'left'
 	context.fillText(
 		`${RARITY_CODES[card.rarity]}${card.number ? ' • ' + card.number : ''}${card.artist ? ' • ' + card.artist : ''}`,
-		layout.footer.x,
+		footerX,
 		layout.footer.metadataY,
 		layout.footer.maxWidth,
 	)
 	applyTextStyle(context, layout.footer.disclaimer)
 	context.fillStyle = layout.footer.disclaimerColorByVariant?.[variant] ?? layout.footer.colorByVariant?.[variant] ?? layout.footer.disclaimer.color
-	context.fillText('NOT FOR SALE • Made on MTG Proxy', layout.footer.x, layout.footer.disclaimerY, layout.footer.maxWidth)
+	context.fillText('NOT FOR SALE • Made on MTG Proxy', footerX, layout.footer.disclaimerY, layout.footer.maxWidth)
 }
 
 function applyTextStyle(

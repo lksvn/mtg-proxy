@@ -115,3 +115,9 @@ export function resolvePtTextColor(variant: FrameVariant, defaultColor: string) 
 export function resolveTextColor(style: TextStyle, variant: FrameVariant) {
 	return style.colorByVariant?.[variant] ?? style.color
 }
+
+export function resolveFooterX(layout: FrameLayout, hasPt: boolean) {
+	return !hasPt && layout.footer.align === 'right'
+		? layout.pt.x + layout.pt.width
+		: layout.footer.x
+}

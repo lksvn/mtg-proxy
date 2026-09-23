@@ -10,6 +10,7 @@ import {
 	resolveFrameVariant,
 	resolvePtTextColor,
 	resolveTextColor,
+	resolveFooterX,
 	type FrameFamily,
 } from '../src/components/cardEditor/frameFamilies.ts'
 
@@ -136,6 +137,9 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(future, 'WL'), 'L')
 	assert.equal(resolveFrameVariant(future, 'V'), 'A')
 	assert.equal(future.layout.mana.verticalPositions?.length, 6)
+	assert.equal(resolveFooterX(future.layout, true), future.layout.footer.x)
+	assert.equal(resolveFooterX(future.layout, false), future.layout.pt.x + future.layout.pt.width)
+	assert.equal(resolveFooterX(seventh.layout, false), seventh.layout.footer.x)
 	assert.equal(futureManaFile('2'), 'future/f2.png')
 	assert.equal(futureManaFile('W/U'), 'future/fwu.png')
 	assert.equal(futureManaFile('C'), undefined)
