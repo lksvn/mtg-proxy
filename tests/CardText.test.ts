@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
 	getLoyaltySymbolFile,
+	getAbuDualLandColors,
 	getSymbolFile,
 	hasHybridManaSymbol,
 	inferFrameVariant,
@@ -11,6 +12,14 @@ import {
 	parseManaCost,
 	parseRulesText,
 } from '../src/components/cardEditor/cardText.ts'
+
+test('finds ABU dual-land colors from names or basic land types', () => {
+	assert.deepEqual(getAbuDualLandColors('Savannah', 'Land'), ['WL', 'GL'])
+	assert.deepEqual(getAbuDualLandColors('Plateau', 'Land'), ['WL', 'RL'])
+	assert.deepEqual(getAbuDualLandColors('Custom', 'Land — Forest Plains'), ['WL', 'GL'])
+	assert.deepEqual(getAbuDualLandColors('Custom', 'Terreno — Montanha Planície'), ['WL', 'RL'])
+	assert.equal(getAbuDualLandColors('Savannah', 'Creature'), undefined)
+})
 
 test('identifies two-color hybrid mana symbols', () => {
 	assert.equal(hasHybridManaSymbol('{W/U}'), true)
