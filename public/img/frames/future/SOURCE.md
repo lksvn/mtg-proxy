@@ -1,0 +1,3 @@
+# Future Sight frame sources
+
+The nine ordinary frames (744 × 1039), matching P/T plates (129 × 81), and seven type-icon masks were copied from the local [Card Conjurer](https://github.com/joshbirnholz/cardconjurer) clone at `D:\www\cardconjurer`, revision `d3c6706692898d596ec6a5be0be44f63062c9e12`. The 37 matching mana icons in `public/img/manaSymbols/future/` came from the same source. Geometry follows `js/frames/packFutureRegular.js`; mana icons follow `js/frames/manaSymbolsFuture.js`. Canvas scales these low-resolution assets to 1500 × 2100, so exports may look softer than other families. Dual colors use the family's multicolored frame; special layouts and optional borders are excluded.

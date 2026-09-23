@@ -3,12 +3,13 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era'
+export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight'
 export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
 type TextStyle = {
 	font: string
 	color: string
+	colorByVariant?: Partial<Record<FrameVariant, string>>
 	shadowColor?: string
 	shadowOffsetX?: number
 	shadowOffsetY?: number
@@ -23,7 +24,7 @@ type TextBox = TextStyle & {
 export type FrameLayout = {
 	artwork: { dragTop: number; dragBottom: number }
 	title: TextBox
-	mana: TextStyle & { right: number; centerY: number; symbolSize: number; gap: number }
+	mana: TextStyle & { right: number; centerY: number; symbolSize: number; gap: number; verticalPositions?: readonly (readonly [number, number])[] }
 	type: TextBox
 	rules: {
 		x: number
@@ -68,6 +69,7 @@ export type FrameFamily = {
 	defaultBorderStyle?: FrameBorderStyle
 	dualLandMask?: string
 	manaSymbolOverrides?: Record<string, string>
+	typeIconMasks?: Partial<Record<'creature' | 'instant' | 'sorcery' | 'enchantment' | 'artifact' | 'land' | 'multi', string>>
 	frames: Partial<Record<FrameVariant, string>>
 	pt: Partial<Record<FrameVariant, string>>
 	fallbacks: Partial<Record<FrameVariant, FrameVariant>>
@@ -108,4 +110,14 @@ export function resolvePtVariant(variant: FrameVariant, hybrid: boolean): FrameV
 
 export function resolvePtTextColor(variant: FrameVariant, defaultColor: string) {
 	return variant === 'V' ? '#fff' : defaultColor
+}
+
+export function resolveTextColor(style: TextStyle, variant: FrameVariant) {
+	return style.colorByVariant?.[variant] ?? style.color
+}
+
+export function resolveFooterX(layout: FrameLayout, hasPt: boolean) {
+	return !hasPt && layout.footer.align === 'right'
+		? layout.pt.x + layout.pt.width
+		: layout.footer.x
 }

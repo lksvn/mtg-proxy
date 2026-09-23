@@ -10,6 +10,7 @@ import {
 	inferFrameVariant,
 	parseCardText,
 	parseManaCost,
+	countManaCostItems,
 	parseRulesText,
 } from '../src/components/cardEditor/cardText.ts'
 
@@ -136,6 +137,14 @@ test('parses compact and spaced mana costs', () => {
 		{ type: 'symbol', value: '9' },
 		{ type: 'symbol', value: '9' },
 	])
+})
+
+test('counts mana items independently of braces, digits, and hybrid notation', () => {
+	assert.equal(countManaCostItems('2{W/U}{3}XQ'), 5)
+	assert.equal(countManaCostItems('{2/W}WUBRG'), 6)
+	assert.equal(countManaCostItems('{2/W}WUBRGC'), 7)
+	assert.equal(countManaCostItems('123'), 1)
+	assert.equal(countManaCostItems('{W/U'), 1)
 })
 
 test('parses generic and mixed-format mana costs', () => {

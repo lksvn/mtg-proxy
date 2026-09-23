@@ -1,12 +1,14 @@
 import type { CustomCardData } from '../types'
+import { countManaCostItems } from '../cardText'
 import { useI18n } from '../../../i18n/context'
 
 type CardDetailsFormProps = {
 	card: CustomCardData
 	onChange: (card: CustomCardData) => void
+	maxManaItems?: number
 }
 
-export function CardDetailsForm({ card, onChange }: CardDetailsFormProps) {
+export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFormProps) {
 	const { t } = useI18n()
 
 	function update(changes: Partial<CustomCardData>) {
@@ -32,11 +34,14 @@ export function CardDetailsForm({ card, onChange }: CardDetailsFormProps) {
 					type="text"
 					value={card.manaCost}
 					placeholder="{2}{U}{U}"
-						onChange={(event) =>
-						update({ manaCost: event.target.value })
-					}
+					onChange={(event) => {
+						const next = event.target.value
+						if (maxManaItems && countManaCostItems(next) > Math.max(maxManaItems, countManaCostItems(card.manaCost))) return
+						update({ manaCost: next })
+					}}
 				/>
 				<small className="text-muted">{t('manaCostHelp')}</small>
+				{maxManaItems && <small className="text-muted">{t('manaCostLimitFuture')}</small>}
 			</div>
 
 			<div className="form-group">

@@ -36,6 +36,9 @@ const FRAME_STYLE_GROUPS = [
 		{ id: 'abu', label: 'frameStyleAbu' },
 		{ id: 'revised', label: 'frameStyleRevised' },
 		{ id: 'fourth-era', label: 'frameStyleFourthEra' },
+		{ id: 'colorshifted', label: 'frameStyleColorshifted' },
+		{ id: 'classicshifted', label: 'frameStyleClassicshifted' },
+		{ id: 'future-sight', label: 'frameStyleFutureSight' },
 	] },
 ] as const
 
@@ -164,7 +167,7 @@ export function CustomCardEditor() {
                         <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
                     </div>
                     <h5>3. {t('cardInformationSection')}</h5>
-                    <CardDetailsForm card={card} onChange={setCard} />
+                    <CardDetailsForm card={card} onChange={setCard} maxManaItems={frameFamily === 'future-sight' ? 6 : undefined} />
                 </div>
 
                 <div style={{position:'relative'}}>

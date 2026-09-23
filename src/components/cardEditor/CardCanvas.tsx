@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, ty
 import { DUAL_FRAME_VARIANTS, type CustomCardData, type FrameVariant } from './types'
 import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
 import { drawCard, HEIGHT, WIDTH } from './render/drawCard'
+import { futureManaFile } from './render/drawManaCost'
 import { loadImage, loadImageSource } from './render/loadImage'
 import { loadDualFrame } from './render/composeDualFrame'
 import { loadAbuDualLand } from './render/composeAbuDualLand'
@@ -155,7 +156,18 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
                         : run,
             )
 
-            const allRuns = [...manaRuns, ...rulesRuns, ...flavorRuns]
+			const allRuns = [...manaRuns, ...rulesRuns, ...flavorRuns]
+			const futureManaFiles = family.id === 'future-sight'
+				? manaRuns.flatMap((run) => run.type === 'symbol' ? [futureManaFile(run.value)].filter((file): file is string => Boolean(file)) : [])
+				: []
+			const cardTypes = card.typeLine.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+			const typeMatches = family.typeIconMasks ? ([
+				['creature', /\b(creature|criatura)\b/], ['instant', /\b(instant|instantanea)\b/],
+				['sorcery', /\b(sorcery|feitico)\b/], ['enchantment', /\b(enchantment|encantamento)\b/],
+				['artifact', /\b(artifact|artefato)\b/], ['land', /\b(land|terreno)\b/],
+			] as const).filter(([, pattern]) => pattern.test(cardTypes)) : []
+			const typeIconKey = typeMatches.length > 1 ? 'multi' : typeMatches[0]?.[0]
+			const typeIconPath = typeIconKey ? family.typeIconMasks?.[typeIconKey] : undefined
 
             const manaFiles = [
                 ...new Set(
@@ -176,7 +188,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const hybrid = Boolean(dualPair && hasHybridManaSymbol(card.manaCost))
 			const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 			const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
-			const [frame, border, ptBackground, art, symbol] = await Promise.all([
+			const [frame, border, ptBackground, art, symbol, typeIcon] = await Promise.all([
 				abuLandColors
 					? loadAbuDualLand(family, abuLandColors)
 					: dualPair
@@ -185,13 +197,14 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				family.borderMask && borderStyle !== (family.baseBorderStyle ?? 'black') ? loadBorderOverlay(family.borderMask, borderStyle) : undefined,
 				ptPath ? loadImage(assetUrl(ptPath)) : undefined,
 				artwork ? loadImageSource(artwork) : undefined,
-                setSymbol ? loadImageSource(setSymbol) : undefined
+				setSymbol ? loadImageSource(setSymbol) : undefined,
+				typeIconPath ? loadImage(assetUrl(typeIconPath)) : undefined,
 			])
 			const manaSymbols = new Map(
                 await Promise.all(
-                    manaFiles.map(async (file) => [
+                    [...manaFiles, ...futureManaFiles].map(async (file) => [
                         file,
-                        await loadImage(`${MANA_SYMBOLS_URL}${family.manaSymbolOverrides?.[file] ?? file}`),
+						await loadImage(`${MANA_SYMBOLS_URL}${family.manaSymbolOverrides?.[file] ?? file}`),
                     ] as const),
                 ),
 			)
@@ -208,7 +221,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				context,
 				card,
 				transform,
-				{ frame, border, ptBackground, art, symbol, manaSymbols },
+				{ frame, border, ptBackground, art, symbol, typeIcon, manaSymbols },
 				{ manaRuns, rulesRuns, flavorRuns },
 				family.layout,
 				resolvedVariant,

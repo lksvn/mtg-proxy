@@ -4,10 +4,13 @@ import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import test from 'node:test'
+import { futureManaFile } from '../src/components/cardEditor/render/drawManaCost.ts'
 import {
 	FRAME_FAMILIES,
 	resolveFrameVariant,
 	resolvePtTextColor,
+	resolveTextColor,
+	resolveFooterX,
 	type FrameFamily,
 } from '../src/components/cardEditor/frameFamilies.ts'
 
@@ -16,6 +19,7 @@ test('frame family assets exist', () => {
 		const paths = [
 			...Object.values(family.frames),
 			...Object.values(family.pt),
+			...Object.values(family.typeIconMasks ?? {}),
 			...(family.borderMask ? [family.borderMask] : []),
 			...(family.dualLandMask ? [family.dualLandMask] : []),
 			...Object.values(family.dual ?? {}).filter((value) => typeof value === 'string' && value.includes('/')),
@@ -67,6 +71,8 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(universesBeyond, 'ML'), 'ML')
 	assert.equal(resolvePtTextColor('V', '#111'), '#fff')
 	assert.equal(resolvePtTextColor('A', '#111'), '#111')
+	assert.equal(resolveTextColor({ font: '12px serif', color: '#fff', colorByVariant: { W: '#111' } }, 'W'), '#111')
+	assert.equal(resolveTextColor({ font: '12px serif', color: '#fff', colorByVariant: { W: '#111' } }, 'B'), '#fff')
 	const eighth = FRAME_FAMILIES['eighth-edition']
 	assert.equal(resolveFrameVariant(eighth, 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(eighth, 'WL'), 'WL')
@@ -114,6 +120,32 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(fourth, 'WU'), 'M')
 	assert.equal(resolveFrameVariant(fourth, 'WL'), 'L')
 	assert.equal(resolveFrameVariant(fourth, 'V'), 'A')
+	const colorshifted = FRAME_FAMILIES.colorshifted
+	assert.equal(resolveFrameVariant(colorshifted, 'B'), 'B')
+	assert.equal(resolveFrameVariant(colorshifted, 'WU'), 'W')
+	assert.equal(resolveFrameVariant(colorshifted, 'A'), 'W')
+	assert.equal(resolveFrameVariant(colorshifted, 'GL'), 'W')
+	assert.equal(colorshifted.dual, undefined)
+	const classicshifted = FRAME_FAMILIES.classicshifted
+	assert.equal(resolveFrameVariant(classicshifted, 'B'), 'B')
+	assert.equal(resolveFrameVariant(classicshifted, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(classicshifted, 'WL'), 'WL')
+	assert.equal(resolveFrameVariant(classicshifted, 'ML'), 'L')
+	assert.equal(resolveFrameVariant(classicshifted, 'V'), 'A')
+	const future = FRAME_FAMILIES['future-sight']
+	assert.equal(resolveFrameVariant(future, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(future, 'WL'), 'L')
+	assert.equal(resolveFrameVariant(future, 'V'), 'A')
+	assert.equal(future.layout.mana.verticalPositions?.length, 6)
+	assert.equal(resolveFooterX(future.layout, true), future.layout.footer.x)
+	assert.equal(resolveFooterX(future.layout, false), future.layout.pt.x + future.layout.pt.width)
+	assert.equal(resolveFooterX(seventh.layout, false), seventh.layout.footer.x)
+	assert.equal(futureManaFile('2'), 'future/f2.png')
+	assert.equal(futureManaFile('W/U'), 'future/fwu.png')
+	assert.equal(futureManaFile('C'), undefined)
+	for (const token of ['W', 'U', 'B', 'R', 'G', '0', '20', 'X', 'W/U', 'R/G']) {
+		assert.equal(existsSync(resolve('public/img/manaSymbols', futureManaFile(token)!)), true, token)
+	}
 
 	const limited: FrameFamily = {
 		...regular,
