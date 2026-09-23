@@ -80,6 +80,36 @@ const seventhLayout: FrameLayout = {
 	},
 }
 
+const abuFrames: FrameFamily['frames'] = {
+	W: 'img/frames/old/abu/w.png', U: 'img/frames/old/abu/u.png',
+	B: 'img/frames/old/abu/b.png', R: 'img/frames/old/abu/r.png',
+	G: 'img/frames/old/abu/g.png', A: 'img/frames/old/abu/a.png',
+	L: 'img/frames/old/abu/l.png', WL: 'img/frames/old/abu/wl.png',
+	UL: 'img/frames/old/abu/ul.png', BL: 'img/frames/old/abu/bl.png',
+	RL: 'img/frames/old/abu/rl.png', GL: 'img/frames/old/abu/gl.png',
+}
+
+const abuFallbacks: FrameFamily['fallbacks'] = {
+	...commonFallbacks,
+	C: 'A', M: 'A', ML: 'L',
+	WU: 'A', WB: 'A', UB: 'A', UR: 'A', BR: 'A', BG: 'A', RG: 'A', RW: 'A', GW: 'A', GU: 'A',
+}
+
+const abuLayout: FrameLayout = {
+	artwork: { dragTop: 219, dragBottom: 1145 },
+	title: { x: 105, y: 150, maxWidth: 1190, font: '90px goudymedieval, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	mana: { right: 1375, centerY: 157, symbolSize: 74, gap: 4, font: '48px goudymedieval, serif', color: '#ababab', shadowOffsetX: 0, shadowOffsetY: 0 },
+	type: { x: 150, y: 1208, maxWidth: 1130, font: '70px mplantin, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	rules: { x: 225, y: 1270, width: 1050, height: 580, verticalAlign: 'middle', fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 72, minFontSize: 32 },
+	symbol: { centerX: 1325, centerY: 1225, boxSize: 74 },
+	pt: { x: 1200, y: 1884, width: 240, height: 87, textX: 1320, textY: 1928, font: '87px mplantin, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	footer: {
+		align: 'left', x: 150, maxWidth: 1200,
+		metadataY: 1915, metadata: { font: '50px mplantin, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
+		disclaimerY: 1970, disclaimer: { font: '26px mplantin, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
+	},
+}
+
 export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	'box-topper': {
 		id: 'box-topper',
@@ -497,42 +527,27 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		dualLandMask: 'img/frames/old/abu/dualLand.png',
 		manaSymbolOverrides: {
 			'w.svg': 'old/oldw.svg', 'u.svg': 'old/oldu.svg', 'b.svg': 'old/oldb.svg',
-			'r.svg': 'old/oldr.svg', 'g.svg': 'old/oldg.svg', 't.svg': 'oldtap.svg',
+			'r.svg': 'old/oldr.svg', 'g.svg': 'old/oldg.svg',
 		},
-		frames: {
-			W: 'img/frames/old/abu/w.png',
-			U: 'img/frames/old/abu/u.png',
-			B: 'img/frames/old/abu/b.png',
-			R: 'img/frames/old/abu/r.png',
-			G: 'img/frames/old/abu/g.png',
-			A: 'img/frames/old/abu/a.png',
-			L: 'img/frames/old/abu/l.png',
-			WL: 'img/frames/old/abu/wl.png',
-			UL: 'img/frames/old/abu/ul.png',
-			BL: 'img/frames/old/abu/bl.png',
-			RL: 'img/frames/old/abu/rl.png',
-			GL: 'img/frames/old/abu/gl.png',
-		},
+		frames: abuFrames,
 		pt: {},
-		fallbacks: {
-			...commonFallbacks,
-			C: 'A', M: 'A', ML: 'L',
-			WU: 'A', WB: 'A', UB: 'A', UR: 'A', BR: 'A', BG: 'A', RG: 'A', RW: 'A', GW: 'A', GU: 'A',
+		fallbacks: abuFallbacks,
+		layout: abuLayout,
+		fonts: ['90px goudymedieval', '87px mplantin', '72px mplantini'],
+	},
+	revised: {
+		id: 'revised',
+		borderMask: 'img/frames/old/abu/border.svg',
+		defaultBorderStyle: 'white',
+		dualLandMask: 'img/frames/old/abu/dualLand.png',
+		manaSymbolOverrides: {
+			'w.svg': 'old/oldw.svg', 'u.svg': 'old/oldu.svg', 'b.svg': 'old/oldb.svg',
+			'r.svg': 'old/oldr.svg', 'g.svg': 'old/oldg.svg', 't.svg': 'originaltap.svg',
 		},
-		layout: {
-			artwork: { dragTop: 219, dragBottom: 1145 },
-			title: { x: 105, y: 150, maxWidth: 1190, font: '90px goudymedieval, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
-			mana: { right: 1375, centerY: 157, symbolSize: 74, gap: 4, font: '48px goudymedieval, serif', color: '#ababab', shadowOffsetX: 0, shadowOffsetY: 0 },
-			type: { x: 150, y: 1208, maxWidth: 1130, font: '70px mplantin, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
-			rules: { x: 225, y: 1270, width: 1050, height: 580, verticalAlign: 'middle', fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 72, minFontSize: 32 },
-			symbol: { centerX: 1325, centerY: 1225, boxSize: 74 },
-			pt: { x: 1200, y: 1884, width: 240, height: 87, textX: 1320, textY: 1928, font: '87px mplantin, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
-			footer: {
-				align: 'left', x: 150, maxWidth: 1200,
-				metadataY: 1915, metadata: { font: '50px mplantin, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
-				disclaimerY: 1970, disclaimer: { font: '26px mplantin, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
-			},
-		},
+		frames: abuFrames,
+		pt: {},
+		fallbacks: abuFallbacks,
+		layout: abuLayout,
 		fonts: ['90px goudymedieval', '87px mplantin', '72px mplantini'],
 	},
 }
