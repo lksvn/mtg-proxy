@@ -17,6 +17,7 @@ test('frame family assets exist', () => {
 			...Object.values(family.frames),
 			...Object.values(family.pt),
 			...(family.borderMask ? [family.borderMask] : []),
+			...(family.dualLandMask ? [family.dualLandMask] : []),
 			...Object.values(family.dual ?? {}).filter((value) => typeof value === 'string' && value.includes('/')),
 		]
 
