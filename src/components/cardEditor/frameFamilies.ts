@@ -9,6 +9,7 @@ export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 type TextStyle = {
 	font: string
 	color: string
+	colorByVariant?: Partial<Record<FrameVariant, string>>
 	shadowColor?: string
 	shadowOffsetX?: number
 	shadowOffsetY?: number
@@ -41,7 +42,6 @@ export type FrameLayout = {
 	}
 	symbol: { centerX: number; centerY: number; boxSize: number }
 	pt: TextStyle & {
-		colorByVariant?: Partial<Record<FrameVariant, string>>
 		x: number
 		y: number
 		width: number
@@ -110,4 +110,8 @@ export function resolvePtVariant(variant: FrameVariant, hybrid: boolean): FrameV
 
 export function resolvePtTextColor(variant: FrameVariant, defaultColor: string) {
 	return variant === 'V' ? '#fff' : defaultColor
+}
+
+export function resolveTextColor(style: TextStyle, variant: FrameVariant) {
+	return style.colorByVariant?.[variant] ?? style.color
 }

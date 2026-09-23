@@ -9,6 +9,7 @@ import {
 	FRAME_FAMILIES,
 	resolveFrameVariant,
 	resolvePtTextColor,
+	resolveTextColor,
 	type FrameFamily,
 } from '../src/components/cardEditor/frameFamilies.ts'
 
@@ -69,6 +70,8 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(universesBeyond, 'ML'), 'ML')
 	assert.equal(resolvePtTextColor('V', '#111'), '#fff')
 	assert.equal(resolvePtTextColor('A', '#111'), '#111')
+	assert.equal(resolveTextColor({ font: '12px serif', color: '#fff', colorByVariant: { W: '#111' } }, 'W'), '#111')
+	assert.equal(resolveTextColor({ font: '12px serif', color: '#fff', colorByVariant: { W: '#111' } }, 'B'), '#fff')
 	const eighth = FRAME_FAMILIES['eighth-edition']
 	assert.equal(resolveFrameVariant(eighth, 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(eighth, 'WL'), 'WL')

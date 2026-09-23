@@ -1,7 +1,7 @@
 import type { ArtworkTransform } from '../CardCanvas'
 import type { CardTextRun } from '../cardText'
 import type { FrameLayout } from '../frameFamilies'
-import { resolvePtTextColor } from '../frameFamilies'
+import { resolvePtTextColor, resolveTextColor } from '../frameFamilies'
 import type { CustomCardData, FrameVariant } from '../types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
@@ -107,12 +107,12 @@ export function drawCard(
 	context.fontKerning = 'normal'
 	context.textRendering = 'optimizeLegibility'
 	context.textBaseline = 'middle'
-	applyTextStyle(context, layout.title)
+	applyTextStyle(context, layout.title, variant)
 	context.textAlign = 'left'
 	context.fillText(card.name, layout.title.x, layout.title.y, layout.title.maxWidth)
 	context.textAlign = 'right'
 	drawManaCost(context, manaRuns, manaSymbols, layout.mana.right, layout.mana.centerY, layout.mana)
-	applyTextStyle(context, layout.type)
+	applyTextStyle(context, layout.type, variant)
 	context.textAlign = 'left'
 	context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), layout.type.x, layout.type.y, layout.type.maxWidth)
 	const textRuns: CardTextRun[] = rulesRuns.length && flavorRuns.length
@@ -129,7 +129,7 @@ export function drawCard(
 			layout.pt.height,
 		)
 		applyTextStyle(context, layout.pt)
-		context.fillStyle = resolvePtTextColor(variant, layout.pt.colorByVariant?.[variant] ?? layout.pt.color)
+		context.fillStyle = resolvePtTextColor(variant, resolveTextColor(layout.pt, variant))
 		context.textAlign = 'center'
 		context.fillText(
 			card.powerToughness,
@@ -155,10 +155,11 @@ export function drawCard(
 
 function applyTextStyle(
 	context: CanvasRenderingContext2D,
-	style: { font: string; color: string; shadowColor?: string; shadowOffsetX?: number; shadowOffsetY?: number },
+	style: { font: string; color: string; colorByVariant?: Partial<Record<FrameVariant, string>>; shadowColor?: string; shadowOffsetX?: number; shadowOffsetY?: number },
+	variant?: FrameVariant,
 ) {
 	context.font = style.font
-	context.fillStyle = style.color
+	context.fillStyle = variant ? resolveTextColor(style, variant) : style.color
 	context.shadowColor = style.shadowColor ?? 'transparent'
 	context.shadowOffsetX = style.shadowOffsetX ?? 0
 	context.shadowOffsetY = style.shadowOffsetY ?? 0
