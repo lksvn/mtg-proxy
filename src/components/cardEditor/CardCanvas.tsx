@@ -185,7 +185,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
                 await Promise.all(
                     manaFiles.map(async (file) => [
                         file,
-                        await loadImage(`${MANA_SYMBOLS_URL}${file}`),
+                        await loadImage(`${MANA_SYMBOLS_URL}${family.manaSymbolOverrides?.[file] ?? file}`),
                     ] as const),
                 ),
 			)

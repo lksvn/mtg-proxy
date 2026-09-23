@@ -64,6 +64,7 @@ export type FrameLayout = {
 export type FrameFamily = {
 	id: FrameFamilyId
 	borderMask?: string
+	manaSymbolOverrides?: Record<string, string>
 	frames: Partial<Record<FrameVariant, string>>
 	pt: Partial<Record<FrameVariant, string>>
 	fallbacks: Partial<Record<FrameVariant, FrameVariant>>

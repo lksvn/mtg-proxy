@@ -494,6 +494,10 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	abu: {
 		id: 'abu',
 		borderMask: 'img/frames/old/abu/border.svg',
+		manaSymbolOverrides: {
+			'w.svg': 'old/oldw.svg', 'u.svg': 'old/oldu.svg', 'b.svg': 'old/oldb.svg',
+			'r.svg': 'old/oldr.svg', 'g.svg': 'old/oldg.svg', 't.svg': 'oldtap.svg',
+		},
 		frames: {
 			W: 'img/frames/old/abu/w.png',
 			U: 'img/frames/old/abu/u.png',
@@ -518,16 +522,16 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 			artwork: { dragTop: 219, dragBottom: 1145 },
 			title: { x: 105, y: 150, maxWidth: 1190, font: '90px goudymedieval, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
 			mana: { right: 1375, centerY: 157, symbolSize: 74, gap: 4, font: '48px goudymedieval, serif', color: '#ababab' },
-			type: { x: 150, y: 1208, maxWidth: 1130, font: '70px goudymedieval, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+			type: { x: 150, y: 1208, maxWidth: 1130, font: '70px mplantin, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
 			rules: { x: 225, y: 1270, width: 1050, height: 580, verticalAlign: 'middle', fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 72, minFontSize: 32 },
 			symbol: { centerX: 1325, centerY: 1225, boxSize: 74 },
-			pt: { x: 1200, y: 1884, width: 240, height: 87, textX: 1320, textY: 1928, font: '87px goudymedieval, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+			pt: { x: 1200, y: 1884, width: 240, height: 87, textX: 1320, textY: 1928, font: '87px mplantin, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
 			footer: {
 				align: 'center', x: 750, maxWidth: 1200,
-				metadataY: 1925, metadata: { font: '50px goudymedieval, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
+				metadataY: 1925, metadata: { font: '50px mplantin, serif', color: '#ababab', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
 				disclaimerY: 2054, disclaimer: { font: '26px mplantin, serif', color: '#ababab' },
 			},
 		},
-		fonts: ['90px goudymedieval', '70px goudymedieval', '72px mplantin', '72px mplantini'],
+		fonts: ['90px goudymedieval', '87px mplantin', '72px mplantini'],
 	},
 }
