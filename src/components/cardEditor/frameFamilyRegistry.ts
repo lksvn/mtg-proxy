@@ -426,9 +426,9 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		layout: {
 			artwork: { dragTop: 254, dragBottom: 1162 },
-			title: { x: 135, y: 177, maxWidth: 1236, font: '68px matrixb, serif', color: '#111' },
+			title: { x: 135, y: 177, maxWidth: 1236, font: '74px matrixb, serif', color: '#111' },
 			mana: { right: 1372, centerY: 177, symbolSize: 64, gap: 4, font: '48px matrixb, serif', color: '#111' },
-			type: { x: 153, y: 1230, maxWidth: 1195, font: '58px matrixb, serif', color: '#111' },
+			type: { x: 153, y: 1230, maxWidth: 1195, font: '62px matrixb, serif', color: '#111' },
 			rules: { x: 153, y: 1328, width: 1191, height: 544, fontFamily: 'mplantin', verticalAlign: 'middle', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
 			symbol: { centerX: 1325, centerY: 1236, boxSize: 82 },
 			pt: { x: 1090, y: 1852, width: 309, height: 163, textX: 1253, textY: 1928, font: '80px matrixbsc, serif', color: '#111' },
