@@ -38,6 +38,7 @@ const FRAME_STYLE_GROUPS = [
 		{ id: 'fourth-era', label: 'frameStyleFourthEra' },
 		{ id: 'colorshifted', label: 'frameStyleColorshifted' },
 		{ id: 'classicshifted', label: 'frameStyleClassicshifted' },
+		{ id: 'future-sight', label: 'frameStyleFutureSight' },
 	] },
 ] as const
 

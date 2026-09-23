@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import test from 'node:test'
+import { futureManaFile } from '../src/components/cardEditor/render/drawManaCost.ts'
 import {
 	FRAME_FAMILIES,
 	resolveFrameVariant,
@@ -16,6 +17,7 @@ test('frame family assets exist', () => {
 		const paths = [
 			...Object.values(family.frames),
 			...Object.values(family.pt),
+			...Object.values(family.typeIconMasks ?? {}),
 			...(family.borderMask ? [family.borderMask] : []),
 			...(family.dualLandMask ? [family.dualLandMask] : []),
 			...Object.values(family.dual ?? {}).filter((value) => typeof value === 'string' && value.includes('/')),
@@ -126,6 +128,17 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(classicshifted, 'WL'), 'WL')
 	assert.equal(resolveFrameVariant(classicshifted, 'ML'), 'L')
 	assert.equal(resolveFrameVariant(classicshifted, 'V'), 'A')
+	const future = FRAME_FAMILIES['future-sight']
+	assert.equal(resolveFrameVariant(future, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(future, 'WL'), 'L')
+	assert.equal(resolveFrameVariant(future, 'V'), 'A')
+	assert.equal(future.layout.mana.verticalPositions?.length, 6)
+	assert.equal(futureManaFile('2'), 'future/f2.png')
+	assert.equal(futureManaFile('W/U'), 'future/fwu.png')
+	assert.equal(futureManaFile('C'), undefined)
+	for (const token of ['W', 'U', 'B', 'R', 'G', '0', '20', 'X', 'W/U', 'R/G']) {
+		assert.equal(existsSync(resolve('public/img/manaSymbols', futureManaFile(token)!)), true, token)
+	}
 
 	const limited: FrameFamily = {
 		...regular,

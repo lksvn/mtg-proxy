@@ -28,6 +28,7 @@ type CardImages = {
 	ptBackground?: HTMLImageElement
 	art?: HTMLImageElement
 	symbol?: HTMLImageElement
+	typeIcon?: HTMLImageElement
 	manaSymbols: Map<string, HTMLImageElement>
 }
 
@@ -41,7 +42,7 @@ export function drawCard(
 	context: CanvasRenderingContext2D,
 	card: CustomCardData,
 	transform: ArtworkTransform,
-	{ frame, border, ptBackground, art, symbol, manaSymbols }: CardImages,
+	{ frame, border, ptBackground, art, symbol, typeIcon, manaSymbols }: CardImages,
 	{ manaRuns, rulesRuns, flavorRuns }: CardRuns,
 	layout: FrameLayout,
 	variant: FrameVariant,
@@ -64,6 +65,19 @@ export function drawCard(
 
 	context.drawImage(frame, 0, 0, WIDTH, HEIGHT)
 	if (border) context.drawImage(border, 0, 0, WIDTH, HEIGHT)
+	if (typeIcon) {
+		const icon = document.createElement('canvas')
+		icon.width = WIDTH
+		icon.height = HEIGHT
+		const iconContext = icon.getContext('2d')
+		if (iconContext) {
+			iconContext.drawImage(typeIcon, 0, 0, WIDTH, HEIGHT)
+			iconContext.globalCompositeOperation = 'source-in'
+			iconContext.fillStyle = '#fff'
+			iconContext.fillRect(0, 0, WIDTH, HEIGHT)
+			context.drawImage(icon, 0, 0)
+		}
+	}
 
 	if (symbol) {
 		const { boxSize, centerX, centerY } = layout.symbol
@@ -115,7 +129,7 @@ export function drawCard(
 			layout.pt.height,
 		)
 		applyTextStyle(context, layout.pt)
-		context.fillStyle = resolvePtTextColor(variant, layout.pt.color)
+		context.fillStyle = resolvePtTextColor(variant, layout.pt.colorByVariant?.[variant] ?? layout.pt.color)
 		context.textAlign = 'center'
 		context.fillText(
 			card.powerToughness,

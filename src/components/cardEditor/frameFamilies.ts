@@ -3,7 +3,7 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted'
+export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight'
 export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
 type TextStyle = {
@@ -23,7 +23,7 @@ type TextBox = TextStyle & {
 export type FrameLayout = {
 	artwork: { dragTop: number; dragBottom: number }
 	title: TextBox
-	mana: TextStyle & { right: number; centerY: number; symbolSize: number; gap: number }
+	mana: TextStyle & { right: number; centerY: number; symbolSize: number; gap: number; verticalPositions?: readonly (readonly [number, number])[] }
 	type: TextBox
 	rules: {
 		x: number
@@ -41,6 +41,7 @@ export type FrameLayout = {
 	}
 	symbol: { centerX: number; centerY: number; boxSize: number }
 	pt: TextStyle & {
+		colorByVariant?: Partial<Record<FrameVariant, string>>
 		x: number
 		y: number
 		width: number
@@ -68,6 +69,7 @@ export type FrameFamily = {
 	defaultBorderStyle?: FrameBorderStyle
 	dualLandMask?: string
 	manaSymbolOverrides?: Record<string, string>
+	typeIconMasks?: Partial<Record<'creature' | 'instant' | 'sorcery' | 'enchantment' | 'artifact' | 'land' | 'multi', string>>
 	frames: Partial<Record<FrameVariant, string>>
 	pt: Partial<Record<FrameVariant, string>>
 	fallbacks: Partial<Record<FrameVariant, FrameVariant>>
