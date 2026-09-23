@@ -167,7 +167,7 @@ export function CustomCardEditor() {
                         <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
                     </div>
                     <h5>3. {t('cardInformationSection')}</h5>
-                    <CardDetailsForm card={card} onChange={setCard} />
+                    <CardDetailsForm card={card} onChange={setCard} maxManaItems={frameFamily === 'future-sight' ? 6 : undefined} />
                 </div>
 
                 <div style={{position:'relative'}}>

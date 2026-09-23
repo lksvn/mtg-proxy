@@ -151,6 +151,12 @@ export function getLoyaltySymbolFile(token: string) {
 	return undefined
 }
 
+const MANA_COST_TOKEN = /2\/[WUBRG]|[WUBRG]\/[WUBRGP]|\d+|[WUBRGCXYZSTEQ]/g
+
+export function countManaCostItems(text: string) {
+	return text.replace(/[{}]/g, ' ').toUpperCase().match(MANA_COST_TOKEN)?.length ?? 0
+}
+
 export function parseManaCost(text: string): CardTextRun[] {
 	const source = text
         .replace(/\{([^{}]+)\}/g, ' $1 ')
@@ -160,9 +166,7 @@ export function parseManaCost(text: string): CardTextRun[] {
 
     const tokens = segments.flatMap(
         (segment) =>
-            segment.match(
-                /2\/[WUBRG]|[WUBRG]\/[WUBRGP]|\d+|[WUBRGCXYZSTEQ]/g,
-            ) ?? [],
+            segment.match(MANA_COST_TOKEN) ?? [],
     )
 
     if (tokens.join('') !== segments.join('')) {
