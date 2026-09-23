@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
 import { DUAL_FRAME_VARIANTS, type CustomCardData, type FrameVariant } from './types'
-import { getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
+import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
 import { drawCard, HEIGHT, WIDTH } from './render/drawCard'
 import { loadImage, loadImageSource } from './render/loadImage'
 import { loadDualFrame } from './render/composeDualFrame'
+import { loadAbuDualLand } from './render/composeAbuDualLand'
 import { loadBorderOverlay } from './render/composeBorder'
 import { useI18n } from '../../i18n/context'
 import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
@@ -168,12 +169,17 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
             ]
 
 			const resolvedVariant = resolveFrameVariant(family, frameVariant)
+			const abuLandColors = family.dualLandMask && (frameVariant === 'L' || frameVariant === 'ML')
+				? getAbuDualLandColors(card.name, card.typeLine)
+				: undefined
 			const dualPair = DUAL_FRAME_VARIANTS.find((pair) => pair === resolvedVariant)
 			const hybrid = Boolean(dualPair && hasHybridManaSymbol(card.manaCost))
 			const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 			const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
 			const [frame, border, ptBackground, art, symbol] = await Promise.all([
-				dualPair
+				abuLandColors
+					? loadAbuDualLand(family, abuLandColors)
+					: dualPair
 					? loadDualFrame(family, dualPair, hybrid)
 					: loadImage(assetUrl(family.frames[resolvedVariant]!)),
 				family.borderMask && borderStyle !== 'black' ? loadBorderOverlay(family.borderMask, borderStyle) : undefined,
@@ -185,7 +191,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
                 await Promise.all(
                     manaFiles.map(async (file) => [
                         file,
-                        await loadImage(`${MANA_SYMBOLS_URL}${file}`),
+                        await loadImage(`${MANA_SYMBOLS_URL}${family.manaSymbolOverrides?.[file] ?? file}`),
                     ] as const),
                 ),
 			)

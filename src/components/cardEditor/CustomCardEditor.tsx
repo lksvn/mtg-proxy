@@ -33,6 +33,7 @@ const FRAME_STYLE_GROUPS = [
 		{ id: 'eighth-edition', label: 'frameStyleEighthEdition' },
 		{ id: 'seventh-edition', label: 'frameStyleSeventhEdition' },
 		{ id: 'old-floating', label: 'frameStyleOldFloating' },
+		{ id: 'abu', label: 'frameStyleAbu' },
 	] },
 ] as const
 

@@ -186,6 +186,31 @@ export function hasHybridManaSymbol(manaCost: string) {
 	)
 }
 
+const abuDualLands: Record<string, readonly [FrameVariant, FrameVariant]> = {
+	tundra: ['WL', 'UL'], 'underground sea': ['UL', 'BL'], badlands: ['BL', 'RL'],
+	taiga: ['RL', 'GL'], savannah: ['WL', 'GL'], scrubland: ['WL', 'BL'],
+	'volcanic island': ['UL', 'RL'], bayou: ['BL', 'GL'],
+	plateau: ['WL', 'RL'], 'tropical island': ['UL', 'GL'],
+}
+
+export function getAbuDualLandColors(name: string, typeLine: string): readonly [FrameVariant, FrameVariant] | undefined {
+	const type = typeLine.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+	if (!/\b(land|terreno)\b/.test(type)) return undefined
+
+	const byName = abuDualLands[name.trim().toLowerCase()]
+	if (byName) return byName
+
+	const basicTypes: Record<string, FrameVariant> = {
+		plains: 'WL', planicie: 'WL', island: 'UL', ilha: 'UL',
+		swamp: 'BL', pantano: 'BL', mountain: 'RL', montanha: 'RL',
+		forest: 'GL', floresta: 'GL',
+	}
+	const colors = new Set((type.match(/\b(plains|planicie|island|ilha|swamp|pantano|mountain|montanha|forest|floresta)\b/g) ?? [])
+		.map((basicType) => basicTypes[basicType]))
+	if (colors.size !== 2) return undefined
+	return (['WL', 'UL', 'BL', 'RL', 'GL'] as const).filter((color) => colors.has(color)) as [FrameVariant, FrameVariant]
+}
+
 export function inferFrameVariant(manaCost: string, typeLine: string): FrameVariant {
 	const type = typeLine.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 	if (/\b(Vehicle|Veiculo)\b/i.test(type)) return 'V'

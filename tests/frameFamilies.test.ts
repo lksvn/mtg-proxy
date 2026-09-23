@@ -17,11 +17,15 @@ test('frame family assets exist', () => {
 			...Object.values(family.frames),
 			...Object.values(family.pt),
 			...(family.borderMask ? [family.borderMask] : []),
+			...(family.dualLandMask ? [family.dualLandMask] : []),
 			...Object.values(family.dual ?? {}).filter((value) => typeof value === 'string' && value.includes('/')),
 		]
 
 		for (const path of paths) {
 			assert.equal(existsSync(resolve('public', path)), true, `${family.id}: ${path}`)
+		}
+		for (const path of Object.values(family.manaSymbolOverrides ?? {})) {
+			assert.equal(existsSync(resolve('public/img/manaSymbols', path)), true, `${family.id}: ${path}`)
 		}
 	}
 	assert.equal(existsSync(resolve('src/assets/fonts/matrix-b.ttf')), true)
@@ -87,6 +91,16 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(oldFloating, 'ML'), 'L')
 	assert.equal(resolveFrameVariant(oldFloating, 'V'), 'A')
 	assert.equal(oldFloating.layout.rules, seventh.layout.rules)
+	const abu = FRAME_FAMILIES.abu
+	assert.equal(resolveFrameVariant(abu, 'B'), 'B')
+	assert.equal(resolveFrameVariant(abu, 'WL'), 'WL')
+	assert.equal(resolveFrameVariant(abu, 'WU'), 'A')
+	assert.equal(resolveFrameVariant(abu, 'M'), 'A')
+	assert.equal(resolveFrameVariant(abu, 'ML'), 'L')
+	assert.equal(resolveFrameVariant(abu, 'V'), 'A')
+	assert.equal(abu.manaSymbolOverrides?.['b.svg'], 'old/oldb.svg')
+	assert.equal(abu.manaSymbolOverrides?.['t.svg'], 'oldtap.svg')
+	assert.match(abu.layout.type.font, /mplantin/)
 
 	const limited: FrameFamily = {
 		...regular,
