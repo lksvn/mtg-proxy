@@ -100,7 +100,9 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
 		for (const [key, identifier] of chunk) {
 			const parsedCard = cardsByKey.get(key)
 
-            const identifiedCard = response.data.find((candidate) => matchesIdentifier(candidate, identifier))
+			const identifiedCard = ('name' in identifier
+				? response.data.find((candidate) => candidate.name.toLowerCase() === identifier.name.toLowerCase())
+				: undefined) ?? response.data.find((candidate) => matchesIdentifier(candidate, identifier))
 
             const card = identifiedCard && (!parsedCard || matchesCardName(identifiedCard, parsedCard.name)) ? identifiedCard : undefined
 
@@ -108,7 +110,10 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
                 cache.set(key, card)
                 results.set(key, { card })
             } else if (parsedCard) {
-                individualCards.push({ parsedCard, identifiedCard, skipNamedLookup: true })
+				const repeatedFace = response.data.some((candidate) =>
+					candidate.name.toLowerCase() === `${parsedCard.name.toLowerCase()} // ${parsedCard.name.toLowerCase()}`
+				)
+				individualCards.push({ parsedCard, identifiedCard, skipNamedLookup: !repeatedFace })
             } else {
                 results.set(key, { error: 'Card not found' })
             }
@@ -424,6 +429,7 @@ async function loadPrintings(card: ScryfallCard): Promise<ScryfallCard[]> {
 
 function matchesCardName(card: ScryfallCard, name: string): boolean {
 	const expected = name.toLowerCase()
+	if (card.name.toLowerCase() === `${expected} // ${expected}`) return false
 	const names = [
 		card.name,
 		card.flavor_name,
