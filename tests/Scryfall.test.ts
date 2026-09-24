@@ -183,10 +183,10 @@ test('matches card-face names returned by collection lookup', async () => {
 test('prefers the newest regular printing when the default is a promo', async () => {
 	const originalFetch = globalThis.fetch
 	const promo = {
-		id: 'promo-sol-ring', name: 'Sol Ring', set: 'sld', promo: true,
-		prints_search_uri: 'https://api.scryfall.com/cards/search?q=oracleid%3Asol-ring'
+		id: 'promo-arcane-signet', name: 'Arcane Signet', set: 'sld', promo: true,
+		prints_search_uri: 'https://api.scryfall.com/cards/search?q=oracleid%3Aarcane-signet'
 	} as ScryfallCard
-	const regular = { id: 'regular-sol-ring', name: 'Sol Ring', set: 'cmm' } as ScryfallCard
+	const regular = { id: 'regular-arcane-signet', name: 'Arcane Signet', set: 'cmm' } as ScryfallCard
 
 	globalThis.fetch = (async (input) => {
 		const url = String(input)
@@ -199,7 +199,7 @@ test('prefers the newest regular printing when the default is a promo', async ()
 	}) as typeof fetch
 
 	try {
-		const [result] = await findCards([{ quantity: 1, name: 'Sol Ring', sourceLine: 'Sol Ring' }])
+		const [result] = await findCards([{ quantity: 1, name: 'Arcane Signet', sourceLine: 'Arcane Signet' }])
 		assert.equal(result.card?.id, regular.id)
 	} finally {
 		globalThis.fetch = originalFetch
@@ -209,10 +209,10 @@ test('prefers the newest regular printing when the default is a promo', async ()
 test('keeps a special printing when regular results have a different name', async () => {
 	const originalFetch = globalThis.fetch
 	const reversible = {
-		id: 'reversible-sol-ring', name: 'Sol Ring // Sol Ring', set: 'sld',
-		prints_search_uri: 'https://api.scryfall.com/cards/search?q=oracleid%3Asol-ring'
+		id: 'reversible-command-tower', name: 'Command Tower // Command Tower', set: 'sld',
+		prints_search_uri: 'https://api.scryfall.com/cards/search?q=oracleid%3Acommand-tower'
 	} as ScryfallCard
-	const regular = { id: 'regular-sol-ring', name: 'Sol Ring', set: 'cmm' } as ScryfallCard
+	const regular = { id: 'regular-command-tower', name: 'Command Tower', set: 'cmm' } as ScryfallCard
 
 	globalThis.fetch = (async (input) => String(input).endsWith('/cards/collection')
 		? Response.json({ data: [reversible] })
@@ -223,6 +223,61 @@ test('keeps a special printing when regular results have a different name', asyn
 			quantity: 1, name: reversible.name, sourceLine: reversible.name
 		}])
 		assert.equal(result.card?.id, reversible.id)
+	} finally {
+		globalThis.fetch = originalFetch
+	}
+})
+
+test('keeps plain and reversible cards distinct in a batch lookup', async () => {
+	const originalFetch = globalThis.fetch
+	const reversible = {
+		id: 'sld-sol-ring', name: 'Sol Ring // Sol Ring', set: 'sld',
+		card_faces: [{ name: 'Sol Ring' }, { name: 'Sol Ring' }],
+		prints_search_uri: 'https://api.scryfall.com/cards/search?q=oracleid%3Asol-ring'
+	} as ScryfallCard
+	const regular = { id: 'regular-sol-ring', name: 'Sol Ring', set: 'cmm' } as ScryfallCard
+	const urzasSaga = { id: 'urzas-saga', name: "Urza's Saga", set: 'mh2' } as ScryfallCard
+
+	globalThis.fetch = (async (input) => {
+		const url = String(input)
+		if (url.endsWith('/cards/collection')) return Response.json({ data: [reversible, regular, urzasSaga] })
+		if (url.includes('/cards/named')) return Response.json(reversible)
+		return Response.json({ data: [regular] })
+	}) as typeof fetch
+
+	try {
+		const lookups = await findCards([
+			{ quantity: 1, name: reversible.name, sourceLine: reversible.name },
+			{ quantity: 1, name: regular.name, sourceLine: regular.name },
+			{ quantity: 1, name: regular.name, set: 'sld', sourceLine: 'Sol Ring (sld)' },
+			{ quantity: 1, name: urzasSaga.name, sourceLine: urzasSaga.name }
+		])
+		assert.deepEqual(lookups.map((lookup) => lookup.card?.id), [
+			reversible.id, regular.id, reversible.id, urzasSaga.id
+		])
+	} finally {
+		globalThis.fetch = originalFetch
+	}
+})
+
+test('retries the exact name when collection only returns a reversible card', async () => {
+	const originalFetch = globalThis.fetch
+	const reversible = {
+		id: 'reversible-mind-stone', name: 'Mind Stone // Mind Stone', set: 'sld',
+		card_faces: [{ name: 'Mind Stone' }, { name: 'Mind Stone' }]
+	} as ScryfallCard
+	const regular = { id: 'regular-mind-stone', name: 'Mind Stone', set: 'cmm' } as ScryfallCard
+
+	globalThis.fetch = (async (input) => {
+		const url = String(input)
+		if (url.endsWith('/cards/collection')) return Response.json({ data: [reversible] })
+		if (url.includes('/cards/named')) return Response.json(regular)
+		throw new Error(`Unexpected search request: ${url}`)
+	}) as typeof fetch
+
+	try {
+		const [result] = await findCards([{ quantity: 1, name: regular.name, sourceLine: regular.name }])
+		assert.equal(result.card?.id, regular.id)
 	} finally {
 		globalThis.fetch = originalFetch
 	}
