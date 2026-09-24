@@ -205,3 +205,25 @@ test('prefers the newest regular printing when the default is a promo', async ()
 		globalThis.fetch = originalFetch
 	}
 })
+
+test('keeps a special printing when regular results have a different name', async () => {
+	const originalFetch = globalThis.fetch
+	const reversible = {
+		id: 'reversible-sol-ring', name: 'Sol Ring // Sol Ring', set: 'sld',
+		prints_search_uri: 'https://api.scryfall.com/cards/search?q=oracleid%3Asol-ring'
+	} as ScryfallCard
+	const regular = { id: 'regular-sol-ring', name: 'Sol Ring', set: 'cmm' } as ScryfallCard
+
+	globalThis.fetch = (async (input) => String(input).endsWith('/cards/collection')
+		? Response.json({ data: [reversible] })
+		: Response.json({ data: [regular] })) as typeof fetch
+
+	try {
+		const [result] = await findCards([{
+			quantity: 1, name: reversible.name, sourceLine: reversible.name
+		}])
+		assert.equal(result.card?.id, reversible.id)
+	} finally {
+		globalThis.fetch = originalFetch
+	}
+})

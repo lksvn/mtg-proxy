@@ -170,7 +170,9 @@ async function findRegularPrinting(card: ScryfallCard): Promise<ScryfallCard | u
 		const response = await fetch(url, { headers: { Accept: 'application/json' } })
 		if (!response.ok) throw await responseError(response)
 		const result = await response.json() as { data: ScryfallCard[] }
-		return result.data.find((printing) => !isSpecialPrinting(printing))
+		return result.data.find((printing) =>
+			!isSpecialPrinting(printing) && matchesCardName(printing, card.name)
+		)
 	}, 125)
 }
 
