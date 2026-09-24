@@ -179,3 +179,29 @@ test('matches card-face names returned by collection lookup', async () => {
 		globalThis.fetch = originalFetch
 	}
 })
+
+test('prefers the newest regular printing when the default is a promo', async () => {
+	const originalFetch = globalThis.fetch
+	const promo = {
+		id: 'promo-sol-ring', name: 'Sol Ring', set: 'sld', promo: true,
+		prints_search_uri: 'https://api.scryfall.com/cards/search?q=oracleid%3Asol-ring'
+	} as ScryfallCard
+	const regular = { id: 'regular-sol-ring', name: 'Sol Ring', set: 'cmm' } as ScryfallCard
+
+	globalThis.fetch = (async (input) => {
+		const url = String(input)
+		if (url.endsWith('/cards/collection')) return Response.json({ data: [promo] })
+		const query = new URL(url).searchParams.get('q') ?? ''
+		assert.match(query, /-is:promo/)
+		assert.match(query, /-set:sld/)
+		assert.equal(new URL(url).searchParams.get('dir'), 'desc')
+		return Response.json({ data: [regular] })
+	}) as typeof fetch
+
+	try {
+		const [result] = await findCards([{ quantity: 1, name: 'Sol Ring', sourceLine: 'Sol Ring' }])
+		assert.equal(result.card?.id, regular.id)
+	} finally {
+		globalThis.fetch = originalFetch
+	}
+})
