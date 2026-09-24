@@ -6,6 +6,7 @@ export type ScryfallCard = {
     flavor_name?: string
 	set: string
 	set_name: string
+	set_type?: string
 	collector_number: string
 	released_at: string
 	lang: string
@@ -33,6 +34,10 @@ export type ScryfallCard = {
 	artist: string,
 	scryfall_uri: string
     layout: string
+	promo?: boolean
+	full_art?: boolean
+	border_color?: string
+	frame_effects?: string[]
 }
 
 export type CardLookup = {
@@ -127,9 +132,48 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
         })
     )
 
+	await Promise.all(cards.map(async (parsedCard) => {
+		if (parsedCard.set) return
+		const key = cardKey(parsedCard)
+		const result = results.get(key)
+		if (!result?.card || !isSpecialPrinting(result.card)) return
+
+		const preferred = await findRegularPrinting(result.card).catch(() => undefined)
+		if (preferred) {
+			cache.set(key, preferred)
+			results.set(key, { card: preferred })
+		}
+	}))
+
 	return cards.map((card) => {
 		return results.get(cardKey(card)) ?? { error: 'Card not found' }
 	})
+}
+
+function isSpecialPrinting(card: ScryfallCard): boolean {
+	return card.promo === true || card.full_art === true ||
+		card.set === 'sld' || card.set_type === 'promo' ||
+		card.border_color === 'borderless' ||
+		(card.frame_effects?.some((effect) => ['showcase', 'extendedart'].includes(effect)) ?? false)
+}
+
+async function findRegularPrinting(card: ScryfallCard): Promise<ScryfallCard | undefined> {
+	if (!card.prints_search_uri) return undefined
+
+	const url = new URL(card.prints_search_uri)
+	url.searchParams.set('q', `${url.searchParams.get('q')} game:paper lang:en -is:promo -is:fullart -is:borderless -is:showcase -is:extendedart -set:sld`)
+	url.searchParams.set('order', 'released')
+	url.searchParams.set('dir', 'desc')
+	url.searchParams.set('unique', 'prints')
+
+	return enqueueRequest(async () => {
+		const response = await fetch(url, { headers: { Accept: 'application/json' } })
+		if (!response.ok) throw await responseError(response)
+		const result = await response.json() as { data: ScryfallCard[] }
+		return result.data.find((printing) =>
+			!isSpecialPrinting(printing) && matchesCardName(printing, card.name)
+		)
+	}, 125)
 }
 
 async function findCardInAnyLanguage(
