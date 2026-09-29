@@ -157,6 +157,13 @@ const tokenMarkerLayout: FrameLayout = {
 	pt: { ...tokenRegularLayout.pt, width: 0, height: 0 },
 }
 
+const tokenInitiativeLayout: FrameLayout = {
+	...tokenMarkerLayout,
+	title: { ...tokenMarkerLayout.title, y: 1247, font: '80px belerenb, serif' },
+	rules: { ...tokenMarkerLayout.rules, y: 1324, height: 604 },
+	symbol: { ...tokenMarkerLayout.symbol, centerY: 1241 },
+}
+
 const seventhLayout: FrameLayout = {
 	artwork: { dragTop: 208, dragBottom: 1138 },
 	title: { x: 170, y: 148, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
@@ -344,6 +351,14 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: {},
 		fallbacks: {},
 		layout: tokenMarkerLayout,
+		fonts: commonFonts,
+	},
+	'token-initiative': {
+		id: 'token-initiative',
+		frames: { C: 'img/frames/token/initiative/initiative.png' },
+		pt: {},
+		fallbacks: {},
+		layout: tokenInitiativeLayout,
 		fonts: commonFonts,
 	},
 	'box-topper': {
