@@ -211,6 +211,13 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(initiativeToken, 'U'), 'C')
 	assert.equal(initiativeToken.layout.title.y, 1247)
 	assert.equal(initiativeToken.layout.rules.height, 604)
+
+	const dayNightToken = FRAME_FAMILIES['token-day-night']
+	assert.equal(resolveFrameVariant(dayNightToken, 'R'), 'C')
+	assert.equal(dayNightToken.layout.rules.horizontalAlign, undefined)
+	assert.equal(dayNightToken.layout.flavorRules?.y, 266)
+	assert.equal(dayNightToken.layout.symbol.boxSize, 0)
+	assert.equal(dayNightToken.layout.footer.disclaimerAlign, 'right')
 	assert.equal(resolveTextX(FRAME_FAMILIES['m15-regular'].layout.title), 125)
 	for (const token of ['W', 'U', 'B', 'R', 'G', '0', '20', 'X', 'W/U', 'R/G']) {
 		assert.equal(existsSync(resolve('public/img/manaSymbols', futureManaFile(token)!)), true, token)

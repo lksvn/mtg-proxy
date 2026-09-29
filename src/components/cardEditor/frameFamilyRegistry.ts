@@ -164,6 +164,18 @@ const tokenInitiativeLayout: FrameLayout = {
 	symbol: { ...tokenMarkerLayout.symbol, centerY: 1241 },
 }
 
+const tokenDayNightLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 60, dragBottom: 1929 },
+	mana: { ...tokenRegularLayout.mana, symbolSize: 0 },
+	type: { ...tokenRegularLayout.type, maxWidth: 0 },
+	rules: { ...tokenRegularLayout.rules, x: 90, y: 1300, width: 1320, height: 630, color: '#fff', strokeColor: '#fff' },
+	flavorRules: { ...tokenRegularLayout.rules, x: 90, y: 266, width: 1320, height: 350, color: '#fff', strokeColor: '#fff' },
+	symbol: { centerX: 0, centerY: 0, boxSize: 0 },
+	pt: { ...tokenRegularLayout.pt, width: 0, height: 0 },
+	footer: { ...commonFooter, metadataY: 2010, disclaimerX: 1385, disclaimerY: 2010, disclaimerAlign: 'right' },
+}
+
 const seventhLayout: FrameLayout = {
 	artwork: { dragTop: 208, dragBottom: 1138 },
 	title: { x: 170, y: 148, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
@@ -359,6 +371,14 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: {},
 		fallbacks: {},
 		layout: tokenInitiativeLayout,
+		fonts: commonFonts,
+	},
+	'token-day-night': {
+		id: 'token-day-night',
+		frames: { C: 'img/frames/token/day-night/day-night.png' },
+		pt: {},
+		fallbacks: {},
+		layout: tokenDayNightLayout,
 		fonts: commonFonts,
 	},
 	'box-topper': {

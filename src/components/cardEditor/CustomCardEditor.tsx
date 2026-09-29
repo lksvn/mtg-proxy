@@ -58,7 +58,7 @@ export function CustomCardEditor() {
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [layout, setLayout] = useState<'card' | 'token'>('card')
-	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative'>('token-regular')
+	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night'>('token-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -116,7 +116,7 @@ export function CustomCardEditor() {
                             }}
                             onClear={() => setArtwork(undefined)}
                         />
-						{tokenStyle !== 'token-unglued' && tokenStyle !== 'token-monarch' && <FileInput
+						{tokenStyle !== 'token-unglued' && tokenStyle !== 'token-monarch' && tokenStyle !== 'token-day-night' && <FileInput
                             id="custom-card-set-symbol"
                             accept="image/*"
                             label={t('chooseSetSymbol')}
@@ -182,7 +182,7 @@ export function CustomCardEditor() {
 							</select>
 						</div>
 					)}
-                    <div className="form-group gap-2 mb-5">
+                    <div className="form-group gap-2">
                         <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
                     </div>
 					</>}
@@ -201,18 +201,19 @@ export function CustomCardEditor() {
 							<option value="token-monarch">{t('tokenStyleMonarch')}</option>
 							<option value="token-marker">{t('tokenStyleMarker')}</option>
 							<option value="token-initiative">{t('tokenStyleInitiative')}</option>
+							<option value="token-day-night">{t('tokenStyleDayNight')}</option>
 						</select>
 					</div>}
-					{layout === 'token' && tokenStyle !== 'token-monarch' && tokenStyle !== 'token-marker' && tokenStyle !== 'token-initiative' && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
-                    <h5>3. {t('cardInformationSection')}</h5>
+					{layout === 'token' && tokenStyle !== 'token-monarch' && tokenStyle !== 'token-marker' && tokenStyle !== 'token-initiative' && tokenStyle !== 'token-day-night' && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
+                    <h5 className='mt-5'>3. {t('cardInformationSection')}</h5>
 					<CardDetailsForm
 						card={activeCard}
 						onChange={layout === 'token' ? setToken : setCard}
 						hideManaCost={layout === 'token'}
 						hideRulesText={tokenStyle === 'token-textless' || tokenStyle === 'token-textless-borderless' || tokenStyle === 'token-nyx-textless' || tokenStyle === 'token-unglued'}
 						hideNameAndType={tokenStyle === 'token-unglued'}
-						hideTypeLine={tokenStyle === 'token-monarch' || tokenStyle === 'token-marker' || tokenStyle === 'token-initiative'}
-						hidePowerToughness={tokenStyle === 'token-unglued' || tokenStyle === 'token-monarch' || tokenStyle === 'token-marker' || tokenStyle === 'token-initiative'}
+						hideTypeLine={tokenStyle === 'token-monarch' || tokenStyle === 'token-marker' || tokenStyle === 'token-initiative' || tokenStyle === 'token-day-night'}
+						hidePowerToughness={tokenStyle === 'token-unglued' || tokenStyle === 'token-monarch' || tokenStyle === 'token-marker' || tokenStyle === 'token-initiative' || tokenStyle === 'token-day-night'}
 						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
 					/>
                 </div>

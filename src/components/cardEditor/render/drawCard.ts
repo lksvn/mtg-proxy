@@ -122,9 +122,16 @@ export function drawCard(
 	const textRuns: CardTextRun[] = rulesRuns.length && flavorRuns.length
 		? [...rulesRuns, { type: 'text', value: '\n\n', italic: false }, ...flavorRuns]
 		: [...rulesRuns, ...flavorRuns]
-	drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, card.centerRulesText
-		? { ...layout.rules, horizontalAlign: 'center', verticalAlign: 'middle' }
-		: layout.rules)
+	if (layout.flavorRules) {
+		const rulesStyle = card.centerRulesText ? { ...layout.rules, horizontalAlign: 'center' as const, verticalAlign: 'middle' as const } : layout.rules
+		const flavorStyle = card.centerRulesText ? { ...layout.flavorRules, horizontalAlign: 'center' as const, verticalAlign: 'middle' as const } : layout.flavorRules
+		drawRulesText(context, rulesRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, rulesStyle)
+		drawRulesText(context, flavorRuns, manaSymbols, layout.flavorRules.x, layout.flavorRules.y, layout.flavorRules.width, layout.flavorRules.height, flavorStyle)
+	} else {
+		drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, card.centerRulesText
+			? { ...layout.rules, horizontalAlign: 'center', verticalAlign: 'middle' }
+			: layout.rules)
+	}
 
 	if (card.powerToughness && layout.pt.width > 0) {
 		if (ptBackground) context.drawImage(
@@ -157,7 +164,8 @@ export function drawCard(
 	)
 	applyTextStyle(context, layout.footer.disclaimer)
 	context.fillStyle = layout.footer.disclaimerColorByVariant?.[variant] ?? layout.footer.colorByVariant?.[variant] ?? layout.footer.disclaimer.color
-	context.fillText('NOT FOR SALE • Made on MTG Proxy', footerX, layout.footer.disclaimerY, layout.footer.maxWidth)
+	context.textAlign = layout.footer.disclaimerAlign ?? layout.footer.align ?? 'left'
+	context.fillText('NOT FOR SALE • Made on MTG Proxy', layout.footer.disclaimerX ?? footerX, layout.footer.disclaimerY, layout.footer.maxWidth)
 }
 
 function applyTextStyle(
