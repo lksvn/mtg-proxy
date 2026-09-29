@@ -8,6 +8,7 @@ export type CustomCardData = {
     manaCost: string
     typeLine: string
     rulesText: string
+	centerRulesText: boolean
     flavorText: string
     powerToughness: string
     artist: string

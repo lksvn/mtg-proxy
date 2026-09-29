@@ -64,6 +64,7 @@ export function CustomCardEditor() {
         typeLine: 'Legendary Creature — Rat Rogue',
         rulesText: `All Rats have fear.
 {T}, Sacrifice a Rat: Create X 1/1 black Rat creature tokens, where X is the number of Rats you control.`,
+		centerRulesText: false,
         flavorText: 'Marrow-Gnawer united three nezumi gangs when he slew their leaders in a single night. Now they call him their first lord.',
         powerToughness: '2/3',
         artist: 'Wayne Reynolds',
@@ -73,7 +74,7 @@ export function CustomCardEditor() {
         backgroundColor: '#000000'
     })
 	const [token, setToken] = useState<CustomCardData>({
-		name: 'Rat', manaCost: '', typeLine: 'Token Creature — Rat', rulesText: '', flavorText: '',
+		name: 'Rat', manaCost: '', typeLine: 'Token Creature — Rat', rulesText: '', centerRulesText: false, flavorText: '',
 		powerToughness: '1/1', artist: '', number: '1', rarity: 'common', tintSetSymbol: false, backgroundColor: '#000000',
 	})
 	const activeCard = layout === 'token' ? token : card

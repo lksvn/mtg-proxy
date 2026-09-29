@@ -68,6 +68,13 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost }: 
 						update({ rulesText: event.target.value })
 					}
 				/>
+				<label>
+					<input
+						type="checkbox"
+						checked={card.centerRulesText}
+						onChange={(event) => update({ centerRulesText: event.target.checked })}
+					/> {t('centerRulesText')}
+				</label>
                 <details>
 					<summary>{t('formatting')}</summary>
 					<ul className="pl-3">

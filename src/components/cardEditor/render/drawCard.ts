@@ -118,7 +118,9 @@ export function drawCard(
 	const textRuns: CardTextRun[] = rulesRuns.length && flavorRuns.length
 		? [...rulesRuns, { type: 'text', value: '\n\n', italic: false }, ...flavorRuns]
 		: [...rulesRuns, ...flavorRuns]
-	drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, layout.rules)
+	drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, card.centerRulesText
+		? { ...layout.rules, horizontalAlign: 'center', verticalAlign: 'middle' }
+		: layout.rules)
 
 	if (card.powerToughness) {
 		if (ptBackground) context.drawImage(
