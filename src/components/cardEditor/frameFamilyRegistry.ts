@@ -92,7 +92,7 @@ const tokenTextlessBorderlessLayout: FrameLayout = {
 	artwork: { dragTop: 0, dragBottom: 2100 },
 	title: { ...tokenTextlessLayout.title, x: 128, y: 167, maxWidth: 1244 },
 	type: { ...tokenTextlessLayout.type, x: 128, y: 1778, maxWidth: 1244 },
-	symbol: { ...tokenTextlessLayout.symbol, centerY: 1815 },
+	symbol: { ...tokenTextlessLayout.symbol, centerY: 1775 },
 }
 
 const tokenOldLayout: FrameLayout = {
