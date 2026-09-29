@@ -87,6 +87,14 @@ const tokenTextlessLayout: FrameLayout = {
 	symbol: { ...tokenRegularLayout.symbol, centerY: 1772 },
 }
 
+const tokenTextlessBorderlessLayout: FrameLayout = {
+	...tokenTextlessLayout,
+	artwork: { dragTop: 0, dragBottom: 2100 },
+	title: { ...tokenTextlessLayout.title, x: 128, y: 167, maxWidth: 1244 },
+	type: { ...tokenTextlessLayout.type, x: 128, y: 1778, maxWidth: 1244 },
+	symbol: { ...tokenTextlessLayout.symbol, centerY: 1815 },
+}
+
 const tokenOldLayout: FrameLayout = {
 	artwork: { dragTop: 232, dragBottom: 1303 },
 	title: { x: 170, y: 150, maxWidth: 1160, align: 'center', font: '100px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
@@ -210,6 +218,19 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: m15Pt,
 		fallbacks: commonFallbacks,
 		layout: tokenTextlessLayout,
+		fonts: commonFonts,
+	},
+	'token-textless-borderless': {
+		id: 'token-textless-borderless',
+		frames: {
+			W: 'img/frames/token/textless-borderless/w.png', U: 'img/frames/token/textless-borderless/u.png',
+			B: 'img/frames/token/textless-borderless/b.png', R: 'img/frames/token/textless-borderless/r.png',
+			G: 'img/frames/token/textless-borderless/g.png', M: 'img/frames/token/textless-borderless/m.png',
+			A: 'img/frames/token/textless-borderless/a.png', C: 'img/frames/token/textless-borderless/c.png',
+		},
+		pt: m15Pt,
+		fallbacks: { ...commonFallbacks, L: 'M' },
+		layout: tokenTextlessBorderlessLayout,
 		fonts: commonFonts,
 	},
 	'token-nyx': {
