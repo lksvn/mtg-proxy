@@ -143,6 +143,11 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(futureManaFile('2'), 'future/f2.png')
 	assert.equal(futureManaFile('W/U'), 'future/fwu.png')
 	assert.equal(futureManaFile('C'), undefined)
+	const token = FRAME_FAMILIES['token-regular']
+	assert.equal(resolveFrameVariant(token, 'C'), 'C')
+	assert.equal(resolveFrameVariant(token, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(token, 'V'), 'A')
+	assert.equal(token.layout.title.align, 'center')
 	for (const token of ['W', 'U', 'B', 'R', 'G', '0', '20', 'X', 'W/U', 'R/G']) {
 		assert.equal(existsSync(resolve('public/img/manaSymbols', futureManaFile(token)!)), true, token)
 	}

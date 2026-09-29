@@ -108,7 +108,7 @@ export function drawCard(
 	context.textRendering = 'optimizeLegibility'
 	context.textBaseline = 'middle'
 	applyTextStyle(context, layout.title, variant)
-	context.textAlign = 'left'
+	context.textAlign = layout.title.align ?? 'left'
 	context.fillText(card.name, layout.title.x, layout.title.y, layout.title.maxWidth)
 	context.textAlign = 'right'
 	drawManaCost(context, manaRuns, manaSymbols, layout.mana.right, layout.mana.centerY, layout.mana)

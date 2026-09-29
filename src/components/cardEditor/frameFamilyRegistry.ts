@@ -60,6 +60,17 @@ const m15RegularLayout: FrameLayout = {
 	footer: commonFooter,
 }
 
+const tokenRegularLayout: FrameLayout = {
+	artwork: { dragTop: 60, dragBottom: 1439 },
+	title: { x: 750, y: 188, maxWidth: 1248, align: 'center', font: '80px belerenb, serif', color: '#fff' },
+	mana: { right: 1316, centerY: 121, symbolSize: 70, gap: 8, font: '48px belerenb, serif', color: '#fff' },
+	type: { x: 126, y: 1439, maxWidth: 1248, font: '68px belerenb, serif', color: '#111' },
+	rules: { x: 135, y: 1545, width: 1230, height: 450, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 74, minFontSize: 32 },
+	symbol: { centerX: 1292, centerY: 1416, boxSize: 86 },
+	pt: { x: 1136, y: 1858, width: 282, height: 154, textX: 1292, textY: 1954, font: '78px belerenbsc, serif', color: '#111' },
+	footer: commonFooter,
+}
+
 const seventhLayout: FrameLayout = {
 	artwork: { dragTop: 208, dragBottom: 1138 },
 	title: { x: 170, y: 148, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
@@ -111,6 +122,20 @@ const abuLayout: FrameLayout = {
 }
 
 export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
+	'token-regular': {
+		id: 'token-regular',
+		frames: {
+			W: 'img/frames/token/regular/w.png', U: 'img/frames/token/regular/u.png',
+			B: 'img/frames/token/regular/b.png', R: 'img/frames/token/regular/r.png',
+			G: 'img/frames/token/regular/g.png', M: 'img/frames/token/regular/m.png',
+			A: 'img/frames/token/regular/a.png', C: 'img/frames/token/regular/c.png',
+			L: 'img/frames/token/regular/l.png',
+		},
+		pt: m15Pt,
+		fallbacks: commonFallbacks,
+		layout: tokenRegularLayout,
+		fonts: commonFonts,
+	},
 	'box-topper': {
 		id: 'box-topper',
 		frames: {

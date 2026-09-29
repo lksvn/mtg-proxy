@@ -53,9 +53,11 @@ export function CustomCardEditor() {
     const [artworkTransform, setArtworkTransform] = useState(createDefaultArtworkTransform)
     const [setSymbol, setSetSymbol] = useState<File | string | undefined>(SAMPLE_SET_SYMBOL_URL)
 	const [frameSelection, setFrameSelection] = useState<FrameVariant | 'auto'>('auto')
+	const [tokenFrameSelection, setTokenFrameSelection] = useState<FrameVariant | 'auto'>('C')
 	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
+	const [layout, setLayout] = useState<'card' | 'token'>('card')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -70,9 +72,16 @@ export function CustomCardEditor() {
         tintSetSymbol: false,
         backgroundColor: '#000000'
     })
-	const frameVariant = frameSelection === 'auto'
-		? inferFrameVariant(card.manaCost, card.typeLine)
-		: frameSelection
+	const [token, setToken] = useState<CustomCardData>({
+		name: 'Rat', manaCost: '', typeLine: 'Token Creature — Rat', rulesText: '', flavorText: '',
+		powerToughness: '1/1', artist: '', number: '1', rarity: 'common', tintSetSymbol: false, backgroundColor: '#000000',
+	})
+	const activeCard = layout === 'token' ? token : card
+	const activeFamily: FrameFamilyId = layout === 'token' ? 'token-regular' : frameFamily
+	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
+	const frameVariant = activeFrameSelection === 'auto'
+		? inferFrameVariant(activeCard.manaCost, activeCard.typeLine)
+		: activeFrameSelection
 	const search = frameStyleSearch.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 
 	function downloadPng(dpi?: number) {
@@ -115,6 +124,14 @@ export function CustomCardEditor() {
                         />
                     </div>
                     <h5>2. {t('cardEditionSection')}</h5>
+					<div className="form-group gap-2">
+						<label htmlFor="card-layout">{t('cardLayout')}</label>
+						<select id="card-layout" value={layout} onChange={(event) => setLayout(event.target.value as 'card' | 'token')}>
+							<option value="card">{t('cardLayoutCard')}</option>
+							<option value="token">{t('cardLayoutToken')}</option>
+						</select>
+					</div>
+					{layout === 'card' && <>
                     <div style={{display:'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gridAutoFlow:'dense'}} className="gap-3">
                         <div className="form-group gap-2">
                             <label htmlFor="card-frame-style-search">{t('searchFrameStyles')}</label>
@@ -166,8 +183,15 @@ export function CustomCardEditor() {
                     <div className="form-group gap-2 mb-5">
                         <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
                     </div>
+					</>}
+					{layout === 'token' && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} /></div>}
                     <h5>3. {t('cardInformationSection')}</h5>
-                    <CardDetailsForm card={card} onChange={setCard} maxManaItems={frameFamily === 'future-sight' ? 6 : undefined} />
+					<CardDetailsForm
+						card={activeCard}
+						onChange={layout === 'token' ? setToken : setCard}
+						hideManaCost={layout === 'token'}
+						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
+					/>
                 </div>
 
                 <div style={{position:'relative'}}>
@@ -176,9 +200,9 @@ export function CustomCardEditor() {
                         artwork={artwork}
                         transform={artworkTransform}
                         onTransformChange={setArtworkTransform}
-                        card={card}
+						card={activeCard}
 						setSymbol={setSymbol}
-						frameFamily={frameFamily}
+						frameFamily={activeFamily}
 						borderStyle={borderStyle}
 						frameVariant={frameVariant}
                     />

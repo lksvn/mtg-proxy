@@ -6,9 +6,10 @@ type CardDetailsFormProps = {
 	card: CustomCardData
 	onChange: (card: CustomCardData) => void
 	maxManaItems?: number
+	hideManaCost?: boolean
 }
 
-export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFormProps) {
+export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost }: CardDetailsFormProps) {
 	const { t } = useI18n()
 
 	function update(changes: Partial<CustomCardData>) {
@@ -27,7 +28,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFor
 				/>
 			</div>
 
-			<div className="form-group">
+			{!hideManaCost && <div className="form-group">
 				<label htmlFor="card-mana-cost">{t('manaCost')}</label>
 				<input
 					id="card-mana-cost"
@@ -42,7 +43,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFor
 				/>
 				<small className="text-muted">{t('manaCostHelp')}</small>
 				{maxManaItems && <small className="text-muted">{t('manaCostLimitFuture')}</small>}
-			</div>
+			</div>}
 
 			<div className="form-group">
 				<label htmlFor="card-type-line">{t('typeLine')}</label>
