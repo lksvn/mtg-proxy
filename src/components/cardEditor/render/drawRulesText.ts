@@ -109,6 +109,8 @@ export function drawRulesText(
 	maxHeight: number,
 	style: RulesTextStyle,
 ) {
+	if (!runs.length || maxWidth <= 0 || maxHeight <= 0) return
+
 	let fontSize = style.maxFontSize
 	let lines: Line[] = []
 	let lineHeight = 0

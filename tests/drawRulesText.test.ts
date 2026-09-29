@@ -42,3 +42,18 @@ test('centers rules text horizontally and vertically', () => {
 
 	assert.deepEqual(positions, [[230, 239]])
 })
+
+test('does not draw rules text without a text box', () => {
+	let drawn = false
+	const context = { fillText() { drawn = true } } as unknown as CanvasRenderingContext2D
+
+	drawRulesText(
+		context,
+		[{ type: 'text', value: 'Hidden text', italic: false }],
+		new Map(),
+		0, 0, 500, 0,
+		{ fontFamily: 'serif', italicFontFamily: 'serif', color: '#111', strokeColor: '#111', strokeWidth: 0, maxFontSize: 20, minFontSize: 20 },
+	)
+
+	assert.equal(drawn, false)
+})
