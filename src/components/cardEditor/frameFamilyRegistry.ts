@@ -62,12 +62,12 @@ const m15RegularLayout: FrameLayout = {
 
 const tokenRegularLayout: FrameLayout = {
 	artwork: { dragTop: 60, dragBottom: 1439 },
-	title: { x: 750, y: 188, maxWidth: 1248, align: 'center', font: '80px belerenb, serif', color: '#fff' },
+	title: { x: 120, y: 163, maxWidth: 1265, align: 'center', font: '80px belerenb, serif', color: '#fff' },
 	mana: { right: 1316, centerY: 121, symbolSize: 70, gap: 8, font: '48px belerenb, serif', color: '#fff' },
-	type: { x: 126, y: 1439, maxWidth: 1248, font: '68px belerenb, serif', color: '#111' },
-	rules: { x: 135, y: 1545, width: 1230, height: 450, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 74, minFontSize: 32 },
-	symbol: { centerX: 1292, centerY: 1416, boxSize: 86 },
-	pt: { x: 1136, y: 1858, width: 282, height: 154, textX: 1292, textY: 1954, font: '78px belerenbsc, serif', color: '#111' },
+	type: { x: 120, y: 1415, maxWidth: 1190, font: '68px belerenb, serif', color: '#111' },
+	rules: { x: 130, y: 1510, width: 1240, height: 410, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 74, minFontSize: 32 },
+	symbol: { centerX: 1345, centerY: 1416, boxSize: 86 },
+	pt: { x: 1136, y: 1858, width: 282, height: 154, textX: 1300, textY: 1935, font: '78px belerenbsc, serif', color: '#111' },
 	footer: commonFooter,
 }
 

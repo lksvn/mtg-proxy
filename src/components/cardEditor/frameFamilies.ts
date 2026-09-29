@@ -117,6 +117,10 @@ export function resolveTextColor(style: TextStyle, variant: FrameVariant) {
 	return style.colorByVariant?.[variant] ?? style.color
 }
 
+export function resolveTextX(box: TextBox) {
+	return box.align === 'center' ? box.x + box.maxWidth / 2 : box.x
+}
+
 export function resolveFooterX(layout: FrameLayout, hasPt: boolean) {
 	return !hasPt && layout.footer.align === 'right'
 		? layout.pt.x + layout.pt.width

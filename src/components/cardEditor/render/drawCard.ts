@@ -1,7 +1,7 @@
 import type { ArtworkTransform } from '../CardCanvas'
 import type { CardTextRun } from '../cardText'
 import type { FrameLayout } from '../frameFamilies'
-import { resolveFooterX, resolvePtTextColor, resolveTextColor } from '../frameFamilies'
+import { resolveFooterX, resolvePtTextColor, resolveTextColor, resolveTextX } from '../frameFamilies'
 import type { CustomCardData, FrameVariant } from '../types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
@@ -109,7 +109,7 @@ export function drawCard(
 	context.textBaseline = 'middle'
 	applyTextStyle(context, layout.title, variant)
 	context.textAlign = layout.title.align ?? 'left'
-	context.fillText(card.name, layout.title.x, layout.title.y, layout.title.maxWidth)
+	context.fillText(card.name, resolveTextX(layout.title), layout.title.y, layout.title.maxWidth)
 	context.textAlign = 'right'
 	drawManaCost(context, manaRuns, manaSymbols, layout.mana.right, layout.mana.centerY, layout.mana)
 	applyTextStyle(context, layout.type, variant)
