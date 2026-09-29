@@ -58,7 +58,7 @@ export function CustomCardEditor() {
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [layout, setLayout] = useState<'card' | 'token'>('card')
-	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch'>('token-regular')
+	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker'>('token-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -186,7 +186,7 @@ export function CustomCardEditor() {
                         <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
                     </div>
 					</>}
-					{layout === 'token' && <div className="form-group gap-2"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
+					{layout === 'token' && tokenStyle !== 'token-monarch' && tokenStyle !== 'token-marker' && <div className="form-group gap-2"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
 					{layout === 'token' && <div className="form-group gap-2 mb-5">
 						<label htmlFor="token-style">{t('tokenStyle')}</label>
 						<select id="token-style" value={tokenStyle} onChange={(event) => setTokenStyle(event.target.value as typeof tokenStyle)}>
@@ -200,6 +200,7 @@ export function CustomCardEditor() {
 							<option value="token-old">{t('tokenStyleOld')}</option>
 							<option value="token-unglued">{t('tokenStyleUnglued')}</option>
 							<option value="token-monarch">{t('tokenStyleMonarch')}</option>
+							<option value="token-marker">{t('tokenStyleMarker')}</option>
 						</select>
 					</div>}
                     <h5>3. {t('cardInformationSection')}</h5>
@@ -209,8 +210,8 @@ export function CustomCardEditor() {
 						hideManaCost={layout === 'token'}
 						hideRulesText={tokenStyle === 'token-textless' || tokenStyle === 'token-textless-borderless' || tokenStyle === 'token-nyx-textless' || tokenStyle === 'token-unglued'}
 						hideNameAndType={tokenStyle === 'token-unglued'}
-						hideTypeLine={tokenStyle === 'token-monarch'}
-						hidePowerToughness={tokenStyle === 'token-unglued' || tokenStyle === 'token-monarch'}
+						hideTypeLine={tokenStyle === 'token-monarch' || tokenStyle === 'token-marker'}
+						hidePowerToughness={tokenStyle === 'token-unglued' || tokenStyle === 'token-monarch' || tokenStyle === 'token-marker'}
 						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
 					/>
                 </div>

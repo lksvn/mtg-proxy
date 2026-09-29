@@ -146,6 +146,17 @@ const tokenMonarchLayout: FrameLayout = {
 	pt: { ...tokenRegularLayout.pt, width: 0, height: 0 },
 }
 
+const tokenMarkerLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 60, dragBottom: 1940 },
+	title: { ...tokenRegularLayout.title, y: 1481 },
+	mana: { ...tokenRegularLayout.mana, symbolSize: 0 },
+	type: { ...tokenRegularLayout.type, maxWidth: 0 },
+	rules: { ...tokenRegularLayout.rules, y: 1559, height: 371, color: '#fff', strokeColor: '#fff' },
+	symbol: { ...tokenRegularLayout.symbol, centerY: 1475 },
+	pt: { ...tokenRegularLayout.pt, width: 0, height: 0 },
+}
+
 const seventhLayout: FrameLayout = {
 	artwork: { dragTop: 208, dragBottom: 1138 },
 	title: { x: 170, y: 148, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
@@ -325,6 +336,14 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: {},
 		fallbacks: {},
 		layout: tokenMonarchLayout,
+		fonts: commonFonts,
+	},
+	'token-marker': {
+		id: 'token-marker',
+		frames: { C: 'img/frames/token/marker/marker.png' },
+		pt: {},
+		fallbacks: {},
+		layout: tokenMarkerLayout,
 		fonts: commonFonts,
 	},
 	'box-topper': {

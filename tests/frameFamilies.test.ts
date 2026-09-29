@@ -200,6 +200,12 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(monarchToken.layout.title.y, 1383)
 	assert.equal(monarchToken.layout.type.maxWidth, 0)
 	assert.equal(monarchToken.layout.pt.width, 0)
+
+	const markerToken = FRAME_FAMILIES['token-marker']
+	assert.equal(resolveFrameVariant(markerToken, 'G'), 'C')
+	assert.equal(markerToken.layout.title.y, 1481)
+	assert.equal(markerToken.layout.rules.color, '#fff')
+	assert.equal(markerToken.layout.pt.width, 0)
 	assert.equal(resolveTextX(FRAME_FAMILIES['m15-regular'].layout.title), 125)
 	for (const token of ['W', 'U', 'B', 'R', 'G', '0', '20', 'X', 'W/U', 'R/G']) {
 		assert.equal(existsSync(resolve('public/img/manaSymbols', futureManaFile(token)!)), true, token)
