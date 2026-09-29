@@ -180,6 +180,19 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		layout: tokenTextlessLayout,
 		fonts: commonFonts,
 	},
+	'token-nyx': {
+		id: 'token-nyx',
+		frames: {
+			W: 'img/frames/token/nyx/w.png', U: 'img/frames/token/nyx/u.png',
+			B: 'img/frames/token/nyx/b.png', R: 'img/frames/token/nyx/r.png',
+			G: 'img/frames/token/nyx/g.png', M: 'img/frames/token/nyx/m.png',
+			A: 'img/frames/token/nyx/a.png',
+		},
+		pt: m15Pt,
+		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
+		layout: tokenRegularLayout,
+		fonts: commonFonts,
+	},
 	'box-topper': {
 		id: 'box-topper',
 		frames: {

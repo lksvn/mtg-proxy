@@ -158,6 +158,10 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(textlessToken, 'C'), 'C')
 	assert.equal(resolveFrameVariant(textlessToken, 'WU'), 'M')
 	assert.equal(textlessToken.layout.rules.height, 0)
+	const nyxToken = FRAME_FAMILIES['token-nyx']
+	assert.equal(resolveFrameVariant(nyxToken, 'W'), 'W')
+	assert.equal(resolveFrameVariant(nyxToken, 'C'), 'A')
+	assert.equal(resolveFrameVariant(nyxToken, 'WU'), 'M')
 	assert.equal(resolveTextX(FRAME_FAMILIES['m15-regular'].layout.title), 125)
 	for (const token of ['W', 'U', 'B', 'R', 'G', '0', '20', 'X', 'W/U', 'R/G']) {
 		assert.equal(existsSync(resolve('public/img/manaSymbols', futureManaFile(token)!)), true, token)
