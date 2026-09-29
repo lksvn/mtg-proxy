@@ -89,16 +89,17 @@ const tokenTextlessLayout: FrameLayout = {
 
 const tokenOldLayout: FrameLayout = {
 	artwork: { dragTop: 232, dragBottom: 1303 },
-	title: { x: 170, y: 106, maxWidth: 1160, align: 'center', font: '100px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	title: { x: 170, y: 150, maxWidth: 1160, align: 'center', font: '100px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
 	mana: { right: 1330, centerY: 106, symbolSize: 0, gap: 0, font: '48px mplantin, serif', color: '#fff' },
-	type: { x: 234, y: 1373, maxWidth: 1032, font: '67px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	type: { x: 234, y: 1425, maxWidth: 1032, font: '67px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
 	rules: { x: 270, y: 1496, width: 960, height: 294, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 75, minFontSize: 32 },
-	symbol: { centerX: 1274, centerY: 1424, boxSize: 78 },
-	pt: { x: 1125, y: 1838, width: 205, height: 90, textX: 1228, textY: 1883, font: '90px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	symbol: { centerX: 1228, centerY: 1424, boxSize: 78 },
+	pt: { x: 1040, y: 1838, width: 205, height: 90, textX: 1160, textY: 1883, font: '90px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
 	footer: {
 		align: 'center', x: 750, maxWidth: 1200,
 		metadataY: 1855, metadata: { font: '42px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 2 },
-		disclaimerY: 1940, disclaimer: { font: '30px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 2, shadowOffsetY: 2 },
+		disclaimerY: 1900, disclaimer: { font: '30px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 2, shadowOffsetY: 2 },
+        disclaimerColorByVariant: { W: '#111' }
 	},
 }
 
