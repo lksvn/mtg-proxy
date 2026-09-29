@@ -194,6 +194,12 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(ungluedToken.layout.pt.width, 0)
 	assert.equal(ungluedToken.defaultBorderStyle, 'silver')
 	assert.equal(ungluedToken.borderMask, 'img/frames/token/unglued/border.svg')
+
+	const monarchToken = FRAME_FAMILIES['token-monarch']
+	assert.equal(resolveFrameVariant(monarchToken, 'W'), 'C')
+	assert.equal(monarchToken.layout.title.y, 1383)
+	assert.equal(monarchToken.layout.type.maxWidth, 0)
+	assert.equal(monarchToken.layout.pt.width, 0)
 	assert.equal(resolveTextX(FRAME_FAMILIES['m15-regular'].layout.title), 125)
 	for (const token of ['W', 'U', 'B', 'R', 'G', '0', '20', 'X', 'W/U', 'R/G']) {
 		assert.equal(existsSync(resolve('public/img/manaSymbols', futureManaFile(token)!)), true, token)

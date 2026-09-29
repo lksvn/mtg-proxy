@@ -9,10 +9,11 @@ type CardDetailsFormProps = {
 	hideManaCost?: boolean
 	hideRulesText?: boolean
 	hideNameAndType?: boolean
+	hideTypeLine?: boolean
 	hidePowerToughness?: boolean
 }
 
-export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hidePowerToughness }: CardDetailsFormProps) {
+export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hideTypeLine, hidePowerToughness }: CardDetailsFormProps) {
 	const { t } = useI18n()
 
 	function update(changes: Partial<CustomCardData>) {
@@ -48,7 +49,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 				{maxManaItems && <small className="text-muted">{t('manaCostLimitFuture')}</small>}
 			</div>}
 
-			{!hideNameAndType && <div className="form-group">
+			{!hideNameAndType && !hideTypeLine && <div className="form-group">
 				<label htmlFor="card-type-line">{t('typeLine')}</label>
 				<input
 					id="card-type-line"

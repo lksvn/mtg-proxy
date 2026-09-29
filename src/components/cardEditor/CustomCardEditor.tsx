@@ -58,7 +58,7 @@ export function CustomCardEditor() {
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [layout, setLayout] = useState<'card' | 'token'>('card')
-	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued'>('token-regular')
+	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch'>('token-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -116,7 +116,7 @@ export function CustomCardEditor() {
                             }}
                             onClear={() => setArtwork(undefined)}
                         />
-						{tokenStyle !== 'token-unglued' && <FileInput
+						{tokenStyle !== 'token-unglued' && tokenStyle !== 'token-monarch' && <FileInput
                             id="custom-card-set-symbol"
                             accept="image/*"
                             label={t('chooseSetSymbol')}
@@ -199,6 +199,7 @@ export function CustomCardEditor() {
 							<option value="token-nyx-textless">{t('tokenStyleNyxTextless')}</option>
 							<option value="token-old">{t('tokenStyleOld')}</option>
 							<option value="token-unglued">{t('tokenStyleUnglued')}</option>
+							<option value="token-monarch">{t('tokenStyleMonarch')}</option>
 						</select>
 					</div>}
                     <h5>3. {t('cardInformationSection')}</h5>
@@ -208,7 +209,8 @@ export function CustomCardEditor() {
 						hideManaCost={layout === 'token'}
 						hideRulesText={tokenStyle === 'token-textless' || tokenStyle === 'token-textless-borderless' || tokenStyle === 'token-nyx-textless' || tokenStyle === 'token-unglued'}
 						hideNameAndType={tokenStyle === 'token-unglued'}
-						hidePowerToughness={tokenStyle === 'token-unglued'}
+						hideTypeLine={tokenStyle === 'token-monarch'}
+						hidePowerToughness={tokenStyle === 'token-unglued' || tokenStyle === 'token-monarch'}
 						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
 					/>
                 </div>

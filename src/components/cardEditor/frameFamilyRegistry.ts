@@ -135,6 +135,17 @@ const tokenUngluedLayout: FrameLayout = {
 	},
 }
 
+const tokenMonarchLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 60, dragBottom: 1940 },
+	title: { ...tokenRegularLayout.title, y: 1383, color: '#f4ce80' },
+	mana: { ...tokenRegularLayout.mana, symbolSize: 0 },
+	type: { ...tokenRegularLayout.type, maxWidth: 0 },
+	rules: { ...tokenRegularLayout.rules, y: 1460, height: 470 },
+	symbol: { centerX: 0, centerY: 0, boxSize: 0 },
+	pt: { ...tokenRegularLayout.pt, width: 0, height: 0 },
+}
+
 const seventhLayout: FrameLayout = {
 	artwork: { dragTop: 208, dragBottom: 1138 },
 	title: { x: 170, y: 148, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
@@ -307,6 +318,14 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
 		layout: tokenUngluedLayout,
 		fonts: ['90px mplantin'],
+	},
+	'token-monarch': {
+		id: 'token-monarch',
+		frames: { C: 'img/frames/token/monarch/monarch.png' },
+		pt: {},
+		fallbacks: {},
+		layout: tokenMonarchLayout,
+		fonts: commonFonts,
 	},
 	'box-topper': {
 		id: 'box-topper',
