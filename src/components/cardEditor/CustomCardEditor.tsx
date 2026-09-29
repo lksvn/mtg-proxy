@@ -58,6 +58,7 @@ export function CustomCardEditor() {
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [layout, setLayout] = useState<'card' | 'token'>('card')
+	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall'>('token-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -78,7 +79,7 @@ export function CustomCardEditor() {
 		powerToughness: '1/1', artist: '', number: '1', rarity: 'common', tintSetSymbol: false, backgroundColor: '#000000',
 	})
 	const activeCard = layout === 'token' ? token : card
-	const activeFamily: FrameFamilyId = layout === 'token' ? 'token-regular' : frameFamily
+	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : frameFamily
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
 	const frameVariant = activeFrameSelection === 'auto'
 		? inferFrameVariant(activeCard.manaCost, activeCard.typeLine)
@@ -186,6 +187,13 @@ export function CustomCardEditor() {
                     </div>
 					</>}
 					{layout === 'token' && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
+					{layout === 'token' && <div className="form-group gap-2 mb-5">
+						<label htmlFor="token-style">{t('tokenStyle')}</label>
+						<select id="token-style" value={tokenStyle} onChange={(event) => setTokenStyle(event.target.value as typeof tokenStyle)}>
+							<option value="token-regular">{t('tokenStyleRegular')}</option>
+							<option value="token-tall">{t('tokenStyleTall')}</option>
+						</select>
+					</div>}
                     <h5>3. {t('cardInformationSection')}</h5>
 					<CardDetailsForm
 						card={activeCard}
