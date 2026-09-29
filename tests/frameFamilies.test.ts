@@ -179,6 +179,12 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(borderlessToken.layout.artwork.dragBottom, 2100)
 	assert.equal(borderlessToken.layout.rules.height, 0)
 
+	const shortToken = FRAME_FAMILIES['token-short']
+	assert.equal(resolveFrameVariant(shortToken, 'C'), 'C')
+	assert.equal(resolveFrameVariant(shortToken, 'WU'), 'M')
+	assert.equal(shortToken.layout.artwork.dragBottom, 1940)
+	assert.equal(shortToken.layout.rules.height, 371)
+
 	const ungluedToken = FRAME_FAMILIES['token-unglued']
 	assert.equal(resolveFrameVariant(ungluedToken, 'C'), 'A')
 	assert.equal(resolveFrameVariant(ungluedToken, 'WU'), 'M')

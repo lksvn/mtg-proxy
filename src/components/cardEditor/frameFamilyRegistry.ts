@@ -79,6 +79,14 @@ const tokenTallLayout: FrameLayout = {
 	symbol: { ...tokenRegularLayout.symbol, centerY: 1241 },
 }
 
+const tokenShortLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 60, dragBottom: 1940 },
+	type: { ...tokenRegularLayout.type, y: 1481 },
+	rules: { ...tokenRegularLayout.rules, y: 1559, height: 371 },
+	symbol: { ...tokenRegularLayout.symbol, centerY: 1475 },
+}
+
 const tokenTextlessLayout: FrameLayout = {
 	...tokenRegularLayout,
 	artwork: { dragTop: 60, dragBottom: 1771 },
@@ -204,6 +212,19 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: m15Pt,
 		fallbacks: commonFallbacks,
 		layout: tokenTallLayout,
+		fonts: commonFonts,
+	},
+	'token-short': {
+		id: 'token-short',
+		frames: {
+			W: 'img/frames/token/short/w.png', U: 'img/frames/token/short/u.png',
+			B: 'img/frames/token/short/b.png', R: 'img/frames/token/short/r.png',
+			G: 'img/frames/token/short/g.png', M: 'img/frames/token/short/m.png',
+			A: 'img/frames/token/short/a.png', C: 'img/frames/token/short/c.png',
+		},
+		pt: m15Pt,
+		fallbacks: { ...commonFallbacks, L: 'M' },
+		layout: tokenShortLayout,
 		fonts: commonFonts,
 	},
 	'token-textless': {
