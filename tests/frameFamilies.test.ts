@@ -221,7 +221,7 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 
 	const jumpstartToken = FRAME_FAMILIES['token-jumpstart']
 	assert.equal(resolveFrameVariant(jumpstartToken, 'G'), 'C')
-	assert.equal(jumpstartToken.layout.title.y, 1435)
+	assert.equal(jumpstartToken.layout.title.y, 1570)
 	assert.equal(jumpstartToken.layout.rules.height, 0)
 	assert.equal(jumpstartToken.layout.type.maxWidth, 0)
 	assert.equal(jumpstartToken.layout.symbol.boxSize, 0)
