@@ -281,6 +281,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 							<rect x={family.layout.type.x} y={family.layout.type.y - 50} width={family.layout.type.maxWidth} height="100" />
 							<rect x={family.layout.symbol.centerX - family.layout.symbol.boxSize / 2} y={family.layout.symbol.centerY - family.layout.symbol.boxSize / 2} width={family.layout.symbol.boxSize} height={family.layout.symbol.boxSize} />
 							<rect x={family.layout.rules.x} y={family.layout.rules.y} width={family.layout.rules.width} height={family.layout.rules.height} />
+							{family.layout.flavorRules && <rect x={family.layout.flavorRules.x} y={family.layout.flavorRules.y} width={family.layout.flavorRules.width} height={family.layout.flavorRules.height} />}
 							<rect
 								x={family.layout.pt.x}
 								y={family.layout.pt.y}

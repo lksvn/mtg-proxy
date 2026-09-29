@@ -6,9 +6,14 @@ type CardDetailsFormProps = {
 	card: CustomCardData
 	onChange: (card: CustomCardData) => void
 	maxManaItems?: number
+	hideManaCost?: boolean
+	hideRulesText?: boolean
+	hideNameAndType?: boolean
+	hideTypeLine?: boolean
+	hidePowerToughness?: boolean
 }
 
-export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFormProps) {
+export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hideTypeLine, hidePowerToughness }: CardDetailsFormProps) {
 	const { t } = useI18n()
 
 	function update(changes: Partial<CustomCardData>) {
@@ -17,7 +22,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFor
 
 	return (
 		<fieldset>
-			<div className="form-group">
+			{!hideNameAndType && <div className="form-group">
 				<label htmlFor="card-name">{t('cardName')}</label>
 				<input
 					id="card-name"
@@ -25,9 +30,9 @@ export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFor
 					value={card.name}
 					onChange={(event) => update({ name: event.target.value })}
 				/>
-			</div>
+			</div>}
 
-			<div className="form-group">
+			{!hideManaCost && <div className="form-group">
 				<label htmlFor="card-mana-cost">{t('manaCost')}</label>
 				<input
 					id="card-mana-cost"
@@ -42,9 +47,9 @@ export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFor
 				/>
 				<small className="text-muted">{t('manaCostHelp')}</small>
 				{maxManaItems && <small className="text-muted">{t('manaCostLimitFuture')}</small>}
-			</div>
+			</div>}
 
-			<div className="form-group">
+			{!hideNameAndType && !hideTypeLine && <div className="form-group">
 				<label htmlFor="card-type-line">{t('typeLine')}</label>
 				<input
 					id="card-type-line"
@@ -55,9 +60,9 @@ export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFor
 					}
 				/>
 				<small className="text-muted">{t('typeLineHelp')}</small>
-			</div>
+			</div>}
 
-			<div className="form-group">
+			{!hideRulesText && <div className="form-group">
 				<label htmlFor="card-rules-text">{t('rulesText')}</label>
 				<textarea
 					id="card-rules-text"
@@ -67,6 +72,13 @@ export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFor
 						update({ rulesText: event.target.value })
 					}
 				/>
+				<label>
+					<input
+						type="checkbox"
+						checked={card.centerRulesText}
+						onChange={(event) => update({ centerRulesText: event.target.checked })}
+					/> {t('centerRulesText')}
+				</label>
                 <details>
 					<summary>{t('formatting')}</summary>
 					<ul className="pl-3">
@@ -76,9 +88,9 @@ export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFor
 						<li>{t('formatAbilityName')}: <code>{t('formatAbilityExample')}</code></li>
 					</ul>
                 </details>
-			</div>
+			</div>}
 
-			<div className="form-group">
+			{!hideRulesText && <div className="form-group">
 				<label htmlFor="card-flavor-text">{t('flavorText')}</label>
 				<textarea
 					id="card-flavor-text"
@@ -88,9 +100,9 @@ export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFor
 						update({ flavorText: event.target.value })
 					}
 				/>
-			</div>
+			</div>}
 
-			<div className="form-group">
+			{!hidePowerToughness && <div className="form-group">
 				<label htmlFor="card-power-toughness">{t('powerToughness')}</label>
 				<input
 					id="card-power-toughness"
@@ -101,7 +113,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems }: CardDetailsFor
 						update({ powerToughness: event.target.value })
 					}
 				/>
-			</div>
+			</div>}
 
 			<div className="form-group">
 				<label htmlFor="card-artist">{t('artist')}</label>

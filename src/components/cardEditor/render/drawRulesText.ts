@@ -9,6 +9,7 @@ type Atom =
 type Line = {
 	atoms: Atom[]
 	gapBefore: number
+	width: number
 }
 
 function atomize(runs: CardTextRun[]): Atom[] {
@@ -33,6 +34,7 @@ function atomize(runs: CardTextRun[]): Atom[] {
 
 type RulesTextStyle = {
 	verticalAlign?: 'top' | 'middle'
+	horizontalAlign?: 'left' | 'center'
 	fontFamily: string
 	italicFontFamily: string
 	color: string
@@ -53,14 +55,14 @@ function layout(
 	fontSize: number,
 	style: RulesTextStyle,
 ) {
-	const lines: Line[] = [{ atoms: [], gapBefore: 0 }]
+	const lines: Line[] = [{ atoms: [], gapBefore: 0, width: 0 }]
 	let width = 0
 
 	for (const atom of atoms) {
 		if (atom.type === 'newline') {
 			const line = lines.at(-1)!
 			if (line.atoms.length) {
-				lines.push({ atoms: [], gapBefore: fontSize * 0.15 })
+				lines.push({ atoms: [], gapBefore: fontSize * 0.15, width: 0 })
 			} else {
 				line.gapBefore = fontSize * 0.45
 			}
@@ -85,11 +87,12 @@ function layout(
 			width + atomWidth > maxWidth &&
 			!(atom.type === 'text' && atom.value === ' ')
 		) {
-			lines.push({ atoms: [atom], gapBefore: 0 })
+			lines.push({ atoms: [atom], gapBefore: 0, width: atomWidth })
 			width = atomWidth
 		} else if (!(width === 0 && atom.type === 'text' && atom.value === ' ')) {
 			line.push(atom)
 			width += atomWidth
+			lines.at(-1)!.width = width
 		}
 	}
 
@@ -106,6 +109,8 @@ export function drawRulesText(
 	maxHeight: number,
 	style: RulesTextStyle,
 ) {
+	if (!runs.length || maxWidth <= 0 || maxHeight <= 0) return
+
 	let fontSize = style.maxFontSize
 	let lines: Line[] = []
 	let lineHeight = 0
@@ -138,7 +143,7 @@ export function drawRulesText(
 	let lineY = y + (style.verticalAlign === 'middle' ? Math.max(0, (maxHeight - blockHeight) / 2) : 0)
 
 	lines.forEach((line) => {
-		let cursorX = x
+		let cursorX = x + (style.horizontalAlign === 'center' ? (maxWidth - line.width) / 2 : 0)
 		lineY += line.gapBefore
 
 		for (const atom of line.atoms) {

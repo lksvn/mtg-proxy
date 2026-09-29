@@ -60,6 +60,134 @@ const m15RegularLayout: FrameLayout = {
 	footer: commonFooter,
 }
 
+const tokenRegularLayout: FrameLayout = {
+	artwork: { dragTop: 60, dragBottom: 1439 },
+	title: { x: 120, y: 163, maxWidth: 1265, align: 'center', font: '80px belerenb, serif', color: '#fff' },
+	mana: { right: 1316, centerY: 121, symbolSize: 70, gap: 8, font: '48px belerenb, serif', color: '#fff' },
+	type: { x: 120, y: 1415, maxWidth: 1190, font: '68px belerenb, serif', color: '#111' },
+	rules: { x: 130, y: 1510, width: 1240, height: 410, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 74, minFontSize: 32 },
+	symbol: { centerX: 1345, centerY: 1416, boxSize: 86 },
+	pt: { x: 1136, y: 1858, width: 282, height: 154, textX: 1300, textY: 1935, font: '78px belerenbsc, serif', color: '#111' },
+	footer: commonFooter,
+}
+
+const tokenTallLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 60, dragBottom: 1240 },
+	type: { ...tokenRegularLayout.type, y: 1240 },
+	rules: { ...tokenRegularLayout.rules, y: 1335, height: 585 },
+	symbol: { ...tokenRegularLayout.symbol, centerY: 1241 },
+}
+
+const tokenShortLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 60, dragBottom: 1940 },
+	type: { ...tokenRegularLayout.type, y: 1481 },
+	rules: { ...tokenRegularLayout.rules, y: 1559, height: 371 },
+	symbol: { ...tokenRegularLayout.symbol, centerY: 1475 },
+}
+
+const tokenTextlessLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 60, dragBottom: 1771 },
+	type: { ...tokenRegularLayout.type, y: 1771 },
+	rules: { ...tokenRegularLayout.rules, y: 0, height: 0 },
+	symbol: { ...tokenRegularLayout.symbol, centerY: 1772 },
+}
+
+const tokenTextlessBorderlessLayout: FrameLayout = {
+	...tokenTextlessLayout,
+	artwork: { dragTop: 0, dragBottom: 2100 },
+	title: { ...tokenTextlessLayout.title, x: 128, y: 167, maxWidth: 1244 },
+	type: { ...tokenTextlessLayout.type, x: 128, y: 1778, maxWidth: 1244 },
+	symbol: { ...tokenTextlessLayout.symbol, centerY: 1775 },
+}
+
+const tokenOldLayout: FrameLayout = {
+	artwork: { dragTop: 232, dragBottom: 1303 },
+	title: { x: 170, y: 150, maxWidth: 1160, align: 'center', font: '100px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	mana: { right: 1330, centerY: 106, symbolSize: 0, gap: 0, font: '48px mplantin, serif', color: '#fff' },
+	type: { x: 234, y: 1425, maxWidth: 1032, font: '67px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	rules: { x: 270, y: 1496, width: 960, height: 294, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 75, minFontSize: 32 },
+	symbol: { centerX: 1228, centerY: 1424, boxSize: 78 },
+	pt: { x: 1040, y: 1838, width: 205, height: 90, textX: 1160, textY: 1883, font: '90px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	footer: {
+		align: 'center', x: 750, maxWidth: 1200,
+		metadataY: 1855, metadata: { font: '42px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 2 },
+		disclaimerY: 1900, disclaimer: { font: '30px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 2, shadowOffsetY: 2 },
+        disclaimerColorByVariant: { W: '#111' }
+	},
+}
+
+const tokenUngluedLayout: FrameLayout = {
+	artwork: { dragTop: 204, dragBottom: 1815 },
+	title: { x: 0, y: 0, maxWidth: 0, font: '1px mplantin, serif', color: '#fff' },
+	mana: { right: 0, centerY: 0, symbolSize: 0, gap: 0, font: '1px mplantin, serif', color: '#fff' },
+	type: { x: 0, y: 0, maxWidth: 0, font: '1px mplantin, serif', color: '#fff' },
+	rules: { x: 0, y: 0, width: 0, height: 0, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0, maxFontSize: 1, minFontSize: 1 },
+	symbol: { centerX: 0, centerY: 0, boxSize: 0 },
+	pt: { x: 0, y: 0, width: 0, height: 0, textX: 0, textY: 0, font: '1px mplantin, serif', color: '#fff' },
+	footer: {
+		align: 'center', x: 750, maxWidth: 1200,
+		metadataY: 1900, metadata: { font: '42px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 2 },
+		disclaimerY: 1955, disclaimer: { font: '30px mplantin, serif', color: '#111', shadowColor: '#111', shadowOffsetX: 2, shadowOffsetY: 2 },
+        disclaimerColorByVariant: { G: '#fff', B: '#fff' }
+	},
+}
+
+const tokenMonarchLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 60, dragBottom: 1940 },
+	title: { ...tokenRegularLayout.title, y: 1383, color: '#f4ce80' },
+	mana: { ...tokenRegularLayout.mana, symbolSize: 0 },
+	type: { ...tokenRegularLayout.type, maxWidth: 0 },
+	rules: { ...tokenRegularLayout.rules, y: 1460, height: 470 },
+	symbol: { centerX: 0, centerY: 0, boxSize: 0 },
+	pt: { ...tokenRegularLayout.pt, width: 0, height: 0 },
+}
+
+const tokenMarkerLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 60, dragBottom: 1940 },
+	title: { ...tokenRegularLayout.title, y: 1481 },
+	mana: { ...tokenRegularLayout.mana, symbolSize: 0 },
+	type: { ...tokenRegularLayout.type, maxWidth: 0 },
+	rules: { ...tokenRegularLayout.rules, y: 1559, height: 371, color: '#fff', strokeColor: '#fff' },
+	symbol: { ...tokenRegularLayout.symbol, centerY: 1475 },
+	pt: { ...tokenRegularLayout.pt, width: 0, height: 0 },
+}
+
+const tokenInitiativeLayout: FrameLayout = {
+	...tokenMarkerLayout,
+	title: { ...tokenMarkerLayout.title, y: 1247, font: '80px belerenb, serif' },
+	rules: { ...tokenMarkerLayout.rules, y: 1324, height: 604 },
+	symbol: { ...tokenMarkerLayout.symbol, centerY: 1241 },
+}
+
+const tokenDayNightLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 60, dragBottom: 1929 },
+	mana: { ...tokenRegularLayout.mana, symbolSize: 0 },
+	type: { ...tokenRegularLayout.type, maxWidth: 0 },
+	rules: { ...tokenRegularLayout.rules, x: 90, y: 1300, width: 1320, height: 630, color: '#fff', strokeColor: '#fff' },
+	flavorRules: { ...tokenRegularLayout.rules, x: 90, y: 266, width: 1320, height: 350, color: '#fff', strokeColor: '#fff' },
+	symbol: { centerX: 0, centerY: 0, boxSize: 0 },
+	pt: { ...tokenRegularLayout.pt, width: 0, height: 0 },
+	footer: { ...commonFooter, metadataY: 2010, disclaimerX: 1385, disclaimerY: 2010, disclaimerAlign: 'right' },
+}
+
+const tokenJumpstartLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 74, dragBottom: 2026 },
+	title: { ...tokenRegularLayout.title, x: 71, y: 1570, maxWidth: 1358, font: '112px belerenb, serif' },
+	mana: { ...tokenRegularLayout.mana, right: 800, centerY: 1795, symbolSize: 100 },
+	type: { ...tokenRegularLayout.type, maxWidth: 0 },
+	rules: { ...tokenRegularLayout.rules, height: 0 },
+	symbol: { centerX: 0, centerY: 0, boxSize: 0 },
+	pt: { ...tokenRegularLayout.pt, width: 0, height: 0 },
+	footer: { ...commonFooter, metadataY: 2010, disclaimerY: 2040 },
+}
+
 const seventhLayout: FrameLayout = {
 	artwork: { dragTop: 208, dragBottom: 1138 },
 	title: { x: 170, y: 148, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
@@ -111,6 +239,168 @@ const abuLayout: FrameLayout = {
 }
 
 export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
+	'token-regular': {
+		id: 'token-regular',
+		frames: {
+			W: 'img/frames/token/regular/w.png', U: 'img/frames/token/regular/u.png',
+			B: 'img/frames/token/regular/b.png', R: 'img/frames/token/regular/r.png',
+			G: 'img/frames/token/regular/g.png', M: 'img/frames/token/regular/m.png',
+			A: 'img/frames/token/regular/a.png', C: 'img/frames/token/regular/c.png',
+			L: 'img/frames/token/regular/l.png',
+		},
+		pt: m15Pt,
+		fallbacks: commonFallbacks,
+		layout: tokenRegularLayout,
+		fonts: commonFonts,
+	},
+	'token-tall': {
+		id: 'token-tall',
+		frames: {
+			W: 'img/frames/token/tall/w.png', U: 'img/frames/token/tall/u.png',
+			B: 'img/frames/token/tall/b.png', R: 'img/frames/token/tall/r.png',
+			G: 'img/frames/token/tall/g.png', M: 'img/frames/token/tall/m.png',
+			A: 'img/frames/token/tall/a.png', C: 'img/frames/token/tall/c.png',
+			L: 'img/frames/token/tall/l.png',
+		},
+		pt: m15Pt,
+		fallbacks: commonFallbacks,
+		layout: tokenTallLayout,
+		fonts: commonFonts,
+	},
+	'token-short': {
+		id: 'token-short',
+		frames: {
+			W: 'img/frames/token/short/w.png', U: 'img/frames/token/short/u.png',
+			B: 'img/frames/token/short/b.png', R: 'img/frames/token/short/r.png',
+			G: 'img/frames/token/short/g.png', M: 'img/frames/token/short/m.png',
+			A: 'img/frames/token/short/a.png', C: 'img/frames/token/short/c.png',
+		},
+		pt: m15Pt,
+		fallbacks: { ...commonFallbacks, L: 'M' },
+		layout: tokenShortLayout,
+		fonts: commonFonts,
+	},
+	'token-textless': {
+		id: 'token-textless',
+		frames: {
+			W: 'img/frames/token/textless/w.png', U: 'img/frames/token/textless/u.png',
+			B: 'img/frames/token/textless/b.png', R: 'img/frames/token/textless/r.png',
+			G: 'img/frames/token/textless/g.png', M: 'img/frames/token/textless/m.png',
+			A: 'img/frames/token/textless/a.png', C: 'img/frames/token/textless/c.png',
+			L: 'img/frames/token/textless/l.png',
+		},
+		pt: m15Pt,
+		fallbacks: commonFallbacks,
+		layout: tokenTextlessLayout,
+		fonts: commonFonts,
+	},
+	'token-textless-borderless': {
+		id: 'token-textless-borderless',
+		frames: {
+			W: 'img/frames/token/textless-borderless/w.png', U: 'img/frames/token/textless-borderless/u.png',
+			B: 'img/frames/token/textless-borderless/b.png', R: 'img/frames/token/textless-borderless/r.png',
+			G: 'img/frames/token/textless-borderless/g.png', M: 'img/frames/token/textless-borderless/m.png',
+			A: 'img/frames/token/textless-borderless/a.png', C: 'img/frames/token/textless-borderless/c.png',
+		},
+		pt: m15Pt,
+		fallbacks: { ...commonFallbacks, L: 'M' },
+		layout: tokenTextlessBorderlessLayout,
+		fonts: commonFonts,
+	},
+	'token-nyx': {
+		id: 'token-nyx',
+		frames: {
+			W: 'img/frames/token/nyx/w.png', U: 'img/frames/token/nyx/u.png',
+			B: 'img/frames/token/nyx/b.png', R: 'img/frames/token/nyx/r.png',
+			G: 'img/frames/token/nyx/g.png', M: 'img/frames/token/nyx/m.png',
+			A: 'img/frames/token/nyx/a.png',
+		},
+		pt: m15Pt,
+		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
+		layout: tokenRegularLayout,
+		fonts: commonFonts,
+	},
+	'token-nyx-textless': {
+		id: 'token-nyx-textless',
+		frames: {
+			W: 'img/frames/token/nyx-textless/w.png', U: 'img/frames/token/nyx-textless/u.png',
+			B: 'img/frames/token/nyx-textless/b.png', R: 'img/frames/token/nyx-textless/r.png',
+			G: 'img/frames/token/nyx-textless/g.png', M: 'img/frames/token/nyx-textless/m.png',
+			A: 'img/frames/token/nyx-textless/a.png',
+		},
+		pt: m15Pt,
+		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
+		layout: tokenTextlessLayout,
+		fonts: commonFonts,
+	},
+	'token-old': {
+		id: 'token-old',
+		frames: {
+			W: 'img/frames/token/old/w.png', U: 'img/frames/token/old/u.png',
+			B: 'img/frames/token/old/b.png', R: 'img/frames/token/old/r.png',
+			G: 'img/frames/token/old/g.png', M: 'img/frames/token/old/m.png',
+			A: 'img/frames/token/old/a.png', C: 'img/frames/token/old/c.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, L: 'M' },
+		layout: tokenOldLayout,
+		fonts: ['100px mplantin', '75px mplantin', '75px mplantini'],
+	},
+	'token-unglued': {
+		id: 'token-unglued',
+		borderMask: 'img/frames/token/unglued/border.svg',
+		defaultBorderStyle: 'silver',
+		frames: {
+			W: 'img/frames/token/unglued/w.png', U: 'img/frames/token/unglued/u.png',
+			B: 'img/frames/token/unglued/b.png', R: 'img/frames/token/unglued/r.png',
+			G: 'img/frames/token/unglued/g.png', M: 'img/frames/token/unglued/m.png',
+			A: 'img/frames/token/unglued/a.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
+		layout: tokenUngluedLayout,
+		fonts: ['90px mplantin'],
+	},
+	'token-monarch': {
+		id: 'token-monarch',
+		frames: { C: 'img/frames/token/monarch/monarch.png' },
+		pt: {},
+		fallbacks: {},
+		layout: tokenMonarchLayout,
+		fonts: commonFonts,
+	},
+	'token-marker': {
+		id: 'token-marker',
+		frames: { C: 'img/frames/token/marker/marker.png' },
+		pt: {},
+		fallbacks: {},
+		layout: tokenMarkerLayout,
+		fonts: commonFonts,
+	},
+	'token-initiative': {
+		id: 'token-initiative',
+		frames: { C: 'img/frames/token/initiative/initiative.png' },
+		pt: {},
+		fallbacks: {},
+		layout: tokenInitiativeLayout,
+		fonts: commonFonts,
+	},
+	'token-day-night': {
+		id: 'token-day-night',
+		frames: { C: 'img/frames/token/day-night/day-night.png' },
+		pt: {},
+		fallbacks: {},
+		layout: tokenDayNightLayout,
+		fonts: commonFonts,
+	},
+	'token-jumpstart': {
+		id: 'token-jumpstart',
+		frames: { C: 'img/frames/token/jumpstart/frame.png' },
+		pt: {},
+		fallbacks: {},
+		layout: tokenJumpstartLayout,
+		fonts: commonFonts,
+	},
 	'box-topper': {
 		id: 'box-topper',
 		frames: {

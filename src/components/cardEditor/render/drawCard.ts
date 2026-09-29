@@ -1,7 +1,7 @@
 import type { ArtworkTransform } from '../CardCanvas'
 import type { CardTextRun } from '../cardText'
 import type { FrameLayout } from '../frameFamilies'
-import { resolveFooterX, resolvePtTextColor, resolveTextColor } from '../frameFamilies'
+import { resolveFooterX, resolvePtTextColor, resolveTextColor, resolveTextX } from '../frameFamilies'
 import type { CustomCardData, FrameVariant } from '../types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
@@ -79,7 +79,7 @@ export function drawCard(
 		}
 	}
 
-	if (symbol) {
+	if (symbol && layout.symbol.boxSize > 0) {
 		const { boxSize, centerX, centerY } = layout.symbol
 		const scale = Math.min(boxSize / symbol.width, boxSize / symbol.height)
 		const width = symbol.width * scale
@@ -107,20 +107,33 @@ export function drawCard(
 	context.fontKerning = 'normal'
 	context.textRendering = 'optimizeLegibility'
 	context.textBaseline = 'middle'
-	applyTextStyle(context, layout.title, variant)
-	context.textAlign = 'left'
-	context.fillText(card.name, layout.title.x, layout.title.y, layout.title.maxWidth)
+	if (layout.title.maxWidth > 0) {
+		applyTextStyle(context, layout.title, variant)
+		context.textAlign = layout.title.align ?? 'left'
+		context.fillText(card.name, resolveTextX(layout.title), layout.title.y, layout.title.maxWidth)
+	}
 	context.textAlign = 'right'
 	drawManaCost(context, manaRuns, manaSymbols, layout.mana.right, layout.mana.centerY, layout.mana)
-	applyTextStyle(context, layout.type, variant)
-	context.textAlign = 'left'
-	context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), layout.type.x, layout.type.y, layout.type.maxWidth)
+	if (layout.type.maxWidth > 0) {
+		applyTextStyle(context, layout.type, variant)
+		context.textAlign = 'left'
+		context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), layout.type.x, layout.type.y, layout.type.maxWidth)
+	}
 	const textRuns: CardTextRun[] = rulesRuns.length && flavorRuns.length
 		? [...rulesRuns, { type: 'text', value: '\n\n', italic: false }, ...flavorRuns]
 		: [...rulesRuns, ...flavorRuns]
-	drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, layout.rules)
+	if (layout.flavorRules) {
+		const rulesStyle = card.centerRulesText ? { ...layout.rules, horizontalAlign: 'center' as const, verticalAlign: 'middle' as const } : layout.rules
+		const flavorStyle = card.centerRulesText ? { ...layout.flavorRules, horizontalAlign: 'center' as const, verticalAlign: 'middle' as const } : layout.flavorRules
+		drawRulesText(context, rulesRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, rulesStyle)
+		drawRulesText(context, flavorRuns, manaSymbols, layout.flavorRules.x, layout.flavorRules.y, layout.flavorRules.width, layout.flavorRules.height, flavorStyle)
+	} else {
+		drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, card.centerRulesText
+			? { ...layout.rules, horizontalAlign: 'center', verticalAlign: 'middle' }
+			: layout.rules)
+	}
 
-	if (card.powerToughness) {
+	if (card.powerToughness && layout.pt.width > 0) {
 		if (ptBackground) context.drawImage(
 			ptBackground,
 			layout.pt.x,
@@ -139,7 +152,7 @@ export function drawCard(
 		)
 	}
 
-	const footerX = resolveFooterX(layout, Boolean(card.powerToughness))
+	const footerX = resolveFooterX(layout, Boolean(card.powerToughness) && layout.pt.width > 0)
 	applyTextStyle(context, layout.footer.metadata)
 	context.fillStyle = layout.footer.colorByVariant?.[variant] ?? layout.footer.metadata.color
 	context.textAlign = layout.footer.align ?? 'left'
@@ -151,7 +164,8 @@ export function drawCard(
 	)
 	applyTextStyle(context, layout.footer.disclaimer)
 	context.fillStyle = layout.footer.disclaimerColorByVariant?.[variant] ?? layout.footer.colorByVariant?.[variant] ?? layout.footer.disclaimer.color
-	context.fillText('NOT FOR SALE • Made on MTG Proxy', footerX, layout.footer.disclaimerY, layout.footer.maxWidth)
+	context.textAlign = layout.footer.disclaimerAlign ?? layout.footer.align ?? 'left'
+	context.fillText('NOT FOR SALE • Made on MTG Proxy', layout.footer.disclaimerX ?? footerX, layout.footer.disclaimerY, layout.footer.maxWidth)
 }
 
 function applyTextStyle(

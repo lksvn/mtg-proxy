@@ -3,7 +3,7 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight'
+export type FrameFamilyId = 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight' | 'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'
 export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
 type TextStyle = {
@@ -19,6 +19,23 @@ type TextBox = TextStyle & {
 	x: number
 	y: number
 	maxWidth: number
+	align?: CanvasTextAlign
+}
+
+type RulesBox = {
+	x: number
+	y: number
+	width: number
+	height: number
+	verticalAlign?: 'top' | 'middle'
+	horizontalAlign?: 'left' | 'center'
+	fontFamily: string
+	italicFontFamily: string
+	color: string
+	strokeColor: string
+	strokeWidth: number
+	maxFontSize: number
+	minFontSize: number
 }
 
 export type FrameLayout = {
@@ -26,20 +43,8 @@ export type FrameLayout = {
 	title: TextBox
 	mana: TextStyle & { right: number; centerY: number; symbolSize: number; gap: number; verticalPositions?: readonly (readonly [number, number])[] }
 	type: TextBox
-	rules: {
-		x: number
-		y: number
-		width: number
-		height: number
-		verticalAlign?: 'top' | 'middle'
-		fontFamily: string
-		italicFontFamily: string
-		color: string
-		strokeColor: string
-		strokeWidth: number
-		maxFontSize: number
-		minFontSize: number
-	}
+	rules: RulesBox
+	flavorRules?: RulesBox
 	symbol: { centerX: number; centerY: number; boxSize: number }
 	pt: TextStyle & {
 		x: number
@@ -58,6 +63,8 @@ export type FrameLayout = {
 		metadataY: number
 		metadata: TextStyle
 		disclaimerY: number
+		disclaimerX?: number
+		disclaimerAlign?: CanvasTextAlign
 		disclaimer: TextStyle
 	}
 }
@@ -114,6 +121,10 @@ export function resolvePtTextColor(variant: FrameVariant, defaultColor: string) 
 
 export function resolveTextColor(style: TextStyle, variant: FrameVariant) {
 	return style.colorByVariant?.[variant] ?? style.color
+}
+
+export function resolveTextX(box: TextBox) {
+	return box.align === 'center' ? box.x + box.maxWidth / 2 : box.x
 }
 
 export function resolveFooterX(layout: FrameLayout, hasPt: boolean) {

@@ -53,15 +53,19 @@ export function CustomCardEditor() {
     const [artworkTransform, setArtworkTransform] = useState(createDefaultArtworkTransform)
     const [setSymbol, setSetSymbol] = useState<File | string | undefined>(SAMPLE_SET_SYMBOL_URL)
 	const [frameSelection, setFrameSelection] = useState<FrameVariant | 'auto'>('auto')
+	const [tokenFrameSelection, setTokenFrameSelection] = useState<FrameVariant | 'auto'>('C')
 	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
+	const [layout, setLayout] = useState<'card' | 'token'>('card')
+	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'>('token-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
         typeLine: 'Legendary Creature — Rat Rogue',
         rulesText: `All Rats have fear.
 {T}, Sacrifice a Rat: Create X 1/1 black Rat creature tokens, where X is the number of Rats you control.`,
+		centerRulesText: false,
         flavorText: 'Marrow-Gnawer united three nezumi gangs when he slew their leaders in a single night. Now they call him their first lord.',
         powerToughness: '2/3',
         artist: 'Wayne Reynolds',
@@ -70,9 +74,16 @@ export function CustomCardEditor() {
         tintSetSymbol: false,
         backgroundColor: '#000000'
     })
-	const frameVariant = frameSelection === 'auto'
-		? inferFrameVariant(card.manaCost, card.typeLine)
-		: frameSelection
+	const [token, setToken] = useState<CustomCardData>({
+		name: 'Rat', manaCost: '', typeLine: 'Token Creature — Rat', rulesText: '', centerRulesText: false, flavorText: '',
+		powerToughness: '1/1', artist: '', number: '1', rarity: 'common', tintSetSymbol: false, backgroundColor: '#000000',
+	})
+	const activeCard = layout === 'token' ? token : card
+	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : frameFamily
+	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
+	const frameVariant = activeFrameSelection === 'auto'
+		? inferFrameVariant(activeCard.manaCost, activeCard.typeLine)
+		: activeFrameSelection
 	const search = frameStyleSearch.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 
 	function downloadPng(dpi?: number) {
@@ -105,16 +116,24 @@ export function CustomCardEditor() {
                             }}
                             onClear={() => setArtwork(undefined)}
                         />
-                        <FileInput
+						{tokenStyle !== 'token-unglued' && tokenStyle !== 'token-monarch' && tokenStyle !== 'token-day-night' && tokenStyle !== 'token-jumpstart' && <FileInput
                             id="custom-card-set-symbol"
                             accept="image/*"
                             label={t('chooseSetSymbol')}
                             hasValue={Boolean(setSymbol)}
                             onSelect={setSetSymbol}
                             onClear={() => setSetSymbol(undefined)}
-                        />
+						/>}
                     </div>
                     <h5>2. {t('cardEditionSection')}</h5>
+					<div className="form-group gap-2">
+						<label htmlFor="card-layout">{t('cardLayout')}</label>
+						<select id="card-layout" value={layout} onChange={(event) => setLayout(event.target.value as 'card' | 'token')}>
+							<option value="card">{t('cardLayoutCard')}</option>
+							<option value="token">{t('cardLayoutToken')}</option>
+						</select>
+					</div>
+					{layout === 'card' && <>
                     <div style={{display:'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gridAutoFlow:'dense'}} className="gap-3">
                         <div className="form-group gap-2">
                             <label htmlFor="card-frame-style-search">{t('searchFrameStyles')}</label>
@@ -152,7 +171,7 @@ export function CustomCardEditor() {
                             </select>
                         </div>
                     </div>
-					{getFrameFamily(frameFamily).borderMask && (
+					{activeFamily !== 'token-unglued' && getFrameFamily(activeFamily).borderMask && (
 						<div className="form-group gap-2">
 							<label htmlFor="card-frame-border">{t('frameBorder')}</label>
 							<select id="card-frame-border" value={borderStyle} onChange={(event) => setBorderStyle(event.target.value as FrameBorderStyle)}>
@@ -163,11 +182,41 @@ export function CustomCardEditor() {
 							</select>
 						</div>
 					)}
-                    <div className="form-group gap-2 mb-5">
+                    <div className="form-group gap-2">
                         <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
                     </div>
-                    <h5>3. {t('cardInformationSection')}</h5>
-                    <CardDetailsForm card={card} onChange={setCard} maxManaItems={frameFamily === 'future-sight' ? 6 : undefined} />
+					</>}
+					{layout === 'token' && <div className="form-group gap-2">
+						<label htmlFor="token-style">{t('tokenStyle')}</label>
+						<select id="token-style" value={tokenStyle} onChange={(event) => setTokenStyle(event.target.value as typeof tokenStyle)}>
+							<option value="token-regular">{t('tokenStyleRegular')}</option>
+							<option value="token-tall">{t('tokenStyleTall')}</option>
+							<option value="token-short">{t('tokenStyleShort')}</option>
+							<option value="token-textless">{t('tokenStyleTextless')}</option>
+							<option value="token-textless-borderless">{t('tokenStyleTextlessBorderless')}</option>
+							<option value="token-nyx">{t('tokenStyleNyx')}</option>
+							<option value="token-nyx-textless">{t('tokenStyleNyxTextless')}</option>
+							<option value="token-old">{t('tokenStyleOld')}</option>
+							<option value="token-unglued">{t('tokenStyleUnglued')}</option>
+							<option value="token-monarch">{t('tokenStyleMonarch')}</option>
+							<option value="token-marker">{t('tokenStyleMarker')}</option>
+							<option value="token-initiative">{t('tokenStyleInitiative')}</option>
+							<option value="token-day-night">{t('tokenStyleDayNight')}</option>
+							<option value="token-jumpstart">{t('tokenStyleJumpstart')}</option>
+						</select>
+					</div>}
+					{layout === 'token' && tokenStyle !== 'token-monarch' && tokenStyle !== 'token-marker' && tokenStyle !== 'token-initiative' && tokenStyle !== 'token-day-night' && tokenStyle !== 'token-jumpstart' && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
+                    <h5 className='mt-5'>3. {t('cardInformationSection')}</h5>
+					<CardDetailsForm
+						card={activeCard}
+						onChange={layout === 'token' ? setToken : setCard}
+						hideManaCost={layout === 'token' && tokenStyle !== 'token-jumpstart'}
+						hideRulesText={tokenStyle === 'token-textless' || tokenStyle === 'token-textless-borderless' || tokenStyle === 'token-nyx-textless' || tokenStyle === 'token-unglued' || tokenStyle === 'token-jumpstart'}
+						hideNameAndType={tokenStyle === 'token-unglued'}
+						hideTypeLine={tokenStyle === 'token-monarch' || tokenStyle === 'token-marker' || tokenStyle === 'token-initiative' || tokenStyle === 'token-day-night' || tokenStyle === 'token-jumpstart'}
+						hidePowerToughness={tokenStyle === 'token-unglued' || tokenStyle === 'token-monarch' || tokenStyle === 'token-marker' || tokenStyle === 'token-initiative' || tokenStyle === 'token-day-night' || tokenStyle === 'token-jumpstart'}
+						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
+					/>
                 </div>
 
                 <div style={{position:'relative'}}>
@@ -176,10 +225,10 @@ export function CustomCardEditor() {
                         artwork={artwork}
                         transform={artworkTransform}
                         onTransformChange={setArtworkTransform}
-                        card={card}
+						card={activeCard}
 						setSymbol={setSymbol}
-						frameFamily={frameFamily}
-						borderStyle={borderStyle}
+						frameFamily={activeFamily}
+						borderStyle={activeFamily === 'token-unglued' ? 'silver' : borderStyle}
 						frameVariant={frameVariant}
                     />
                     {artwork && <ArtworkControls

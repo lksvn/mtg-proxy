@@ -10,6 +10,7 @@ import {
 	resolveFrameVariant,
 	resolvePtTextColor,
 	resolveTextColor,
+	resolveTextX,
 	resolveFooterX,
 	type FrameFamily,
 } from '../src/components/cardEditor/frameFamilies.ts'
@@ -143,6 +144,88 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(futureManaFile('2'), 'future/f2.png')
 	assert.equal(futureManaFile('W/U'), 'future/fwu.png')
 	assert.equal(futureManaFile('C'), undefined)
+	const token = FRAME_FAMILIES['token-regular']
+	assert.equal(resolveFrameVariant(token, 'C'), 'C')
+	assert.equal(resolveFrameVariant(token, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(token, 'V'), 'A')
+	assert.equal(token.layout.title.align, 'center')
+	assert.equal(resolveTextX(token.layout.title), 752.5)
+	const tallToken = FRAME_FAMILIES['token-tall']
+	assert.equal(resolveFrameVariant(tallToken, 'C'), 'C')
+	assert.equal(resolveFrameVariant(tallToken, 'WU'), 'M')
+	assert.equal(tallToken.layout.rules.height, 585)
+	const textlessToken = FRAME_FAMILIES['token-textless']
+	assert.equal(resolveFrameVariant(textlessToken, 'C'), 'C')
+	assert.equal(resolveFrameVariant(textlessToken, 'WU'), 'M')
+	assert.equal(textlessToken.layout.rules.height, 0)
+	const nyxToken = FRAME_FAMILIES['token-nyx']
+	assert.equal(resolveFrameVariant(nyxToken, 'W'), 'W')
+	assert.equal(resolveFrameVariant(nyxToken, 'C'), 'A')
+	assert.equal(resolveFrameVariant(nyxToken, 'WU'), 'M')
+	const nyxTextlessToken = FRAME_FAMILIES['token-nyx-textless']
+	assert.equal(resolveFrameVariant(nyxTextlessToken, 'C'), 'A')
+	assert.equal(resolveFrameVariant(nyxTextlessToken, 'WU'), 'M')
+	assert.equal(nyxTextlessToken.layout.rules.height, 0)
+	const oldToken = FRAME_FAMILIES['token-old']
+	assert.equal(resolveFrameVariant(oldToken, 'C'), 'C')
+	assert.equal(resolveFrameVariant(oldToken, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(oldToken, 'L'), 'M')
+	assert.deepEqual(oldToken.pt, {})
+
+	const borderlessToken = FRAME_FAMILIES['token-textless-borderless']
+	assert.equal(resolveFrameVariant(borderlessToken, 'C'), 'C')
+	assert.equal(resolveFrameVariant(borderlessToken, 'WU'), 'M')
+	assert.equal(borderlessToken.layout.artwork.dragTop, 0)
+	assert.equal(borderlessToken.layout.artwork.dragBottom, 2100)
+	assert.equal(borderlessToken.layout.rules.height, 0)
+
+	const shortToken = FRAME_FAMILIES['token-short']
+	assert.equal(resolveFrameVariant(shortToken, 'C'), 'C')
+	assert.equal(resolveFrameVariant(shortToken, 'WU'), 'M')
+	assert.equal(shortToken.layout.artwork.dragBottom, 1940)
+	assert.equal(shortToken.layout.rules.height, 371)
+
+	const ungluedToken = FRAME_FAMILIES['token-unglued']
+	assert.equal(resolveFrameVariant(ungluedToken, 'C'), 'A')
+	assert.equal(resolveFrameVariant(ungluedToken, 'WU'), 'M')
+	assert.equal(ungluedToken.layout.title.maxWidth, 0)
+	assert.equal(ungluedToken.layout.rules.height, 0)
+	assert.equal(ungluedToken.layout.symbol.boxSize, 0)
+	assert.equal(ungluedToken.layout.pt.width, 0)
+	assert.equal(ungluedToken.defaultBorderStyle, 'silver')
+	assert.equal(ungluedToken.borderMask, 'img/frames/token/unglued/border.svg')
+
+	const monarchToken = FRAME_FAMILIES['token-monarch']
+	assert.equal(resolveFrameVariant(monarchToken, 'W'), 'C')
+	assert.equal(monarchToken.layout.title.y, 1383)
+	assert.equal(monarchToken.layout.type.maxWidth, 0)
+	assert.equal(monarchToken.layout.pt.width, 0)
+
+	const markerToken = FRAME_FAMILIES['token-marker']
+	assert.equal(resolveFrameVariant(markerToken, 'G'), 'C')
+	assert.equal(markerToken.layout.title.y, 1481)
+	assert.equal(markerToken.layout.rules.color, '#fff')
+	assert.equal(markerToken.layout.pt.width, 0)
+
+	const initiativeToken = FRAME_FAMILIES['token-initiative']
+	assert.equal(resolveFrameVariant(initiativeToken, 'U'), 'C')
+	assert.equal(initiativeToken.layout.title.y, 1247)
+	assert.equal(initiativeToken.layout.rules.height, 604)
+
+	const dayNightToken = FRAME_FAMILIES['token-day-night']
+	assert.equal(resolveFrameVariant(dayNightToken, 'R'), 'C')
+	assert.equal(dayNightToken.layout.rules.horizontalAlign, undefined)
+	assert.equal(dayNightToken.layout.flavorRules?.y, 266)
+	assert.equal(dayNightToken.layout.symbol.boxSize, 0)
+	assert.equal(dayNightToken.layout.footer.disclaimerAlign, 'right')
+
+	const jumpstartToken = FRAME_FAMILIES['token-jumpstart']
+	assert.equal(resolveFrameVariant(jumpstartToken, 'G'), 'C')
+	assert.equal(jumpstartToken.layout.title.y, 1570)
+	assert.equal(jumpstartToken.layout.rules.height, 0)
+	assert.equal(jumpstartToken.layout.type.maxWidth, 0)
+	assert.equal(jumpstartToken.layout.symbol.boxSize, 0)
+	assert.equal(resolveTextX(FRAME_FAMILIES['m15-regular'].layout.title), 125)
 	for (const token of ['W', 'U', 'B', 'R', 'G', '0', '20', 'X', 'W/U', 'R/G']) {
 		assert.equal(existsSync(resolve('public/img/manaSymbols', futureManaFile(token)!)), true, token)
 	}
