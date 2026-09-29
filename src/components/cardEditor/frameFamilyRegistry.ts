@@ -103,6 +103,22 @@ const tokenOldLayout: FrameLayout = {
 	},
 }
 
+const tokenUngluedLayout: FrameLayout = {
+	artwork: { dragTop: 204, dragBottom: 1815 },
+	title: { x: 0, y: 0, maxWidth: 0, font: '1px mplantin, serif', color: '#fff' },
+	mana: { right: 0, centerY: 0, symbolSize: 0, gap: 0, font: '1px mplantin, serif', color: '#fff' },
+	type: { x: 0, y: 0, maxWidth: 0, font: '1px mplantin, serif', color: '#fff' },
+	rules: { x: 0, y: 0, width: 0, height: 0, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0, maxFontSize: 1, minFontSize: 1 },
+	symbol: { centerX: 0, centerY: 0, boxSize: 0 },
+	pt: { x: 0, y: 0, width: 0, height: 0, textX: 0, textY: 0, font: '1px mplantin, serif', color: '#fff' },
+	footer: {
+		align: 'center', x: 750, maxWidth: 1200,
+		metadataY: 1900, metadata: { font: '42px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 2 },
+		disclaimerY: 1955, disclaimer: { font: '30px mplantin, serif', color: '#111', shadowColor: '#111', shadowOffsetX: 2, shadowOffsetY: 2 },
+        disclaimerColorByVariant: { G: '#fff', B: '#fff' }
+	},
+}
+
 const seventhLayout: FrameLayout = {
 	artwork: { dragTop: 208, dragBottom: 1138 },
 	title: { x: 170, y: 148, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
@@ -234,6 +250,21 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		fallbacks: { ...commonFallbacks, L: 'M' },
 		layout: tokenOldLayout,
 		fonts: ['100px mplantin', '75px mplantin', '75px mplantini'],
+	},
+	'token-unglued': {
+		id: 'token-unglued',
+		borderMask: 'img/frames/token/unglued/border.svg',
+		defaultBorderStyle: 'silver',
+		frames: {
+			W: 'img/frames/token/unglued/w.png', U: 'img/frames/token/unglued/u.png',
+			B: 'img/frames/token/unglued/b.png', R: 'img/frames/token/unglued/r.png',
+			G: 'img/frames/token/unglued/g.png', M: 'img/frames/token/unglued/m.png',
+			A: 'img/frames/token/unglued/a.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
+		layout: tokenUngluedLayout,
+		fonts: ['90px mplantin'],
 	},
 	'box-topper': {
 		id: 'box-topper',

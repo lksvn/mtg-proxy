@@ -79,7 +79,7 @@ export function drawCard(
 		}
 	}
 
-	if (symbol) {
+	if (symbol && layout.symbol.boxSize > 0) {
 		const { boxSize, centerX, centerY } = layout.symbol
 		const scale = Math.min(boxSize / symbol.width, boxSize / symbol.height)
 		const width = symbol.width * scale
@@ -107,14 +107,18 @@ export function drawCard(
 	context.fontKerning = 'normal'
 	context.textRendering = 'optimizeLegibility'
 	context.textBaseline = 'middle'
-	applyTextStyle(context, layout.title, variant)
-	context.textAlign = layout.title.align ?? 'left'
-	context.fillText(card.name, resolveTextX(layout.title), layout.title.y, layout.title.maxWidth)
+	if (layout.title.maxWidth > 0) {
+		applyTextStyle(context, layout.title, variant)
+		context.textAlign = layout.title.align ?? 'left'
+		context.fillText(card.name, resolveTextX(layout.title), layout.title.y, layout.title.maxWidth)
+	}
 	context.textAlign = 'right'
 	drawManaCost(context, manaRuns, manaSymbols, layout.mana.right, layout.mana.centerY, layout.mana)
-	applyTextStyle(context, layout.type, variant)
-	context.textAlign = 'left'
-	context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), layout.type.x, layout.type.y, layout.type.maxWidth)
+	if (layout.type.maxWidth > 0) {
+		applyTextStyle(context, layout.type, variant)
+		context.textAlign = 'left'
+		context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), layout.type.x, layout.type.y, layout.type.maxWidth)
+	}
 	const textRuns: CardTextRun[] = rulesRuns.length && flavorRuns.length
 		? [...rulesRuns, { type: 'text', value: '\n\n', italic: false }, ...flavorRuns]
 		: [...rulesRuns, ...flavorRuns]
@@ -122,7 +126,7 @@ export function drawCard(
 		? { ...layout.rules, horizontalAlign: 'center', verticalAlign: 'middle' }
 		: layout.rules)
 
-	if (card.powerToughness) {
+	if (card.powerToughness && layout.pt.width > 0) {
 		if (ptBackground) context.drawImage(
 			ptBackground,
 			layout.pt.x,
@@ -141,7 +145,7 @@ export function drawCard(
 		)
 	}
 
-	const footerX = resolveFooterX(layout, Boolean(card.powerToughness))
+	const footerX = resolveFooterX(layout, Boolean(card.powerToughness) && layout.pt.width > 0)
 	applyTextStyle(context, layout.footer.metadata)
 	context.fillStyle = layout.footer.colorByVariant?.[variant] ?? layout.footer.metadata.color
 	context.textAlign = layout.footer.align ?? 'left'

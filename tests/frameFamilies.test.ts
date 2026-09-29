@@ -171,6 +171,16 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(oldToken, 'WU'), 'M')
 	assert.equal(resolveFrameVariant(oldToken, 'L'), 'M')
 	assert.deepEqual(oldToken.pt, {})
+
+	const ungluedToken = FRAME_FAMILIES['token-unglued']
+	assert.equal(resolveFrameVariant(ungluedToken, 'C'), 'A')
+	assert.equal(resolveFrameVariant(ungluedToken, 'WU'), 'M')
+	assert.equal(ungluedToken.layout.title.maxWidth, 0)
+	assert.equal(ungluedToken.layout.rules.height, 0)
+	assert.equal(ungluedToken.layout.symbol.boxSize, 0)
+	assert.equal(ungluedToken.layout.pt.width, 0)
+	assert.equal(ungluedToken.defaultBorderStyle, 'silver')
+	assert.equal(ungluedToken.borderMask, 'img/frames/token/unglued/border.svg')
 	assert.equal(resolveTextX(FRAME_FAMILIES['m15-regular'].layout.title), 125)
 	for (const token of ['W', 'U', 'B', 'R', 'G', '0', '20', 'X', 'W/U', 'R/G']) {
 		assert.equal(existsSync(resolve('public/img/manaSymbols', futureManaFile(token)!)), true, token)

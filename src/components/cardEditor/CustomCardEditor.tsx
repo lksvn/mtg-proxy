@@ -58,7 +58,7 @@ export function CustomCardEditor() {
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [layout, setLayout] = useState<'card' | 'token'>('card')
-	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-textless' | 'token-nyx' | 'token-nyx-textless' | 'token-old'>('token-regular')
+	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-textless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued'>('token-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -116,14 +116,14 @@ export function CustomCardEditor() {
                             }}
                             onClear={() => setArtwork(undefined)}
                         />
-                        <FileInput
+						{tokenStyle !== 'token-unglued' && <FileInput
                             id="custom-card-set-symbol"
                             accept="image/*"
                             label={t('chooseSetSymbol')}
                             hasValue={Boolean(setSymbol)}
                             onSelect={setSetSymbol}
                             onClear={() => setSetSymbol(undefined)}
-                        />
+						/>}
                     </div>
                     <h5>2. {t('cardEditionSection')}</h5>
 					<div className="form-group gap-2">
@@ -171,7 +171,7 @@ export function CustomCardEditor() {
                             </select>
                         </div>
                     </div>
-					{getFrameFamily(frameFamily).borderMask && (
+					{activeFamily !== 'token-unglued' && getFrameFamily(activeFamily).borderMask && (
 						<div className="form-group gap-2">
 							<label htmlFor="card-frame-border">{t('frameBorder')}</label>
 							<select id="card-frame-border" value={borderStyle} onChange={(event) => setBorderStyle(event.target.value as FrameBorderStyle)}>
@@ -196,6 +196,7 @@ export function CustomCardEditor() {
 							<option value="token-nyx">{t('tokenStyleNyx')}</option>
 							<option value="token-nyx-textless">{t('tokenStyleNyxTextless')}</option>
 							<option value="token-old">{t('tokenStyleOld')}</option>
+							<option value="token-unglued">{t('tokenStyleUnglued')}</option>
 						</select>
 					</div>}
                     <h5>3. {t('cardInformationSection')}</h5>
@@ -203,7 +204,9 @@ export function CustomCardEditor() {
 						card={activeCard}
 						onChange={layout === 'token' ? setToken : setCard}
 						hideManaCost={layout === 'token'}
-						hideRulesText={tokenStyle === 'token-textless' || tokenStyle === 'token-nyx-textless'}
+						hideRulesText={tokenStyle === 'token-textless' || tokenStyle === 'token-nyx-textless' || tokenStyle === 'token-unglued'}
+						hideNameAndType={tokenStyle === 'token-unglued'}
+						hidePowerToughness={tokenStyle === 'token-unglued'}
 						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
 					/>
                 </div>
@@ -217,7 +220,7 @@ export function CustomCardEditor() {
 						card={activeCard}
 						setSymbol={setSymbol}
 						frameFamily={activeFamily}
-						borderStyle={borderStyle}
+						borderStyle={activeFamily === 'token-unglued' ? 'silver' : borderStyle}
 						frameVariant={frameVariant}
                     />
                     {artwork && <ArtworkControls

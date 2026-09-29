@@ -8,9 +8,11 @@ type CardDetailsFormProps = {
 	maxManaItems?: number
 	hideManaCost?: boolean
 	hideRulesText?: boolean
+	hideNameAndType?: boolean
+	hidePowerToughness?: boolean
 }
 
-export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText }: CardDetailsFormProps) {
+export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hidePowerToughness }: CardDetailsFormProps) {
 	const { t } = useI18n()
 
 	function update(changes: Partial<CustomCardData>) {
@@ -19,7 +21,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 
 	return (
 		<fieldset>
-			<div className="form-group">
+			{!hideNameAndType && <div className="form-group">
 				<label htmlFor="card-name">{t('cardName')}</label>
 				<input
 					id="card-name"
@@ -27,7 +29,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 					value={card.name}
 					onChange={(event) => update({ name: event.target.value })}
 				/>
-			</div>
+			</div>}
 
 			{!hideManaCost && <div className="form-group">
 				<label htmlFor="card-mana-cost">{t('manaCost')}</label>
@@ -46,7 +48,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 				{maxManaItems && <small className="text-muted">{t('manaCostLimitFuture')}</small>}
 			</div>}
 
-			<div className="form-group">
+			{!hideNameAndType && <div className="form-group">
 				<label htmlFor="card-type-line">{t('typeLine')}</label>
 				<input
 					id="card-type-line"
@@ -57,7 +59,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 					}
 				/>
 				<small className="text-muted">{t('typeLineHelp')}</small>
-			</div>
+			</div>}
 
 			{!hideRulesText && <div className="form-group">
 				<label htmlFor="card-rules-text">{t('rulesText')}</label>
@@ -99,7 +101,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 				/>
 			</div>}
 
-			<div className="form-group">
+			{!hidePowerToughness && <div className="form-group">
 				<label htmlFor="card-power-toughness">{t('powerToughness')}</label>
 				<input
 					id="card-power-toughness"
@@ -110,7 +112,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 						update({ powerToughness: event.target.value })
 					}
 				/>
-			</div>
+			</div>}
 
 			<div className="form-group">
 				<label htmlFor="card-artist">{t('artist')}</label>
