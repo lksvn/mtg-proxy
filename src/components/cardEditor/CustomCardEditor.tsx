@@ -186,7 +186,7 @@ export function CustomCardEditor() {
                         <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
                     </div>
 					</>}
-					{layout === 'token' && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
+					{layout === 'token' && <div className="form-group gap-2"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
 					{layout === 'token' && <div className="form-group gap-2 mb-5">
 						<label htmlFor="token-style">{t('tokenStyle')}</label>
 						<select id="token-style" value={tokenStyle} onChange={(event) => setTokenStyle(event.target.value as typeof tokenStyle)}>
