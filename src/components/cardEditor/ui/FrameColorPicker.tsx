@@ -33,9 +33,11 @@ function ChoiceIcon({ value, symbol }: { value: FrameChoice; symbol?: string }) 
 		: <span className={`frame-color-swatch frame-color-swatch-${value}`} aria-hidden="true" />
 }
 
-export function FrameColorPicker({ value, onChange, hideLands = false }: { value: FrameChoice; onChange: (value: FrameChoice) => void; hideLands?: boolean }) {
+export function FrameColorPicker({ value, onChange, hideLands = false, hideVehicles = false }: { value: FrameChoice; onChange: (value: FrameChoice) => void; hideLands?: boolean; hideVehicles?: boolean }) {
 	const { t } = useI18n()
-	const options = hideLands ? OPTIONS.filter((option) => !LAND_OPTIONS.includes(option.value)) : OPTIONS
+	const options = OPTIONS.filter((option) =>
+		(!hideLands || !LAND_OPTIONS.includes(option.value)) &&
+		(!hideVehicles || option.value !== 'V'))
 	const triggerRef = useRef<HTMLButtonElement>(null)
 	const [open, setOpen] = useState(false)
 	const [activeIndex, setActiveIndex] = useState(0)
