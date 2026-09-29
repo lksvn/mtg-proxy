@@ -58,7 +58,7 @@ export function CustomCardEditor() {
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [layout, setLayout] = useState<'card' | 'token'>('card')
-	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-textless' | 'token-nyx'>('token-regular')
+	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-textless' | 'token-nyx' | 'token-nyx-textless'>('token-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -194,6 +194,7 @@ export function CustomCardEditor() {
 							<option value="token-tall">{t('tokenStyleTall')}</option>
 							<option value="token-textless">{t('tokenStyleTextless')}</option>
 							<option value="token-nyx">{t('tokenStyleNyx')}</option>
+							<option value="token-nyx-textless">{t('tokenStyleNyxTextless')}</option>
 						</select>
 					</div>}
                     <h5>3. {t('cardInformationSection')}</h5>
@@ -201,7 +202,7 @@ export function CustomCardEditor() {
 						card={activeCard}
 						onChange={layout === 'token' ? setToken : setCard}
 						hideManaCost={layout === 'token'}
-						hideRulesText={tokenStyle === 'token-textless'}
+						hideRulesText={tokenStyle === 'token-textless' || tokenStyle === 'token-nyx-textless'}
 						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
 					/>
                 </div>
