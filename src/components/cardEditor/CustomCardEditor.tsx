@@ -185,7 +185,7 @@ export function CustomCardEditor() {
                         <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
                     </div>
 					</>}
-					{layout === 'token' && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} /></div>}
+					{layout === 'token' && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands /></div>}
                     <h5>3. {t('cardInformationSection')}</h5>
 					<CardDetailsForm
 						card={activeCard}

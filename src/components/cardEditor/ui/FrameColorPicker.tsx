@@ -25,6 +25,7 @@ const OPTIONS: { value: FrameChoice; label: TranslationKey; symbol?: string }[] 
 	{ value: 'GL', label: 'frameGreenLand', symbol: 'g' },
 	{ value: 'ML', label: 'frameMulticoloredLand' },
 ]
+const LAND_OPTIONS: FrameChoice[] = ['L', 'WL', 'UL', 'BL', 'RL', 'GL', 'ML']
 
 function ChoiceIcon({ value, symbol }: { value: FrameChoice; symbol?: string }) {
 	return symbol
@@ -32,12 +33,13 @@ function ChoiceIcon({ value, symbol }: { value: FrameChoice; symbol?: string }) 
 		: <span className={`frame-color-swatch frame-color-swatch-${value}`} aria-hidden="true" />
 }
 
-export function FrameColorPicker({ value, onChange }: { value: FrameChoice; onChange: (value: FrameChoice) => void }) {
+export function FrameColorPicker({ value, onChange, hideLands = false }: { value: FrameChoice; onChange: (value: FrameChoice) => void; hideLands?: boolean }) {
 	const { t } = useI18n()
+	const options = hideLands ? OPTIONS.filter((option) => !LAND_OPTIONS.includes(option.value)) : OPTIONS
 	const triggerRef = useRef<HTMLButtonElement>(null)
 	const [open, setOpen] = useState(false)
 	const [activeIndex, setActiveIndex] = useState(0)
-	const selected = OPTIONS.find((option) => option.value === value) ?? OPTIONS[0]
+	const selected = options.find((option) => option.value === value) ?? options[0]
 
 	function highlight(index: number) {
 		setActiveIndex(index)
@@ -66,22 +68,22 @@ export function FrameColorPicker({ value, onChange }: { value: FrameChoice; onCh
 					aria-controls={open ? 'frame-color-options' : undefined}
 					aria-activedescendant={open ? `frame-color-option-${activeIndex}` : undefined}
 					onClick={() => {
-						if (!open) setActiveIndex(OPTIONS.findIndex((option) => option.value === value))
+						if (!open) setActiveIndex(options.findIndex((option) => option.value === value))
 						setOpen(!open)
 					}}
 					onKeyDown={(event) => {
 						if (event.key === 'Escape') { setOpen(false); return }
 						if (event.key === 'Enter' && open) {
 							event.preventDefault()
-							choose(OPTIONS[activeIndex].value)
+							choose(options[activeIndex].value)
 							return
 						}
 						if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return
 						event.preventDefault()
-						const current = open ? activeIndex : OPTIONS.findIndex((option) => option.value === value)
+						const current = open ? activeIndex : options.findIndex((option) => option.value === value)
 						const next = event.key === 'Home' ? 0
-							: event.key === 'End' ? OPTIONS.length - 1
-							: Math.max(0, Math.min(OPTIONS.length - 1, current + (event.key === 'ArrowDown' ? 1 : -1)))
+							: event.key === 'End' ? options.length - 1
+							: Math.max(0, Math.min(options.length - 1, current + (event.key === 'ArrowDown' ? 1 : -1)))
 						setOpen(true)
 						highlight(next)
 					}}
@@ -92,7 +94,7 @@ export function FrameColorPicker({ value, onChange }: { value: FrameChoice; onCh
 					<Icon name="chevron-down" />
 				</button>
 				{open && <div id="frame-color-options" role="listbox" aria-labelledby="card-frame-label" className="frame-color-options">
-					{OPTIONS.map((option, index) => <button
+					{options.map((option, index) => <button
 						key={option.value}
 						id={`frame-color-option-${index}`}
 						type="button"
