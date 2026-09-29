@@ -87,6 +87,21 @@ const tokenTextlessLayout: FrameLayout = {
 	symbol: { ...tokenRegularLayout.symbol, centerY: 1772 },
 }
 
+const tokenOldLayout: FrameLayout = {
+	artwork: { dragTop: 232, dragBottom: 1303 },
+	title: { x: 170, y: 106, maxWidth: 1160, align: 'center', font: '100px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	mana: { right: 1330, centerY: 106, symbolSize: 0, gap: 0, font: '48px mplantin, serif', color: '#fff' },
+	type: { x: 234, y: 1373, maxWidth: 1032, font: '67px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	rules: { x: 270, y: 1496, width: 960, height: 294, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 75, minFontSize: 32 },
+	symbol: { centerX: 1274, centerY: 1424, boxSize: 78 },
+	pt: { x: 1125, y: 1838, width: 205, height: 90, textX: 1228, textY: 1883, font: '90px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 3 },
+	footer: {
+		align: 'center', x: 750, maxWidth: 1200,
+		metadataY: 1855, metadata: { font: '42px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 3, shadowOffsetY: 2 },
+		disclaimerY: 1940, disclaimer: { font: '30px mplantin, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 2, shadowOffsetY: 2 },
+	},
+}
+
 const seventhLayout: FrameLayout = {
 	artwork: { dragTop: 208, dragBottom: 1138 },
 	title: { x: 170, y: 148, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
@@ -205,6 +220,19 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
 		layout: tokenTextlessLayout,
 		fonts: commonFonts,
+	},
+	'token-old': {
+		id: 'token-old',
+		frames: {
+			W: 'img/frames/token/old/w.png', U: 'img/frames/token/old/u.png',
+			B: 'img/frames/token/old/b.png', R: 'img/frames/token/old/r.png',
+			G: 'img/frames/token/old/g.png', M: 'img/frames/token/old/m.png',
+			A: 'img/frames/token/old/a.png', C: 'img/frames/token/old/c.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, L: 'M' },
+		layout: tokenOldLayout,
+		fonts: ['100px mplantin', '75px mplantin', '75px mplantini'],
 	},
 	'box-topper': {
 		id: 'box-topper',

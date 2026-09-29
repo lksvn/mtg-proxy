@@ -58,7 +58,7 @@ export function CustomCardEditor() {
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [layout, setLayout] = useState<'card' | 'token'>('card')
-	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-textless' | 'token-nyx' | 'token-nyx-textless'>('token-regular')
+	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-textless' | 'token-nyx' | 'token-nyx-textless' | 'token-old'>('token-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -195,6 +195,7 @@ export function CustomCardEditor() {
 							<option value="token-textless">{t('tokenStyleTextless')}</option>
 							<option value="token-nyx">{t('tokenStyleNyx')}</option>
 							<option value="token-nyx-textless">{t('tokenStyleNyxTextless')}</option>
+							<option value="token-old">{t('tokenStyleOld')}</option>
 						</select>
 					</div>}
                     <h5>3. {t('cardInformationSection')}</h5>
