@@ -49,6 +49,10 @@ const commonFooter: FrameLayout['footer'] = {
 	disclaimer: { font: '34px mplantin, serif', color: '#fff' },
 }
 
+function tokenFrames(style: string, variants: readonly FrameVariant[]): FrameFamily['frames'] {
+	return Object.fromEntries(variants.map((variant) => [variant, `img/frames/token/${style}/${variant.toLowerCase()}.png`]))
+}
+
 const m15RegularLayout: FrameLayout = {
 	artwork: { dragTop: 237, dragBottom: 1167 },
 	title: { x: 125, y: 165, maxWidth: 1244, font: '70px belerenb, serif', color: '#111' },
@@ -241,13 +245,7 @@ const abuLayout: FrameLayout = {
 export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	'token-regular': {
 		id: 'token-regular',
-		frames: {
-			W: 'img/frames/token/regular/w.png', U: 'img/frames/token/regular/u.png',
-			B: 'img/frames/token/regular/b.png', R: 'img/frames/token/regular/r.png',
-			G: 'img/frames/token/regular/g.png', M: 'img/frames/token/regular/m.png',
-			A: 'img/frames/token/regular/a.png', C: 'img/frames/token/regular/c.png',
-			L: 'img/frames/token/regular/l.png',
-		},
+		frames: tokenFrames('regular', ['W', 'U', 'B', 'R', 'G', 'M', 'A', 'C', 'L']),
 		pt: m15Pt,
 		fallbacks: commonFallbacks,
 		layout: tokenRegularLayout,
@@ -255,13 +253,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	},
 	'token-tall': {
 		id: 'token-tall',
-		frames: {
-			W: 'img/frames/token/tall/w.png', U: 'img/frames/token/tall/u.png',
-			B: 'img/frames/token/tall/b.png', R: 'img/frames/token/tall/r.png',
-			G: 'img/frames/token/tall/g.png', M: 'img/frames/token/tall/m.png',
-			A: 'img/frames/token/tall/a.png', C: 'img/frames/token/tall/c.png',
-			L: 'img/frames/token/tall/l.png',
-		},
+		frames: tokenFrames('tall', ['W', 'U', 'B', 'R', 'G', 'M', 'A', 'C', 'L']),
 		pt: m15Pt,
 		fallbacks: commonFallbacks,
 		layout: tokenTallLayout,
@@ -269,12 +261,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	},
 	'token-short': {
 		id: 'token-short',
-		frames: {
-			W: 'img/frames/token/short/w.png', U: 'img/frames/token/short/u.png',
-			B: 'img/frames/token/short/b.png', R: 'img/frames/token/short/r.png',
-			G: 'img/frames/token/short/g.png', M: 'img/frames/token/short/m.png',
-			A: 'img/frames/token/short/a.png', C: 'img/frames/token/short/c.png',
-		},
+		frames: tokenFrames('short', ['W', 'U', 'B', 'R', 'G', 'M', 'A', 'C']),
 		pt: m15Pt,
 		fallbacks: { ...commonFallbacks, L: 'M' },
 		layout: tokenShortLayout,
@@ -282,13 +269,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	},
 	'token-textless': {
 		id: 'token-textless',
-		frames: {
-			W: 'img/frames/token/textless/w.png', U: 'img/frames/token/textless/u.png',
-			B: 'img/frames/token/textless/b.png', R: 'img/frames/token/textless/r.png',
-			G: 'img/frames/token/textless/g.png', M: 'img/frames/token/textless/m.png',
-			A: 'img/frames/token/textless/a.png', C: 'img/frames/token/textless/c.png',
-			L: 'img/frames/token/textless/l.png',
-		},
+		frames: tokenFrames('textless', ['W', 'U', 'B', 'R', 'G', 'M', 'A', 'C', 'L']),
 		pt: m15Pt,
 		fallbacks: commonFallbacks,
 		layout: tokenTextlessLayout,
@@ -296,12 +277,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	},
 	'token-textless-borderless': {
 		id: 'token-textless-borderless',
-		frames: {
-			W: 'img/frames/token/textless-borderless/w.png', U: 'img/frames/token/textless-borderless/u.png',
-			B: 'img/frames/token/textless-borderless/b.png', R: 'img/frames/token/textless-borderless/r.png',
-			G: 'img/frames/token/textless-borderless/g.png', M: 'img/frames/token/textless-borderless/m.png',
-			A: 'img/frames/token/textless-borderless/a.png', C: 'img/frames/token/textless-borderless/c.png',
-		},
+		frames: tokenFrames('textless-borderless', ['W', 'U', 'B', 'R', 'G', 'M', 'A', 'C']),
 		pt: m15Pt,
 		fallbacks: { ...commonFallbacks, L: 'M' },
 		layout: tokenTextlessBorderlessLayout,
@@ -309,12 +285,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	},
 	'token-nyx': {
 		id: 'token-nyx',
-		frames: {
-			W: 'img/frames/token/nyx/w.png', U: 'img/frames/token/nyx/u.png',
-			B: 'img/frames/token/nyx/b.png', R: 'img/frames/token/nyx/r.png',
-			G: 'img/frames/token/nyx/g.png', M: 'img/frames/token/nyx/m.png',
-			A: 'img/frames/token/nyx/a.png',
-		},
+		frames: tokenFrames('nyx', ['W', 'U', 'B', 'R', 'G', 'M', 'A']),
 		pt: m15Pt,
 		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
 		layout: tokenRegularLayout,
@@ -322,12 +293,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	},
 	'token-nyx-textless': {
 		id: 'token-nyx-textless',
-		frames: {
-			W: 'img/frames/token/nyx-textless/w.png', U: 'img/frames/token/nyx-textless/u.png',
-			B: 'img/frames/token/nyx-textless/b.png', R: 'img/frames/token/nyx-textless/r.png',
-			G: 'img/frames/token/nyx-textless/g.png', M: 'img/frames/token/nyx-textless/m.png',
-			A: 'img/frames/token/nyx-textless/a.png',
-		},
+		frames: tokenFrames('nyx-textless', ['W', 'U', 'B', 'R', 'G', 'M', 'A']),
 		pt: m15Pt,
 		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
 		layout: tokenTextlessLayout,
@@ -335,12 +301,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 	},
 	'token-old': {
 		id: 'token-old',
-		frames: {
-			W: 'img/frames/token/old/w.png', U: 'img/frames/token/old/u.png',
-			B: 'img/frames/token/old/b.png', R: 'img/frames/token/old/r.png',
-			G: 'img/frames/token/old/g.png', M: 'img/frames/token/old/m.png',
-			A: 'img/frames/token/old/a.png', C: 'img/frames/token/old/c.png',
-		},
+		frames: tokenFrames('old', ['W', 'U', 'B', 'R', 'G', 'M', 'A', 'C']),
 		pt: {},
 		fallbacks: { ...commonFallbacks, L: 'M' },
 		layout: tokenOldLayout,
@@ -350,12 +311,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		id: 'token-unglued',
 		borderMask: 'img/frames/token/unglued/border.svg',
 		defaultBorderStyle: 'silver',
-		frames: {
-			W: 'img/frames/token/unglued/w.png', U: 'img/frames/token/unglued/u.png',
-			B: 'img/frames/token/unglued/b.png', R: 'img/frames/token/unglued/r.png',
-			G: 'img/frames/token/unglued/g.png', M: 'img/frames/token/unglued/m.png',
-			A: 'img/frames/token/unglued/a.png',
-		},
+		frames: tokenFrames('unglued', ['W', 'U', 'B', 'R', 'G', 'M', 'A']),
 		pt: {},
 		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
 		layout: tokenUngluedLayout,

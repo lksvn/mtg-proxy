@@ -11,37 +11,10 @@ import { setPngDpi } from '../../utils/pngDpi'
 import { Icon } from '../Icon'
 import { getFrameFamily, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
 import { FrameColorPicker } from './ui/FrameColorPicker'
+import { FRAME_STYLE_GROUPS, TOKEN_STYLES, type TokenStyle } from './editorOptions'
 
 const SAMPLE_ARTWORK_URL = `${import.meta.env.BASE_URL}img/samples/marrow-gnawer.jpg`
 const SAMPLE_SET_SYMBOL_URL = `${import.meta.env.BASE_URL}img/setSymbols/chk.svg`
-const FRAME_STYLE_GROUPS = [
-	{ label: 'frameStyleGroupM15', options: [
-		{ id: 'box-topper', label: 'frameStyleBoxTopper' },
-		{ id: 'm15-regular', label: 'frameStyleM15Regular' },
-		{ id: 'm15-extended', label: 'frameStyleM15Extended' },
-		{ id: 'snow', label: 'frameStyleSnow' },
-		{ id: 'nyx', label: 'frameStyleNyx' },
-		{ id: 'universes-beyond', label: 'frameStyleUniversesBeyond' },
-	] },
-	{ label: 'frameStyleGroupShowcase', options: [
-		{ id: 'borderless', label: 'frameStyleBorderless' },
-	] },
-	{ label: 'frameStyleGroupPromo', options: [
-		{ id: 'promo-regular', label: 'frameStylePromoRegular' },
-	] },
-	{ label: 'frameStyleGroupHistorical', options: [
-		{ id: 'eighth-edition', label: 'frameStyleEighthEdition' },
-		{ id: 'seventh-edition', label: 'frameStyleSeventhEdition' },
-		{ id: 'old-floating', label: 'frameStyleOldFloating' },
-		{ id: 'abu', label: 'frameStyleAbu' },
-		{ id: 'revised', label: 'frameStyleRevised' },
-		{ id: 'fourth-era', label: 'frameStyleFourthEra' },
-		{ id: 'colorshifted', label: 'frameStyleColorshifted' },
-		{ id: 'classicshifted', label: 'frameStyleClassicshifted' },
-		{ id: 'future-sight', label: 'frameStyleFutureSight' },
-	] },
-] as const
-
 function createDefaultArtworkTransform(): ArtworkTransform {
 	return { x: 0, y: 0, flipX: false, flipY: false, scale: 0, rotation: 0 }
 }
@@ -58,7 +31,7 @@ export function CustomCardEditor() {
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [layout, setLayout] = useState<'card' | 'token'>('card')
-	const [tokenStyle, setTokenStyle] = useState<'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'>('token-regular')
+	const [tokenStyle, setTokenStyle] = useState<TokenStyle>('token-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -81,6 +54,7 @@ export function CustomCardEditor() {
 	const activeCard = layout === 'token' ? token : card
 	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : frameFamily
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
+	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
 	const frameVariant = activeFrameSelection === 'auto'
 		? inferFrameVariant(activeCard.manaCost, activeCard.typeLine)
 		: activeFrameSelection
@@ -116,7 +90,7 @@ export function CustomCardEditor() {
                             }}
                             onClear={() => setArtwork(undefined)}
                         />
-						{tokenStyle !== 'token-unglued' && tokenStyle !== 'token-monarch' && tokenStyle !== 'token-day-night' && tokenStyle !== 'token-jumpstart' && <FileInput
+						{!tokenOptions.hideSetSymbol && <FileInput
                             id="custom-card-set-symbol"
                             accept="image/*"
                             label={t('chooseSetSymbol')}
@@ -189,32 +163,19 @@ export function CustomCardEditor() {
 					{layout === 'token' && <div className="form-group gap-2">
 						<label htmlFor="token-style">{t('tokenStyle')}</label>
 						<select id="token-style" value={tokenStyle} onChange={(event) => setTokenStyle(event.target.value as typeof tokenStyle)}>
-							<option value="token-regular">{t('tokenStyleRegular')}</option>
-							<option value="token-tall">{t('tokenStyleTall')}</option>
-							<option value="token-short">{t('tokenStyleShort')}</option>
-							<option value="token-textless">{t('tokenStyleTextless')}</option>
-							<option value="token-textless-borderless">{t('tokenStyleTextlessBorderless')}</option>
-							<option value="token-nyx">{t('tokenStyleNyx')}</option>
-							<option value="token-nyx-textless">{t('tokenStyleNyxTextless')}</option>
-							<option value="token-old">{t('tokenStyleOld')}</option>
-							<option value="token-unglued">{t('tokenStyleUnglued')}</option>
-							<option value="token-monarch">{t('tokenStyleMonarch')}</option>
-							<option value="token-marker">{t('tokenStyleMarker')}</option>
-							<option value="token-initiative">{t('tokenStyleInitiative')}</option>
-							<option value="token-day-night">{t('tokenStyleDayNight')}</option>
-							<option value="token-jumpstart">{t('tokenStyleJumpstart')}</option>
+							{TOKEN_STYLES.map(({ id, label }) => <option key={id} value={id}>{t(label)}</option>)}
 						</select>
 					</div>}
-					{layout === 'token' && tokenStyle !== 'token-monarch' && tokenStyle !== 'token-marker' && tokenStyle !== 'token-initiative' && tokenStyle !== 'token-day-night' && tokenStyle !== 'token-jumpstart' && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
+					{layout === 'token' && !tokenOptions.hideColor && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
                     <h5 className='mt-5'>3. {t('cardInformationSection')}</h5>
 					<CardDetailsForm
 						card={activeCard}
 						onChange={layout === 'token' ? setToken : setCard}
-						hideManaCost={layout === 'token' && tokenStyle !== 'token-jumpstart'}
-						hideRulesText={tokenStyle === 'token-textless' || tokenStyle === 'token-textless-borderless' || tokenStyle === 'token-nyx-textless' || tokenStyle === 'token-unglued' || tokenStyle === 'token-jumpstart'}
-						hideNameAndType={tokenStyle === 'token-unglued'}
-						hideTypeLine={tokenStyle === 'token-monarch' || tokenStyle === 'token-marker' || tokenStyle === 'token-initiative' || tokenStyle === 'token-day-night' || tokenStyle === 'token-jumpstart'}
-						hidePowerToughness={tokenStyle === 'token-unglued' || tokenStyle === 'token-monarch' || tokenStyle === 'token-marker' || tokenStyle === 'token-initiative' || tokenStyle === 'token-day-night' || tokenStyle === 'token-jumpstart'}
+						hideManaCost={layout === 'token' && !tokenOptions.showManaCost}
+						hideRulesText={tokenOptions.hideRulesText}
+						hideNameAndType={tokenOptions.hideNameAndType}
+						hideTypeLine={tokenOptions.hideTypeLine}
+						hidePowerToughness={tokenOptions.hidePowerToughness}
 						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
 					/>
                 </div>
