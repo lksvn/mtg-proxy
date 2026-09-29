@@ -176,6 +176,18 @@ const tokenDayNightLayout: FrameLayout = {
 	footer: { ...commonFooter, metadataY: 2010, disclaimerX: 1385, disclaimerY: 2010, disclaimerAlign: 'right' },
 }
 
+const tokenJumpstartLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 74, dragBottom: 2026 },
+	title: { ...tokenRegularLayout.title, x: 71, y: 1570, maxWidth: 1358, font: '112px belerenb, serif' },
+	mana: { ...tokenRegularLayout.mana, right: 800, centerY: 1795, symbolSize: 100 },
+	type: { ...tokenRegularLayout.type, maxWidth: 0 },
+	rules: { ...tokenRegularLayout.rules, height: 0 },
+	symbol: { centerX: 0, centerY: 0, boxSize: 0 },
+	pt: { ...tokenRegularLayout.pt, width: 0, height: 0 },
+	footer: { ...commonFooter, metadataY: 2010, disclaimerY: 2040 },
+}
+
 const seventhLayout: FrameLayout = {
 	artwork: { dragTop: 208, dragBottom: 1138 },
 	title: { x: 170, y: 148, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
@@ -379,6 +391,14 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: {},
 		fallbacks: {},
 		layout: tokenDayNightLayout,
+		fonts: commonFonts,
+	},
+	'token-jumpstart': {
+		id: 'token-jumpstart',
+		frames: { C: 'img/frames/token/jumpstart/frame.png' },
+		pt: {},
+		fallbacks: {},
+		layout: tokenJumpstartLayout,
 		fonts: commonFonts,
 	},
 	'box-topper': {

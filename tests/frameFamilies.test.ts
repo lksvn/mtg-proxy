@@ -218,6 +218,13 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(dayNightToken.layout.flavorRules?.y, 266)
 	assert.equal(dayNightToken.layout.symbol.boxSize, 0)
 	assert.equal(dayNightToken.layout.footer.disclaimerAlign, 'right')
+
+	const jumpstartToken = FRAME_FAMILIES['token-jumpstart']
+	assert.equal(resolveFrameVariant(jumpstartToken, 'G'), 'C')
+	assert.equal(jumpstartToken.layout.title.y, 1435)
+	assert.equal(jumpstartToken.layout.rules.height, 0)
+	assert.equal(jumpstartToken.layout.type.maxWidth, 0)
+	assert.equal(jumpstartToken.layout.symbol.boxSize, 0)
 	assert.equal(resolveTextX(FRAME_FAMILIES['m15-regular'].layout.title), 125)
 	for (const token of ['W', 'U', 'B', 'R', 'G', '0', '20', 'X', 'W/U', 'R/G']) {
 		assert.equal(existsSync(resolve('public/img/manaSymbols', futureManaFile(token)!)), true, token)
