@@ -79,6 +79,14 @@ const tokenTallLayout: FrameLayout = {
 	symbol: { ...tokenRegularLayout.symbol, centerY: 1241 },
 }
 
+const tokenTextlessLayout: FrameLayout = {
+	...tokenRegularLayout,
+	artwork: { dragTop: 60, dragBottom: 1771 },
+	type: { ...tokenRegularLayout.type, y: 1771 },
+	rules: { ...tokenRegularLayout.rules, y: 0, height: 0 },
+	symbol: { ...tokenRegularLayout.symbol, centerY: 1772 },
+}
+
 const seventhLayout: FrameLayout = {
 	artwork: { dragTop: 208, dragBottom: 1138 },
 	title: { x: 170, y: 148, maxWidth: 1160, font: '80px goudymedieval, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 4, shadowOffsetY: 3 },
@@ -156,6 +164,20 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: m15Pt,
 		fallbacks: commonFallbacks,
 		layout: tokenTallLayout,
+		fonts: commonFonts,
+	},
+	'token-textless': {
+		id: 'token-textless',
+		frames: {
+			W: 'img/frames/token/textless/w.png', U: 'img/frames/token/textless/u.png',
+			B: 'img/frames/token/textless/b.png', R: 'img/frames/token/textless/r.png',
+			G: 'img/frames/token/textless/g.png', M: 'img/frames/token/textless/m.png',
+			A: 'img/frames/token/textless/a.png', C: 'img/frames/token/textless/c.png',
+			L: 'img/frames/token/textless/l.png',
+		},
+		pt: m15Pt,
+		fallbacks: commonFallbacks,
+		layout: tokenTextlessLayout,
 		fonts: commonFonts,
 	},
 	'box-topper': {
