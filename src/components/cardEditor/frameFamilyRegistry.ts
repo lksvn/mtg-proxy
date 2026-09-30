@@ -265,6 +265,31 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		fonts: commonFonts,
 	},
+	'planeswalker-borderless': {
+		id: 'planeswalker-borderless',
+		frames: {
+			W: 'img/frames/planeswalker/borderless/w.png',
+			U: 'img/frames/planeswalker/borderless/u.png',
+			B: 'img/frames/planeswalker/borderless/b.png',
+			R: 'img/frames/planeswalker/borderless/r.png',
+			G: 'img/frames/planeswalker/borderless/g.png',
+			M: 'img/frames/planeswalker/borderless/m.png',
+			A: 'img/frames/planeswalker/borderless/a.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, C: 'A', L: 'A' },
+		layout: {
+			artwork: { dragTop: 0, dragBottom: 1922 },
+			title: { x: 130, y: 136, maxWidth: 1240, font: '80px belerenb, serif', color: '#111' },
+			mana: { right: 1394, centerY: 136, symbolSize: 71, gap: 0, font: '48px belerenb, serif', color: '#111' },
+			type: { x: 130, y: 1239, maxWidth: 1240, font: '68px belerenb, serif', color: '#111' },
+			rules: { x: 270, y: 1310, width: 1100, height: 560, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 74, minFontSize: 32 },
+			symbol: { centerX: 1340, centerY: 1237, boxSize: 80 },
+			pt: { x: 1209, y: 1894, width: 210, height: 78, textX: 1314, textY: 1933, font: '78px belerenbsc, serif', color: '#fff' },
+			footer: commonFooter,
+		},
+		fonts: commonFonts,
+	},
 	'planeswalker-transform-back': {
 		id: 'planeswalker-transform-back',
 		overlay: {

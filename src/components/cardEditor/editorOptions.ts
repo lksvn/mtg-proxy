@@ -36,6 +36,7 @@ export const PLANESWALKER_STYLES: readonly { id: PlaneswalkerStyle; label: Trans
 	{ id: 'planeswalker-regular', label: 'planeswalkerStyleRegular' },
 	{ id: 'planeswalker-transform-back', label: 'planeswalkerStyleTransformBack' },
 	{ id: 'planeswalker-mdfc-back', label: 'planeswalkerStyleMdfcBack' },
+	{ id: 'planeswalker-borderless', label: 'planeswalkerStyleBorderless' },
 ]
 
 type TokenStyleOptions = {

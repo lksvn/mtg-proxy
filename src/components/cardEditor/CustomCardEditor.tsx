@@ -73,6 +73,7 @@ export function CustomCardEditor() {
 	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : frameFamily
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
 	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
+	const planeswalkerBackFace = planeswalkerStyle === 'planeswalker-transform-back' || planeswalkerStyle === 'planeswalker-mdfc-back'
 	const frameVariant = activeFrameSelection === 'auto'
 		? inferFrameVariant(activeCard.manaCost, activeCard.typeLine)
 		: activeFrameSelection
@@ -198,7 +199,7 @@ export function CustomCardEditor() {
 								onChange={(event) => {
 									const style = event.target.value as PlaneswalkerStyle
 									setPlaneswalkerStyle(style)
-									if (style !== 'planeswalker-regular' && (frameSelection === 'A' || frameSelection === 'C')) {
+									if ((style === 'planeswalker-transform-back' || style === 'planeswalker-mdfc-back') && (frameSelection === 'A' || frameSelection === 'C')) {
 										setFrameSelection('auto')
 									}
 								}}
@@ -214,8 +215,8 @@ export function CustomCardEditor() {
 								onChange={setFrameSelection}
 								hideLands
 								hideVehicles
-								hideArtifacts={planeswalkerStyle !== 'planeswalker-regular'}
-								hideColorless={planeswalkerStyle !== 'planeswalker-regular'}
+								hideArtifacts={planeswalkerBackFace}
+								hideColorless={planeswalkerBackFace}
 							/>
 						</div>
 					</>}
