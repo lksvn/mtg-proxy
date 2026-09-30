@@ -39,6 +39,7 @@ export const PLANESWALKER_STYLES: readonly { id: PlaneswalkerStyle; label: Trans
 	{ id: 'planeswalker-mdfc-back', label: 'planeswalkerStyleMdfcBack' },
 	{ id: 'planeswalker-borderless', label: 'planeswalkerStyleBorderless' },
 	{ id: 'planeswalker-box-topper', label: 'planeswalkerStyleBoxTopper' },
+	{ id: 'planeswalker-compleated', label: 'planeswalkerStyleCompleated' },
 	{ id: 'planeswalker-tall', label: 'planeswalkerStyleTall' },
 	{ id: 'planeswalker-tall-borderless', label: 'planeswalkerStyleTallBorderless' },
 ]

@@ -167,6 +167,8 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
 			const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 				? 'img/frames/planeswalker/mdfc/text.png'
+				: family.id === 'planeswalker-compleated'
+					? 'img/frames/planeswalker/compleated/text.svg'
 				: family.id === 'planeswalker-transform-front'
 					? 'img/frames/planeswalker/transform/textFront.svg'
 				: family.id === 'planeswalker-tall' || family.id === 'planeswalker-tall-borderless'
@@ -252,7 +254,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					frame,
 					overlay: overlay && family.overlay ? { image: overlay, ...family.overlay } : undefined,
 					frameOverlay: frameOverlayImage && frameOverlay
-						? { image: frameOverlayImage, crops: frameOverlay.crops }
+						? { image: frameOverlayImage, crops: frameOverlay.crops, bounds: frameOverlay.bounds }
 						: undefined,
 					border,
 					colorIndicatorBase,

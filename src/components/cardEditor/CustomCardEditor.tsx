@@ -75,7 +75,8 @@ export function CustomCardEditor() {
 	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
 	const planeswalkerLimitedColors = planeswalkerStyle === 'planeswalker-transform-front' ||
 		planeswalkerStyle === 'planeswalker-transform-back' ||
-		planeswalkerStyle === 'planeswalker-mdfc-back'
+		planeswalkerStyle === 'planeswalker-mdfc-back' ||
+		planeswalkerStyle === 'planeswalker-compleated'
 	const frameVariant = activeFrameSelection === 'auto'
 		? inferFrameVariant(activeCard.manaCost, activeCard.typeLine)
 		: activeFrameSelection
