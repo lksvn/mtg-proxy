@@ -29,7 +29,8 @@ function createDefaultArtworkTransform(grayscale = false): ArtworkTransform {
 function isDoubleFeatureStyle(style: PlaneswalkerStyle) {
 	return style === 'planeswalker-double-feature' ||
 		style === 'planeswalker-tall-double-feature' ||
-		style === 'planeswalker-transform-front-double-feature'
+		style === 'planeswalker-transform-front-double-feature' ||
+		style === 'planeswalker-transform-back-double-feature'
 }
 
 export function CustomCardEditor() {
