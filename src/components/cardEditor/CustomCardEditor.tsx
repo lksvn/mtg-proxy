@@ -61,6 +61,7 @@ export function CustomCardEditor() {
 	})
 	const [planeswalker, setPlaneswalker] = useState<PlaneswalkerCardData>({
 		name: 'Jace, Arcane Strategist', manaCost: '4uu', typeLine: 'Legendary Planeswalker — Jace', startingLoyalty: '4',
+		reverseFaceName: '', reverseFaceManaCost: '',
 		abilities: [
 			{ cost: '+1', text: 'Draw a card.' },
 			{ cost: '-2', text: 'Return target creature to its owner’s hand.' },
@@ -197,7 +198,7 @@ export function CustomCardEditor() {
 								onChange={(event) => {
 									const style = event.target.value as PlaneswalkerStyle
 									setPlaneswalkerStyle(style)
-									if (style === 'planeswalker-transform-back' && (frameSelection === 'A' || frameSelection === 'C')) {
+									if (style !== 'planeswalker-regular' && (frameSelection === 'A' || frameSelection === 'C')) {
 										setFrameSelection('auto')
 									}
 								}}
@@ -213,15 +214,15 @@ export function CustomCardEditor() {
 								onChange={setFrameSelection}
 								hideLands
 								hideVehicles
-								hideArtifacts={planeswalkerStyle === 'planeswalker-transform-back'}
-								hideColorless={planeswalkerStyle === 'planeswalker-transform-back'}
+								hideArtifacts={planeswalkerStyle !== 'planeswalker-regular'}
+								hideColorless={planeswalkerStyle !== 'planeswalker-regular'}
 							/>
 						</div>
 					</>}
 					</details>
 					<details className="form-section" open>
 					<summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>
-					{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" /> : <CardDetailsForm
+					{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : <CardDetailsForm
 						card={layout === 'token' ? token : card}
 						onChange={layout === 'token' ? setToken : setCard}
 						hideManaCost={layout === 'token' && !tokenOptions.showManaCost}

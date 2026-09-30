@@ -9,7 +9,7 @@ import { loadAbuDualLand } from './render/composeAbuDualLand'
 import { loadBorderOverlay } from './render/composeBorder'
 import { useI18n } from '../../i18n/context'
 import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
-import { drawPlaneswalker, drawPlaneswalkerBackground, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from './render/drawPlaneswalker'
+import { drawPlaneswalker, drawPlaneswalkerBackground, drawPlaneswalkerReverseFace, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from './render/drawPlaneswalker'
 
 const DEBUG_CANVAS = import.meta.env.DEV
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
@@ -163,7 +163,11 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
             )
 
 			const abilityRuns = planeswalker ? card.abilities.map(({ text }) => parseRulesText(text)) : []
-			const allRuns = [...manaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat()]
+			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
+			const planeswalkerAssets = family.id === 'planeswalker-mdfc-back'
+				? { ...PLANESWALKER_ASSETS, mask: 'img/frames/planeswalker/mdfc/text.png' }
+				: PLANESWALKER_ASSETS
+			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat()]
 			const futureManaFiles = family.id === 'future-sight'
 				? manaRuns.flatMap((run) => run.type === 'symbol' ? [futureManaFile(run.value)].filter((file): file is string => Boolean(file)) : [])
 				: []
@@ -195,19 +199,23 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const hybrid = Boolean(dualPair && hasHybridManaSymbol(card.manaCost))
 			const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 			const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
-			const [frame, overlay, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons] = await Promise.all([
+			const frameOverlay = family.frameOverlays?.[resolvedVariant]
+			const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons] = await Promise.all([
 				abuLandColors
 					? loadAbuDualLand(family, abuLandColors)
 					: dualPair
 					? loadDualFrame(family, dualPair, hybrid)
 					: loadImage(assetUrl(family.frames[resolvedVariant]!)),
 				family.overlay ? loadImage(assetUrl(family.overlay.path)) : undefined,
-				family.borderMask && borderStyle !== (family.baseBorderStyle ?? 'black') ? loadBorderOverlay(family.borderMask, borderStyle) : undefined,
+				frameOverlay ? loadImage(assetUrl(frameOverlay.path)) : undefined,
+				family.borderMask && borderStyle !== (family.baseBorderStyle ?? 'black')
+					? loadBorderOverlay(family.borderMask, borderStyle)
+					: undefined,
 				ptPath ? loadImage(assetUrl(ptPath)) : undefined,
 				artwork ? loadImageSource(artwork) : undefined,
 				setSymbol ? loadImageSource(setSymbol) : undefined,
 				typeIconPath ? loadImage(assetUrl(typeIconPath)) : undefined,
-				planeswalker ? Promise.all(Object.entries(PLANESWALKER_ASSETS).map(async ([key, path]) => [key, await loadImage(assetUrl(path))] as const)).then((entries) => Object.fromEntries(entries) as PlaneswalkerIcons) : undefined,
+				planeswalker ? Promise.all(Object.entries(planeswalkerAssets).map(async ([key, path]) => [key, await loadImage(assetUrl(path))] as const)).then((entries) => Object.fromEntries(entries) as PlaneswalkerIcons) : undefined,
 			])
 			const manaSymbols = new Map(
                 await Promise.all(
@@ -233,6 +241,9 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				{
 					frame,
 					overlay: overlay && family.overlay ? { image: overlay, ...family.overlay } : undefined,
+					frameOverlay: frameOverlayImage && frameOverlay
+						? { image: frameOverlayImage, crops: frameOverlay.crops }
+						: undefined,
 					border,
 					ptBackground,
 					art,
@@ -244,10 +255,30 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				family.layout,
 				resolvedVariant,
 				planeswalker && planeswalkerIcons
-					? () => drawPlaneswalkerBackground(context, card, abilityRuns, planeswalkerIcons)
+					? () => drawPlaneswalkerBackground(
+						context,
+						card,
+						abilityRuns,
+						planeswalkerIcons,
+						family.layout.rules.y,
+						family.layout.rules.y + family.layout.rules.height,
+					)
 					: undefined,
 			)
-			if (planeswalker && planeswalkerIcons) drawPlaneswalker(context, card, abilityRuns, manaSymbols, planeswalkerIcons)
+			if (planeswalker && planeswalkerIcons) {
+				drawPlaneswalker(
+					context,
+					card,
+					abilityRuns,
+					manaSymbols,
+					planeswalkerIcons,
+					family.layout.rules.y,
+					family.layout.rules.y + family.layout.rules.height,
+				)
+				if (family.id === 'planeswalker-mdfc-back') {
+					drawPlaneswalkerReverseFace(context, card, reverseManaRuns, manaSymbols)
+				}
+			}
 
 		}
 

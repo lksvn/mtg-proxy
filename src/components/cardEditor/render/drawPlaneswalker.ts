@@ -1,5 +1,6 @@
 import type { CardTextRun } from '../cardText.ts'
 import type { PlaneswalkerCardData } from '../types.ts'
+import { drawManaCost } from './drawManaCost.ts'
 import { drawRulesText, measureRulesTextHeight } from './drawRulesText.ts'
 
 const WIDTH = 1500
@@ -23,9 +24,7 @@ const ABILITY_CENTERS = [
 
 export type PlaneswalkerIcons = Record<keyof typeof PLANESWALKER_ASSETS, HTMLImageElement>
 
-export function getPlaneswalkerRows(count: number, desiredHeights?: number[]) {
-	const top = 1310
-	const bottom = 1870
+export function getPlaneswalkerRows(count: number, desiredHeights?: number[], top = 1310, bottom = 1870) {
 
 	if (desiredHeights) {
 		const availableHeight = bottom - top
@@ -51,6 +50,8 @@ function getPlaneswalkerLayout(
 	context: CanvasRenderingContext2D,
 	card: PlaneswalkerCardData,
 	abilityRuns: CardTextRun[][],
+	top: number,
+	bottom: number,
 ) {
 	const textStyle = {
 		verticalAlign: 'middle' as const,
@@ -67,7 +68,7 @@ function getPlaneswalkerLayout(
 		return measureRulesTextHeight(context, runs, width, textStyle.maxFontSize, textStyle)
 	})
 	const desiredHeights = textHeights.map((height) => height + 30)
-	const rows = getPlaneswalkerRows(card.abilities.length, desiredHeights)
+	const rows = getPlaneswalkerRows(card.abilities.length, desiredHeights, top, bottom)
 
 	return { rows, textHeights, textStyle }
 }
@@ -77,8 +78,10 @@ export function drawPlaneswalkerBackground(
 	card: PlaneswalkerCardData,
 	abilityRuns: CardTextRun[][],
 	icons: PlaneswalkerIcons,
+	top = 1310,
+	bottom = 1870,
 ) {
-	const { rows } = getPlaneswalkerLayout(context, card, abilityRuns)
+	const { rows } = getPlaneswalkerLayout(context, card, abilityRuns, top, bottom)
 	const background = document.createElement('canvas')
 	background.width = WIDTH
 	background.height = HEIGHT
@@ -108,8 +111,10 @@ export function drawPlaneswalker(
 	abilityRuns: CardTextRun[][],
 	manaSymbols: Map<string, HTMLImageElement>,
 	icons: PlaneswalkerIcons,
+	top = 1310,
+	bottom = 1870,
 ) {
-	const { rows, textHeights, textStyle } = getPlaneswalkerLayout(context, card, abilityRuns)
+	const { rows, textHeights, textStyle } = getPlaneswalkerLayout(context, card, abilityRuns, top, bottom)
 
 	rows.forEach((row, index) => {
 		const ability = card.abilities[index]
@@ -148,5 +153,27 @@ export function drawPlaneswalker(
 			row.height - 30,
 			textStyle,
 		)
+	})
+}
+
+export function drawPlaneswalkerReverseFace(
+	context: CanvasRenderingContext2D,
+	card: PlaneswalkerCardData,
+	manaRuns: CardTextRun[],
+	manaSymbols: Map<string, HTMLImageElement>,
+) {
+	context.save()
+	context.font = '48px belerenb, serif'
+	context.fillStyle = '#111'
+	context.textAlign = 'left'
+	context.textBaseline = 'middle'
+	context.fillText(card.reverseFaceName, 105, 1910, 400)
+	context.restore()
+
+	drawManaCost(context, manaRuns, manaSymbols, 620, 1910, {
+		symbolSize: 44,
+		gap: 2,
+		font: '40px belerenb, serif',
+		color: '#111',
 	})
 }

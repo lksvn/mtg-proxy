@@ -31,6 +31,10 @@ type CardImages = {
 		width: number
 		height: number
 	}
+	frameOverlay?: {
+		image: CanvasImageSource
+		crops: { x: number; y: number; width: number; height: number }[]
+	}
 	border?: CanvasImageSource
 	ptBackground?: HTMLImageElement
 	art?: HTMLImageElement
@@ -49,7 +53,7 @@ export function drawCard(
 	context: CanvasRenderingContext2D,
 	card: CustomCardData,
 	transform: ArtworkTransform,
-	{ frame, overlay, border, ptBackground, art, symbol, typeIcon, manaSymbols }: CardImages,
+	{ frame, overlay, frameOverlay, border, ptBackground, art, symbol, typeIcon, manaSymbols }: CardImages,
 	{ manaRuns, rulesRuns, flavorRuns }: CardRuns,
 	layout: FrameLayout,
 	variant: FrameVariant,
@@ -73,6 +77,9 @@ export function drawCard(
 
 	drawBeforeFrame?.()
 	context.drawImage(frame, 0, 0, WIDTH, HEIGHT)
+	frameOverlay?.crops.forEach(({ x, y, width, height }) => {
+		context.drawImage(frameOverlay.image, x, y, width, height, x, y, width, height)
+	})
 	if (overlay) context.drawImage(overlay.image, overlay.x, overlay.y, overlay.width, overlay.height)
 	if (border) context.drawImage(border, 0, 0, WIDTH, HEIGHT)
 	if (typeIcon) {

@@ -6,9 +6,10 @@ type Props = {
 	card: PlaneswalkerCardData
 	onChange: (card: PlaneswalkerCardData) => void
 	part: 'content' | 'details'
+	showReverseFace?: boolean
 }
 
-export function PlaneswalkerDetailsForm({ card, onChange, part }: Props) {
+export function PlaneswalkerDetailsForm({ card, onChange, part, showReverseFace = false }: Props) {
 	const { t } = useI18n()
 	const update = (changes: Partial<PlaneswalkerCardData>) => onChange({ ...card, ...changes })
 
@@ -122,6 +123,27 @@ export function PlaneswalkerDetailsForm({ card, onChange, part }: Props) {
 					onChange={(event) => update({ startingLoyalty: event.target.value })}
 				/>
 			</div>
+			{showReverseFace && <>
+				<div className="form-group gap-2">
+					<label htmlFor="planeswalker-reverse-name">{t('reverseFaceName')}</label>
+					<input
+						id="planeswalker-reverse-name"
+						type="text"
+						value={card.reverseFaceName}
+						onChange={(event) => update({ reverseFaceName: event.target.value })}
+					/>
+				</div>
+				<div className="form-group gap-2">
+					<label htmlFor="planeswalker-reverse-mana">{t('reverseFaceManaCost')}</label>
+					<input
+						id="planeswalker-reverse-mana"
+						type="text"
+						value={card.reverseFaceManaCost}
+						placeholder="{2}{R}"
+						onChange={(event) => update({ reverseFaceManaCost: event.target.value })}
+					/>
+				</div>
+			</>}
 
 			<h5 className="mt-5">{t('planeswalkerAbilities')}</h5>
 			{card.abilities.map((ability, index) => (
