@@ -34,15 +34,20 @@ export type PlaneswalkerStyle = Extract<FrameFamilyId, `planeswalker-${string}`>
 
 export const PLANESWALKER_STYLES: readonly { id: PlaneswalkerStyle; label: TranslationKey }[] = [
 	{ id: 'planeswalker-regular', label: 'planeswalkerStyleRegular' },
+	{ id: 'planeswalker-tall', label: 'planeswalkerStyleTall' },
+
 	{ id: 'planeswalker-transform-front', label: 'planeswalkerStyleTransformFront' },
 	{ id: 'planeswalker-transform-back', label: 'planeswalkerStyleTransformBack' },
-	{ id: 'planeswalker-mdfc-back', label: 'planeswalkerStyleMdfcBack' },
-	{ id: 'planeswalker-borderless', label: 'planeswalkerStyleBorderless' },
+
+    { id: 'planeswalker-mdfc-back', label: 'planeswalkerStyleMdfcBack' },
 	{ id: 'planeswalker-box-topper', label: 'planeswalkerStyleBoxTopper' },
 	{ id: 'planeswalker-compleated', label: 'planeswalkerStyleCompleated' },
-	{ id: 'planeswalker-double-feature', label: 'planeswalkerStyleDoubleFeature' },
+
+    { id: 'planeswalker-double-feature', label: 'planeswalkerStyleDoubleFeature' },
 	{ id: 'planeswalker-tall-double-feature', label: 'planeswalkerStyleTallDoubleFeature' },
-	{ id: 'planeswalker-tall', label: 'planeswalkerStyleTall' },
+	{ id: 'planeswalker-transform-front-double-feature', label: 'planeswalkerStyleTransformFrontDoubleFeature' },
+
+	{ id: 'planeswalker-borderless', label: 'planeswalkerStyleBorderless' },
 	{ id: 'planeswalker-tall-borderless', label: 'planeswalkerStyleTallBorderless' },
 ]
 
