@@ -103,8 +103,7 @@ export function PlaneswalkerDetailsForm({ card, onChange, part, showReverseFace 
 					placeholder="{2}{U}{U}"
 					onChange={(event) => update({ manaCost: event.target.value })}
 				/>
-				<small className="text-muted">{t('manaCostHelp')}</small>
-				<SymbolReferenceDialog />
+				<small className="text-muted">{t('manaCostHelp')} <SymbolReferenceDialog isLink/></small>
 			</div>
 			<div className="form-group gap-2">
 				<label htmlFor="planeswalker-type">{t('typeLine')}</label>
@@ -144,6 +143,7 @@ export function PlaneswalkerDetailsForm({ card, onChange, part, showReverseFace 
 						placeholder="{2}{R}"
 						onChange={(event) => update({ reverseFaceManaCost: event.target.value })}
 					/>
+                    <small className="text-muted">{t('manaCostHelp')} <SymbolReferenceDialog isLink/></small>
 				</div>
 			</>}
 

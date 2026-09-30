@@ -81,6 +81,7 @@ export function drawCard(
 		context.translate(WIDTH / 2 + transform.x, HEIGHT / 2 + transform.y)
 		context.rotate(transform.rotation * Math.PI / 180)
 		context.scale(transform.flipX ? -1 : 1, transform.flipY ? -1 : 1)
+		if (transform.grayscale) context.filter = 'grayscale(1)'
 		context.drawImage(art, -width / 2, -height / 2, width, height)
 		context.restore()
 	}

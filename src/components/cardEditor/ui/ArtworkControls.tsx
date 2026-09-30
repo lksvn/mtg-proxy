@@ -87,6 +87,16 @@ export function ArtworkControls({
 						}
 					/> {t('flipVertically')}
 				</label>
+
+				<label>
+					<input
+						type="checkbox"
+						checked={transform.grayscale}
+						onChange={(event) =>
+							update({ grayscale: event.target.checked })
+						}
+					/> {t('grayscaleArtwork')}
+				</label>
 			</div>
 
             <div className="form-group gap-2">

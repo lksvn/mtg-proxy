@@ -48,7 +48,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 						update({ manaCost: next })
 					}}
 				/>
-				<small className="text-muted">{t('manaCostHelp')}</small>
+				<small className="text-muted">{t('manaCostHelp')} <SymbolReferenceDialog isLink/></small>
 				{maxManaItems && <small className="text-muted">{t('manaCostLimitFuture')}</small>}
 			</div>}
 

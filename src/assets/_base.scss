@@ -75,9 +75,10 @@ mark {
     }
 }
 
-a, summary {
+a, summary, .text-link {
     color: var(--accent);
     transition: color var(--transition-fast);
+    cursor: pointer;
     &:hover, &:focus {
         color: var(--accent-hover);
     }

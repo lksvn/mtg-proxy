@@ -7,6 +7,10 @@ type SymbolReference = {
 	name: string
 }
 
+type Props = {
+    isLink?: boolean
+}
+
 const SYMBOLS: SymbolReference[] = [
 	...Array.from({ length: 21 }, (_, value) => ({
 		symbol: `{${value}}`,
@@ -51,14 +55,17 @@ const SYMBOLS: SymbolReference[] = [
 	})),
 ]
 
-export function SymbolReferenceDialog() {
+export function SymbolReferenceDialog({ isLink }: Props) {
 	const { t } = useI18n()
 	const dialogRef = useRef<HTMLDialogElement>(null)
 
 	return <>
-		<button type="button" className="btn" onClick={() => dialogRef.current?.showModal()}>
+        {isLink && <span className="text-link" onClick={() => dialogRef.current?.showModal()}>
+            {t('viewSymbols')}
+        </span>}
+		{!isLink && <button type="button" className="btn" onClick={() => dialogRef.current?.showModal()}>
 			{t('viewSymbols')}
-		</button>
+		</button>}
 		<dialog ref={dialogRef} className="symbol-reference-dialog">
 			<div className="symbol-reference-header">
 				<h5>{t('symbolReference')}</h5>

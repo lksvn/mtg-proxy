@@ -20,6 +20,7 @@ export type ArtworkTransform = {
 	y: number
 	flipX: boolean
 	flipY: boolean
+	grayscale: boolean
 	scale: number
     rotation: number
 }
