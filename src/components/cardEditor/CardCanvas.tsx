@@ -164,9 +164,12 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 
 			const abilityRuns = planeswalker ? card.abilities.map(({ text }) => parseRulesText(text)) : []
 			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
-			const planeswalkerAssets = family.id === 'planeswalker-mdfc-back'
-				? { ...PLANESWALKER_ASSETS, mask: 'img/frames/planeswalker/mdfc/text.png' }
-				: PLANESWALKER_ASSETS
+			const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
+				? 'img/frames/planeswalker/mdfc/text.png'
+				: family.id === 'planeswalker-tall'
+					? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
+					: PLANESWALKER_ASSETS.mask
+			const planeswalkerAssets = { ...PLANESWALKER_ASSETS, mask: planeswalkerMask }
 			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat()]
 			const futureManaFiles = family.id === 'future-sight'
 				? manaRuns.flatMap((run) => run.type === 'symbol' ? [futureManaFile(run.value)].filter((file): file is string => Boolean(file)) : [])
