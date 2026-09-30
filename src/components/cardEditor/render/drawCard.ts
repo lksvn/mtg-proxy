@@ -21,6 +21,13 @@ const RARITY_CODES: Record<CustomCardData['rarity'], string> = {
 	rare: 'R',
 	mythic: 'M',
 }
+const COLOR_INDICATOR_COLORS: Record<string, string> = {
+	W: '#fcfeff',
+	U: '#0075be',
+	B: '#272624',
+	R: '#ef3827',
+	G: '#007b43',
+}
 
 type CardImages = {
 	frame: CanvasImageSource
@@ -36,6 +43,8 @@ type CardImages = {
 		crops: { x: number; y: number; width: number; height: number }[]
 	}
 	border?: CanvasImageSource
+	colorIndicatorBase?: CanvasImageSource
+	colorIndicatorColors?: string[]
 	ptBackground?: HTMLImageElement
 	art?: HTMLImageElement
 	symbol?: HTMLImageElement
@@ -53,7 +62,7 @@ export function drawCard(
 	context: CanvasRenderingContext2D,
 	card: CustomCardData,
 	transform: ArtworkTransform,
-	{ frame, overlay, frameOverlay, border, ptBackground, art, symbol, typeIcon, manaSymbols }: CardImages,
+	{ frame, overlay, frameOverlay, border, colorIndicatorBase, colorIndicatorColors, ptBackground, art, symbol, typeIcon, manaSymbols }: CardImages,
 	{ manaRuns, rulesRuns, flavorRuns }: CardRuns,
 	layout: FrameLayout,
 	variant: FrameVariant,
@@ -82,6 +91,19 @@ export function drawCard(
 	})
 	if (overlay) context.drawImage(overlay.image, overlay.x, overlay.y, overlay.width, overlay.height)
 	if (border) context.drawImage(border, 0, 0, WIDTH, HEIGHT)
+	if (colorIndicatorBase && colorIndicatorColors?.length) {
+		context.drawImage(colorIndicatorBase, 115, 1207, 70, 70)
+		const slice = Math.PI * 2 / colorIndicatorColors.length
+
+		colorIndicatorColors.forEach((color, index) => {
+			context.beginPath()
+			context.moveTo(155, 1242)
+			context.arc(155, 1242, 22, -Math.PI / 2 + slice * index, -Math.PI / 2 + slice * (index + 1))
+			context.closePath()
+			context.fillStyle = COLOR_INDICATOR_COLORS[color]
+			context.fill()
+		})
+	}
 	if (typeIcon) {
 		const icon = document.createElement('canvas')
 		icon.width = WIDTH

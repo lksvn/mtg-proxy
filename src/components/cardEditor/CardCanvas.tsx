@@ -14,6 +14,7 @@ import { drawPlaneswalker, drawPlaneswalkerBackground, drawPlaneswalkerReverseFa
 const DEBUG_CANVAS = import.meta.env.DEV
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`
+const COLOR_INDICATOR_ORDER = ['W', 'U', 'B', 'R', 'G'] as const
 export type ArtworkTransform = {
 	x: number
 	y: number
@@ -166,6 +167,8 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
 			const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 				? 'img/frames/planeswalker/mdfc/text.png'
+				: family.id === 'planeswalker-transform-front'
+					? 'img/frames/planeswalker/transform/textFront.svg'
 				: family.id === 'planeswalker-tall' || family.id === 'planeswalker-tall-borderless'
 					? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
 					: PLANESWALKER_ASSETS.mask
@@ -203,7 +206,10 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 			const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
 			const frameOverlay = family.frameOverlays?.[resolvedVariant]
-			const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons] = await Promise.all([
+			const colorIndicatorColors = family.id === 'planeswalker-transform-back'
+				? COLOR_INDICATOR_ORDER.filter((color) => card.manaCost.toUpperCase().includes(color))
+				: []
+			const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase] = await Promise.all([
 				abuLandColors
 					? loadAbuDualLand(family, abuLandColors)
 					: dualPair
@@ -219,6 +225,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				setSymbol ? loadImageSource(setSymbol) : undefined,
 				typeIconPath ? loadImage(assetUrl(typeIconPath)) : undefined,
 				planeswalker ? Promise.all(Object.entries(planeswalkerAssets).map(async ([key, path]) => [key, await loadImage(assetUrl(path))] as const)).then((entries) => Object.fromEntries(entries) as PlaneswalkerIcons) : undefined,
+				colorIndicatorColors.length ? loadImage(assetUrl('img/frames/planeswalker/color-indicator/base.png')) : undefined,
 			])
 			const manaSymbols = new Map(
                 await Promise.all(
@@ -248,6 +255,8 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 						? { image: frameOverlayImage, crops: frameOverlay.crops }
 						: undefined,
 					border,
+					colorIndicatorBase,
+					colorIndicatorColors,
 					ptBackground,
 					art,
 					symbol,

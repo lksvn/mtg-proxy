@@ -340,6 +340,37 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		fonts: commonFonts,
 	},
+	'planeswalker-transform-front': {
+		id: 'planeswalker-transform-front',
+		overlay: {
+			path: 'img/frames/planeswalker/transform/sun.svg',
+			x: 89,
+			y: 79,
+			width: 110,
+			height: 110,
+		},
+		frames: {
+			W: 'img/frames/planeswalker/transform/wf.png',
+			U: 'img/frames/planeswalker/transform/uf.png',
+			B: 'img/frames/planeswalker/transform/bf.png',
+			R: 'img/frames/planeswalker/transform/rf.png',
+			G: 'img/frames/planeswalker/transform/gf.png',
+			M: 'img/frames/planeswalker/transform/mf.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, A: 'M', C: 'M', L: 'M' },
+		layout: {
+			artwork: { dragTop: 212, dragBottom: 1180 },
+			title: { x: 240, y: 136, maxWidth: 1244, font: '80px belerenb, serif', color: '#111' },
+			mana: { right: 1394, centerY: 136, symbolSize: 71, gap: 0, font: '48px belerenb, serif', color: '#111' },
+			type: { x: 130, y: 1239, maxWidth: 1240, font: '68px belerenb, serif', color: '#111' },
+			rules: { x: 270, y: 1310, width: 1100, height: 560, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#111', strokeWidth: 0.75, maxFontSize: 74, minFontSize: 32 },
+			symbol: { centerX: 1340, centerY: 1237, boxSize: 80 },
+			pt: { x: 1209, y: 1894, width: 210, height: 78, textX: 1314, textY: 1933, font: '78px belerenbsc, serif', color: '#fff' },
+			footer: commonFooter,
+		},
+		fonts: commonFonts,
+	},
 	'planeswalker-transform-back': {
 		id: 'planeswalker-transform-back',
 		overlay: {

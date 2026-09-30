@@ -34,6 +34,7 @@ export type PlaneswalkerStyle = Extract<FrameFamilyId, `planeswalker-${string}`>
 
 export const PLANESWALKER_STYLES: readonly { id: PlaneswalkerStyle; label: TranslationKey }[] = [
 	{ id: 'planeswalker-regular', label: 'planeswalkerStyleRegular' },
+	{ id: 'planeswalker-transform-front', label: 'planeswalkerStyleTransformFront' },
 	{ id: 'planeswalker-transform-back', label: 'planeswalkerStyleTransformBack' },
 	{ id: 'planeswalker-mdfc-back', label: 'planeswalkerStyleMdfcBack' },
 	{ id: 'planeswalker-borderless', label: 'planeswalkerStyleBorderless' },
