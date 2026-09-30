@@ -3,7 +3,7 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-export type FrameFamilyId = 'planeswalker-regular' | 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight' | 'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'
+export type FrameFamilyId = 'planeswalker-regular' | 'planeswalker-transform-back' | 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight' | 'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'
 export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
 type TextStyle = {
@@ -71,6 +71,7 @@ export type FrameLayout = {
 
 export type FrameFamily = {
 	id: FrameFamilyId
+	overlay?: { path: string; x: number; y: number; width: number; height: number }
 	borderMask?: string
 	baseBorderStyle?: 'black' | 'white'
 	defaultBorderStyle?: FrameBorderStyle

@@ -12,7 +12,13 @@ import { setPngDpi } from '../../utils/pngDpi'
 import { Icon } from '../Icon'
 import { getFrameFamily, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
 import { FrameColorPicker } from './ui/FrameColorPicker'
-import { FRAME_STYLE_GROUPS, TOKEN_STYLES, type TokenStyle } from './editorOptions'
+import {
+	FRAME_STYLE_GROUPS,
+	PLANESWALKER_STYLES,
+	TOKEN_STYLES,
+	type PlaneswalkerStyle,
+	type TokenStyle,
+} from './editorOptions'
 
 const SAMPLE_ARTWORK_URL = `${import.meta.env.BASE_URL}img/samples/marrow-gnawer.jpg`
 const SAMPLE_SET_SYMBOL_URL = `${import.meta.env.BASE_URL}img/setSymbols/chk.svg`
@@ -33,6 +39,7 @@ export function CustomCardEditor() {
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker'>('card')
 	const [tokenStyle, setTokenStyle] = useState<TokenStyle>('token-regular')
+	const [planeswalkerStyle, setPlaneswalkerStyle] = useState<PlaneswalkerStyle>('planeswalker-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -62,7 +69,7 @@ export function CustomCardEditor() {
 		artist: '', number: '1', rarity: 'mythic', tintSetSymbol: false, backgroundColor: '#000000',
 	})
 	const activeCard = layout === 'token' ? token : layout === 'planeswalker' ? planeswalker : card
-	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? 'planeswalker-regular' : frameFamily
+	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : frameFamily
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
 	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
 	const frameVariant = activeFrameSelection === 'auto'
@@ -181,7 +188,36 @@ export function CustomCardEditor() {
 						</select>
 					</div>}
 					{layout === 'token' && !tokenOptions.hideColor && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
-					{layout === 'planeswalker' && <div className="form-group gap-2 mb-5"><FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideLands hideVehicles /></div>}
+					{layout === 'planeswalker' && <>
+						<div className="form-group gap-2">
+							<label htmlFor="planeswalker-style">{t('planeswalkerStyle')}</label>
+							<select
+								id="planeswalker-style"
+								value={planeswalkerStyle}
+								onChange={(event) => {
+									const style = event.target.value as PlaneswalkerStyle
+									setPlaneswalkerStyle(style)
+									if (style === 'planeswalker-transform-back' && (frameSelection === 'A' || frameSelection === 'C')) {
+										setFrameSelection('auto')
+									}
+								}}
+							>
+								{PLANESWALKER_STYLES.map(({ id, label }) => (
+									<option key={id} value={id}>{t(label)}</option>
+								))}
+							</select>
+						</div>
+						<div className="form-group gap-2 mb-5">
+							<FrameColorPicker
+								value={frameSelection}
+								onChange={setFrameSelection}
+								hideLands
+								hideVehicles
+								hideArtifacts={planeswalkerStyle === 'planeswalker-transform-back'}
+								hideColorless={planeswalkerStyle === 'planeswalker-transform-back'}
+							/>
+						</div>
+					</>}
 					</details>
 					<details className="form-section" open>
 					<summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>

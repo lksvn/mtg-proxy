@@ -30,6 +30,12 @@ export const FRAME_STYLE_GROUPS = [
 ] as const
 
 export type TokenStyle = Extract<FrameFamilyId, `token-${string}`>
+export type PlaneswalkerStyle = Extract<FrameFamilyId, `planeswalker-${string}`>
+
+export const PLANESWALKER_STYLES: readonly { id: PlaneswalkerStyle; label: TranslationKey }[] = [
+	{ id: 'planeswalker-regular', label: 'planeswalkerStyleRegular' },
+	{ id: 'planeswalker-transform-back', label: 'planeswalkerStyleTransformBack' },
+]
 
 type TokenStyleOptions = {
 	id: TokenStyle

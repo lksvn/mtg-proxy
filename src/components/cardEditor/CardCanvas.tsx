@@ -195,12 +195,13 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const hybrid = Boolean(dualPair && hasHybridManaSymbol(card.manaCost))
 			const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 			const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
-			const [frame, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons] = await Promise.all([
+			const [frame, overlay, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons] = await Promise.all([
 				abuLandColors
 					? loadAbuDualLand(family, abuLandColors)
 					: dualPair
 					? loadDualFrame(family, dualPair, hybrid)
 					: loadImage(assetUrl(family.frames[resolvedVariant]!)),
+				family.overlay ? loadImage(assetUrl(family.overlay.path)) : undefined,
 				family.borderMask && borderStyle !== (family.baseBorderStyle ?? 'black') ? loadBorderOverlay(family.borderMask, borderStyle) : undefined,
 				ptPath ? loadImage(assetUrl(ptPath)) : undefined,
 				artwork ? loadImageSource(artwork) : undefined,
@@ -229,7 +230,16 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				context,
 				drawableCard,
 				transform,
-				{ frame, border, ptBackground, art, symbol, typeIcon, manaSymbols },
+				{
+					frame,
+					overlay: overlay && family.overlay ? { image: overlay, ...family.overlay } : undefined,
+					border,
+					ptBackground,
+					art,
+					symbol,
+					typeIcon,
+					manaSymbols,
+				},
 				{ manaRuns, rulesRuns, flavorRuns },
 				family.layout,
 				resolvedVariant,
