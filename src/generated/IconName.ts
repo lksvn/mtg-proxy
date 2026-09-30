@@ -14,6 +14,7 @@ export type IconName =
 	| "language"
 	| "list-clock"
 	| "loading"
+	| "plus"
 	| "printer"
 	| "refresh-cw"
 	| "sun-moon"

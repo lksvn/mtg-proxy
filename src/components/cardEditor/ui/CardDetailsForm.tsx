@@ -1,6 +1,7 @@
 import type { CustomCardData } from '../types'
 import { countManaCostItems } from '../cardText'
 import { useI18n } from '../../../i18n/context'
+import { SymbolReferenceDialog } from './SymbolReferenceDialog'
 
 type CardDetailsFormProps = {
 	card: CustomCardData
@@ -11,9 +12,10 @@ type CardDetailsFormProps = {
 	hideNameAndType?: boolean
 	hideTypeLine?: boolean
 	hidePowerToughness?: boolean
+	part?: 'content' | 'details'
 }
 
-export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hideTypeLine, hidePowerToughness }: CardDetailsFormProps) {
+export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hideTypeLine, hidePowerToughness, part }: CardDetailsFormProps) {
 	const { t } = useI18n()
 
 	function update(changes: Partial<CustomCardData>) {
@@ -22,7 +24,8 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 
 	return (
 		<fieldset>
-			{!hideNameAndType && <div className="form-group">
+			{part !== 'details' && <>
+			{!hideNameAndType && <div className="form-group gap-2">
 				<label htmlFor="card-name">{t('cardName')}</label>
 				<input
 					id="card-name"
@@ -32,7 +35,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 				/>
 			</div>}
 
-			{!hideManaCost && <div className="form-group">
+			{!hideManaCost && <div className="form-group gap-2">
 				<label htmlFor="card-mana-cost">{t('manaCost')}</label>
 				<input
 					id="card-mana-cost"
@@ -45,11 +48,11 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 						update({ manaCost: next })
 					}}
 				/>
-				<small className="text-muted">{t('manaCostHelp')}</small>
+				<small className="text-muted">{t('manaCostHelp')} <SymbolReferenceDialog isLink/></small>
 				{maxManaItems && <small className="text-muted">{t('manaCostLimitFuture')}</small>}
 			</div>}
 
-			{!hideNameAndType && !hideTypeLine && <div className="form-group">
+			{!hideNameAndType && !hideTypeLine && <div className="form-group gap-2">
 				<label htmlFor="card-type-line">{t('typeLine')}</label>
 				<input
 					id="card-type-line"
@@ -62,7 +65,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 				<small className="text-muted">{t('typeLineHelp')}</small>
 			</div>}
 
-			{!hideRulesText && <div className="form-group">
+			{!hideRulesText && <div className="form-group gap-2">
 				<label htmlFor="card-rules-text">{t('rulesText')}</label>
 				<textarea
 					id="card-rules-text"
@@ -87,10 +90,11 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 						<li>{t('formatReminderText')}: <code>{t('formatReminderExample')}</code></li>
 						<li>{t('formatAbilityName')}: <code>{t('formatAbilityExample')}</code></li>
 					</ul>
+					<SymbolReferenceDialog />
                 </details>
 			</div>}
 
-			{!hideRulesText && <div className="form-group">
+			{!hideRulesText && <div className="form-group gap-2">
 				<label htmlFor="card-flavor-text">{t('flavorText')}</label>
 				<textarea
 					id="card-flavor-text"
@@ -102,7 +106,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 				/>
 			</div>}
 
-			{!hidePowerToughness && <div className="form-group">
+			{!hidePowerToughness && <div className="form-group gap-2">
 				<label htmlFor="card-power-toughness">{t('powerToughness')}</label>
 				<input
 					id="card-power-toughness"
@@ -114,8 +118,10 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 					}
 				/>
 			</div>}
+			</>}
 
-			<div className="form-group">
+			{part !== 'content' && <>
+			<div className="form-group gap-2">
 				<label htmlFor="card-artist">{t('artist')}</label>
 				<input
 					id="card-artist"
@@ -127,7 +133,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 				/>
 			</div>
 
-            <div className="form-group">
+            <div className="form-group gap-2">
 				<label htmlFor="card-number">{t('cardNumber')}</label>
 				<input
 					id="card-number"
@@ -139,7 +145,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 				/>
 			</div>
 
-			<div className="form-group">
+			<div className="form-group gap-2">
 				<label htmlFor="card-rarity">{t('rarity')}</label>
 				<select
 					id="card-rarity"
@@ -166,7 +172,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
                     /> {t('tintSetSymbolByRarity')}
                 </label>
 
-                <div className="form-group">
+                <div className="form-group gap-2">
                     <label htmlFor="card-background">{t('backgroundColor')}</label>
                     <input
                         id="card-background"
@@ -180,6 +186,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
                     <small className="text-muted">{t('backgroundColorHelp')}</small>
                 </div>
 			</div>
+			</>}
 		</fieldset>
 	)
 }

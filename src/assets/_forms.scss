@@ -49,6 +49,50 @@ button {
     gap: 0.25rem;
     width: 100%;
 }
+
+details.form-section {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.75rem;
+
+    > summary {
+        color: inherit;
+        outline: none;
+
+        &:focus-visible {
+            outline: 1px dashed var(--accent-hover);
+            outline-offset: 3px;
+        }
+    }
+
+    > summary h5 {
+        display: inline-block;
+        margin-bottom: 0.75rem;
+    }
+}
+
+.planeswalker-ability {
+    display: grid;
+    grid-template-columns: minmax(4rem, 0.25fr) 1fr auto;
+    align-items: start;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.planeswalker-ability-remove > span {
+    visibility: hidden;
+}
+
+.planeswalker-ability-remove .btn {
+    display: grid;
+    place-items: center;
+}
+
+@media (max-width: 36rem) {
+    .planeswalker-ability {
+        grid-template-columns: 1fr;
+    }
+}
+
 label {
     font-weight: 600;
 }
@@ -144,6 +188,48 @@ button.frame-color-choice {
     text-align: left;
 
     &:hover, &:focus-visible, &[aria-selected="true"] { background: var(--accent); color: var(--accent-text); }
+}
+
+.symbol-reference-dialog {
+	width: min(36rem, calc(100% - 2rem));
+	max-height: calc(100% - 2rem);
+	padding: 1rem;
+	border: 1px solid var(--border);
+	border-radius: var(--small-radius);
+	background: var(--surface);
+	color: var(--text);
+
+	&::backdrop {
+		background: #000a;
+	}
+
+	table {
+		width: 100%;
+	}
+
+	th,
+	td {
+		padding: 0.35rem 0.5rem;
+		border-bottom: 1px solid var(--border);
+		text-align: left;
+	}
+
+	img {
+		width: 2rem;
+		height: 2rem;
+	}
+}
+
+.symbol-reference-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 0.75rem;
+
+	h5 {
+		margin: 0;
+	}
 }
 
 .frame-color-swatch {
