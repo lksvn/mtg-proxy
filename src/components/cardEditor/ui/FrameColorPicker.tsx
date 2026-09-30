@@ -55,7 +55,7 @@ export function FrameColorPicker({ value, onChange, hideLands = false, hideVehic
 	}
 
 	return (
-		<div className="form-group" onBlur={(event) => {
+		<div className="form-group gap-2" onBlur={(event) => {
 			if (!event.relatedTarget || !event.currentTarget.contains(event.relatedTarget)) setOpen(false)
 		}}>
 			<span id="card-frame-label">{t('frame')}</span>

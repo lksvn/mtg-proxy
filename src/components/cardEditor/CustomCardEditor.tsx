@@ -3,7 +3,8 @@ import { CardCanvas, type ArtworkTransform } from './CardCanvas'
 import { FileInput } from '../FileInput'
 import { ArtworkControls } from './ui/ArtworkControls'
 import { CardDetailsForm } from './ui/CardDetailsForm'
-import type { CustomCardData, FrameVariant } from './types'
+import { PlaneswalkerDetailsForm } from './ui/PlaneswalkerDetailsForm'
+import type { CustomCardData, FrameVariant, PlaneswalkerCardData } from './types'
 import { inferFrameVariant } from './cardText'
 import { useI18n } from '../../i18n/context'
 import { downloadBlob } from '../../utils/downloadBlob'
@@ -30,7 +31,7 @@ export function CustomCardEditor() {
 	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
-	const [layout, setLayout] = useState<'card' | 'token'>('card')
+	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker'>('card')
 	const [tokenStyle, setTokenStyle] = useState<TokenStyle>('token-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
@@ -51,8 +52,17 @@ export function CustomCardEditor() {
 		name: 'Rat', manaCost: '', typeLine: 'Token Creature — Rat', rulesText: '', centerRulesText: false, flavorText: '',
 		powerToughness: '1/1', artist: '', number: '1', rarity: 'common', tintSetSymbol: false, backgroundColor: '#000000',
 	})
-	const activeCard = layout === 'token' ? token : card
-	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : frameFamily
+	const [planeswalker, setPlaneswalker] = useState<PlaneswalkerCardData>({
+		name: 'Jace, Arcane Strategist', manaCost: '4uu', typeLine: 'Legendary Planeswalker — Jace', startingLoyalty: '4',
+		abilities: [
+			{ cost: '+1', text: 'Draw a card.' },
+			{ cost: '-2', text: 'Return target creature to its owner’s hand.' },
+			{ cost: '-8', text: 'Draw seven cards. You get an emblem with “You have no maximum hand size.”' },
+		],
+		artist: '', number: '1', rarity: 'mythic', tintSetSymbol: false, backgroundColor: '#000000',
+	})
+	const activeCard = layout === 'token' ? token : layout === 'planeswalker' ? planeswalker : card
+	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? 'planeswalker-regular' : frameFamily
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
 	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
 	const frameVariant = activeFrameSelection === 'auto'
@@ -78,8 +88,9 @@ export function CustomCardEditor() {
 		<section>
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '1rem'}}>
                 <div>
-                    <h5>1. {t('cardImageSection')}</h5>
-                    <div className="form-group gap-2 mb-5">
+					<details className="form-section" open>
+					<summary><h5 className="mt-5">1. {t('cardImageSection')}</h5></summary>
+                    <div className="form-group gap-2">
                         <FileInput
                             id="custom-card-artwork"
                             accept="image/*"
@@ -90,21 +101,24 @@ export function CustomCardEditor() {
                             }}
                             onClear={() => setArtwork(undefined)}
                         />
-						{!tokenOptions.hideSetSymbol && <FileInput
+					</div>
+						{(layout !== 'token' || !tokenOptions.hideSetSymbol) && <div className="form-group gap-2 mb-5"><FileInput
                             id="custom-card-set-symbol"
                             accept="image/*"
                             label={t('chooseSetSymbol')}
                             hasValue={Boolean(setSymbol)}
                             onSelect={setSetSymbol}
                             onClear={() => setSetSymbol(undefined)}
-						/>}
-                    </div>
-                    <h5>2. {t('cardEditionSection')}</h5>
+						/></div>}
+					</details>
+					<details className="form-section" open>
+					<summary><h5 className="mt-5">2. {t('cardEditionSection')}</h5></summary>
 					<div className="form-group gap-2">
 						<label htmlFor="card-layout">{t('cardLayout')}</label>
-						<select id="card-layout" value={layout} onChange={(event) => setLayout(event.target.value as 'card' | 'token')}>
+						<select id="card-layout" value={layout} onChange={(event) => setLayout(event.target.value as typeof layout)}>
 							<option value="card">{t('cardLayoutCard')}</option>
 							<option value="token">{t('cardLayoutToken')}</option>
+							<option value="planeswalker">{t('cardLayoutPlaneswalker')}</option>
 						</select>
 					</div>
 					{layout === 'card' && <>
@@ -167,9 +181,12 @@ export function CustomCardEditor() {
 						</select>
 					</div>}
 					{layout === 'token' && !tokenOptions.hideColor && <div className="form-group gap-2 mb-5"><FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles /></div>}
-                    <h5 className='mt-5'>3. {t('cardInformationSection')}</h5>
-					<CardDetailsForm
-						card={activeCard}
+					{layout === 'planeswalker' && <div className="form-group gap-2 mb-5"><FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideLands hideVehicles /></div>}
+					</details>
+					<details className="form-section" open>
+					<summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>
+					{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" /> : <CardDetailsForm
+						card={layout === 'token' ? token : card}
 						onChange={layout === 'token' ? setToken : setCard}
 						hideManaCost={layout === 'token' && !tokenOptions.showManaCost}
 						hideRulesText={tokenOptions.hideRulesText}
@@ -177,7 +194,13 @@ export function CustomCardEditor() {
 						hideTypeLine={tokenOptions.hideTypeLine}
 						hidePowerToughness={tokenOptions.hidePowerToughness}
 						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
-					/>
+						part="content"
+					/>}
+					</details>
+					<details className="form-section">
+					<summary><h5 className="mt-5">4. {t('cardDetailsSection')}</h5></summary>
+					{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="details" /> : <CardDetailsForm card={layout === 'token' ? token : card} onChange={layout === 'token' ? setToken : setCard} part="details" />}
+					</details>
                 </div>
 
                 <div style={{position:'relative'}}>

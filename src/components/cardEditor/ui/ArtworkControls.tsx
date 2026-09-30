@@ -67,7 +67,7 @@ export function ArtworkControls({
                 </label>
             </div>
 
-			<div className="form-group">
+			<div className="form-group gap-2">
 				<label>
 					<input
 						type="checkbox"
@@ -89,7 +89,7 @@ export function ArtworkControls({
 				</label>
 			</div>
 
-            <div className="form-group">
+            <div className="form-group gap-2">
                 <label>
                     {t('zoom')} ({(transform.scale * 100).toFixed(0)}%)
                     <input

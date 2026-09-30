@@ -46,6 +46,7 @@ export function drawCard(
 	{ manaRuns, rulesRuns, flavorRuns }: CardRuns,
 	layout: FrameLayout,
 	variant: FrameVariant,
+	drawBeforeFrame?: () => void,
 ) {
 	context.fillStyle = card.backgroundColor
 	context.fillRect(0, 0, WIDTH, HEIGHT)
@@ -63,6 +64,7 @@ export function drawCard(
 		context.restore()
 	}
 
+	drawBeforeFrame?.()
 	context.drawImage(frame, 0, 0, WIDTH, HEIGHT)
 	if (border) context.drawImage(border, 0, 0, WIDTH, HEIGHT)
 	if (typeIcon) {

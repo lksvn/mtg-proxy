@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
-import { DUAL_FRAME_VARIANTS, type CustomCardData, type FrameVariant } from './types'
+import { DUAL_FRAME_VARIANTS, type CustomCardData, type FrameVariant, type PlaneswalkerCardData } from './types'
 import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
 import { drawCard, HEIGHT, WIDTH } from './render/drawCard'
 import { futureManaFile } from './render/drawManaCost'
@@ -9,6 +9,7 @@ import { loadAbuDualLand } from './render/composeAbuDualLand'
 import { loadBorderOverlay } from './render/composeBorder'
 import { useI18n } from '../../i18n/context'
 import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
+import { drawPlaneswalker, drawPlaneswalkerBackground, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from './render/drawPlaneswalker'
 
 const DEBUG_CANVAS = import.meta.env.DEV
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
@@ -29,7 +30,7 @@ type CardCanvasProps = {
 	borderStyle: FrameBorderStyle
 	frameVariant: FrameVariant
 	transform: ArtworkTransform,
-    card: CustomCardData,
+    card: CustomCardData | PlaneswalkerCardData,
     onTransformChange: (transform: ArtworkTransform) => void,
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
@@ -146,17 +147,23 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 		let cancelled = false
 
 		async function render() {
+			const planeswalker = 'abilities' in card
+			const drawableCard: CustomCardData = planeswalker ? {
+				...card,
+				rulesText: '', centerRulesText: false, flavorText: '', powerToughness: card.startingLoyalty,
+			} : card
             const manaRuns = parseManaCost(card.manaCost)
-            const rulesRuns = parseRulesText(card.rulesText)
+            const rulesRuns = parseRulesText(drawableCard.rulesText)
 
-            const flavorRuns = parseCardText(card.flavorText).map(
+            const flavorRuns = parseCardText(drawableCard.flavorText).map(
                 (run): CardTextRun =>
                     run.type === 'text'
                         ? { ...run, italic: true }
                         : run,
             )
 
-			const allRuns = [...manaRuns, ...rulesRuns, ...flavorRuns]
+			const abilityRuns = planeswalker ? card.abilities.map(({ text }) => parseRulesText(text)) : []
+			const allRuns = [...manaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat()]
 			const futureManaFiles = family.id === 'future-sight'
 				? manaRuns.flatMap((run) => run.type === 'symbol' ? [futureManaFile(run.value)].filter((file): file is string => Boolean(file)) : [])
 				: []
@@ -188,7 +195,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const hybrid = Boolean(dualPair && hasHybridManaSymbol(card.manaCost))
 			const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 			const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
-			const [frame, border, ptBackground, art, symbol, typeIcon] = await Promise.all([
+			const [frame, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons] = await Promise.all([
 				abuLandColors
 					? loadAbuDualLand(family, abuLandColors)
 					: dualPair
@@ -199,6 +206,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				artwork ? loadImageSource(artwork) : undefined,
 				setSymbol ? loadImageSource(setSymbol) : undefined,
 				typeIconPath ? loadImage(assetUrl(typeIconPath)) : undefined,
+				planeswalker ? Promise.all(Object.entries(PLANESWALKER_ASSETS).map(async ([key, path]) => [key, await loadImage(assetUrl(path))] as const)).then((entries) => Object.fromEntries(entries) as PlaneswalkerIcons) : undefined,
 			])
 			const manaSymbols = new Map(
                 await Promise.all(
@@ -219,13 +227,17 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 
 			drawCard(
 				context,
-				card,
+				drawableCard,
 				transform,
 				{ frame, border, ptBackground, art, symbol, typeIcon, manaSymbols },
 				{ manaRuns, rulesRuns, flavorRuns },
 				family.layout,
 				resolvedVariant,
+				planeswalker && planeswalkerIcons
+					? () => drawPlaneswalkerBackground(context, card, abilityRuns, planeswalkerIcons)
+					: undefined,
 			)
+			if (planeswalker && planeswalkerIcons) drawPlaneswalker(context, card, abilityRuns, manaSymbols, planeswalkerIcons)
 
 		}
 

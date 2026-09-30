@@ -49,6 +49,50 @@ button {
     gap: 0.25rem;
     width: 100%;
 }
+
+details.form-section {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.75rem;
+
+    > summary {
+        color: inherit;
+        outline: none;
+
+        &:focus-visible {
+            outline: 1px dashed var(--accent-hover);
+            outline-offset: 3px;
+        }
+    }
+
+    > summary h5 {
+        display: inline-block;
+        margin-bottom: 0.75rem;
+    }
+}
+
+.planeswalker-ability {
+    display: grid;
+    grid-template-columns: minmax(4rem, 0.25fr) 1fr auto;
+    align-items: start;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.planeswalker-ability-remove > span {
+    visibility: hidden;
+}
+
+.planeswalker-ability-remove .btn {
+    display: grid;
+    place-items: center;
+}
+
+@media (max-width: 36rem) {
+    .planeswalker-ability {
+        grid-template-columns: 1fr;
+    }
+}
+
 label {
     font-weight: 600;
 }

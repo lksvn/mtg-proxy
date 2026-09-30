@@ -17,3 +17,13 @@ export type CustomCardData = {
     tintSetSymbol: boolean
     backgroundColor: string
 }
+
+export type PlaneswalkerAbility = {
+	cost: string
+	text: string
+}
+
+export type PlaneswalkerCardData = Omit<CustomCardData, 'rulesText' | 'centerRulesText' | 'flavorText' | 'powerToughness'> & {
+	startingLoyalty: string
+	abilities: PlaneswalkerAbility[]
+}

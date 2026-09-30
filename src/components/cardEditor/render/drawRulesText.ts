@@ -44,6 +44,37 @@ type RulesTextStyle = {
 	minFontSize: number
 }
 
+export function fitRulesText(
+	context: CanvasRenderingContext2D,
+	runs: CardTextRun[],
+	maxWidth: number,
+	maxHeight: number,
+	style: RulesTextStyle,
+) {
+	for (let fontSize = style.maxFontSize; fontSize >= style.minFontSize; fontSize--) {
+		const lineHeight = Math.round(fontSize * 1.1)
+		const lines = layout(context, atomize(runs), maxWidth, fontSize, style)
+		const height = lines.length * lineHeight + lines.reduce((total, line) => total + line.gapBefore, 0)
+
+		if (height <= maxHeight) return fontSize
+	}
+
+	return style.minFontSize
+}
+
+export function measureRulesTextHeight(
+	context: CanvasRenderingContext2D,
+	runs: CardTextRun[],
+	maxWidth: number,
+	fontSize: number,
+	style: RulesTextStyle,
+) {
+	const lines = layout(context, atomize(runs), maxWidth, fontSize, style)
+	const lineHeight = Math.round(fontSize * 1.1)
+
+	return lines.length * lineHeight + lines.reduce((total, line) => total + line.gapBefore, 0)
+}
+
 function font(fontSize: number, italic: boolean, style: RulesTextStyle) {
 	return `${fontSize}px ${italic ? style.italicFontFamily : style.fontFamily}, serif`
 }
@@ -111,22 +142,9 @@ export function drawRulesText(
 ) {
 	if (!runs.length || maxWidth <= 0 || maxHeight <= 0) return
 
-	let fontSize = style.maxFontSize
-	let lines: Line[] = []
-	let lineHeight = 0
-
-	for (; fontSize >= style.minFontSize; fontSize--) {
-		lineHeight = Math.round(fontSize * 1.1)
-		lines = layout(context, atomize(runs), maxWidth, fontSize, style)
-
-		const height = lines.length * lineHeight +
-			lines.reduce((total, line) => total + line.gapBefore, 0)
-
-		if (height <= maxHeight) break
-	}
-
-	fontSize = Math.max(fontSize, style.minFontSize)
-	lineHeight = Math.round(fontSize * 1.1)
+	const fontSize = fitRulesText(context, runs, maxWidth, maxHeight, style)
+	const lineHeight = Math.round(fontSize * 1.1)
+	const lines = layout(context, atomize(runs), maxWidth, fontSize, style)
 	const blockHeight = lines.length * lineHeight +
 		lines.reduce((total, line) => total + line.gapBefore, 0)
 
