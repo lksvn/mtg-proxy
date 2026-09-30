@@ -172,7 +172,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					? 'img/frames/planeswalker/compleated/text.svg'
 				: family.id === 'planeswalker-transform-front'
 					? 'img/frames/planeswalker/transform/textFront.svg'
-				: family.id === 'planeswalker-tall' || family.id === 'planeswalker-tall-borderless'
+				: family.id === 'planeswalker-tall' || family.id === 'planeswalker-tall-borderless' || family.id === 'planeswalker-tall-double-feature'
 					? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
 					: PLANESWALKER_ASSETS.mask
 			const planeswalkerAssets = { ...PLANESWALKER_ASSETS, mask: planeswalkerMask }

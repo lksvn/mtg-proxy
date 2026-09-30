@@ -41,6 +41,7 @@ export const PLANESWALKER_STYLES: readonly { id: PlaneswalkerStyle; label: Trans
 	{ id: 'planeswalker-box-topper', label: 'planeswalkerStyleBoxTopper' },
 	{ id: 'planeswalker-compleated', label: 'planeswalkerStyleCompleated' },
 	{ id: 'planeswalker-double-feature', label: 'planeswalkerStyleDoubleFeature' },
+	{ id: 'planeswalker-tall-double-feature', label: 'planeswalkerStyleTallDoubleFeature' },
 	{ id: 'planeswalker-tall', label: 'planeswalkerStyleTall' },
 	{ id: 'planeswalker-tall-borderless', label: 'planeswalkerStyleTallBorderless' },
 ]

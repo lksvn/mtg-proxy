@@ -77,7 +77,8 @@ export function CustomCardEditor() {
 		planeswalkerStyle === 'planeswalker-transform-back' ||
 		planeswalkerStyle === 'planeswalker-mdfc-back' ||
 		planeswalkerStyle === 'planeswalker-compleated' ||
-		planeswalkerStyle === 'planeswalker-double-feature'
+		planeswalkerStyle === 'planeswalker-double-feature' ||
+		planeswalkerStyle === 'planeswalker-tall-double-feature'
 	const frameVariant = activeFrameSelection === 'auto'
 		? inferFrameVariant(activeCard.manaCost, activeCard.typeLine)
 		: activeFrameSelection
@@ -111,7 +112,7 @@ export function CustomCardEditor() {
                                 onSelect={(file) => {
                                     setArtwork(file)
                                     setArtworkTransform(createDefaultArtworkTransform(
-										layout === 'planeswalker' && planeswalkerStyle === 'planeswalker-double-feature',
+										layout === 'planeswalker' && (planeswalkerStyle === 'planeswalker-double-feature' || planeswalkerStyle === 'planeswalker-tall-double-feature'),
 									))
                                 }}
                                 onClear={() => setArtwork(undefined)}
@@ -209,13 +210,14 @@ export function CustomCardEditor() {
                                         setPlaneswalkerStyle(style)
 										setArtworkTransform({
 											...artworkTransform,
-											grayscale: style === 'planeswalker-double-feature',
+											grayscale: style === 'planeswalker-double-feature' || style === 'planeswalker-tall-double-feature',
 										})
                                         const limitedColors = style === 'planeswalker-transform-front' ||
                                             style === 'planeswalker-transform-back' ||
                                             style === 'planeswalker-mdfc-back' ||
                                             style === 'planeswalker-compleated' ||
-                                            style === 'planeswalker-double-feature'
+											style === 'planeswalker-double-feature' ||
+											style === 'planeswalker-tall-double-feature'
                                         if (limitedColors && (frameSelection === 'A' || frameSelection === 'C')) {
                                             setFrameSelection('auto')
                                         }
@@ -274,7 +276,7 @@ export function CustomCardEditor() {
                         transform={artworkTransform}
                         onChange={setArtworkTransform}
                         onReset={() => setArtworkTransform(createDefaultArtworkTransform(
-								layout === 'planeswalker' && planeswalkerStyle === 'planeswalker-double-feature',
+								layout === 'planeswalker' && (planeswalkerStyle === 'planeswalker-double-feature' || planeswalkerStyle === 'planeswalker-tall-double-feature'),
 							))}
                         />
                     }
