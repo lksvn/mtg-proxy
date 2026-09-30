@@ -166,7 +166,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
 			const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 				? 'img/frames/planeswalker/mdfc/text.png'
-				: family.id === 'planeswalker-tall'
+				: family.id === 'planeswalker-tall' || family.id === 'planeswalker-tall-borderless'
 					? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
 					: PLANESWALKER_ASSETS.mask
 			const planeswalkerAssets = { ...PLANESWALKER_ASSETS, mask: planeswalkerMask }
