@@ -233,7 +233,7 @@ export function CustomCardEditor() {
                                     ))}
                                 </select>
                             </div>
-							{planeswalkerStyle !== 'planeswalker-sdcc15' && <div className="form-group gap-2 mb-5">
+							{!planeswalkerStyle.startsWith('planeswalker-sdcc15') && <div className="form-group gap-2 mb-5">
                                 <FrameColorPicker
                                     value={frameSelection}
                                     onChange={setFrameSelection}

@@ -285,6 +285,25 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		fonts: commonFonts,
 	},
+	'planeswalker-sdcc15-transform': {
+		id: 'planeswalker-sdcc15-transform',
+		frames: {
+			C: 'img/frames/planeswalker/sdcc15/transform.svg',
+		},
+		pt: {},
+		fallbacks: commonFallbacks,
+		layout: {
+			artwork: { dragLeft: 59, dragTop: 190, dragRight: 1441, dragBottom: 1180 },
+			title: { x: 240, y: 136, maxWidth: 1140, font: '80px belerenb, serif', color: '#aaa' },
+			mana: { right: 1394, centerY: 136, symbolSize: 71, gap: 0, font: '48px belerenb, serif', color: '#aaa' },
+			type: { x: 200, y: 1239, maxWidth: 1200, font: '68px belerenb, serif', color: '#aaa' },
+			rules: { x: 270, y: 1310, width: 1100, height: 560, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#aaa', strokeColor: '#aaa', strokeWidth: 0.75, maxFontSize: 74, minFontSize: 32 },
+			symbol: { centerX: 1340, centerY: 1237, boxSize: 80 },
+			pt: { x: 1209, y: 1894, width: 210, height: 78, textX: 1314, textY: 1933, font: '78px belerenbsc, serif', color: '#aaa' },
+			footer: commonFooter,
+		},
+		fonts: commonFonts,
+	},
 	'planeswalker-borderless': {
 		id: 'planeswalker-borderless',
 		frames: {
