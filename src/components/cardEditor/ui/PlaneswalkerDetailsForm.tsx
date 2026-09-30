@@ -1,6 +1,7 @@
 import { useI18n } from '../../../i18n/context'
 import { Icon } from '../../Icon'
 import type { PlaneswalkerCardData } from '../types'
+import { SymbolReferenceDialog } from './SymbolReferenceDialog'
 
 type Props = {
 	card: PlaneswalkerCardData
@@ -103,6 +104,7 @@ export function PlaneswalkerDetailsForm({ card, onChange, part, showReverseFace 
 					onChange={(event) => update({ manaCost: event.target.value })}
 				/>
 				<small className="text-muted">{t('manaCostHelp')}</small>
+				<SymbolReferenceDialog />
 			</div>
 			<div className="form-group gap-2">
 				<label htmlFor="planeswalker-type">{t('typeLine')}</label>

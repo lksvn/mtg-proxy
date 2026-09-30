@@ -190,6 +190,48 @@ button.frame-color-choice {
     &:hover, &:focus-visible, &[aria-selected="true"] { background: var(--accent); color: var(--accent-text); }
 }
 
+.symbol-reference-dialog {
+	width: min(36rem, calc(100% - 2rem));
+	max-height: calc(100% - 2rem);
+	padding: 1rem;
+	border: 1px solid var(--border);
+	border-radius: var(--small-radius);
+	background: var(--surface);
+	color: var(--text);
+
+	&::backdrop {
+		background: #000a;
+	}
+
+	table {
+		width: 100%;
+	}
+
+	th,
+	td {
+		padding: 0.35rem 0.5rem;
+		border-bottom: 1px solid var(--border);
+		text-align: left;
+	}
+
+	img {
+		width: 2rem;
+		height: 2rem;
+	}
+}
+
+.symbol-reference-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 0.75rem;
+
+	h5 {
+		margin: 0;
+	}
+}
+
 .frame-color-swatch {
     display: inline-block;
     border: 1px solid #777;

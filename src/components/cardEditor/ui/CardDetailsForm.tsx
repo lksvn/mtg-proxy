@@ -1,6 +1,7 @@
 import type { CustomCardData } from '../types'
 import { countManaCostItems } from '../cardText'
 import { useI18n } from '../../../i18n/context'
+import { SymbolReferenceDialog } from './SymbolReferenceDialog'
 
 type CardDetailsFormProps = {
 	card: CustomCardData
@@ -89,6 +90,7 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 						<li>{t('formatReminderText')}: <code>{t('formatReminderExample')}</code></li>
 						<li>{t('formatAbilityName')}: <code>{t('formatAbilityExample')}</code></li>
 					</ul>
+					<SymbolReferenceDialog />
                 </details>
 			</div>}
 
