@@ -47,6 +47,7 @@ export const PLANESWALKER_STYLES: readonly { id: PlaneswalkerStyle; label: Trans
 	{ id: 'planeswalker-tall-double-feature', label: 'planeswalkerStyleTallDoubleFeature' },
 	{ id: 'planeswalker-transform-front-double-feature', label: 'planeswalkerStyleTransformFrontDoubleFeature' },
 	{ id: 'planeswalker-transform-back-double-feature', label: 'planeswalkerStyleTransformBackDoubleFeature' },
+	{ id: 'planeswalker-sdcc15', label: 'planeswalkerStyleSdcc15' },
 
 	{ id: 'planeswalker-borderless', label: 'planeswalkerStyleBorderless' },
 	{ id: 'planeswalker-tall-borderless', label: 'planeswalkerStyleTallBorderless' },

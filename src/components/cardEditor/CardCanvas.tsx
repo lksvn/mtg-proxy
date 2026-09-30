@@ -15,6 +15,20 @@ const DEBUG_CANVAS = import.meta.env.DEV
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`
 const COLOR_INDICATOR_ORDER = ['W', 'U', 'B', 'R', 'G'] as const
+
+function isInsideArtwork(
+	clientX: number,
+	clientY: number,
+	bounds: DOMRect,
+	artwork: { dragLeft: number; dragTop: number; dragRight: number; dragBottom: number },
+) {
+	const x = (clientX - bounds.left) * (WIDTH / bounds.width)
+	const y = (clientY - bounds.top) * (HEIGHT / bounds.height)
+
+	return x >= artwork.dragLeft && x <= artwork.dragRight &&
+		y >= artwork.dragTop && y <= artwork.dragBottom
+}
+
 export type ArtworkTransform = {
 	x: number
 	y: number
@@ -57,8 +71,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
         if (!artwork) return
 
 		const bounds = event.currentTarget.getBoundingClientRect()
-		const y = (event.clientY - bounds.top) * (HEIGHT / bounds.height)
-		if (y < family.layout.artwork.dragTop || y > family.layout.artwork.dragBottom) return
+		if (!isInsideArtwork(event.clientX, event.clientY, bounds, family.layout.artwork)) return
 
 		setArtworkHovered(true)
         setDragging(true)
@@ -75,8 +88,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 
     function dragArtwork(event: ReactPointerEvent<HTMLCanvasElement>) {
 		const bounds = event.currentTarget.getBoundingClientRect()
-		const y = (event.clientY - bounds.top) * (HEIGHT / bounds.height)
-		setArtworkHovered(y >= family.layout.artwork.dragTop && y <= family.layout.artwork.dragBottom)
+		setArtworkHovered(isInsideArtwork(event.clientX, event.clientY, bounds, family.layout.artwork))
 
         const drag = dragRef.current
 
@@ -117,8 +129,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
         function zoomArtwork(event: WheelEvent) {
             if (!artwork) return
 			const bounds = target.getBoundingClientRect()
-			const y = (event.clientY - bounds.top) * (HEIGHT / bounds.height)
-			if (y < family.layout.artwork.dragTop || y > family.layout.artwork.dragBottom) return
+			if (!isInsideArtwork(event.clientX, event.clientY, bounds, family.layout.artwork)) return
 
             event.preventDefault()
 

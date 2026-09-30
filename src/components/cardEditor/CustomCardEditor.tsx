@@ -194,7 +194,7 @@ export function CustomCardEditor() {
                             )}
                             <div className="form-group gap-2">
                                 <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
-                            </div>
+							</div>
                         </>}
                         {layout === 'token' && <div className="form-group gap-2">
                             <label htmlFor="token-style">{t('tokenStyle')}</label>
@@ -233,7 +233,7 @@ export function CustomCardEditor() {
                                     ))}
                                 </select>
                             </div>
-                            <div className="form-group gap-2 mb-5">
+							{planeswalkerStyle !== 'planeswalker-sdcc15' && <div className="form-group gap-2 mb-5">
                                 <FrameColorPicker
                                     value={frameSelection}
                                     onChange={setFrameSelection}
@@ -242,7 +242,7 @@ export function CustomCardEditor() {
                                     hideArtifacts={planeswalkerLimitedColors}
                                     hideColorless={planeswalkerLimitedColors}
                                 />
-                            </div>
+							</div>}
                         </>}
 					</details>
 					<details className="form-section" open>
