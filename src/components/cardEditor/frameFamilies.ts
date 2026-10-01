@@ -91,7 +91,9 @@ export type FrameFamily = {
 	dual?: {
 		neutralVariant: FrameVariant
 		rulesMask: string
+		rightRulesMask?: string
 		pinlineMask: string
+		rightPinlineMask?: string
 		titleMask: string
 		typeMask: string
 		frameMask: string

@@ -884,6 +884,17 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		pt: {},
 		fallbacks: { ...commonFallbacks, A: 'M', C: 'M' },
+		dual: {
+			neutralVariant: 'L',
+			rulesMask: 'img/frames/saga/sagaMaskText.png',
+			rightRulesMask: 'img/frames/saga/sagaMaskTextRight.png',
+			pinlineMask: 'img/frames/saga/sagaMaskBanner.png',
+			rightPinlineMask: 'img/frames/saga/sagaMaskBannerRight.png',
+			titleMask: 'img/frames/m15/regular/m15MaskTitle.png',
+			typeMask: 'img/frames/saga/sagaMaskType.png',
+			frameMask: 'img/frames/saga/sagaMaskFrame.png',
+			rightHalfMask: 'img/frames/m15/regular/maskRightHalf.png',
+		},
 		layout: {
 			artwork: { dragLeft: 750, dragTop: 236, dragRight: 1388, dragBottom: 1758 },
 			title: { x: 128, y: 160, maxWidth: 1244, font: '80px belerenb, serif', color: '#111' },
