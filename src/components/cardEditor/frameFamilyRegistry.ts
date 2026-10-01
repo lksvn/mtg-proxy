@@ -330,6 +330,23 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		fonts: commonFonts,
 	},
+	'planeswalker-seventh': {
+		id: 'planeswalker-seventh',
+		frames: {
+			W: 'img/frames/seventh/w.png',
+			U: 'img/frames/seventh/u.png',
+			B: 'img/frames/seventh/b.png',
+			R: 'img/frames/seventh/r.png',
+			G: 'img/frames/seventh/g.png',
+			M: 'img/frames/seventh/m.png',
+			A: 'img/frames/seventh/a.png',
+			C: 'img/frames/seventh/c.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, L: 'C' },
+		layout: seventhLayout,
+		fonts: ['86px goudymedieval', '90px mplantin', '72px mplantini'],
+	},
 	'planeswalker-borderless': {
 		id: 'planeswalker-borderless',
 		frames: {

@@ -1,4 +1,5 @@
 import type { CardTextRun } from '../cardText.ts'
+import type { FrameLayout } from '../frameFamilies.ts'
 import type { PlaneswalkerCardData } from '../types.ts'
 import { drawManaCost } from './drawManaCost.ts'
 import { drawRulesText, measureRulesTextHeight } from './drawRulesText.ts'
@@ -23,6 +24,14 @@ const ABILITY_CENTERS = [
 ] as const
 
 export type PlaneswalkerIcons = Record<keyof typeof PLANESWALKER_ASSETS, HTMLImageElement>
+
+export function getIconlessAbilityRuns(costs: string[], abilityRuns: CardTextRun[][]) {
+	return abilityRuns.flatMap((runs, index): CardTextRun[] => [
+		{ type: 'text', value: costs[index] ? `${costs[index]}: ` : '', italic: false },
+		...runs,
+		...(index < abilityRuns.length - 1 ? [{ type: 'text' as const, value: '\n', italic: false }] : []),
+	])
+}
 
 export function getPlaneswalkerRows(count: number, desiredHeights?: number[], top = 1310, bottom = 1870) {
 
@@ -169,6 +178,25 @@ export function drawPlaneswalkerNickname(context: CanvasRenderingContext2D, name
 	context.textBaseline = 'middle'
 	context.fillText(name, 750, 235, 1290)
 	context.restore()
+}
+
+export function drawIconlessPlaneswalkerAbilities(
+	context: CanvasRenderingContext2D,
+	card: PlaneswalkerCardData,
+	abilityRuns: CardTextRun[][],
+	manaSymbols: Map<string, HTMLImageElement>,
+	rules: FrameLayout['rules'],
+) {
+	drawRulesText(
+		context,
+		getIconlessAbilityRuns(card.abilities.map(({ cost }) => cost), abilityRuns),
+		manaSymbols,
+		rules.x,
+		rules.y,
+		rules.width,
+		rules.height,
+		{ ...rules, verticalAlign: 'middle' },
+	)
 }
 
 export function drawPlaneswalkerReverseFace(

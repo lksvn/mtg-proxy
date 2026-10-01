@@ -50,6 +50,7 @@ export const PLANESWALKER_STYLES: readonly { id: PlaneswalkerStyle; label: Trans
 	{ id: 'planeswalker-sdcc15', label: 'planeswalkerStyleSdcc15' },
 	{ id: 'planeswalker-sdcc15-transform', label: 'planeswalkerStyleSdcc15Transform' },
 	{ id: 'planeswalker-nickname', label: 'planeswalkerStyleNickname' },
+	{ id: 'planeswalker-seventh', label: 'planeswalkerStyleSeventh' },
 
 	{ id: 'planeswalker-borderless', label: 'planeswalkerStyleBorderless' },
 	{ id: 'planeswalker-tall-borderless', label: 'planeswalkerStyleTallBorderless' },
