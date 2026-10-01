@@ -9,7 +9,7 @@ import { loadAbuDualLand } from './render/composeAbuDualLand'
 import { loadBorderOverlay } from './render/composeBorder'
 import { useI18n } from '../../i18n/context'
 import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
-import { drawPlaneswalker, drawPlaneswalkerBackground, drawPlaneswalkerReverseFace, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from './render/drawPlaneswalker'
+import { drawIconlessPlaneswalkerAbilities, drawPlaneswalker, drawPlaneswalkerBackground, drawPlaneswalkerNickname, drawPlaneswalkerReverseFace, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from './render/drawPlaneswalker'
 
 const DEBUG_CANVAS = import.meta.env.DEV
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
@@ -163,6 +163,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const planeswalker = 'abilities' in card
 			const drawableCard: CustomCardData = planeswalker ? {
 				...card,
+				name: family.id === 'planeswalker-nickname' ? card.nickname : card.name,
 				rulesText: '', centerRulesText: false, flavorText: '', powerToughness: card.startingLoyalty,
 			} : card
             const manaRuns = parseManaCost(card.manaCost)
@@ -258,6 +259,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 
 			if (!canvas || !context) return
 
+			const iconlessPlaneswalker = family.id === 'planeswalker-seventh'
 			drawCard(
 				context,
 				drawableCard,
@@ -280,7 +282,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				{ manaRuns, rulesRuns, flavorRuns },
 				family.layout,
 				resolvedVariant,
-				planeswalker && planeswalkerIcons
+				planeswalker && planeswalkerIcons && !iconlessPlaneswalker
 					? () => drawPlaneswalkerBackground(
 						context,
 						card,
@@ -292,15 +294,21 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					: undefined,
 			)
 			if (planeswalker && planeswalkerIcons) {
-				drawPlaneswalker(
-					context,
-					card,
-					abilityRuns,
-					manaSymbols,
-					planeswalkerIcons,
-					family.layout.rules.y,
-					family.layout.rules.y + family.layout.rules.height,
-				)
+				if (iconlessPlaneswalker) {
+					drawIconlessPlaneswalkerAbilities(context, card, abilityRuns, manaSymbols, family.layout.rules)
+				} else {
+					drawPlaneswalker(
+						context,
+						card,
+						abilityRuns,
+						manaSymbols,
+						planeswalkerIcons,
+						family.layout.rules.y,
+						family.layout.rules.y + family.layout.rules.height,
+						family.layout.rules.color,
+					)
+				}
+				if (family.id === 'planeswalker-nickname') drawPlaneswalkerNickname(context, card.name)
 				if (family.id === 'planeswalker-mdfc-back') {
 					drawPlaneswalkerReverseFace(context, card, reverseManaRuns, manaSymbols)
 				}

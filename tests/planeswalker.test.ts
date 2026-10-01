@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
 import test from 'node:test'
-import { getPlaneswalkerRows, PLANESWALKER_ASSETS } from '../src/components/cardEditor/render/drawPlaneswalker.ts'
+import { getIconlessAbilityRuns, getPlaneswalkerRows, PLANESWALKER_ASSETS } from '../src/components/cardEditor/render/drawPlaneswalker.ts'
 
 test('lays out one to four Planeswalker abilities inside the rules area', () => {
 	for (let count = 1; count <= 4; count++) {
@@ -30,4 +30,22 @@ test('gives passive text more room on a two-ability Planeswalker', () => {
 
 test('Planeswalker overlay assets exist', () => {
 	for (const path of Object.values(PLANESWALKER_ASSETS)) assert.ok(existsSync(`public/${path}`), path)
+})
+
+test('formats Seventh-style loyalty costs as inline rules text', () => {
+	const runs = getIconlessAbilityRuns(
+		['+1', '-3'],
+		[
+			[{ type: 'text', value: 'Draw a card.', italic: false }],
+			[{ type: 'text', value: 'Create a token.', italic: false }],
+		],
+	)
+
+	assert.deepEqual(runs.filter((run) => run.type === 'text').map((run) => run.value), [
+		'+1: ',
+		'Draw a card.',
+		'\n',
+		'-3: ',
+		'Create a token.',
+	])
 })
