@@ -69,16 +69,18 @@ export function drawCard(
 	variant: FrameVariant,
 	drawBeforeFrame?: () => void,
 ) {
+	const canvasWidth = layout.canvas?.width ?? WIDTH
+	const canvasHeight = layout.canvas?.height ?? HEIGHT
 	context.fillStyle = card.backgroundColor
-	context.fillRect(0, 0, WIDTH, HEIGHT)
+	context.fillRect(0, 0, canvasWidth, canvasHeight)
 
 	if (art) {
-		const scale = Math.max(WIDTH / art.width, HEIGHT / art.height) * (1 + transform.scale)
+		const scale = Math.max(canvasWidth / art.width, canvasHeight / art.height) * (1 + transform.scale)
 		const width = art.width * scale
 		const height = art.height * scale
 
 		context.save()
-		context.translate(WIDTH / 2 + transform.x, HEIGHT / 2 + transform.y)
+		context.translate(canvasWidth / 2 + transform.x, canvasHeight / 2 + transform.y)
 		context.rotate(transform.rotation * Math.PI / 180)
 		context.scale(transform.flipX ? -1 : 1, transform.flipY ? -1 : 1)
 		if (transform.grayscale) context.filter = 'grayscale(1)'
@@ -87,7 +89,7 @@ export function drawCard(
 	}
 
 	drawBeforeFrame?.()
-	context.drawImage(frame, 0, 0, WIDTH, HEIGHT)
+	context.drawImage(frame, 0, 0, canvasWidth, canvasHeight)
 	frameOverlay?.crops?.forEach(({ x, y, width, height }) => {
 		context.drawImage(frameOverlay.image, x, y, width, height, x, y, width, height)
 	})
@@ -96,7 +98,7 @@ export function drawCard(
 		context.drawImage(frameOverlay.image, x, y, width, height)
 	}
 	if (overlay) context.drawImage(overlay.image, overlay.x, overlay.y, overlay.width, overlay.height)
-	if (border) context.drawImage(border, 0, 0, WIDTH, HEIGHT)
+	if (border) context.drawImage(border, 0, 0, canvasWidth, canvasHeight)
 	if (colorIndicatorBase && colorIndicatorColors?.length) {
 		context.drawImage(colorIndicatorBase, 115, 1207, 70, 70)
 		const slice = Math.PI * 2 / colorIndicatorColors.length
@@ -197,6 +199,15 @@ export function drawCard(
 		)
 	}
 
+	if (!layout.footer.unrotated) drawCardFooter(context, card, layout, variant)
+}
+
+export function drawCardFooter(
+	context: CanvasRenderingContext2D,
+	card: CustomCardData,
+	layout: FrameLayout,
+	variant: FrameVariant,
+) {
 	const footerX = resolveFooterX(layout, Boolean(card.powerToughness) && layout.pt.width > 0)
 	applyTextStyle(context, layout.footer.metadata)
 	context.fillStyle = layout.footer.colorByVariant?.[variant] ?? layout.footer.metadata.color
