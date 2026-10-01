@@ -7,9 +7,10 @@ type SagaDetailsFormProps = {
 	card: SagaCardData
 	onChange: (card: SagaCardData) => void
 	part: 'content' | 'details'
+	showCreatureFields?: boolean
 }
 
-export function SagaDetailsForm({ card, onChange, part }: SagaDetailsFormProps) {
+export function SagaDetailsForm({ card, onChange, part, showCreatureFields = false }: SagaDetailsFormProps) {
 	const { t } = useI18n()
 	const totalChapters = card.chapters.reduce((total, chapter) => total + chapter.chapterCount, 0)
 
@@ -102,6 +103,28 @@ export function SagaDetailsForm({ card, onChange, part }: SagaDetailsFormProps) 
 			>
 				<Icon name="plus" /> {t('addChapter')}
 			</button>
+
+			{showCreatureFields && <>
+				<div className="form-group gap-2 mt-5">
+					<label htmlFor="saga-creature-rules">{t('rulesText')}</label>
+					<textarea
+						id="saga-creature-rules"
+						rows={3}
+						value={card.flavorText}
+						onChange={(event) => update({ flavorText: event.target.value })}
+					/>
+				</div>
+				<div className="form-group gap-2">
+					<label htmlFor="saga-creature-power-toughness">{t('powerToughness')}</label>
+					<input
+						id="saga-creature-power-toughness"
+						type="text"
+						placeholder="3/3"
+						value={card.powerToughness}
+						onChange={(event) => update({ powerToughness: event.target.value })}
+					/>
+				</div>
+			</>}
 		</>
 	)
 }

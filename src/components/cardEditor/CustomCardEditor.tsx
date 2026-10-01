@@ -16,8 +16,10 @@ import { FrameColorPicker } from './ui/FrameColorPicker'
 import {
 	FRAME_STYLE_GROUPS,
 	PLANESWALKER_STYLES,
+	SAGA_STYLES,
 	TOKEN_STYLES,
 	type PlaneswalkerStyle,
+	type SagaStyle,
 	type TokenStyle,
 } from './editorOptions'
 
@@ -48,6 +50,7 @@ export function CustomCardEditor() {
 	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker' | 'battle' | 'saga'>('card')
 	const [tokenStyle, setTokenStyle] = useState<TokenStyle>('token-regular')
 	const [planeswalkerStyle, setPlaneswalkerStyle] = useState<PlaneswalkerStyle>('planeswalker-regular')
+	const [sagaStyle, setSagaStyle] = useState<SagaStyle>('saga-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -96,7 +99,7 @@ export function CustomCardEditor() {
 		],
 	})
 	const activeCard = layout === 'token' ? token : layout === 'planeswalker' ? planeswalker : layout === 'battle' ? battle : layout === 'saga' ? saga : card
-	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : layout === 'saga' ? 'saga-regular' : frameFamily
+	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : layout === 'saga' ? sagaStyle : frameFamily
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
 	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
 	const planeswalkerLimitedColors = planeswalkerStyle === 'planeswalker-transform-front' ||
@@ -268,13 +271,29 @@ export function CustomCardEditor() {
 						{layout === 'battle' && <div className="form-group gap-2 mb-5">
 							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideVehicles />
 						</div>}
-						{layout === 'saga' && <div className="form-group gap-2 mb-5">
-							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideVehicles hideArtifacts hideColorless hideColoredLands />
-						</div>}
+						{layout === 'saga' && <>
+							<div className="form-group gap-2">
+								<label htmlFor="saga-style">{t('sagaStyle')}</label>
+								<select id="saga-style" value={sagaStyle} onChange={(event) => setSagaStyle(event.target.value as SagaStyle)}>
+									{SAGA_STYLES.map(({ id, label }) => <option key={id} value={id}>{t(label)}</option>)}
+								</select>
+							</div>
+							<div className="form-group gap-2 mb-5">
+								<FrameColorPicker
+									value={frameSelection}
+									onChange={setFrameSelection}
+									hideVehicles
+									hideArtifacts
+									hideColorless={sagaStyle === 'saga-regular'}
+									hideLands={sagaStyle === 'saga-creature'}
+									hideColoredLands
+								/>
+							</div>
+						</>}
 					</details>
 					<details className="form-section" open>
 					    <summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>
-						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="content" /> : <CardDetailsForm
+						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="content" showCreatureFields={sagaStyle === 'saga-creature'} /> : <CardDetailsForm
 							card={layout === 'token' ? token : layout === 'battle' ? battle : card}
 							onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard}
                             hideManaCost={layout === 'token' && !tokenOptions.showManaCost}

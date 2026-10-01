@@ -184,6 +184,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const abilityRuns = planeswalker ? card.abilities.map(({ text }) => parseRulesText(text)) : []
 			const sagaReminderRuns = saga ? parseRulesText(card.rulesText) : []
 			const sagaChapterRuns = saga ? card.chapters.map(({ text }) => parseRulesText(text)) : []
+			const sagaCreatureRulesRuns = saga && family.id === 'saga-creature' ? parseRulesText(card.flavorText) : []
 			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
 			const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 				? 'img/frames/planeswalker/mdfc/text.png'
@@ -195,7 +196,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
 					: PLANESWALKER_ASSETS.mask
 			const planeswalkerAssets = { ...PLANESWALKER_ASSETS, mask: planeswalkerMask }
-			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat()]
+			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat(), ...sagaCreatureRulesRuns]
 			const futureManaFiles = family.id === 'future-sight'
 				? manaRuns.flatMap((run) => run.type === 'symbol' ? [futureManaFile(run.value)].filter((file): file is string => Boolean(file)) : [])
 				: []
@@ -328,7 +329,16 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				}
 			}
 			if (saga && sagaImages) {
-				drawSaga(context, card, sagaReminderRuns, sagaChapterRuns, manaSymbols, sagaImages)
+				drawSaga(
+					context,
+					card,
+					sagaReminderRuns,
+					sagaChapterRuns,
+					sagaCreatureRulesRuns,
+					manaSymbols,
+					sagaImages,
+					family.id === 'saga-creature',
+				)
 			}
 			context.resetTransform()
 			if (family.layout.footer.unrotated) {

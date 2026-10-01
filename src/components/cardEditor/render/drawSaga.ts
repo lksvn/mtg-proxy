@@ -13,10 +13,6 @@ export type SagaImages = {
 	divider: HTMLImageElement
 }
 
-const ABILITY_X = 200
-const ABILITY_Y = 608
-const ABILITY_WIDTH = 525
-const ABILITY_HEIGHT = 1148
 const CHAPTER_X = 58
 const CHAPTER_WIDTH = 118
 const CHAPTER_HEIGHT = 132
@@ -26,10 +22,19 @@ export function drawSaga(
 	card: SagaCardData,
 	reminderRuns: CardTextRun[],
 	chapterRuns: CardTextRun[][],
+	creatureRulesRuns: CardTextRun[],
 	manaSymbols: Map<string, HTMLImageElement>,
 	images: SagaImages,
+	creature: boolean,
 ) {
-	drawRulesText(context, reminderRuns, manaSymbols, 130, 265, 606, 372, {
+	const reminder = creature
+		? { x: 130, y: 250, width: 1260, height: 174 }
+		: { x: 130, y: 265, width: 606, height: 372 }
+	const abilities = creature
+		? { x: 200, y: 451, width: 525, height: 1138 }
+		: { x: 200, y: 608, width: 525, height: 1148 }
+
+	drawRulesText(context, reminderRuns, manaSymbols, reminder.x, reminder.y, reminder.width, reminder.height, {
 		fontFamily: 'mplantin',
 		italicFontFamily: 'mplantini',
 		color: '#111',
@@ -38,20 +43,33 @@ export function drawSaga(
 		maxFontSize: 62,
 		minFontSize: 34,
 	})
+	if (creature) {
+		drawRulesText(context, creatureRulesRuns, manaSymbols, 119, 1741, 1263, 192, {
+			fontFamily: 'mplantin',
+			italicFontFamily: 'mplantini',
+			color: '#111',
+			strokeColor: '#fff',
+			strokeWidth: 0.75,
+			maxFontSize: 58,
+			minFontSize: 30,
+			horizontalAlign: 'center',
+			verticalAlign: 'middle',
+		})
+	}
 
 	const weights = card.chapters.map((chapter) => Math.max(20, chapter.text.length))
 	const totalWeight = weights.reduce((total, weight) => total + weight, 0)
-	let y = ABILITY_Y
+	let y = abilities.y
 	let chapterNumber = 1
 	let remainingChapters = 6
 
 	card.chapters.forEach((chapter, index) => {
 		const height = index === card.chapters.length - 1
-			? ABILITY_Y + ABILITY_HEIGHT - y
-			: ABILITY_HEIGHT * weights[index] / totalWeight
+			? abilities.y + abilities.height - y
+			: abilities.height * weights[index] / totalWeight
 
 		context.drawImage(images.divider, 150, y - 3, 592, 6)
-		drawRulesText(context, chapterRuns[index], manaSymbols, ABILITY_X, y + 16, ABILITY_WIDTH, height - 32, {
+		drawRulesText(context, chapterRuns[index], manaSymbols, abilities.x, y + 16, abilities.width, height - 32, {
 			verticalAlign: 'middle',
 			fontFamily: 'mplantin',
 			italicFontFamily: 'mplantini',
