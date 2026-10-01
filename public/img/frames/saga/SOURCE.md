@@ -1,0 +1,1 @@
+The regular Saga frame, chapter, and divider assets were copied from the local [Card Conjurer](https://github.com/joshbirnholz/cardconjurer) clone at `D:\www\cardconjurer`, revision `d3c6706692898d596ec6a5be0be44f63062c9e12`. Asset choices and geometry follow `js/frames/packSagaRegular.js` and `js/frames/versionSaga.js`.

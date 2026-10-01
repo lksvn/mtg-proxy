@@ -871,6 +871,31 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		fonts: commonFonts,
 	},
+	'saga-regular': {
+		id: 'saga-regular',
+		frames: {
+			W: 'img/frames/saga/regular/sagaFrameW.png',
+			U: 'img/frames/saga/regular/sagaFrameU.png',
+			B: 'img/frames/saga/regular/sagaFrameB.png',
+			R: 'img/frames/saga/regular/sagaFrameR.png',
+			G: 'img/frames/saga/regular/sagaFrameG.png',
+			M: 'img/frames/saga/regular/sagaFrameM.png',
+			L: 'img/frames/saga/regular/l.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, A: 'M', C: 'M' },
+		layout: {
+			artwork: { dragLeft: 750, dragTop: 236, dragRight: 1388, dragBottom: 1758 },
+			title: { x: 128, y: 160, maxWidth: 1244, font: '80px belerenb, serif', color: '#111' },
+			mana: { right: 1394, centerY: 160, symbolSize: 71, gap: 4, font: '48px belerenb, serif', color: '#111' },
+			type: { x: 128, y: 1835, maxWidth: 1244, font: '68px belerenb, serif', color: '#111' },
+			rules: { x: 130, y: 237, width: 606, height: 1519, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
+			symbol: { centerX: 1340, centerY: 1835, boxSize: 80 },
+			pt: { x: 0, y: 0, width: 0, height: 0, textX: 0, textY: 0, font: '1px mplantin, serif', color: '#111' },
+			footer: commonFooter,
+		},
+		fonts: commonFonts,
+	},
 	'battle-regular': {
 		id: 'battle-regular',
 		frames: {

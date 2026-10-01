@@ -4,7 +4,8 @@ import { FileInput } from '../FileInput'
 import { ArtworkControls } from './ui/ArtworkControls'
 import { CardDetailsForm } from './ui/CardDetailsForm'
 import { PlaneswalkerDetailsForm } from './ui/PlaneswalkerDetailsForm'
-import type { CustomCardData, FrameVariant, PlaneswalkerCardData } from './types'
+import { SagaDetailsForm } from './ui/SagaDetailsForm'
+import type { CustomCardData, FrameVariant, PlaneswalkerCardData, SagaCardData } from './types'
 import { inferFrameVariant } from './cardText'
 import { useI18n } from '../../i18n/context'
 import { downloadBlob } from '../../utils/downloadBlob'
@@ -44,7 +45,7 @@ export function CustomCardEditor() {
 	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
-	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker' | 'battle'>('card')
+	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker' | 'battle' | 'saga'>('card')
 	const [tokenStyle, setTokenStyle] = useState<TokenStyle>('token-regular')
 	const [planeswalkerStyle, setPlaneswalkerStyle] = useState<PlaneswalkerStyle>('planeswalker-regular')
     const [card, setCard] = useState<CustomCardData>({
@@ -83,8 +84,19 @@ export function CustomCardEditor() {
 		centerRulesText: false, flavorText: '', powerToughness: '3', artist: '', number: '194',
 		rarity: 'uncommon', tintSetSymbol: false, backgroundColor: '#000000',
 	})
-	const activeCard = layout === 'token' ? token : layout === 'planeswalker' ? planeswalker : layout === 'battle' ? battle : card
-	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : frameFamily
+	const [saga, setSaga] = useState<SagaCardData>({
+		name: 'History of Benalia', manaCost: '1ww', typeLine: 'Enchantment — Saga',
+		rulesText: '(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)',
+		centerRulesText: false, flavorText: '', powerToughness: '', artist: '', number: '21',
+		rarity: 'mythic', tintSetSymbol: false, backgroundColor: '#000000',
+		chapters: [
+			{ chapterCount: 1, text: 'Create a 2/2 white Knight creature token with vigilance.' },
+			{ chapterCount: 1, text: 'Create a 2/2 white Knight creature token with vigilance.' },
+			{ chapterCount: 1, text: 'Knights you control get +2/+1 until end of turn.' },
+		],
+	})
+	const activeCard = layout === 'token' ? token : layout === 'planeswalker' ? planeswalker : layout === 'battle' ? battle : layout === 'saga' ? saga : card
+	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : layout === 'saga' ? 'saga-regular' : frameFamily
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
 	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
 	const planeswalkerLimitedColors = planeswalkerStyle === 'planeswalker-transform-front' ||
@@ -149,6 +161,7 @@ export function CustomCardEditor() {
                                 <option value="token">{t('cardLayoutToken')}</option>
                                 <option value="planeswalker">{t('cardLayoutPlaneswalker')}</option>
 								<option value="battle">{t('cardLayoutBattle')}</option>
+								<option value="saga">{t('cardLayoutSaga')}</option>
                             </select>
                         </div>
                         {layout === 'card' && <>
@@ -255,10 +268,13 @@ export function CustomCardEditor() {
 						{layout === 'battle' && <div className="form-group gap-2 mb-5">
 							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideVehicles />
 						</div>}
+						{layout === 'saga' && <div className="form-group gap-2 mb-5">
+							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideVehicles hideArtifacts hideColorless hideColoredLands />
+						</div>}
 					</details>
 					<details className="form-section" open>
 					    <summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>
-						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : <CardDetailsForm
+						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="content" /> : <CardDetailsForm
 							card={layout === 'token' ? token : layout === 'battle' ? battle : card}
 							onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard}
                             hideManaCost={layout === 'token' && !tokenOptions.showManaCost}
@@ -273,7 +289,7 @@ export function CustomCardEditor() {
 					</details>
 					<details className="form-section">
                         <summary><h5 className="mt-5">4. {t('cardDetailsSection')}</h5></summary>
-						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="details" /> : <CardDetailsForm card={layout === 'token' ? token : layout === 'battle' ? battle : card} onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard} part="details" />}
+						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="details" /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="details" /> : <CardDetailsForm card={layout === 'token' ? token : layout === 'battle' ? battle : card} onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard} part="details" />}
 					</details>
                 </div>
 

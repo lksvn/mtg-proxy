@@ -26,6 +26,7 @@ const OPTIONS: { value: FrameChoice; label: TranslationKey; symbol?: string }[] 
 	{ value: 'ML', label: 'frameMulticoloredLand' },
 ]
 const LAND_OPTIONS: FrameChoice[] = ['L', 'WL', 'UL', 'BL', 'RL', 'GL', 'ML']
+const COLORED_LAND_OPTIONS: FrameChoice[] = ['WL', 'UL', 'BL', 'RL', 'GL', 'ML']
 
 function ChoiceIcon({ value, symbol }: { value: FrameChoice; symbol?: string }) {
 	return symbol
@@ -37,6 +38,7 @@ export function FrameColorPicker({
 	value,
 	onChange,
 	hideLands = false,
+	hideColoredLands = false,
 	hideVehicles = false,
 	hideArtifacts = false,
 	hideColorless = false,
@@ -44,6 +46,7 @@ export function FrameColorPicker({
 	value: FrameChoice
 	onChange: (value: FrameChoice) => void
 	hideLands?: boolean
+	hideColoredLands?: boolean
 	hideVehicles?: boolean
 	hideArtifacts?: boolean
 	hideColorless?: boolean
@@ -51,6 +54,7 @@ export function FrameColorPicker({
 	const { t } = useI18n()
 	const options = OPTIONS.filter((option) =>
 		(!hideLands || !LAND_OPTIONS.includes(option.value)) &&
+		(!hideColoredLands || !COLORED_LAND_OPTIONS.includes(option.value)) &&
 		(!hideVehicles || option.value !== 'V') &&
 		(!hideArtifacts || option.value !== 'A') &&
 		(!hideColorless || option.value !== 'C'))

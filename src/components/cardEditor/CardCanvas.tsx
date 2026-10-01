@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
-import { DUAL_FRAME_VARIANTS, type CustomCardData, type FrameVariant, type PlaneswalkerCardData } from './types'
+import { DUAL_FRAME_VARIANTS, type CustomCardData, type FrameVariant, type PlaneswalkerCardData, type SagaCardData } from './types'
 import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
 import { drawCard, drawCardFooter, HEIGHT, WIDTH } from './render/drawCard'
 import { futureManaFile } from './render/drawManaCost'
@@ -10,6 +10,7 @@ import { loadBorderOverlay } from './render/composeBorder'
 import { useI18n } from '../../i18n/context'
 import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
 import { drawIconlessPlaneswalkerAbilities, drawPlaneswalker, drawPlaneswalkerBackground, drawPlaneswalkerNickname, drawPlaneswalkerReverseFace, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from './render/drawPlaneswalker'
+import { drawSaga, SAGA_ASSETS, type SagaImages } from './render/drawSaga'
 import { Icon } from '../Icon'
 
 const DEBUG_CANVAS = import.meta.env.DEV
@@ -50,7 +51,7 @@ type CardCanvasProps = {
 	borderStyle: FrameBorderStyle
 	frameVariant: FrameVariant
 	transform: ArtworkTransform,
-    card: CustomCardData | PlaneswalkerCardData,
+    card: CustomCardData | PlaneswalkerCardData | SagaCardData,
     onTransformChange: (transform: ArtworkTransform) => void,
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
@@ -163,12 +164,13 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 		let cancelled = false
 
 		async function render() {
-			const planeswalker = 'abilities' in card
+			const planeswalker = 'startingLoyalty' in card
+			const saga = 'chapters' in card
 			const drawableCard: CustomCardData = planeswalker ? {
 				...card,
 				name: family.id === 'planeswalker-nickname' ? card.nickname : card.name,
 				rulesText: '', centerRulesText: false, flavorText: '', powerToughness: card.startingLoyalty,
-			} : card
+			} : saga ? { ...card, rulesText: '', flavorText: '' } : card
             const manaRuns = parseManaCost(card.manaCost)
             const rulesRuns = parseRulesText(drawableCard.rulesText)
 
@@ -180,6 +182,8 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
             )
 
 			const abilityRuns = planeswalker ? card.abilities.map(({ text }) => parseRulesText(text)) : []
+			const sagaReminderRuns = saga ? parseRulesText(card.rulesText) : []
+			const sagaChapterRuns = saga ? card.chapters.map(({ text }) => parseRulesText(text)) : []
 			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
 			const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 				? 'img/frames/planeswalker/mdfc/text.png'
@@ -191,7 +195,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
 					: PLANESWALKER_ASSETS.mask
 			const planeswalkerAssets = { ...PLANESWALKER_ASSETS, mask: planeswalkerMask }
-			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat()]
+			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat()]
 			const futureManaFiles = family.id === 'future-sight'
 				? manaRuns.flatMap((run) => run.type === 'symbol' ? [futureManaFile(run.value)].filter((file): file is string => Boolean(file)) : [])
 				: []
@@ -227,7 +231,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const colorIndicatorColors = family.id === 'planeswalker-transform-back' || family.id === 'planeswalker-transform-back-double-feature'
 				? COLOR_INDICATOR_ORDER.filter((color) => card.manaCost.toUpperCase().includes(color))
 				: []
-			const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase] = await Promise.all([
+			const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase, sagaImages] = await Promise.all([
 				abuLandColors
 					? loadAbuDualLand(family, abuLandColors)
 					: dualPair
@@ -244,6 +248,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				typeIconPath ? loadImage(assetUrl(typeIconPath)) : undefined,
 				planeswalker ? Promise.all(Object.entries(planeswalkerAssets).map(async ([key, path]) => [key, await loadImage(assetUrl(path))] as const)).then((entries) => Object.fromEntries(entries) as PlaneswalkerIcons) : undefined,
 				colorIndicatorColors.length ? loadImage(assetUrl('img/frames/planeswalker/color-indicator/base.png')) : undefined,
+				saga ? Promise.all(Object.entries(SAGA_ASSETS).map(async ([key, path]) => [key, await loadImage(assetUrl(path))] as const)).then((entries) => Object.fromEntries(entries) as SagaImages) : undefined,
 			])
 			const manaSymbols = new Map(
                 await Promise.all(
@@ -321,6 +326,9 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				if (family.id === 'planeswalker-mdfc-back') {
 					drawPlaneswalkerReverseFace(context, card, reverseManaRuns, manaSymbols)
 				}
+			}
+			if (saga && sagaImages) {
+				drawSaga(context, card, sagaReminderRuns, sagaChapterRuns, manaSymbols, sagaImages)
 			}
 			context.resetTransform()
 			if (family.layout.footer.unrotated) {
