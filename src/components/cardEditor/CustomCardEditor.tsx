@@ -68,6 +68,7 @@ export function CustomCardEditor() {
 	})
 	const [planeswalker, setPlaneswalker] = useState<PlaneswalkerCardData>({
 		name: 'Jace, Arcane Strategist', manaCost: '4uu', typeLine: 'Legendary Planeswalker — Jace', startingLoyalty: '4',
+		nickname: 'The Mind Sculptor',
 		reverseFaceName: '', reverseFaceManaCost: '',
 		abilities: [
 			{ cost: '+1', text: 'Draw a card.' },
@@ -247,7 +248,7 @@ export function CustomCardEditor() {
 					</details>
 					<details className="form-section" open>
 					    <summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>
-                        {layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : <CardDetailsForm
+                        {layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : <CardDetailsForm
                             card={layout === 'token' ? token : card}
                             onChange={layout === 'token' ? setToken : setCard}
                             hideManaCost={layout === 'token' && !tokenOptions.showManaCost}

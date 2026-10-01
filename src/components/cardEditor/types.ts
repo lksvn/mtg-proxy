@@ -24,6 +24,7 @@ export type PlaneswalkerAbility = {
 }
 
 export type PlaneswalkerCardData = Omit<CustomCardData, 'rulesText' | 'centerRulesText' | 'flavorText' | 'powerToughness'> & {
+	nickname: string
 	startingLoyalty: string
 	reverseFaceName: string
 	reverseFaceManaCost: string

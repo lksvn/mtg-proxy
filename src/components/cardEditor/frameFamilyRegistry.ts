@@ -304,6 +304,32 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		fonts: commonFonts,
 	},
+	'planeswalker-nickname': {
+		id: 'planeswalker-nickname',
+		frames: {
+			W: 'img/frames/planeswalker/nickname/w.png',
+			U: 'img/frames/planeswalker/nickname/u.png',
+			B: 'img/frames/planeswalker/nickname/b.png',
+			R: 'img/frames/planeswalker/nickname/r.png',
+			G: 'img/frames/planeswalker/nickname/g.png',
+			M: 'img/frames/planeswalker/nickname/m.png',
+			A: 'img/frames/planeswalker/nickname/a.png',
+			L: 'img/frames/planeswalker/nickname/l.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, C: 'L' },
+		layout: {
+			artwork: { dragLeft: 80, dragTop: 247, dragRight: 1420, dragBottom: 1162 },
+			title: { x: 130, y: 136, maxWidth: 1240, font: '80px belerenb, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 2, shadowOffsetY: 2 },
+			mana: { right: 1394, centerY: 136, symbolSize: 71, gap: 0, font: '48px belerenb, serif', color: '#fff' },
+			type: { x: 130, y: 1237, maxWidth: 1240, font: '68px belerenb, serif', color: '#fff', shadowColor: '#111', shadowOffsetX: 2, shadowOffsetY: 2 },
+			rules: { x: 270, y: 1310, width: 1100, height: 560, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 74, minFontSize: 32 },
+			symbol: { centerX: 1340, centerY: 1237, boxSize: 80 },
+			pt: { x: 1209, y: 1894, width: 210, height: 78, textX: 1314, textY: 1933, font: '78px belerenbsc, serif', color: '#fff' },
+			footer: commonFooter,
+		},
+		fonts: commonFonts,
+	},
 	'planeswalker-borderless': {
 		id: 'planeswalker-borderless',
 		frames: {

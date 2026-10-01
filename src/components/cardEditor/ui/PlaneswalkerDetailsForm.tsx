@@ -7,10 +7,11 @@ type Props = {
 	card: PlaneswalkerCardData
 	onChange: (card: PlaneswalkerCardData) => void
 	part: 'content' | 'details'
+	showNickname?: boolean
 	showReverseFace?: boolean
 }
 
-export function PlaneswalkerDetailsForm({ card, onChange, part, showReverseFace = false }: Props) {
+export function PlaneswalkerDetailsForm({ card, onChange, part, showNickname = false, showReverseFace = false }: Props) {
 	const { t } = useI18n()
 	const update = (changes: Partial<PlaneswalkerCardData>) => onChange({ ...card, ...changes })
 
@@ -85,6 +86,15 @@ export function PlaneswalkerDetailsForm({ card, onChange, part, showReverseFace 
 
 	return (
 		<fieldset>
+			{showNickname && <div className="form-group gap-2">
+				<label htmlFor="planeswalker-nickname">{t('nickname')}</label>
+				<input
+					id="planeswalker-nickname"
+					type="text"
+					value={card.nickname}
+					onChange={(event) => update({ nickname: event.target.value })}
+				/>
+			</div>}
 			<div className="form-group gap-2">
 				<label htmlFor="planeswalker-name">{t('cardName')}</label>
 				<input

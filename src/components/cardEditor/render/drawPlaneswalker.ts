@@ -52,13 +52,14 @@ function getPlaneswalkerLayout(
 	abilityRuns: CardTextRun[][],
 	top: number,
 	bottom: number,
+	color = '#111',
 ) {
 	const textStyle = {
 		verticalAlign: 'middle' as const,
 		fontFamily: 'mplantin',
 		italicFontFamily: 'mplantini',
-		color: '#111',
-		strokeColor: '#111',
+		color,
+		strokeColor: color,
 		strokeWidth: 0.75,
 		maxFontSize: 62,
 		minFontSize: 30,
@@ -113,8 +114,9 @@ export function drawPlaneswalker(
 	icons: PlaneswalkerIcons,
 	top = 1310,
 	bottom = 1870,
+	color = '#111',
 ) {
-	const { rows, textHeights, textStyle } = getPlaneswalkerLayout(context, card, abilityRuns, top, bottom)
+	const { rows, textHeights, textStyle } = getPlaneswalkerLayout(context, card, abilityRuns, top, bottom, color)
 
 	rows.forEach((row, index) => {
 		const ability = card.abilities[index]
@@ -154,6 +156,19 @@ export function drawPlaneswalker(
 			textStyle,
 		)
 	})
+}
+
+export function drawPlaneswalkerNickname(context: CanvasRenderingContext2D, name: string) {
+	context.save()
+	context.font = '48px mplantini, serif'
+	context.fillStyle = '#fff'
+	context.shadowColor = '#111'
+	context.shadowOffsetX = 2
+	context.shadowOffsetY = 2
+	context.textAlign = 'center'
+	context.textBaseline = 'middle'
+	context.fillText(name, 750, 235, 1290)
+	context.restore()
 }
 
 export function drawPlaneswalkerReverseFace(
