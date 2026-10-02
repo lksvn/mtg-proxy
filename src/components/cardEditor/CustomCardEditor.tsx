@@ -283,7 +283,7 @@ export function CustomCardEditor() {
 									value={frameSelection}
 									onChange={setFrameSelection}
 									hideVehicles
-									hideArtifacts={sagaStyle !== 'saga-nyx'}
+									hideArtifacts={!['saga-nyx', 'saga-universes-beyond'].includes(sagaStyle)}
 									hideColorless={sagaStyle === 'saga-regular'}
 									hideLands={sagaStyle !== 'saga-regular'}
 									hideColoredLands

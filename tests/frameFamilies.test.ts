@@ -44,6 +44,7 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(resolveFrameVariant(regular, 'V'), 'V')
 	assert.equal(resolveFrameVariant(FRAME_FAMILIES['saga-regular'], 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(FRAME_FAMILIES['saga-nyx'], 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(FRAME_FAMILIES['saga-universes-beyond'], 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(FRAME_FAMILIES['saga-creature'], 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(FRAME_FAMILIES['m15-extended'], 'WU'), 'WU')
 	const borderless = FRAME_FAMILIES.borderless

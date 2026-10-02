@@ -36,6 +36,7 @@ export type SagaStyle = Extract<FrameFamilyId, `saga-${string}`>
 export const SAGA_STYLES: readonly { id: SagaStyle; label: TranslationKey }[] = [
 	{ id: 'saga-regular', label: 'sagaStyleRegular' },
 	{ id: 'saga-nyx', label: 'sagaStyleNyx' },
+	{ id: 'saga-universes-beyond', label: 'sagaStyleUniversesBeyond' },
 	{ id: 'saga-creature', label: 'sagaStyleCreature' },
 ]
 
