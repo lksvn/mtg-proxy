@@ -39,6 +39,7 @@ export const SAGA_STYLES: readonly { id: SagaStyle; label: TranslationKey }[] = 
 	{ id: 'saga-universes-beyond', label: 'sagaStyleUniversesBeyond' },
 	{ id: 'saga-creature', label: 'sagaStyleCreature' },
 	{ id: 'saga-transform', label: 'sagaStyleTransform' },
+	{ id: 'saga-lord-of-the-rings', label: 'sagaStyleLordOfTheRings' },
 ]
 
 export const PLANESWALKER_STYLES: readonly { id: PlaneswalkerStyle; label: TranslationKey }[] = [

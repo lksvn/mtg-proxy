@@ -1096,6 +1096,41 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		},
 		fonts: commonFonts,
 	},
+	'saga-lord-of-the-rings': {
+		id: 'saga-lord-of-the-rings',
+		frames: {
+			W: 'img/frames/saga/lord-of-the-rings/w.png',
+			U: 'img/frames/saga/lord-of-the-rings/u.png',
+			B: 'img/frames/saga/lord-of-the-rings/b.png',
+			R: 'img/frames/saga/lord-of-the-rings/r.png',
+			G: 'img/frames/saga/lord-of-the-rings/g.png',
+			M: 'img/frames/saga/lord-of-the-rings/m.png',
+		},
+		pt: {},
+		fallbacks: {
+			...commonFallbacks,
+			A: 'M',
+			C: 'M',
+			L: 'M',
+			V: 'M',
+		},
+		layout: {
+			saga: regularSagaLayout,
+			artwork: { dragLeft: 744, dragTop: 234, dragRight: 1384, dragBottom: 1760 },
+			title: { x: 128, y: 160, maxWidth: 1244, font: '80px belerenb, serif', color: '#111' },
+			mana: { right: 1394, centerY: 160, symbolSize: 71, gap: 4, font: '48px belerenb, serif', color: '#111' },
+			type: { x: 128, y: 1835, maxWidth: 1244, font: '68px belerenb, serif', color: '#111' },
+			rules: { x: 130, y: 237, width: 606, height: 1519, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
+			symbol: { centerX: 1340, centerY: 1835, boxSize: 80 },
+			pt: { x: 0, y: 0, width: 0, height: 0, textX: 0, textY: 0, font: '1px mplantin, serif', color: '#111' },
+			footer: {
+				...commonFooter,
+				metadata: { ...commonFooter.metadata, color: '#111' },
+				disclaimer: { ...commonFooter.disclaimer, color: '#111' },
+			},
+		},
+		fonts: commonFonts,
+	},
 	'saga-regular': {
 		id: 'saga-regular',
 		frames: {
