@@ -1,5 +1,6 @@
 import { Icon } from '../../Icon'
 import { useI18n } from '../../../i18n/context'
+import { formatPowerToughnessInput } from '../cardText'
 import type { SagaCardData } from '../types'
 import { CardDetailsForm } from './CardDetailsForm'
 
@@ -8,9 +9,10 @@ type SagaDetailsFormProps = {
 	onChange: (card: SagaCardData) => void
 	part: 'content' | 'details'
 	showCreatureFields?: boolean
+	showTransformFields?: boolean
 }
 
-export function SagaDetailsForm({ card, onChange, part, showCreatureFields = false }: SagaDetailsFormProps) {
+export function SagaDetailsForm({ card, onChange, part, showCreatureFields = false, showTransformFields = false }: SagaDetailsFormProps) {
 	const { t } = useI18n()
 	const totalChapters = card.chapters.reduce((total, chapter) => total + chapter.chapterCount, 0)
 
@@ -119,12 +121,23 @@ export function SagaDetailsForm({ card, onChange, part, showCreatureFields = fal
 					<input
 						id="saga-creature-power-toughness"
 						type="text"
-						placeholder="3/3"
+						placeholder="***/***"
 						value={card.powerToughness}
-						onChange={(event) => update({ powerToughness: event.target.value })}
+						onChange={(event) => update({ powerToughness: formatPowerToughnessInput(event.target.value) })}
 					/>
 				</div>
 			</>}
+
+			{showTransformFields && <div className="form-group gap-2 mt-5">
+				<label htmlFor="saga-reverse-power-toughness">{t('powerToughness')}</label>
+				<input
+					id="saga-reverse-power-toughness"
+					type="text"
+					placeholder="***/***"
+					value={card.powerToughness}
+					onChange={(event) => update({ powerToughness: formatPowerToughnessInput(event.target.value) })}
+				/>
+			</div>}
 		</>
 	)
 }

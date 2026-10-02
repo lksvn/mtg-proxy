@@ -49,6 +49,30 @@ const commonFooter: FrameLayout['footer'] = {
 	disclaimer: { font: '34px mplantin, serif', color: '#fff' },
 }
 
+const regularSagaLayout: NonNullable<FrameLayout['saga']> = {
+	reminder: { x: 130, y: 265, width: 606, height: 372 },
+	abilities: { x: 200, y: 608, width: 525, height: 1148 },
+	chapter: {
+		x: 58,
+		width: 118,
+		height: 132,
+		gap: 150,
+		dividerX: 150,
+		dividerWidth: 592,
+		dividerHeight: 6,
+		dividerOffsetY: -3,
+		textInsetX: 0,
+		textInsetY: 16,
+	},
+}
+
+const creatureSagaLayout: NonNullable<FrameLayout['saga']> = {
+	reminder: { x: 130, y: 250, width: 1260, height: 174 },
+	abilities: { x: 200, y: 451, width: 525, height: 1138 },
+	creatureRules: { x: 119, y: 1741, width: 1263, height: 192 },
+	chapter: regularSagaLayout.chapter,
+}
+
 function tokenFrames(style: string, variants: readonly FrameVariant[]): FrameFamily['frames'] {
 	return Object.fromEntries(variants.map((variant) => [variant, `img/frames/token/${style}/${variant.toLowerCase()}.png`]))
 }
@@ -905,6 +929,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 			rightHalfMask: 'img/frames/m15/regular/maskRightHalf.png',
 		},
 		layout: {
+			saga: creatureSagaLayout,
 			artwork: { dragLeft: 753, dragTop: 439, dragRight: 1383, dragBottom: 1583 },
 			title: { x: 128, y: 160, maxWidth: 1244, font: '80px belerenb, serif', color: '#111' },
 			mana: { right: 1394, centerY: 160, symbolSize: 71, gap: 4, font: '48px belerenb, serif', color: '#111' },
@@ -951,6 +976,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 			rightHalfMask: 'img/frames/m15/regular/maskRightHalf.png',
 		},
 		layout: {
+			saga: regularSagaLayout,
 			artwork: { dragLeft: 750, dragTop: 236, dragRight: 1388, dragBottom: 1758 },
 			title: { x: 128, y: 160, maxWidth: 1244, font: '80px belerenb, serif', color: '#111' },
 			mana: { right: 1394, centerY: 160, symbolSize: 71, gap: 4, font: '48px belerenb, serif', color: '#111' },
@@ -997,8 +1023,70 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 			rightHalfMask: 'img/frames/m15/regular/maskRightHalf.png',
 		},
 		layout: {
+			saga: regularSagaLayout,
 			artwork: { dragLeft: 750, dragTop: 236, dragRight: 1388, dragBottom: 1758 },
 			title: { x: 128, y: 160, maxWidth: 1244, font: '80px belerenb, serif', color: '#111' },
+			mana: { right: 1394, centerY: 160, symbolSize: 71, gap: 4, font: '48px belerenb, serif', color: '#111' },
+			type: { x: 128, y: 1835, maxWidth: 1244, font: '68px belerenb, serif', color: '#111' },
+			rules: { x: 130, y: 237, width: 606, height: 1519, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
+			symbol: { centerX: 1340, centerY: 1835, boxSize: 80 },
+			pt: { x: 0, y: 0, width: 0, height: 0, textX: 0, textY: 0, font: '1px mplantin, serif', color: '#111' },
+			footer: commonFooter,
+		},
+		fonts: commonFonts,
+	},
+	'saga-transform': {
+		id: 'saga-transform',
+		overlay: {
+			path: 'img/frames/saga/transform/front-icon.svg',
+			x: 89,
+			y: 105,
+			width: 110,
+			height: 110,
+		},
+		frames: {
+			W: 'img/frames/saga/transform/w.png',
+			U: 'img/frames/saga/transform/u.png',
+			B: 'img/frames/saga/transform/b.png',
+			R: 'img/frames/saga/transform/r.png',
+			G: 'img/frames/saga/transform/g.png',
+			M: 'img/frames/saga/transform/m.png',
+			L: 'img/frames/saga/transform/l.png',
+		},
+		pt: {},
+		fallbacks: {
+			...commonFallbacks,
+			A: 'M',
+			C: 'M',
+			V: 'M',
+		},
+		dual: {
+			neutralVariant: 'L',
+			rulesMask: 'img/frames/saga/transform/rules.svg',
+			rightRulesMask: 'img/frames/saga/sagaMaskTextRight.png',
+			pinlineMask: 'img/frames/saga/transform/banner.svg',
+			rightPinlineMask: 'img/frames/saga/transform/bannerRight.svg',
+			titleMask: 'img/frames/saga/transform/maskTitle.png',
+			typeMask: 'img/frames/saga/sagaMaskType.png',
+			frameMask: 'img/frames/saga/transform/frame.svg',
+			rightHalfMask: 'img/frames/m15/regular/maskRightHalf.png',
+		},
+		layout: {
+			saga: {
+				...regularSagaLayout,
+				reversePt: {
+					x: 120,
+					y: 1665,
+					width: 170,
+					height: 76,
+					textX: 180,
+					textY: 1703,
+					font: '61px belerenbsc, serif',
+					color: '#666',
+				},
+			},
+			artwork: { dragLeft: 750, dragTop: 236, dragRight: 1388, dragBottom: 1758 },
+			title: { x: 240, y: 160, maxWidth: 1132, font: '80px belerenb, serif', color: '#111' },
 			mana: { right: 1394, centerY: 160, symbolSize: 71, gap: 4, font: '48px belerenb, serif', color: '#111' },
 			type: { x: 128, y: 1835, maxWidth: 1244, font: '68px belerenb, serif', color: '#111' },
 			rules: { x: 130, y: 237, width: 606, height: 1519, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
@@ -1033,6 +1121,7 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 			rightHalfMask: 'img/frames/m15/regular/maskRightHalf.png',
 		},
 		layout: {
+			saga: regularSagaLayout,
 			artwork: { dragLeft: 750, dragTop: 236, dragRight: 1388, dragBottom: 1758 },
 			title: { x: 128, y: 160, maxWidth: 1244, font: '80px belerenb, serif', color: '#111' },
 			mana: { right: 1394, centerY: 160, symbolSize: 71, gap: 4, font: '48px belerenb, serif', color: '#111' },

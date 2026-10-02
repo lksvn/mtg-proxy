@@ -1,5 +1,5 @@
 import type { CustomCardData } from '../types'
-import { countManaCostItems } from '../cardText'
+import { countManaCostItems, formatPowerToughnessInput } from '../cardText'
 import { useI18n } from '../../../i18n/context'
 import { SymbolReferenceDialog } from './SymbolReferenceDialog'
 
@@ -113,9 +113,13 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 					id="card-power-toughness"
 					type="text"
 					value={card.powerToughness}
-					placeholder={powerToughnessLabel === 'defense' ? '4' : '3/3'}
+					placeholder={powerToughnessLabel === 'defense' ? '4' : '***/***'}
 					onChange={(event) =>
-						update({ powerToughness: event.target.value })
+						update({
+							powerToughness: powerToughnessLabel === 'defense'
+								? event.target.value
+								: formatPowerToughnessInput(event.target.value),
+						})
 					}
 				/>
 			</div>}

@@ -284,8 +284,8 @@ export function CustomCardEditor() {
 									onChange={setFrameSelection}
 									hideVehicles
 									hideArtifacts={!['saga-nyx', 'saga-universes-beyond'].includes(sagaStyle)}
-									hideColorless={sagaStyle === 'saga-regular'}
-									hideLands={sagaStyle !== 'saga-regular'}
+									hideColorless={['saga-regular', 'saga-transform'].includes(sagaStyle)}
+									hideLands={!['saga-regular', 'saga-transform'].includes(sagaStyle)}
 									hideColoredLands
 								/>
 							</div>
@@ -293,7 +293,7 @@ export function CustomCardEditor() {
 					</details>
 					<details className="form-section" open>
 					    <summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>
-						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="content" showCreatureFields={sagaStyle === 'saga-creature'} /> : <CardDetailsForm
+						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="content" showCreatureFields={sagaStyle === 'saga-creature'} showTransformFields={sagaStyle === 'saga-transform'} /> : <CardDetailsForm
 							card={layout === 'token' ? token : layout === 'battle' ? battle : card}
 							onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard}
                             hideManaCost={layout === 'token' && !tokenOptions.showManaCost}
@@ -314,6 +314,7 @@ export function CustomCardEditor() {
 
                 <div style={{position:'relative'}}>
                     <CardCanvas
+						key={activeFamily}
 						canvasRef={canvasRef}
                         artwork={artwork}
                         transform={artworkTransform}

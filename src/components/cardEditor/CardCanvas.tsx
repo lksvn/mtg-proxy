@@ -8,7 +8,7 @@ import { loadDualFrame } from './render/composeDualFrame'
 import { loadAbuDualLand } from './render/composeAbuDualLand'
 import { loadBorderOverlay } from './render/composeBorder'
 import { useI18n } from '../../i18n/context'
-import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
+import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorderStyle, type FrameFamily, type FrameFamilyId } from './frameFamilies'
 import { drawIconlessPlaneswalkerAbilities, drawPlaneswalker, drawPlaneswalkerBackground, drawPlaneswalkerNickname, drawPlaneswalkerReverseFace, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from './render/drawPlaneswalker'
 import { drawSaga, SAGA_ASSETS, type SagaImages } from './render/drawSaga'
 import { Icon } from '../Icon'
@@ -17,6 +17,77 @@ const DEBUG_CANVAS = import.meta.env.DEV
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`
 const COLOR_INDICATOR_ORDER = ['W', 'U', 'B', 'R', 'G'] as const
+const DEBUG_COLORS = ['#ff3b30', '#ff9500', '#ffcc00', '#34c759', '#00c7be', '#007aff', '#5856d6', '#af52de', '#ff2d55']
+
+type DebugRegion = {
+	label: string
+	x: number
+	y: number
+	width: number
+	height: number
+	unrotated?: boolean
+}
+
+function getDebugRegions(family: FrameFamily): DebugRegion[] {
+	const { layout } = family
+	const regions: DebugRegion[] = [
+		{
+			label: 'Artwork / drag area',
+			x: layout.artwork.dragLeft,
+			y: layout.artwork.dragTop,
+			width: layout.artwork.dragRight - layout.artwork.dragLeft,
+			height: layout.artwork.dragBottom - layout.artwork.dragTop,
+		},
+		{ label: 'Title', x: layout.title.x, y: layout.title.y - 50, width: layout.title.maxWidth, height: 100 },
+		{ label: 'Mana', x: layout.mana.right - 420, y: layout.mana.centerY - layout.mana.symbolSize / 2, width: 420, height: layout.mana.symbolSize },
+		{ label: 'Type', x: layout.type.x, y: layout.type.y - 50, width: layout.type.maxWidth, height: 100 },
+		{
+			label: 'Set symbol',
+			x: layout.symbol.centerX - layout.symbol.boxSize / 2,
+			y: layout.symbol.centerY - layout.symbol.boxSize / 2,
+			width: layout.symbol.boxSize,
+			height: layout.symbol.boxSize,
+		},
+		{ label: 'Rules', ...layout.rules },
+		...(layout.flavorRules ? [{ label: 'Flavor text', ...layout.flavorRules }] : []),
+		{ label: 'P/T', x: layout.pt.x, y: layout.pt.y, width: layout.pt.width, height: layout.pt.height },
+		{
+			label: 'Footer metadata',
+			x: layout.footer.x,
+			y: layout.footer.metadataY - 35,
+			width: layout.footer.maxWidth,
+			height: 55,
+			unrotated: layout.footer.unrotated,
+		},
+		{
+			label: 'Footer disclaimer',
+			x: layout.footer.disclaimerX ?? layout.footer.x,
+			y: layout.footer.disclaimerY - 35,
+			width: layout.footer.maxWidth,
+			height: 55,
+			unrotated: layout.footer.unrotated,
+		},
+		...(family.overlay ? [{ label: 'Frame overlay', ...family.overlay }] : []),
+	]
+
+	if (layout.saga) {
+		regions.push(
+			{ label: 'Saga reminder', ...layout.saga.reminder },
+			{ label: 'Saga abilities', ...layout.saga.abilities },
+			{
+				label: 'Saga chapters',
+				x: layout.saga.chapter.x,
+				y: layout.saga.abilities.y,
+				width: layout.saga.chapter.width,
+				height: layout.saga.abilities.height,
+			},
+		)
+		if (layout.saga.creatureRules) regions.push({ label: 'Creature rules', ...layout.saga.creatureRules })
+		if (layout.saga.reversePt) regions.push({ label: 'Reverse P/T', ...layout.saga.reversePt })
+	}
+
+	return regions.filter(({ width, height }) => width > 0 && height > 0)
+}
 
 function isInsideArtwork(
 	clientX: number,
@@ -59,6 +130,7 @@ type CardCanvasProps = {
 export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, borderStyle, transform, card, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
 	const { t } = useI18n()
 	const family = getFrameFamily(frameFamily)
+	const debugRegions = DEBUG_CANVAS ? getDebugRegions(family) : []
 	const internalCanvasRef = useRef<HTMLCanvasElement>(null)
 	const canvasRef = externalCanvasRef ?? internalCanvasRef
     const [dragging, setDragging] = useState(false)
@@ -337,7 +409,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					sagaCreatureRulesRuns,
 					manaSymbols,
 					sagaImages,
-					family.id === 'saga-creature',
+					family.layout.saga!,
 				)
 			}
 			context.resetTransform()
@@ -411,26 +483,40 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 							pointerEvents: 'none',
 						}}
                     >
-						<g
-							fill="#000"
-							stroke="#ff00ff"
-							fillOpacity="0.25"
-							strokeWidth="4"
-							strokeDasharray="12 8"
-							transform={family.layout.canvas?.rotation === 'counterclockwise' ? `translate(0 ${HEIGHT}) rotate(-90)` : undefined}
-						>
-							<rect x={family.layout.title.x} y={family.layout.title.y - 50} width={family.layout.title.maxWidth} height="100" />
-							<rect x={family.layout.type.x} y={family.layout.type.y - 50} width={family.layout.type.maxWidth} height="100" />
-							<rect x={family.layout.symbol.centerX - family.layout.symbol.boxSize / 2} y={family.layout.symbol.centerY - family.layout.symbol.boxSize / 2} width={family.layout.symbol.boxSize} height={family.layout.symbol.boxSize} />
-							<rect x={family.layout.rules.x} y={family.layout.rules.y} width={family.layout.rules.width} height={family.layout.rules.height} />
-							{family.layout.flavorRules && <rect x={family.layout.flavorRules.x} y={family.layout.flavorRules.y} width={family.layout.flavorRules.width} height={family.layout.flavorRules.height} />}
-							<rect
-								x={family.layout.pt.x}
-								y={family.layout.pt.y}
-								width={family.layout.pt.width}
-								height={family.layout.pt.height}
-                            />
-                        </g>
+						{debugRegions.map((region, index) => {
+							const color = DEBUG_COLORS[index % DEBUG_COLORS.length]
+							const transformDebugRegion = !region.unrotated && family.layout.canvas?.rotation === 'counterclockwise'
+								? `translate(0 ${HEIGHT}) rotate(-90)`
+								: undefined
+
+							return (
+								<g key={`${region.label}-${index}`} transform={transformDebugRegion}>
+									<rect
+										x={region.x}
+										y={region.y}
+										width={region.width}
+										height={region.height}
+										fill={color}
+										fillOpacity="0.18"
+										stroke={color}
+										strokeWidth="4"
+										strokeDasharray="12 8"
+									/>
+									<text
+										x={region.x + 8}
+										y={region.y + 30}
+										fill={color}
+										stroke="#000"
+										strokeWidth="6"
+										paintOrder="stroke"
+										fontSize="40"
+										fontFamily="sans-serif"
+									>
+										{region.label}
+									</text>
+								</g>
+							)
+						})}
                     </svg>
                 )}
             </div>

@@ -1,4 +1,5 @@
 import type { CardTextRun } from '../cardText'
+import type { FrameLayout } from '../frameFamilies'
 import type { SagaCardData } from '../types'
 import { drawRulesText } from './drawRulesText'
 import { romanNumeral } from './sagaNumbers'
@@ -13,10 +14,6 @@ export type SagaImages = {
 	divider: HTMLImageElement
 }
 
-const CHAPTER_X = 58
-const CHAPTER_WIDTH = 118
-const CHAPTER_HEIGHT = 132
-
 export function drawSaga(
 	context: CanvasRenderingContext2D,
 	card: SagaCardData,
@@ -25,14 +22,9 @@ export function drawSaga(
 	creatureRulesRuns: CardTextRun[],
 	manaSymbols: Map<string, HTMLImageElement>,
 	images: SagaImages,
-	creature: boolean,
+	layout: NonNullable<FrameLayout['saga']>,
 ) {
-	const reminder = creature
-		? { x: 130, y: 250, width: 1260, height: 174 }
-		: { x: 130, y: 265, width: 606, height: 372 }
-	const abilities = creature
-		? { x: 200, y: 451, width: 525, height: 1138 }
-		: { x: 200, y: 608, width: 525, height: 1148 }
+	const { reminder, abilities, creatureRules, chapter: chapterLayout, reversePt } = layout
 
 	drawRulesText(context, reminderRuns, manaSymbols, reminder.x, reminder.y, reminder.width, reminder.height, {
 		fontFamily: 'mplantin',
@@ -43,8 +35,8 @@ export function drawSaga(
 		maxFontSize: 62,
 		minFontSize: 34,
 	})
-	if (creature) {
-		drawRulesText(context, creatureRulesRuns, manaSymbols, 119, 1741, 1263, 192, {
+	if (creatureRules) {
+		drawRulesText(context, creatureRulesRuns, manaSymbols, creatureRules.x, creatureRules.y, creatureRules.width, creatureRules.height, {
 			fontFamily: 'mplantin',
 			italicFontFamily: 'mplantini',
 			color: '#111',
@@ -68,8 +60,8 @@ export function drawSaga(
 			? abilities.y + abilities.height - y
 			: abilities.height * weights[index] / totalWeight
 
-		context.drawImage(images.divider, 150, y - 3, 592, 6)
-		drawRulesText(context, chapterRuns[index], manaSymbols, abilities.x, y + 16, abilities.width, height - 32, {
+		context.drawImage(images.divider, chapterLayout.dividerX, y + chapterLayout.dividerOffsetY, chapterLayout.dividerWidth, chapterLayout.dividerHeight)
+		drawRulesText(context, chapterRuns[index], manaSymbols, abilities.x + chapterLayout.textInsetX, y + chapterLayout.textInsetY, abilities.width - chapterLayout.textInsetX * 2, height - chapterLayout.textInsetY * 2, {
 			verticalAlign: 'middle',
 			fontFamily: 'mplantin',
 			italicFontFamily: 'mplantini',
@@ -81,20 +73,27 @@ export function drawSaga(
 		})
 
 		const count = Math.min(remainingChapters, Math.max(1, chapter.chapterCount))
-		const gap = 150
-		const firstChapterY = y + height / 2 - CHAPTER_HEIGHT / 2 - (count - 1) * gap / 2
+		const firstChapterY = y + height / 2 - chapterLayout.height / 2 - (count - 1) * chapterLayout.gap / 2
 		for (let offset = 0; offset < count; offset += 1) {
-			const chapterY = firstChapterY + offset * gap
-			context.drawImage(images.chapter, CHAPTER_X, chapterY, CHAPTER_WIDTH, CHAPTER_HEIGHT)
+			const chapterY = firstChapterY + offset * chapterLayout.gap
+			context.drawImage(images.chapter, chapterLayout.x, chapterY, chapterLayout.width, chapterLayout.height)
 			context.font = '52px mplantin, serif'
 			context.fillStyle = '#111'
 			context.textAlign = 'center'
 			context.textBaseline = 'middle'
-			context.fillText(romanNumeral(chapterNumber), CHAPTER_X + CHAPTER_WIDTH / 2, chapterY + CHAPTER_HEIGHT / 2)
+			context.fillText(romanNumeral(chapterNumber), chapterLayout.x + chapterLayout.width / 2, chapterY + chapterLayout.height / 2)
 			chapterNumber += 1
 		}
 		remainingChapters -= count
 
 		y += height
 	})
+
+	if (reversePt && card.powerToughness) {
+		context.font = reversePt.font
+		context.fillStyle = reversePt.color
+		context.textAlign = 'center'
+		context.textBaseline = 'middle'
+		context.fillText(card.powerToughness, reversePt.textX, reversePt.textY, reversePt.width)
+	}
 }
