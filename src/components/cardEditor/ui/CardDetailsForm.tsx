@@ -1,5 +1,5 @@
 import type { CustomCardData } from '../types'
-import { countManaCostItems } from '../cardText'
+import { countManaCostItems, formatPowerToughnessInput } from '../cardText'
 import { useI18n } from '../../../i18n/context'
 import { SymbolReferenceDialog } from './SymbolReferenceDialog'
 
@@ -12,10 +12,11 @@ type CardDetailsFormProps = {
 	hideNameAndType?: boolean
 	hideTypeLine?: boolean
 	hidePowerToughness?: boolean
+	powerToughnessLabel?: 'powerToughness' | 'defense'
 	part?: 'content' | 'details'
 }
 
-export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hideTypeLine, hidePowerToughness, part }: CardDetailsFormProps) {
+export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hideTypeLine, hidePowerToughness, powerToughnessLabel = 'powerToughness', part }: CardDetailsFormProps) {
 	const { t } = useI18n()
 
 	function update(changes: Partial<CustomCardData>) {
@@ -107,14 +108,18 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 			</div>}
 
 			{!hidePowerToughness && <div className="form-group gap-2">
-				<label htmlFor="card-power-toughness">{t('powerToughness')}</label>
+				<label htmlFor="card-power-toughness">{t(powerToughnessLabel)}</label>
 				<input
 					id="card-power-toughness"
 					type="text"
 					value={card.powerToughness}
-					placeholder="3/3"
+					placeholder={powerToughnessLabel === 'defense' ? '4' : '***/***'}
 					onChange={(event) =>
-						update({ powerToughness: event.target.value })
+						update({
+							powerToughness: powerToughnessLabel === 'defense'
+								? event.target.value
+								: formatPowerToughnessInput(event.target.value),
+						})
 					}
 				/>
 			</div>}

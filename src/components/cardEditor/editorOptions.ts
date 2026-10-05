@@ -31,6 +31,22 @@ export const FRAME_STYLE_GROUPS = [
 
 export type TokenStyle = Extract<FrameFamilyId, `token-${string}`>
 export type PlaneswalkerStyle = Extract<FrameFamilyId, `planeswalker-${string}`>
+export type SagaStyle = Extract<FrameFamilyId, `saga-${string}`>
+
+export const SAGA_STYLES: readonly { id: SagaStyle; label: TranslationKey }[] = [
+	{ id: 'saga-regular', label: 'sagaStyleRegular' },
+	{ id: 'saga-nyx', label: 'sagaStyleNyx' },
+	{ id: 'saga-universes-beyond', label: 'sagaStyleUniversesBeyond' },
+	{ id: 'saga-universes-beyond-regular', label: 'sagaStyleUniversesBeyondRegular' },
+	{ id: 'saga-creature', label: 'sagaStyleCreature' },
+	{ id: 'saga-creature-regular', label: 'sagaStyleCreatureRegular' },
+	{ id: 'saga-creature-transform-front', label: 'sagaStyleCreatureTransformFront' },
+	{ id: 'saga-creature-transform-back', label: 'sagaStyleCreatureTransformBack' },
+	{ id: 'saga-creature-transform-front-ub', label: 'sagaStyleCreatureTransformFrontUb' },
+	{ id: 'saga-creature-transform-back-ub', label: 'sagaStyleCreatureTransformBackUb' },
+	{ id: 'saga-transform', label: 'sagaStyleTransform' },
+	{ id: 'saga-lord-of-the-rings', label: 'sagaStyleLordOfTheRings' },
+]
 
 export const PLANESWALKER_STYLES: readonly { id: PlaneswalkerStyle; label: TranslationKey }[] = [
 	{ id: 'planeswalker-regular', label: 'planeswalkerStyleRegular' },

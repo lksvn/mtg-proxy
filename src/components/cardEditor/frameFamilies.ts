@@ -3,7 +3,7 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-export type FrameFamilyId = 'planeswalker-regular' | 'planeswalker-transform-front' | 'planeswalker-transform-back' | 'planeswalker-mdfc-back' | 'planeswalker-borderless' | 'planeswalker-box-topper' | 'planeswalker-compleated' | 'planeswalker-double-feature' | 'planeswalker-tall-double-feature' | 'planeswalker-transform-front-double-feature' | 'planeswalker-transform-back-double-feature' | 'planeswalker-sdcc15' | 'planeswalker-sdcc15-transform' | 'planeswalker-nickname' | 'planeswalker-seventh' | 'planeswalker-tall' | 'planeswalker-tall-borderless' | 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight' | 'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'
+export type FrameFamilyId = 'saga-regular' | 'saga-nyx' | 'saga-universes-beyond' | 'saga-universes-beyond-regular' | 'saga-creature' | 'saga-creature-regular' | 'saga-creature-transform-front' | 'saga-creature-transform-back' | 'saga-creature-transform-front-ub' | 'saga-creature-transform-back-ub' | 'saga-transform' | 'saga-lord-of-the-rings' | 'battle-regular' | 'planeswalker-regular' | 'planeswalker-transform-front' | 'planeswalker-transform-back' | 'planeswalker-mdfc-back' | 'planeswalker-borderless' | 'planeswalker-box-topper' | 'planeswalker-compleated' | 'planeswalker-double-feature' | 'planeswalker-tall-double-feature' | 'planeswalker-transform-front-double-feature' | 'planeswalker-transform-back-double-feature' | 'planeswalker-sdcc15' | 'planeswalker-sdcc15-transform' | 'planeswalker-nickname' | 'planeswalker-seventh' | 'planeswalker-tall' | 'planeswalker-tall-borderless' | 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight' | 'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'
 export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
 type TextStyle = {
@@ -38,14 +38,43 @@ type RulesBox = {
 	minFontSize: number
 }
 
+type SagaLayout = {
+	reminder: { x: number; y: number; width: number; height: number }
+	abilities: { x: number; y: number; width: number; height: number }
+	creatureRules?: { x: number; y: number; width: number; height: number }
+	chapter: {
+		x: number
+		width: number
+		height: number
+		gap: number
+		dividerX: number
+		dividerWidth: number
+		dividerHeight: number
+		dividerOffsetY: number
+		textInsetX: number
+		textInsetY: number
+	}
+	reversePt?: TextStyle & {
+		x: number
+		y: number
+		width: number
+		height: number
+		textX: number
+		textY: number
+	}
+}
+
 export type FrameLayout = {
+	canvas?: { width: number; height: number; rotation: 'counterclockwise' }
 	artwork: { dragLeft: number; dragTop: number; dragRight: number; dragBottom: number }
 	title: TextBox
 	mana: TextStyle & { right: number; centerY: number; symbolSize: number; gap: number; verticalPositions?: readonly (readonly [number, number])[] }
 	type: TextBox
 	rules: RulesBox
 	flavorRules?: RulesBox
+	saga?: SagaLayout
 	symbol: { centerX: number; centerY: number; boxSize: number }
+	colorIndicator?: { x: number; y: number; width: number; height: number; centerX: number; centerY: number; radius: number }
 	pt: TextStyle & {
 		x: number
 		y: number
@@ -55,6 +84,7 @@ export type FrameLayout = {
 		textY: number
 	}
 	footer: {
+		unrotated?: boolean
 		colorByVariant?: Partial<Record<FrameVariant, string>>
 		disclaimerColorByVariant?: Partial<Record<FrameVariant, string>>
 		align?: CanvasTextAlign
@@ -89,7 +119,9 @@ export type FrameFamily = {
 	dual?: {
 		neutralVariant: FrameVariant
 		rulesMask: string
+		rightRulesMask?: string
 		pinlineMask: string
+		rightPinlineMask?: string
 		titleMask: string
 		typeMask: string
 		frameMask: string

@@ -30,3 +30,13 @@ export type PlaneswalkerCardData = Omit<CustomCardData, 'rulesText' | 'centerRul
 	reverseFaceManaCost: string
 	abilities: PlaneswalkerAbility[]
 }
+
+export type SagaChapter = {
+	chapterCount: number
+	text: string
+}
+
+export type SagaCardData = CustomCardData & {
+	chapters: SagaChapter[]
+	reversePowerToughness: string
+}

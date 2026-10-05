@@ -1,29 +1,105 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
-import { DUAL_FRAME_VARIANTS, type CustomCardData, type FrameVariant, type PlaneswalkerCardData } from './types'
+import { DUAL_FRAME_VARIANTS, type CustomCardData, type FrameVariant, type PlaneswalkerCardData, type SagaCardData } from './types'
 import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
-import { drawCard, HEIGHT, WIDTH } from './render/drawCard'
+import { drawCard, drawCardFooter, HEIGHT, WIDTH } from './render/drawCard'
 import { futureManaFile } from './render/drawManaCost'
 import { loadImage, loadImageSource } from './render/loadImage'
 import { loadDualFrame } from './render/composeDualFrame'
 import { loadAbuDualLand } from './render/composeAbuDualLand'
 import { loadBorderOverlay } from './render/composeBorder'
 import { useI18n } from '../../i18n/context'
-import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
+import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorderStyle, type FrameFamily, type FrameFamilyId } from './frameFamilies'
 import { drawIconlessPlaneswalkerAbilities, drawPlaneswalker, drawPlaneswalkerBackground, drawPlaneswalkerNickname, drawPlaneswalkerReverseFace, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from './render/drawPlaneswalker'
+import { drawSaga, SAGA_ASSETS, type SagaImages } from './render/drawSaga'
+import { Icon } from '../Icon'
 
 const DEBUG_CANVAS = import.meta.env.DEV
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`
 const COLOR_INDICATOR_ORDER = ['W', 'U', 'B', 'R', 'G'] as const
+const DEBUG_COLORS = ['#ff3b30', '#ff9500', '#ffcc00', '#34c759', '#00c7be', '#007aff', '#5856d6', '#af52de', '#ff2d55']
+
+type DebugRegion = {
+	label: string
+	x: number
+	y: number
+	width: number
+	height: number
+	unrotated?: boolean
+}
+
+function getDebugRegions(family: FrameFamily): DebugRegion[] {
+	const { layout } = family
+	const regions: DebugRegion[] = [
+		{
+			label: 'Artwork / drag area',
+			x: layout.artwork.dragLeft,
+			y: layout.artwork.dragTop,
+			width: layout.artwork.dragRight - layout.artwork.dragLeft,
+			height: layout.artwork.dragBottom - layout.artwork.dragTop,
+		},
+		{ label: 'Title', x: layout.title.x, y: layout.title.y - 50, width: layout.title.maxWidth, height: 100 },
+		{ label: 'Mana', x: layout.mana.right - 420, y: layout.mana.centerY - layout.mana.symbolSize / 2, width: 420, height: layout.mana.symbolSize },
+		{ label: 'Type', x: layout.type.x, y: layout.type.y - 50, width: layout.type.maxWidth, height: 100 },
+		{
+			label: 'Set symbol',
+			x: layout.symbol.centerX - layout.symbol.boxSize / 2,
+			y: layout.symbol.centerY - layout.symbol.boxSize / 2,
+			width: layout.symbol.boxSize,
+			height: layout.symbol.boxSize,
+		},
+		{ label: 'Rules', ...layout.rules },
+		...(layout.flavorRules ? [{ label: 'Flavor text', ...layout.flavorRules }] : []),
+		{ label: 'P/T', x: layout.pt.x, y: layout.pt.y, width: layout.pt.width, height: layout.pt.height },
+		{
+			label: 'Footer metadata',
+			x: layout.footer.x,
+			y: layout.footer.metadataY - 35,
+			width: layout.footer.maxWidth,
+			height: 55,
+			unrotated: layout.footer.unrotated,
+		},
+		{
+			label: 'Footer disclaimer',
+			x: layout.footer.disclaimerX ?? layout.footer.x,
+			y: layout.footer.disclaimerY - 35,
+			width: layout.footer.maxWidth,
+			height: 55,
+			unrotated: layout.footer.unrotated,
+		},
+		...(family.overlay ? [{ label: 'Frame overlay', ...family.overlay }] : []),
+	]
+
+	if (layout.saga) {
+		regions.push(
+			{ label: 'Saga reminder', ...layout.saga.reminder },
+			{ label: 'Saga abilities', ...layout.saga.abilities },
+			{
+				label: 'Saga chapters',
+				x: layout.saga.chapter.x,
+				y: layout.saga.abilities.y,
+				width: layout.saga.chapter.width,
+				height: layout.saga.abilities.height,
+			},
+		)
+		if (layout.saga.creatureRules) regions.push({ label: 'Creature rules', ...layout.saga.creatureRules })
+		if (layout.saga.reversePt) regions.push({ label: 'Reverse P/T', ...layout.saga.reversePt })
+	}
+
+	return regions.filter(({ width, height }) => width > 0 && height > 0)
+}
 
 function isInsideArtwork(
 	clientX: number,
 	clientY: number,
 	bounds: DOMRect,
-	artwork: { dragLeft: number; dragTop: number; dragRight: number; dragBottom: number },
+	layout: ReturnType<typeof getFrameFamily>['layout'],
 ) {
-	const x = (clientX - bounds.left) * (WIDTH / bounds.width)
-	const y = (clientY - bounds.top) * (HEIGHT / bounds.height)
+	const canvasX = (clientX - bounds.left) * (WIDTH / bounds.width)
+	const canvasY = (clientY - bounds.top) * (HEIGHT / bounds.height)
+	const x = layout.canvas?.rotation === 'counterclockwise' ? HEIGHT - canvasY : canvasX
+	const y = layout.canvas?.rotation === 'counterclockwise' ? canvasX : canvasY
+	const artwork = layout.artwork
 
 	return x >= artwork.dragLeft && x <= artwork.dragRight &&
 		y >= artwork.dragTop && y <= artwork.dragBottom
@@ -46,7 +122,7 @@ type CardCanvasProps = {
 	borderStyle: FrameBorderStyle
 	frameVariant: FrameVariant
 	transform: ArtworkTransform,
-    card: CustomCardData | PlaneswalkerCardData,
+    card: CustomCardData | PlaneswalkerCardData | SagaCardData,
     onTransformChange: (transform: ArtworkTransform) => void,
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
@@ -54,11 +130,13 @@ type CardCanvasProps = {
 export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, borderStyle, transform, card, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
 	const { t } = useI18n()
 	const family = getFrameFamily(frameFamily)
+	const debugRegions = DEBUG_CANVAS ? getDebugRegions(family) : []
 	const internalCanvasRef = useRef<HTMLCanvasElement>(null)
 	const canvasRef = externalCanvasRef ?? internalCanvasRef
     const [dragging, setDragging] = useState(false)
 	const [artworkHovered, setArtworkHovered] = useState(false)
 	const [showDebug, setShowDebug] = useState(false)
+	const [previewRotated, setPreviewRotated] = useState(false)
     const dragRef = useRef<{
         pointerId: number
         clientX: number
@@ -71,7 +149,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
         if (!artwork) return
 
 		const bounds = event.currentTarget.getBoundingClientRect()
-		if (!isInsideArtwork(event.clientX, event.clientY, bounds, family.layout.artwork)) return
+		if (!isInsideArtwork(event.clientX, event.clientY, bounds, family.layout)) return
 
 		setArtworkHovered(true)
         setDragging(true)
@@ -88,7 +166,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 
     function dragArtwork(event: ReactPointerEvent<HTMLCanvasElement>) {
 		const bounds = event.currentTarget.getBoundingClientRect()
-		setArtworkHovered(isInsideArtwork(event.clientX, event.clientY, bounds, family.layout.artwork))
+		setArtworkHovered(isInsideArtwork(event.clientX, event.clientY, bounds, family.layout))
 
         const drag = dragRef.current
 
@@ -96,14 +174,12 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 
         onTransformChange({
             ...transform,
-            x:
-                drag.x +
-                (event.clientX - drag.clientX) *
-                    (WIDTH / bounds.width),
-            y:
-                drag.y +
-                (event.clientY - drag.clientY) *
-                    (HEIGHT / bounds.height),
+			x: drag.x + (family.layout.canvas?.rotation === 'counterclockwise'
+				? -(event.clientY - drag.clientY) * (HEIGHT / bounds.height)
+				: (event.clientX - drag.clientX) * (WIDTH / bounds.width)),
+			y: drag.y + (family.layout.canvas?.rotation === 'counterclockwise'
+				? (event.clientX - drag.clientX) * (WIDTH / bounds.width)
+				: (event.clientY - drag.clientY) * (HEIGHT / bounds.height)),
         })
     }
 
@@ -129,7 +205,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
         function zoomArtwork(event: WheelEvent) {
             if (!artwork) return
 			const bounds = target.getBoundingClientRect()
-			if (!isInsideArtwork(event.clientX, event.clientY, bounds, family.layout.artwork)) return
+			if (!isInsideArtwork(event.clientX, event.clientY, bounds, family.layout)) return
 
             event.preventDefault()
 
@@ -160,12 +236,13 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 		let cancelled = false
 
 		async function render() {
-			const planeswalker = 'abilities' in card
+			const planeswalker = 'startingLoyalty' in card
+			const saga = 'chapters' in card
 			const drawableCard: CustomCardData = planeswalker ? {
 				...card,
 				name: family.id === 'planeswalker-nickname' ? card.nickname : card.name,
 				rulesText: '', centerRulesText: false, flavorText: '', powerToughness: card.startingLoyalty,
-			} : card
+			} : saga ? { ...card, rulesText: '', flavorText: '' } : card
             const manaRuns = parseManaCost(card.manaCost)
             const rulesRuns = parseRulesText(drawableCard.rulesText)
 
@@ -177,6 +254,9 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
             )
 
 			const abilityRuns = planeswalker ? card.abilities.map(({ text }) => parseRulesText(text)) : []
+			const sagaReminderRuns = saga ? parseRulesText(card.rulesText) : []
+			const sagaChapterRuns = saga ? card.chapters.map(({ text }) => parseRulesText(text)) : []
+			const sagaCreatureRulesRuns = saga && family.id === 'saga-creature' ? parseRulesText(card.flavorText) : []
 			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
 			const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 				? 'img/frames/planeswalker/mdfc/text.png'
@@ -188,7 +268,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
 					: PLANESWALKER_ASSETS.mask
 			const planeswalkerAssets = { ...PLANESWALKER_ASSETS, mask: planeswalkerMask }
-			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat()]
+			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat(), ...sagaCreatureRulesRuns]
 			const futureManaFiles = family.id === 'future-sight'
 				? manaRuns.flatMap((run) => run.type === 'symbol' ? [futureManaFile(run.value)].filter((file): file is string => Boolean(file)) : [])
 				: []
@@ -221,10 +301,10 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 			const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
 			const frameOverlay = family.frameOverlays?.[resolvedVariant]
-			const colorIndicatorColors = family.id === 'planeswalker-transform-back' || family.id === 'planeswalker-transform-back-double-feature'
+			const colorIndicatorColors = family.layout.colorIndicator
 				? COLOR_INDICATOR_ORDER.filter((color) => card.manaCost.toUpperCase().includes(color))
 				: []
-			const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase] = await Promise.all([
+			const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase, sagaImages] = await Promise.all([
 				abuLandColors
 					? loadAbuDualLand(family, abuLandColors)
 					: dualPair
@@ -241,6 +321,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 				typeIconPath ? loadImage(assetUrl(typeIconPath)) : undefined,
 				planeswalker ? Promise.all(Object.entries(planeswalkerAssets).map(async ([key, path]) => [key, await loadImage(assetUrl(path))] as const)).then((entries) => Object.fromEntries(entries) as PlaneswalkerIcons) : undefined,
 				colorIndicatorColors.length ? loadImage(assetUrl('img/frames/planeswalker/color-indicator/base.png')) : undefined,
+				saga ? Promise.all(Object.entries(SAGA_ASSETS).map(async ([key, path]) => [key, await loadImage(assetUrl(path))] as const)).then((entries) => Object.fromEntries(entries) as SagaImages) : undefined,
 			])
 			const manaSymbols = new Map(
                 await Promise.all(
@@ -260,6 +341,12 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			if (!canvas || !context) return
 
 			const iconlessPlaneswalker = family.id === 'planeswalker-seventh'
+			context.resetTransform()
+			context.clearRect(0, 0, WIDTH, HEIGHT)
+			if (family.layout.canvas?.rotation === 'counterclockwise') {
+				context.translate(0, HEIGHT)
+				context.rotate(-Math.PI / 2)
+			}
 			drawCard(
 				context,
 				drawableCard,
@@ -313,6 +400,22 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					drawPlaneswalkerReverseFace(context, card, reverseManaRuns, manaSymbols)
 				}
 			}
+			if (saga && sagaImages) {
+				drawSaga(
+					context,
+					card,
+					sagaReminderRuns,
+					sagaChapterRuns,
+					sagaCreatureRulesRuns,
+					manaSymbols,
+					sagaImages,
+					family.layout.saga!,
+				)
+			}
+			context.resetTransform()
+			if (family.layout.footer.unrotated) {
+				drawCardFooter(context, drawableCard, family.layout, resolvedVariant)
+			}
 
 		}
 
@@ -335,7 +438,11 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
                     {t('showCanvasGuides')}
                 </label>
             )}
-            <div style={{ position: 'relative', lineHeight: 0 }}>
+			<div style={{
+				position: 'relative',
+				lineHeight: 0,
+				aspectRatio: previewRotated ? `${HEIGHT} / ${WIDTH}` : undefined,
+			}}>
                 <canvas
                     ref={canvasRef}
                     width={WIDTH}
@@ -347,39 +454,84 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
                     onPointerCancel={stopDragging}
 					onPointerLeave={() => !dragging && setArtworkHovered(false)}
                     style={{
-                        width: '100%',
+						position: previewRotated ? 'absolute' : undefined,
+						top: previewRotated ? '50%' : undefined,
+						left: previewRotated ? '50%' : undefined,
+						width: previewRotated ? `${WIDTH / HEIGHT * 100}%` : '100%',
                         height: 'auto',
+						transform: previewRotated ? 'translate(-50%, -50%) rotate(90deg)' : undefined,
                         background: 'var(--surface)',
                         border: '1px solid var(--border)',
                         borderRadius: 'var(--card-image-radius)',
                         boxShadow: '10px 5px 15px 0px var(--shadow)',
                         cursor: dragging ? 'grabbing' : artwork && artworkHovered ? 'grab' : 'default',
-                        userSelect: 'none'
+						userSelect: 'none',
+						pointerEvents: previewRotated ? 'none' : undefined,
                     }}
                 />
                 {DEBUG_CANVAS && showDebug && (
                     <svg
                         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
                         aria-hidden="true"
-                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+						style={{
+							position: 'absolute',
+							top: previewRotated ? '50%' : 0,
+							left: previewRotated ? '50%' : 0,
+							width: previewRotated ? `${WIDTH / HEIGHT * 100}%` : '100%',
+							height: previewRotated ? 'auto' : '100%',
+							transform: previewRotated ? 'translate(-50%, -50%) rotate(90deg)' : undefined,
+							pointerEvents: 'none',
+						}}
                     >
-                        <g fill="#000" stroke="#ff00ff" fillOpacity="0.25" strokeWidth="4" strokeDasharray="12 8">
-							<rect x={family.layout.title.x} y={family.layout.title.y - 50} width={family.layout.title.maxWidth} height="100" />
-							<rect x={family.layout.type.x} y={family.layout.type.y - 50} width={family.layout.type.maxWidth} height="100" />
-							<rect x={family.layout.symbol.centerX - family.layout.symbol.boxSize / 2} y={family.layout.symbol.centerY - family.layout.symbol.boxSize / 2} width={family.layout.symbol.boxSize} height={family.layout.symbol.boxSize} />
-							<rect x={family.layout.rules.x} y={family.layout.rules.y} width={family.layout.rules.width} height={family.layout.rules.height} />
-							{family.layout.flavorRules && <rect x={family.layout.flavorRules.x} y={family.layout.flavorRules.y} width={family.layout.flavorRules.width} height={family.layout.flavorRules.height} />}
-							<rect
-								x={family.layout.pt.x}
-								y={family.layout.pt.y}
-								width={family.layout.pt.width}
-								height={family.layout.pt.height}
-                            />
-                        </g>
+						{debugRegions.map((region, index) => {
+							const color = DEBUG_COLORS[index % DEBUG_COLORS.length]
+							const transformDebugRegion = !region.unrotated && family.layout.canvas?.rotation === 'counterclockwise'
+								? `translate(0 ${HEIGHT}) rotate(-90)`
+								: undefined
+
+							return (
+								<g key={`${region.label}-${index}`} transform={transformDebugRegion}>
+									<rect
+										x={region.x}
+										y={region.y}
+										width={region.width}
+										height={region.height}
+										fill={color}
+										fillOpacity="0.18"
+										stroke={color}
+										strokeWidth="4"
+										strokeDasharray="12 8"
+									/>
+									<text
+										x={region.x + 8}
+										y={region.y + 30}
+										fill={color}
+										stroke="#000"
+										strokeWidth="6"
+										paintOrder="stroke"
+										fontSize="40"
+										fontFamily="sans-serif"
+									>
+										{region.label}
+									</text>
+								</g>
+							)
+						})}
                     </svg>
                 )}
             </div>
-            <small className="text-center text-muted block mt-2" style={{ display: 'block' }}>{t('dragImageHelp')}</small>
+			<small className="text-center text-muted block mt-2" style={{ display: 'block' }}>{t('dragImageHelp')}</small>
+			{family.layout.canvas && (
+                <div className="text-center">
+                    <button
+                        type="button"
+                        className="btn sm mt-2"
+                        onClick={() => setPreviewRotated((rotated) => !rotated)}
+                    >
+                        <Icon name="refresh-cw"/> {t('rotateCanvas')}
+                    </button>
+                </div>
+			)}
 		</div>
 	)
 }

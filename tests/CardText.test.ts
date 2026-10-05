@@ -11,8 +11,17 @@ import {
 	parseCardText,
 	parseManaCost,
 	countManaCostItems,
+	formatPowerToughnessInput,
 	parseRulesText,
 } from '../src/components/cardEditor/cardText.ts'
+
+test('formats power and toughness with up to three characters per side', () => {
+	assert.equal(formatPowerToughnessInput('+99/-99'), '+99/-99')
+	assert.equal(formatPowerToughnessInput('x/x'), 'x/x')
+	assert.equal(formatPowerToughnessInput('-1/15'), '-1/15')
+	assert.equal(formatPowerToughnessInput('abcdef'), 'abc/def')
+	assert.equal(formatPowerToughnessInput('abcd/efgh'), 'abc/efg')
+})
 
 test('finds ABU dual-land colors from names or basic land types', () => {
 	assert.deepEqual(getAbuDualLandColors('Savannah', 'Land'), ['WL', 'GL'])

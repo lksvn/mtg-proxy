@@ -250,3 +250,16 @@ export function inferFrameVariant(manaCost: string, typeLine: string): FrameVari
 		? [...colors][0] as FrameVariant
 		: 'M'
 }
+
+export function formatPowerToughnessInput(value: string) {
+	const slashIndex = value.indexOf('/')
+	if (slashIndex >= 0) {
+		const power = value.slice(0, slashIndex).slice(0, 3)
+		const toughness = value.slice(slashIndex + 1).replaceAll('/', '').slice(0, 3)
+		return `${power}/${toughness}`
+	}
+
+	return value.length > 3
+		? `${value.slice(0, 3)}/${value.slice(3, 6)}`
+		: value
+}

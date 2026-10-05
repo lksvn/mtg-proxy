@@ -26,13 +26,15 @@ async function composeDualFrame(family: FrameFamily, pair: DualFrameVariant, hyb
 	const dual = family.dual
 	if (!dual) throw new Error(`Frame family ${family.id} does not support dual frames`)
 
-	const [multicolored, left, right, neutral, rulesMask, pinlineMask, titleMask, typeMask, frameMask, rightHalf] = await Promise.all([
+	const [multicolored, left, right, neutral, rulesMask, rightRulesMask, pinlineMask, rightPinlineMask, titleMask, typeMask, frameMask, rightHalf] = await Promise.all([
 		loadImage(url(family.frames.M!)),
 		loadImage(url(family.frames[pair[0] as FrameVariant]!)),
 		loadImage(url(family.frames[pair[1] as FrameVariant]!)),
 		loadImage(url(family.frames[dual.neutralVariant]!)),
 		loadImage(url(dual.rulesMask)),
+		loadImage(url(dual.rightRulesMask ?? dual.rulesMask)),
 		loadImage(url(dual.pinlineMask)),
+		loadImage(url(dual.rightPinlineMask ?? dual.pinlineMask)),
 		loadImage(url(dual.titleMask)),
 		loadImage(url(dual.typeMask)),
 		loadImage(url(dual.frameMask)),
@@ -67,9 +69,9 @@ async function composeDualFrame(family: FrameFamily, pair: DualFrameVariant, hyb
 		drawMasked(neutral, titleMask)
 		drawMasked(neutral, typeMask)
 	}
-	for (const mask of [rulesMask, pinlineMask]) {
-		drawMasked(left, mask)
-		drawMasked(right, mask, true)
-	}
+	drawMasked(left, rulesMask)
+	drawMasked(right, rightRulesMask, !dual.rightRulesMask)
+	drawMasked(left, pinlineMask)
+	drawMasked(right, rightPinlineMask, !dual.rightPinlineMask)
 	return frame
 }
