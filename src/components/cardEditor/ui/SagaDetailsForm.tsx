@@ -128,14 +128,14 @@ export function SagaDetailsForm({ card, onChange, part, showCreatureFields = fal
 				</div>
 			</>}
 
-			{showTransformFields && <div className="form-group gap-2 mt-5">
-				<label htmlFor="saga-reverse-power-toughness">{t('powerToughness')}</label>
+			{showTransformFields && <div className="form-group gap-2">
+				<label htmlFor="saga-reverse-power-toughness">{t('reversePowerToughness')}</label>
 				<input
 					id="saga-reverse-power-toughness"
 					type="text"
 					placeholder="***/***"
-					value={card.powerToughness}
-					onChange={(event) => update({ powerToughness: formatPowerToughnessInput(event.target.value) })}
+					value={card.reversePowerToughness}
+					onChange={(event) => update({ reversePowerToughness: formatPowerToughnessInput(event.target.value) })}
 				/>
 			</div>}
 		</>

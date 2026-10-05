@@ -40,6 +40,7 @@ export const SAGA_STYLES: readonly { id: SagaStyle; label: TranslationKey }[] = 
 	{ id: 'saga-universes-beyond-regular', label: 'sagaStyleUniversesBeyondRegular' },
 	{ id: 'saga-creature', label: 'sagaStyleCreature' },
 	{ id: 'saga-creature-regular', label: 'sagaStyleCreatureRegular' },
+	{ id: 'saga-creature-transform-front', label: 'sagaStyleCreatureTransformFront' },
 	{ id: 'saga-transform', label: 'sagaStyleTransform' },
 	{ id: 'saga-lord-of-the-rings', label: 'sagaStyleLordOfTheRings' },
 ]

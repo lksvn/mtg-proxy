@@ -89,11 +89,11 @@ export function drawSaga(
 		y += height
 	})
 
-	if (reversePt && card.powerToughness) {
+	if (reversePt && card.reversePowerToughness) {
 		context.font = reversePt.font
 		context.fillStyle = reversePt.color
 		context.textAlign = 'center'
 		context.textBaseline = 'middle'
-		context.fillText(card.powerToughness, reversePt.textX, reversePt.textY, reversePt.width)
+		context.fillText(card.reversePowerToughness, reversePt.textX, reversePt.textY, reversePt.width)
 	}
 }

@@ -38,4 +38,5 @@ export type SagaChapter = {
 
 export type SagaCardData = CustomCardData & {
 	chapters: SagaChapter[]
+	reversePowerToughness: string
 }
