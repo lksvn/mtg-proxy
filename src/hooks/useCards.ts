@@ -1,16 +1,9 @@
 import { useState } from 'react'
-import { parseCardList, type ParsedCard } from '../Cards'
-import { findCards, findPrintings, type ScryfallCard } from '../Scryfall'
+import { parseCardList } from '../Cards'
+import { findCards, findPrintings } from '../Scryfall'
+import { createCustomCardEntry, withCustomCards, type CardEntry, type CustomCardEntry } from './cardEntries'
 
-export type CardEntry = {
-	parsed: ParsedCard
-	status: 'loading' | 'ready' | 'error'
-	card?: ScryfallCard
-	error?: string
-	printings?: ScryfallCard[]
-	loadingPrintings?: boolean
-	printingsError?: string
-}
+export type { CardEntry } from './cardEntries'
 
 export function useCards() {
 	const [cards, setCards] = useState<CardEntry[]>([])
@@ -23,7 +16,7 @@ export function useCards() {
 			error: parsed.error
 		}))
 
-		setCards(entries)
+		setCards((current) => withCustomCards(entries, current))
 		setLoading(true)
 
 		try {
@@ -49,17 +42,17 @@ export function useCards() {
 				}
 			})
 
-			setCards(resolvedCards)
+			setCards((current) => withCustomCards(resolvedCards, current))
 		} catch (error) {
 			const message = error instanceof Error
                 ? error.message
                 : 'Unknown card lookup error'
 
-			setCards(entries.map((entry) =>
+			setCards((current) => withCustomCards(entries.map((entry) =>
 				entry.status === 'error'
 					? entry
 					: { ...entry, status: 'error', error: message }
-			))
+			), current))
 		} finally {
 			setLoading(false)
 		}
@@ -160,5 +153,16 @@ export function useCards() {
 		)
 	}
 
-	return { cards, loading, loadCards, loadCardPrintings, selectPrinting, retryCard }
+	function addCustomCard(customCard: CustomCardEntry) {
+		setCards((current) => [...current, createCustomCardEntry(customCard)])
+	}
+
+	function removeCustomCard(index: number) {
+		const imageUrl = cards[index]?.card?.image_uris?.png
+		if (imageUrl?.startsWith('blob:')) URL.revokeObjectURL(imageUrl)
+
+		setCards((current) => current.filter((_, entryIndex) => entryIndex !== index))
+	}
+
+	return { cards, loading, loadCards, loadCardPrintings, selectPrinting, retryCard, addCustomCard, removeCustomCard }
 }

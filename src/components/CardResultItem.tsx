@@ -21,6 +21,7 @@ type CardResultProps = {
 	onLoadPrintings: (index: number) => void
 	onSelectPrinting: (index: number, cardId: string) => void
 	onRetry: (index: number) => void
+	onRemoveCustomCard: (index: number) => void
 }
 
 export function CardResultItem({
@@ -28,7 +29,8 @@ export function CardResultItem({
 	index,
 	onLoadPrintings,
 	onSelectPrinting,
-	onRetry
+	onRetry,
+	onRemoveCustomCard,
 }: CardResultProps) {
 	const { t } = useI18n()
 	const [imageLoading, setImageLoading] = useState(true)
@@ -80,15 +82,16 @@ export function CardResultItem({
 	const visiblePrintings = entry.card && filteredPrintings && !filteredPrintings.some((printing) => printing.id === entry.card?.id)
 		? [entry.card, ...filteredPrintings]
 		: filteredPrintings
+	const cardName = `${entry.custom && entry.parsed.quantity > 1 ? `${entry.parsed.quantity}x ` : ''}${entry.card?.name ?? ''}`
 
 	return (
 		<>
 			<p>
 				<strong
-					title={entry.card?.name}
+					title={cardName}
 					className="truncate"
 				>
-					{entry.card?.name.toUpperCase()}
+					{cardName.toUpperCase()}
 				</strong>
 				<span
 					title={`${entry.card?.set_name} (${entry.card?.set.toUpperCase()}) ${entry.card?.collector_number}`}
@@ -160,10 +163,15 @@ export function CardResultItem({
 					<span role="status" className="loading"><Icon name="loading" className="hourglass"/> {t('loading')}</span>)
 				}
 			</div>
-			<small>
+			{entry.custom ? <small>{t('customCardResult')}</small> : <small>
 				<a href={entry.card?.scryfall_uri} target="_blank" rel="noreferrer">{t('viewOnScryfall')}</a>
-			</small>
+			</small>}
 			<div className="change-printing">
+				{entry.custom ? (
+					<button type="button" className="btn block center danger" onClick={() => onRemoveCustomCard(index)}>
+						<Icon name="trash-can"/> {t('removeCustomCard')}
+					</button>
+				) : <>
 				<button
 					type="button"
 					disabled={entry.loadingPrintings}
@@ -229,6 +237,7 @@ export function CardResultItem({
 						</button>
 					</>
 				)}
+				</>}
 			</div>
 		</>
 	)

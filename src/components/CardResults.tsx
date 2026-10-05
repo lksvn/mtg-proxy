@@ -7,13 +7,15 @@ type CardResultsProps = {
 	onLoadPrintings: (index: number) => void
 	onSelectPrinting: (index: number, cardId: string) => void
 	onRetry: (index: number) => void
+	onRemoveCustomCard: (index: number) => void
 }
 
 export function CardResults({
 	cards,
 	onLoadPrintings,
 	onSelectPrinting,
-	onRetry
+	onRetry,
+	onRemoveCustomCard,
 }: CardResultsProps) {
 	const { t } = useI18n()
 
@@ -31,6 +33,7 @@ export function CardResults({
 								onLoadPrintings={onLoadPrintings}
 								onSelectPrinting={onSelectPrinting}
 								onRetry={onRetry}
+								onRemoveCustomCard={onRemoveCustomCard}
 							/>
 						</li>
 					))}
