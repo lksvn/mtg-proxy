@@ -301,7 +301,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 			const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
 			const frameOverlay = family.frameOverlays?.[resolvedVariant]
-			const colorIndicatorColors = family.id === 'planeswalker-transform-back' || family.id === 'planeswalker-transform-back-double-feature'
+			const colorIndicatorColors = family.layout.colorIndicator
 				? COLOR_INDICATOR_ORDER.filter((color) => card.manaCost.toUpperCase().includes(color))
 				: []
 			const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase, sagaImages] = await Promise.all([

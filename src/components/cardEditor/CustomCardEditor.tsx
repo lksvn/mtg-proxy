@@ -294,7 +294,7 @@ export function CustomCardEditor() {
 					</details>
 					<details className="form-section" open>
 					    <summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>
-						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="content" showCreatureFields={['saga-creature', 'saga-creature-regular', 'saga-creature-transform-front'].includes(sagaStyle)} showTransformFields={['saga-transform', 'saga-creature-transform-front'].includes(sagaStyle)} /> : <CardDetailsForm
+						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="content" showCreatureFields={['saga-creature', 'saga-creature-regular', 'saga-creature-transform-front', 'saga-creature-transform-back'].includes(sagaStyle)} showTransformFields={['saga-transform', 'saga-creature-transform-front'].includes(sagaStyle)} /> : <CardDetailsForm
 							card={layout === 'token' ? token : layout === 'battle' ? battle : card}
 							onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard}
                             hideManaCost={layout === 'token' && !tokenOptions.showManaCost}

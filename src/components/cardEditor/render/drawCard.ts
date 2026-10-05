@@ -99,14 +99,15 @@ export function drawCard(
 	}
 	if (overlay) context.drawImage(overlay.image, overlay.x, overlay.y, overlay.width, overlay.height)
 	if (border) context.drawImage(border, 0, 0, canvasWidth, canvasHeight)
-	if (colorIndicatorBase && colorIndicatorColors?.length) {
-		context.drawImage(colorIndicatorBase, 115, 1207, 70, 70)
+	if (colorIndicatorBase && colorIndicatorColors?.length && layout.colorIndicator) {
+		const indicator = layout.colorIndicator
+		context.drawImage(colorIndicatorBase, indicator.x, indicator.y, indicator.width, indicator.height)
 		const slice = Math.PI * 2 / colorIndicatorColors.length
 
 		colorIndicatorColors.forEach((color, index) => {
 			context.beginPath()
-			context.moveTo(155, 1242)
-			context.arc(155, 1242, 22, -Math.PI / 2 + slice * index, -Math.PI / 2 + slice * (index + 1))
+			context.moveTo(indicator.centerX, indicator.centerY)
+			context.arc(indicator.centerX, indicator.centerY, indicator.radius, -Math.PI / 2 + slice * index, -Math.PI / 2 + slice * (index + 1))
 			context.closePath()
 			context.fillStyle = COLOR_INDICATOR_COLORS[color]
 			context.fill()
