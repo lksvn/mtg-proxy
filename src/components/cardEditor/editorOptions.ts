@@ -42,6 +42,7 @@ export const SAGA_STYLES: readonly { id: SagaStyle; label: TranslationKey }[] = 
 	{ id: 'saga-creature-regular', label: 'sagaStyleCreatureRegular' },
 	{ id: 'saga-creature-transform-front', label: 'sagaStyleCreatureTransformFront' },
 	{ id: 'saga-creature-transform-back', label: 'sagaStyleCreatureTransformBack' },
+	{ id: 'saga-creature-transform-front-ub', label: 'sagaStyleCreatureTransformFrontUb' },
 	{ id: 'saga-transform', label: 'sagaStyleTransform' },
 	{ id: 'saga-lord-of-the-rings', label: 'sagaStyleLordOfTheRings' },
 ]
