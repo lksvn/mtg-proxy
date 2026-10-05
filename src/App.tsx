@@ -30,7 +30,7 @@ function App() {
 			return []
 		}
 	})
-	const { cards, loading, loadCards, loadCardPrintings, selectPrinting, retryCard } = useCards()
+	const { cards, loading, loadCards, loadCardPrintings, selectPrinting, retryCard, addCustomCard, removeCustomCard } = useCards()
 	const [printSettings, setPrintSettings] = useState<PrintSettings>({
 		paper: 'a4',
 		gap: 0.3,
@@ -137,6 +137,8 @@ function App() {
 
 		const backup = serializeCardList(
 			savedCards.map((entry) => {
+				if (entry.custom) return entry.parsed
+
 				if (!entry.card) {
 					return {
 						...entry.parsed,
@@ -177,6 +179,21 @@ function App() {
 		)
 	}
 
+	function addCustomCardToDeckList(customCard: {
+		quantity: number
+		name: string
+		typeLine: string
+		artist: string
+		collectorNumber: string
+		image: Blob
+	}) {
+		addCustomCard({
+			...customCard,
+			imageUrl: URL.createObjectURL(customCard.image),
+		})
+		window.location.hash = ''
+	}
+
 	return (
 		<>
         <NavigationBar label={t('headerNavigation')} className="mb-3"/>
@@ -184,7 +201,7 @@ function App() {
 			<h1 className="mb-2"><Icon name="cards-fan"/> MTG Proxy</h1>
 			<p>{t('tagline')}</p>
 		</header>
-        {hash === '#editor' ? (<CustomCardEditor />) : (
+		{hash === '#editor' ? (<CustomCardEditor onAddToDeckList={addCustomCardToDeckList} />) : (
             <main>
 
                 <CardListForm
@@ -220,6 +237,7 @@ function App() {
                     onLoadPrintings={loadCardPrintings}
                     onSelectPrinting={selectPrinting}
                     onRetry={retryCard}
+					 onRemoveCustomCard={removeCustomCard}
                 />
 
                 <BackToTop />

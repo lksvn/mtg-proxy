@@ -36,7 +36,18 @@ function isDoubleFeatureStyle(style: PlaneswalkerStyle) {
 		style === 'planeswalker-transform-back-double-feature'
 }
 
-export function CustomCardEditor() {
+type CustomCardEditorProps = {
+	onAddToDeckList?: (card: {
+		quantity: number
+		name: string
+		typeLine: string
+		artist: string
+		collectorNumber: string
+		image: Blob
+	}) => void
+}
+
+export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 	const { t } = useI18n()
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const [artwork, setArtwork] = useState<File | string | undefined>(SAMPLE_ARTWORK_URL)
@@ -47,6 +58,7 @@ export function CustomCardEditor() {
 	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
+	const [customCardQuantity, setCustomCardQuantity] = useState(1)
 	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker' | 'battle' | 'saga'>('card')
 	const [tokenStyle, setTokenStyle] = useState<TokenStyle>('token-regular')
 	const [planeswalkerStyle, setPlaneswalkerStyle] = useState<PlaneswalkerStyle>('planeswalker-regular')
@@ -124,6 +136,21 @@ export function CustomCardEditor() {
 
 			const png = setPngDpi(new Uint8Array(await blob.arrayBuffer()), dpi)
 			downloadBlob(new Blob([png.buffer as ArrayBuffer], { type: 'image/png' }), `mtg-proxy-custom-card-${dpi}dpi.png`)
+		}, 'image/png')
+	}
+
+	function addToDeckList() {
+		canvasRef.current?.toBlob((image) => {
+			if (!image) return
+
+			onAddToDeckList?.({
+				quantity: customCardQuantity,
+				name: activeCard.name || t('customCard'),
+				typeLine: activeCard.typeLine,
+				artist: activeCard.artist,
+				collectorNumber: activeCard.number,
+				image,
+			})
 		}, 'image/png')
 	}
 
@@ -334,6 +361,24 @@ export function CustomCardEditor() {
 							))}
                         />
                     }
+					{onAddToDeckList && <div style={{display:'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gridAutoFlow:'dense'}} className="gap-3 mt-3">
+						<div className="form-group gap-2">
+							<label htmlFor="custom-card-quantity">{t('quantity')}</label>
+							<input
+								id="custom-card-quantity"
+								type="number"
+								min="1"
+								step="1"
+								value={customCardQuantity}
+								onChange={(event) => setCustomCardQuantity(Math.max(1, event.currentTarget.valueAsNumber || 1))}
+							/>
+						</div>
+                        <div className="pt-5">
+                            <button type="button" className="btn block" onClick={addToDeckList}>
+                                <Icon name="plus"/> {t('addCustomCardToDeckList')}
+                            </button>
+                        </div>
+					</div>}
 					<div className="split-button mt-3">
 						<button type="button" className="btn" onClick={() => downloadPng()}>
 							<Icon name="file-down"/> {t('downloadPng')}
