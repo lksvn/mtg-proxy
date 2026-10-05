@@ -284,8 +284,8 @@ export function CustomCardEditor() {
 									onChange={setFrameSelection}
 									hideVehicles
 									hideArtifacts={!['saga-nyx', 'saga-universes-beyond'].includes(sagaStyle)}
-									hideColorless={['saga-regular', 'saga-transform', 'saga-lord-of-the-rings'].includes(sagaStyle)}
-									hideLands={!['saga-regular', 'saga-transform'].includes(sagaStyle)}
+									hideColorless={['saga-regular', 'saga-transform', 'saga-lord-of-the-rings', 'saga-universes-beyond-regular'].includes(sagaStyle)}
+									hideLands={!['saga-regular', 'saga-transform', 'saga-universes-beyond-regular'].includes(sagaStyle)}
 									hideColoredLands
 								/>
 							</div>
