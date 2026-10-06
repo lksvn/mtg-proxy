@@ -1550,6 +1550,23 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		layout: caseLayout,
 		fonts: commonFonts,
 	},
+	'case-nyx': {
+		id: 'case-nyx',
+		frames: {
+			W: 'img/frames/class/nyx/w.png',
+			U: 'img/frames/class/nyx/u.png',
+			B: 'img/frames/class/nyx/b.png',
+			R: 'img/frames/class/nyx/r.png',
+			G: 'img/frames/class/nyx/g.png',
+			M: 'img/frames/class/nyx/m.png',
+			A: 'img/frames/class/nyx/a.png',
+			C: 'img/frames/class/nyx/c.png',
+		},
+		pt: {},
+		fallbacks: commonFallbacks,
+		layout: caseLayout,
+		fonts: commonFonts,
+	},
 	'saga-regular': {
 		id: 'saga-regular',
 		frames: {

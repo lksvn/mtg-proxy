@@ -18,11 +18,13 @@ import { FrameColorPicker } from './ui/FrameColorPicker'
 import {
 	FRAME_STYLE_GROUPS,
 	CLASS_STYLES,
+	CASE_STYLES,
 	PLANESWALKER_STYLES,
 	SAGA_STYLES,
 	TOKEN_STYLES,
 	type PlaneswalkerStyle,
 	type ClassStyle,
+	type CaseStyle,
 	type SagaStyle,
 	type TokenStyle,
 } from './editorOptions'
@@ -68,6 +70,7 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 	const [planeswalkerStyle, setPlaneswalkerStyle] = useState<PlaneswalkerStyle>('planeswalker-regular')
 	const [sagaStyle, setSagaStyle] = useState<SagaStyle>('saga-regular')
 	const [classStyle, setClassStyle] = useState<ClassStyle>('class-regular')
+	const [caseStyle, setCaseStyle] = useState<CaseStyle>('case-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -135,7 +138,7 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 		rarity: 'uncommon', tintSetSymbol: false, backgroundColor: '#000000',
 	})
 	const activeCard = layout === 'token' ? token : layout === 'planeswalker' ? planeswalker : layout === 'battle' ? battle : layout === 'saga' ? saga : layout === 'class' ? classCard : layout === 'case' ? caseCard : card
-	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : layout === 'saga' ? sagaStyle : layout === 'class' ? classStyle : layout === 'case' ? 'case-regular' : frameFamily
+	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : layout === 'saga' ? sagaStyle : layout === 'class' ? classStyle : layout === 'case' ? caseStyle : frameFamily
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
 	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
 	const planeswalkerLimitedColors = planeswalkerStyle === 'planeswalker-transform-front' ||
@@ -354,9 +357,17 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 								<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideLands hideColoredLands hideVehicles />
 							</div>
 						</>}
-						{layout === 'case' && <div className="form-group gap-2 mb-5">
-							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideLands hideColoredLands hideVehicles />
-						</div>}
+						{layout === 'case' && <>
+							<div className="form-group gap-2">
+								<label htmlFor="case-style">{t('caseStyle')}</label>
+								<select id="case-style" value={caseStyle} onChange={(event) => setCaseStyle(event.target.value as CaseStyle)}>
+									{CASE_STYLES.map(({ id, label }) => <option key={id} value={id}>{t(label)}</option>)}
+								</select>
+							</div>
+							<div className="form-group gap-2 mb-5">
+								<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideLands hideColoredLands hideVehicles />
+							</div>
+						</>}
 					</details>
 					<details className="form-section" open>
 					    <summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>
