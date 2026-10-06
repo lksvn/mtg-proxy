@@ -5,7 +5,8 @@ import { ArtworkControls } from './ui/ArtworkControls'
 import { CardDetailsForm } from './ui/CardDetailsForm'
 import { PlaneswalkerDetailsForm } from './ui/PlaneswalkerDetailsForm'
 import { SagaDetailsForm } from './ui/SagaDetailsForm'
-import type { CustomCardData, FrameVariant, PlaneswalkerCardData, SagaCardData } from './types'
+import { ClassDetailsForm } from './ui/ClassDetailsForm'
+import type { ClassCardData, CustomCardData, FrameVariant, PlaneswalkerCardData, SagaCardData } from './types'
 import { inferFrameVariant } from './cardText'
 import { useI18n } from '../../i18n/context'
 import { downloadBlob } from '../../utils/downloadBlob'
@@ -59,7 +60,7 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [customCardQuantity, setCustomCardQuantity] = useState(1)
-	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker' | 'battle' | 'saga'>('card')
+	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker' | 'battle' | 'saga' | 'class'>('card')
 	const [tokenStyle, setTokenStyle] = useState<TokenStyle>('token-regular')
 	const [planeswalkerStyle, setPlaneswalkerStyle] = useState<PlaneswalkerStyle>('planeswalker-regular')
 	const [sagaStyle, setSagaStyle] = useState<SagaStyle>('saga-regular')
@@ -111,8 +112,18 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 		],
 		reversePowerToughness: '',
 	})
-	const activeCard = layout === 'token' ? token : layout === 'planeswalker' ? planeswalker : layout === 'battle' ? battle : layout === 'saga' ? saga : card
-	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : layout === 'saga' ? sagaStyle : frameFamily
+	const [classCard, setClassCard] = useState<ClassCardData>({
+		name: 'Wizard Class', manaCost: 'u', typeLine: 'Enchantment — Class',
+		rulesText: '', centerRulesText: false, flavorText: '', powerToughness: '', artist: '', number: '81',
+		rarity: 'uncommon', tintSetSymbol: false, backgroundColor: '#000000',
+		levels: [
+			{ cost: '', name: '', text: '(Gain the next level as a sorcery to add its ability.)\nYou have no maximum hand size.' },
+			{ cost: '{2}{U}', name: 'Level 2', text: 'When this Class becomes level 2, draw two cards.' },
+			{ cost: '{4}{U}', name: 'Level 3', text: 'Whenever you draw a card, put a +1/+1 counter on target creature you control.' },
+		],
+	})
+	const activeCard = layout === 'token' ? token : layout === 'planeswalker' ? planeswalker : layout === 'battle' ? battle : layout === 'saga' ? saga : layout === 'class' ? classCard : card
+	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : layout === 'saga' ? sagaStyle : layout === 'class' ? 'class-regular' : frameFamily
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
 	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
 	const planeswalkerLimitedColors = planeswalkerStyle === 'planeswalker-transform-front' ||
@@ -193,6 +204,7 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
                                 <option value="planeswalker">{t('cardLayoutPlaneswalker')}</option>
 								<option value="battle">{t('cardLayoutBattle')}</option>
 								<option value="saga">{t('cardLayoutSaga')}</option>
+								<option value="class">{t('cardLayoutClass')}</option>
                             </select>
                         </div>
                         {layout === 'card' && <>
@@ -318,10 +330,13 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 								/>
 							</div>
 						</>}
+						{layout === 'class' && <div className="form-group gap-2 mb-5">
+							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideLands hideColoredLands hideVehicles />
+						</div>}
 					</details>
 					<details className="form-section" open>
 					    <summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>
-						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="content" showCreatureFields={['saga-creature', 'saga-creature-regular', 'saga-creature-transform-front', 'saga-creature-transform-back', 'saga-creature-transform-front-ub', 'saga-creature-transform-back-ub'].includes(sagaStyle)} showTransformFields={['saga-transform', 'saga-creature-transform-front', 'saga-creature-transform-front-ub'].includes(sagaStyle)} /> : <CardDetailsForm
+						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="content" showCreatureFields={['saga-creature', 'saga-creature-regular', 'saga-creature-transform-front', 'saga-creature-transform-back', 'saga-creature-transform-front-ub', 'saga-creature-transform-back-ub'].includes(sagaStyle)} showTransformFields={['saga-transform', 'saga-creature-transform-front', 'saga-creature-transform-front-ub'].includes(sagaStyle)} /> : layout === 'class' ? <ClassDetailsForm card={classCard} onChange={setClassCard} part="content" /> : <CardDetailsForm
 							card={layout === 'token' ? token : layout === 'battle' ? battle : card}
 							onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard}
                             hideManaCost={layout === 'token' && !tokenOptions.showManaCost}
@@ -336,7 +351,7 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 					</details>
 					<details className="form-section">
                         <summary><h5 className="mt-5">4. {t('cardDetailsSection')}</h5></summary>
-						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="details" /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="details" /> : <CardDetailsForm card={layout === 'token' ? token : layout === 'battle' ? battle : card} onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard} part="details" />}
+						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="details" /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="details" /> : layout === 'class' ? <ClassDetailsForm card={classCard} onChange={setClassCard} part="details" /> : <CardDetailsForm card={layout === 'token' ? token : layout === 'battle' ? battle : card} onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard} part="details" />}
 					</details>
                 </div>
 

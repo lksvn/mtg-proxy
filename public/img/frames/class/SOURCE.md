@@ -1,0 +1,1 @@
+Class frame and level-header assets were copied from the local [Card Conjurer](https://github.com/joshbirnholz/cardconjurer) clone at `D:\www\cardconjurer`. Geometry follows `js/frames/packClass.js` and `js/frames/versionClass.js`.

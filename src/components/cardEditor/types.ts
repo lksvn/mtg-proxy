@@ -40,3 +40,13 @@ export type SagaCardData = CustomCardData & {
 	chapters: SagaChapter[]
 	reversePowerToughness: string
 }
+
+export type ClassLevel = {
+	cost: string
+	name: string
+	text: string
+}
+
+export type ClassCardData = CustomCardData & {
+	levels: ClassLevel[]
+}
