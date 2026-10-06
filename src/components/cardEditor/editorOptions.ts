@@ -32,6 +32,28 @@ export const FRAME_STYLE_GROUPS = [
 export type TokenStyle = Extract<FrameFamilyId, `token-${string}`>
 export type PlaneswalkerStyle = Extract<FrameFamilyId, `planeswalker-${string}`>
 export type SagaStyle = Extract<FrameFamilyId, `saga-${string}`>
+export type ClassStyle = Extract<FrameFamilyId, `class-${string}`>
+export type CaseStyle = Extract<FrameFamilyId, `case-${string}`>
+export type AdventureStyle = Extract<FrameFamilyId, `adventure-${string}`>
+
+export const ADVENTURE_STYLES: readonly { id: AdventureStyle; label: TranslationKey }[] = [
+	{ id: 'adventure-regular', label: 'adventureStyleRegular' },
+	{ id: 'adventure-nyx', label: 'adventureStyleNyx' },
+]
+
+export const CLASS_STYLES: readonly { id: ClassStyle; label: TranslationKey }[] = [
+	{ id: 'class-regular', label: 'classStyleRegular' },
+	{ id: 'class-nyx', label: 'classStyleNyx' },
+	{ id: 'class-universes-beyond', label: 'classStyleUniversesBeyond' },
+	{ id: 'class-universes-beyond-nyx', label: 'classStyleUniversesBeyondNyx' },
+]
+
+export const CASE_STYLES: readonly { id: CaseStyle; label: TranslationKey }[] = [
+	{ id: 'case-regular', label: 'caseStyleRegular' },
+	{ id: 'case-nyx', label: 'caseStyleNyx' },
+	{ id: 'case-universes-beyond', label: 'caseStyleUniversesBeyond' },
+	{ id: 'case-universes-beyond-nyx', label: 'caseStyleUniversesBeyondNyx' },
+]
 
 export const SAGA_STYLES: readonly { id: SagaStyle; label: TranslationKey }[] = [
 	{ id: 'saga-regular', label: 'sagaStyleRegular' },

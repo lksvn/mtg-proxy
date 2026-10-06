@@ -76,6 +76,9 @@ details.form-section {
     align-items: start;
     gap: 0.5rem;
     margin-bottom: 0.75rem;
+    &.nocols {
+        grid-template-columns: 1fr;
+    }
 }
 
 .planeswalker-ability-remove > span {

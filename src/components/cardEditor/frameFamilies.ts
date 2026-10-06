@@ -3,7 +3,8 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-export type FrameFamilyId = 'saga-regular' | 'saga-nyx' | 'saga-universes-beyond' | 'saga-universes-beyond-regular' | 'saga-creature' | 'saga-creature-regular' | 'saga-creature-transform-front' | 'saga-creature-transform-back' | 'saga-creature-transform-front-ub' | 'saga-creature-transform-back-ub' | 'saga-transform' | 'saga-lord-of-the-rings' | 'battle-regular' | 'planeswalker-regular' | 'planeswalker-transform-front' | 'planeswalker-transform-back' | 'planeswalker-mdfc-back' | 'planeswalker-borderless' | 'planeswalker-box-topper' | 'planeswalker-compleated' | 'planeswalker-double-feature' | 'planeswalker-tall-double-feature' | 'planeswalker-transform-front-double-feature' | 'planeswalker-transform-back-double-feature' | 'planeswalker-sdcc15' | 'planeswalker-sdcc15-transform' | 'planeswalker-nickname' | 'planeswalker-seventh' | 'planeswalker-tall' | 'planeswalker-tall-borderless' | 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight' | 'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'
+type ClassFrameFamilyId = 'class-regular' | 'class-nyx' | 'class-universes-beyond' | 'class-universes-beyond-nyx' | 'case-regular' | 'case-nyx' | 'case-universes-beyond' | 'case-universes-beyond-nyx' | 'room-regular' | 'adventure-regular' | 'adventure-nyx' | 'leveler-regular'
+export type FrameFamilyId = ClassFrameFamilyId | 'saga-regular' | 'saga-nyx' | 'saga-universes-beyond' | 'saga-universes-beyond-regular' | 'saga-creature' | 'saga-creature-regular' | 'saga-creature-transform-front' | 'saga-creature-transform-back' | 'saga-creature-transform-front-ub' | 'saga-creature-transform-back-ub' | 'saga-transform' | 'saga-lord-of-the-rings' | 'battle-regular' | 'planeswalker-regular' | 'planeswalker-transform-front' | 'planeswalker-transform-back' | 'planeswalker-mdfc-back' | 'planeswalker-borderless' | 'planeswalker-box-topper' | 'planeswalker-compleated' | 'planeswalker-double-feature' | 'planeswalker-tall-double-feature' | 'planeswalker-transform-front-double-feature' | 'planeswalker-transform-back-double-feature' | 'planeswalker-sdcc15' | 'planeswalker-sdcc15-transform' | 'planeswalker-nickname' | 'planeswalker-seventh' | 'planeswalker-tall' | 'planeswalker-tall-borderless' | 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight' | 'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'
 export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
 type TextStyle = {
@@ -64,8 +65,50 @@ type SagaLayout = {
 	}
 }
 
+type ClassLayout = {
+	levels: { x: number; y: number; width: number; height: number }
+	header: { x: number; width: number; height: number }
+}
+
+type CaseLayout = {
+	sections: { x: number; y: number; width: number; height: number }
+}
+
+type RoomLayout = {
+	left: { originX: number; originY: number }
+	right: { originX: number; originY: number }
+	titleWidth: number
+	rules: { x: number; width: number; height: number }
+	type: { x: number; y: number; width: number; height: number; textY: number }
+	reminder: { x: number; y: number; width: number; height: number }
+}
+
+type AdventureLayout = {
+	title: TextBox
+	mana: FrameLayout['mana']
+	type: TextBox
+	rules: RulesBox
+}
+
+type LevelerLayout = {
+	levelUp: RulesBox
+	levelTwo: LevelerTierLayout
+	levelThree: LevelerTierLayout
+}
+
+type LevelerTierLayout = {
+	label: TextBox & {
+		fixedFont: string
+		fixedOffsetY: number
+		rangeOffsetY: number
+	}
+	rules: RulesBox
+	powerToughness: TextBox
+}
+
 export type FrameLayout = {
 	canvas?: { width: number; height: number; rotation: 'counterclockwise' }
+	previewRotation?: boolean
 	artwork: { dragLeft: number; dragTop: number; dragRight: number; dragBottom: number }
 	title: TextBox
 	mana: TextStyle & { right: number; centerY: number; symbolSize: number; gap: number; verticalPositions?: readonly (readonly [number, number])[] }
@@ -73,7 +116,12 @@ export type FrameLayout = {
 	rules: RulesBox
 	flavorRules?: RulesBox
 	saga?: SagaLayout
-	symbol: { centerX: number; centerY: number; boxSize: number }
+	class?: ClassLayout
+	case?: CaseLayout
+	room?: RoomLayout
+	adventure?: AdventureLayout
+	leveler?: LevelerLayout
+	symbol: { centerX: number; centerY: number; boxSize: number; rotation?: 'counterclockwise' }
 	colorIndicator?: { x: number; y: number; width: number; height: number; centerX: number; centerY: number; radius: number }
 	pt: TextStyle & {
 		x: number

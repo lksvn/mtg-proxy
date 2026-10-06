@@ -40,3 +40,42 @@ export type SagaCardData = CustomCardData & {
 	chapters: SagaChapter[]
 	reversePowerToughness: string
 }
+
+export type ClassLevel = {
+	cost: string
+	name: string
+	text: string
+}
+
+export type ClassCardData = CustomCardData & {
+	levels: ClassLevel[]
+}
+
+export type CaseCardData = CustomCardData & {
+	solveCondition: string
+	solvedAbility: string
+}
+
+export type RoomCardData = CustomCardData & {
+	otherName: string
+	otherManaCost: string
+	otherRulesText: string
+	reminderText: string
+}
+
+export type AdventureCardData = CustomCardData & {
+	adventureName: string
+	adventureManaCost: string
+	adventureTypeLine: string
+	adventureRulesText: string
+}
+
+export type LevelerCardData = CustomCardData & {
+	levelUpText: string
+	levelTwo: string
+	levelTwoRulesText: string
+	levelTwoPowerToughness: string
+	levelThree: string
+	levelThreeRulesText: string
+	levelThreePowerToughness: string
+}
