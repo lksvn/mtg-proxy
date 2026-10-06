@@ -50,3 +50,8 @@ export type ClassLevel = {
 export type ClassCardData = CustomCardData & {
 	levels: ClassLevel[]
 }
+
+export type CaseCardData = CustomCardData & {
+	solveCondition: string
+	solvedAbility: string
+}

@@ -88,6 +88,14 @@ const classLayout: FrameLayout = {
 	footer: commonFooter,
 }
 
+const caseLayout: FrameLayout = {
+	...classLayout,
+	class: undefined,
+	case: {
+		sections: { x: 764, y: 266, width: 606, height: 1469 },
+	},
+}
+
 function tokenFrames(style: string, variants: readonly FrameVariant[]): FrameFamily['frames'] {
 	return Object.fromEntries(variants.map((variant) => [variant, `img/frames/token/${style}/${variant.toLowerCase()}.png`]))
 }
@@ -1523,6 +1531,23 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: {},
 		fallbacks: commonFallbacks,
 		layout: classLayout,
+		fonts: commonFonts,
+	},
+	'case-regular': {
+		id: 'case-regular',
+		frames: {
+			W: 'img/frames/class/w.png',
+			U: 'img/frames/class/u.png',
+			B: 'img/frames/class/b.png',
+			R: 'img/frames/class/r.png',
+			G: 'img/frames/class/g.png',
+			M: 'img/frames/class/m.png',
+			A: 'img/frames/class/a.png',
+			C: 'img/frames/class/c.png',
+		},
+		pt: {},
+		fallbacks: commonFallbacks,
+		layout: caseLayout,
 		fonts: commonFonts,
 	},
 	'saga-regular': {

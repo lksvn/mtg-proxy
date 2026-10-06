@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
-import { DUAL_FRAME_VARIANTS, type ClassCardData, type CustomCardData, type FrameVariant, type PlaneswalkerCardData, type SagaCardData } from './types'
+import { DUAL_FRAME_VARIANTS, type CaseCardData, type ClassCardData, type CustomCardData, type FrameVariant, type PlaneswalkerCardData, type SagaCardData } from './types'
 import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
 import { drawCard, drawCardFooter, HEIGHT, WIDTH } from './render/drawCard'
 import { futureManaFile } from './render/drawManaCost'
@@ -12,6 +12,7 @@ import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorder
 import { drawIconlessPlaneswalkerAbilities, drawPlaneswalker, drawPlaneswalkerBackground, drawPlaneswalkerNickname, drawPlaneswalkerReverseFace, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from './render/drawPlaneswalker'
 import { drawSaga, SAGA_ASSETS, type SagaImages } from './render/drawSaga'
 import { CLASS_HEADER, drawClass } from './render/drawClass'
+import { drawCase } from './render/drawCase'
 import { Icon } from '../Icon'
 
 const DEBUG_CANVAS = import.meta.env.DEV
@@ -123,7 +124,7 @@ type CardCanvasProps = {
 	borderStyle: FrameBorderStyle
 	frameVariant: FrameVariant
 	transform: ArtworkTransform,
-    card: CustomCardData | PlaneswalkerCardData | SagaCardData | ClassCardData,
+    card: CustomCardData | PlaneswalkerCardData | SagaCardData | ClassCardData | CaseCardData,
     onTransformChange: (transform: ArtworkTransform) => void,
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
@@ -240,11 +241,12 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const planeswalker = 'startingLoyalty' in card
 			const saga = 'chapters' in card
 			const classCard = 'levels' in card
+			const caseCard = 'solveCondition' in card
 			const drawableCard: CustomCardData = planeswalker ? {
 				...card,
 				name: family.id === 'planeswalker-nickname' ? card.nickname : card.name,
 				rulesText: '', centerRulesText: false, flavorText: '', powerToughness: card.startingLoyalty,
-			} : saga || classCard ? { ...card, rulesText: '', flavorText: '' } : card
+			} : saga || classCard || caseCard ? { ...card, rulesText: '', flavorText: '' } : card
             const manaRuns = parseManaCost(card.manaCost)
             const rulesRuns = parseRulesText(drawableCard.rulesText)
 
@@ -261,6 +263,9 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const sagaCreatureRulesRuns = saga && family.id === 'saga-creature' ? parseRulesText(card.flavorText) : []
 			const classLevelRuns = classCard ? card.levels.map(({ text }) => parseRulesText(text)) : []
 			const classCostRuns = classCard ? card.levels.map(({ cost }) => parseManaCost(cost)) : []
+			const caseRuns = caseCard
+				? [parseRulesText(card.rulesText), parseRulesText(card.solveCondition), parseRulesText(card.solvedAbility)]
+				: []
 			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
 			const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 				? 'img/frames/planeswalker/mdfc/text.png'
@@ -272,7 +277,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
 					: PLANESWALKER_ASSETS.mask
 			const planeswalkerAssets = { ...PLANESWALKER_ASSETS, mask: planeswalkerMask }
-			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat(), ...sagaCreatureRulesRuns, ...classLevelRuns.flat(), ...classCostRuns.flat()]
+			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat(), ...sagaCreatureRulesRuns, ...classLevelRuns.flat(), ...classCostRuns.flat(), ...caseRuns.flat()]
 			const futureManaFiles = family.id === 'future-sight'
 				? manaRuns.flatMap((run) => run.type === 'symbol' ? [futureManaFile(run.value)].filter((file): file is string => Boolean(file)) : [])
 				: []
@@ -419,6 +424,9 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			}
 			if (classCard && classHeader) {
 				drawClass(context, card, classLevelRuns, classCostRuns, manaSymbols, classHeader, family.layout.class!)
+			}
+			if (caseCard) {
+				drawCase(context, caseRuns, manaSymbols, family.layout.case!)
 			}
 			context.resetTransform()
 			if (family.layout.footer.unrotated) {
