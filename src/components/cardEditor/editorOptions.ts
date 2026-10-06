@@ -34,6 +34,12 @@ export type PlaneswalkerStyle = Extract<FrameFamilyId, `planeswalker-${string}`>
 export type SagaStyle = Extract<FrameFamilyId, `saga-${string}`>
 export type ClassStyle = Extract<FrameFamilyId, `class-${string}`>
 export type CaseStyle = Extract<FrameFamilyId, `case-${string}`>
+export type AdventureStyle = Extract<FrameFamilyId, `adventure-${string}`>
+
+export const ADVENTURE_STYLES: readonly { id: AdventureStyle; label: TranslationKey }[] = [
+	{ id: 'adventure-regular', label: 'adventureStyleRegular' },
+	{ id: 'adventure-nyx', label: 'adventureStyleNyx' },
+]
 
 export const CLASS_STYLES: readonly { id: ClassStyle; label: TranslationKey }[] = [
 	{ id: 'class-regular', label: 'classStyleRegular' },

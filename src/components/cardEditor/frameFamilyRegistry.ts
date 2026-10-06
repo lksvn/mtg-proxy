@@ -1674,6 +1674,22 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		layout: adventureLayout,
 		fonts: commonFonts,
 	},
+	'adventure-nyx': {
+		id: 'adventure-nyx',
+		frames: {
+			W: 'img/frames/adventure/nyx/w.png',
+			U: 'img/frames/adventure/nyx/u.png',
+			B: 'img/frames/adventure/nyx/b.png',
+			R: 'img/frames/adventure/nyx/r.png',
+			G: 'img/frames/adventure/nyx/g.png',
+			M: 'img/frames/adventure/nyx/m.png',
+			A: 'img/frames/adventure/nyx/a.png',
+		},
+		pt: m15Pt,
+		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
+		layout: adventureLayout,
+		fonts: commonFonts,
+	},
 	'saga-regular': {
 		id: 'saga-regular',
 		frames: {
