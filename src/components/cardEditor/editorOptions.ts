@@ -45,6 +45,7 @@ export const CLASS_STYLES: readonly { id: ClassStyle; label: TranslationKey }[] 
 export const CASE_STYLES: readonly { id: CaseStyle; label: TranslationKey }[] = [
 	{ id: 'case-regular', label: 'caseStyleRegular' },
 	{ id: 'case-nyx', label: 'caseStyleNyx' },
+	{ id: 'case-universes-beyond', label: 'caseStyleUniversesBeyond' },
 ]
 
 export const SAGA_STYLES: readonly { id: SagaStyle; label: TranslationKey }[] = [

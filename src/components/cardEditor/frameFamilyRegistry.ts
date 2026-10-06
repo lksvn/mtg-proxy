@@ -1567,6 +1567,23 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		layout: caseLayout,
 		fonts: commonFonts,
 	},
+	'case-universes-beyond': {
+		id: 'case-universes-beyond',
+		frames: {
+			W: 'img/frames/class/universes-beyond/w.png',
+			U: 'img/frames/class/universes-beyond/u.png',
+			B: 'img/frames/class/universes-beyond/b.png',
+			R: 'img/frames/class/universes-beyond/r.png',
+			G: 'img/frames/class/universes-beyond/g.png',
+			M: 'img/frames/class/universes-beyond/m.png',
+			A: 'img/frames/class/universes-beyond/a.png',
+			C: 'img/frames/class/universes-beyond/c.png',
+		},
+		pt: {},
+		fallbacks: commonFallbacks,
+		layout: caseLayout,
+		fonts: commonFonts,
+	},
 	'saga-regular': {
 		id: 'saga-regular',
 		frames: {
