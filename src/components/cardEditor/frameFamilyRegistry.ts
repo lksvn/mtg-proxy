@@ -1508,6 +1508,23 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		layout: classLayout,
 		fonts: commonFonts,
 	},
+	'class-universes-beyond-nyx': {
+		id: 'class-universes-beyond-nyx',
+		frames: {
+			W: 'img/frames/class/universes-beyond-nyx/w.png',
+			U: 'img/frames/class/universes-beyond-nyx/u.png',
+			B: 'img/frames/class/universes-beyond-nyx/b.png',
+			R: 'img/frames/class/universes-beyond-nyx/r.png',
+			G: 'img/frames/class/universes-beyond-nyx/g.png',
+			M: 'img/frames/class/universes-beyond-nyx/m.png',
+			A: 'img/frames/class/universes-beyond-nyx/a.png',
+			C: 'img/frames/class/universes-beyond-nyx/c.png',
+		},
+		pt: {},
+		fallbacks: commonFallbacks,
+		layout: classLayout,
+		fonts: commonFonts,
+	},
 	'saga-regular': {
 		id: 'saga-regular',
 		frames: {

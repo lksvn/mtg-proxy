@@ -38,6 +38,7 @@ export const CLASS_STYLES: readonly { id: ClassStyle; label: TranslationKey }[] 
 	{ id: 'class-regular', label: 'classStyleRegular' },
 	{ id: 'class-nyx', label: 'classStyleNyx' },
 	{ id: 'class-universes-beyond', label: 'classStyleUniversesBeyond' },
+	{ id: 'class-universes-beyond-nyx', label: 'classStyleUniversesBeyondNyx' },
 ]
 
 export const SAGA_STYLES: readonly { id: SagaStyle; label: TranslationKey }[] = [
