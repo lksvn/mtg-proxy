@@ -3,7 +3,7 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-type ClassFrameFamilyId = 'class-regular' | 'class-nyx' | 'class-universes-beyond' | 'class-universes-beyond-nyx' | 'case-regular' | 'case-nyx' | 'case-universes-beyond' | 'case-universes-beyond-nyx' | 'room-regular'
+type ClassFrameFamilyId = 'class-regular' | 'class-nyx' | 'class-universes-beyond' | 'class-universes-beyond-nyx' | 'case-regular' | 'case-nyx' | 'case-universes-beyond' | 'case-universes-beyond-nyx' | 'room-regular' | 'adventure-regular'
 export type FrameFamilyId = ClassFrameFamilyId | 'saga-regular' | 'saga-nyx' | 'saga-universes-beyond' | 'saga-universes-beyond-regular' | 'saga-creature' | 'saga-creature-regular' | 'saga-creature-transform-front' | 'saga-creature-transform-back' | 'saga-creature-transform-front-ub' | 'saga-creature-transform-back-ub' | 'saga-transform' | 'saga-lord-of-the-rings' | 'battle-regular' | 'planeswalker-regular' | 'planeswalker-transform-front' | 'planeswalker-transform-back' | 'planeswalker-mdfc-back' | 'planeswalker-borderless' | 'planeswalker-box-topper' | 'planeswalker-compleated' | 'planeswalker-double-feature' | 'planeswalker-tall-double-feature' | 'planeswalker-transform-front-double-feature' | 'planeswalker-transform-back-double-feature' | 'planeswalker-sdcc15' | 'planeswalker-sdcc15-transform' | 'planeswalker-nickname' | 'planeswalker-seventh' | 'planeswalker-tall' | 'planeswalker-tall-borderless' | 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight' | 'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'
 export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
@@ -83,6 +83,13 @@ type RoomLayout = {
 	reminder: { x: number; y: number; width: number; height: number }
 }
 
+type AdventureLayout = {
+	title: TextBox
+	mana: FrameLayout['mana']
+	type: TextBox
+	rules: RulesBox
+}
+
 export type FrameLayout = {
 	canvas?: { width: number; height: number; rotation: 'counterclockwise' }
 	previewRotation?: boolean
@@ -96,6 +103,7 @@ export type FrameLayout = {
 	class?: ClassLayout
 	case?: CaseLayout
 	room?: RoomLayout
+	adventure?: AdventureLayout
 	symbol: { centerX: number; centerY: number; boxSize: number; rotation?: 'counterclockwise' }
 	colorIndicator?: { x: number; y: number; width: number; height: number; centerX: number; centerY: number; radius: number }
 	pt: TextStyle & {

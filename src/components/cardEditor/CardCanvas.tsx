@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
-import { DUAL_FRAME_VARIANTS, type CaseCardData, type ClassCardData, type CustomCardData, type FrameVariant, type PlaneswalkerCardData, type RoomCardData, type SagaCardData } from './types'
+import { DUAL_FRAME_VARIANTS, type AdventureCardData, type CaseCardData, type ClassCardData, type CustomCardData, type FrameVariant, type PlaneswalkerCardData, type RoomCardData, type SagaCardData } from './types'
 import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
 import { drawCard, drawCardFooter, HEIGHT, WIDTH } from './render/drawCard'
 import { futureManaFile } from './render/drawManaCost'
@@ -14,6 +14,7 @@ import { drawSaga, SAGA_ASSETS, type SagaImages } from './render/drawSaga'
 import { CLASS_HEADER, drawClass } from './render/drawClass'
 import { drawCase } from './render/drawCase'
 import { drawRoom } from './render/drawRoom'
+import { drawAdventure } from './render/drawAdventure'
 import { Icon } from '../Icon'
 
 const DEBUG_CANVAS = import.meta.env.DEV
@@ -101,6 +102,15 @@ function getDebugRegions(family: FrameFamily): DebugRegion[] {
 		)
 	}
 
+	if (layout.adventure) {
+		regions.push(
+			{ label: 'Adventure title', x: layout.adventure.title.x, y: layout.adventure.title.y - 40, width: layout.adventure.title.maxWidth, height: 80 },
+			{ label: 'Adventure mana', x: layout.adventure.mana.right - 300, y: layout.adventure.mana.centerY - layout.adventure.mana.symbolSize / 2, width: 300, height: layout.adventure.mana.symbolSize },
+			{ label: 'Adventure type', x: layout.adventure.type.x, y: layout.adventure.type.y - 35, width: layout.adventure.type.maxWidth, height: 70 },
+			{ label: 'Adventure rules', ...layout.adventure.rules },
+		)
+	}
+
 	return regions.filter(({ width, height }) => width > 0 && height > 0)
 }
 
@@ -137,7 +147,7 @@ type CardCanvasProps = {
 	borderStyle: FrameBorderStyle
 	frameVariant: FrameVariant
 	transform: ArtworkTransform,
-    card: CustomCardData | PlaneswalkerCardData | SagaCardData | ClassCardData | CaseCardData | RoomCardData,
+    card: CustomCardData | PlaneswalkerCardData | SagaCardData | ClassCardData | CaseCardData | RoomCardData | AdventureCardData,
     onTransformChange: (transform: ArtworkTransform) => void,
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
@@ -256,6 +266,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const classCard = 'levels' in card
 			const caseCard = 'solveCondition' in card
 			const room = 'otherManaCost' in card
+			const adventure = 'adventureManaCost' in card
 			const drawableCard: CustomCardData = planeswalker ? {
 				...card,
 				name: family.id === 'planeswalker-nickname' ? card.nickname : card.name,
@@ -283,6 +294,8 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const roomManaRuns = room ? [manaRuns, parseManaCost(card.otherManaCost)] : []
 			const roomRulesRuns = room ? [parseRulesText(card.rulesText), parseRulesText(card.otherRulesText)] : []
 			const roomReminderRuns = room ? parseRulesText(card.reminderText) : []
+			const adventureManaRuns = adventure ? parseManaCost(card.adventureManaCost) : []
+			const adventureRulesRuns = adventure ? parseRulesText(card.adventureRulesText) : []
 			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
 			const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 				? 'img/frames/planeswalker/mdfc/text.png'
@@ -294,7 +307,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
 					: PLANESWALKER_ASSETS.mask
 			const planeswalkerAssets = { ...PLANESWALKER_ASSETS, mask: planeswalkerMask }
-			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat(), ...sagaCreatureRulesRuns, ...classLevelRuns.flat(), ...classCostRuns.flat(), ...caseRuns.flat(), ...roomManaRuns.flat(), ...roomRulesRuns.flat(), ...roomReminderRuns]
+			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat(), ...sagaCreatureRulesRuns, ...classLevelRuns.flat(), ...classCostRuns.flat(), ...caseRuns.flat(), ...roomManaRuns.flat(), ...roomRulesRuns.flat(), ...roomReminderRuns, ...adventureManaRuns, ...adventureRulesRuns]
 			const futureManaFiles = family.id === 'future-sight'
 				? manaRuns.flatMap((run) => run.type === 'symbol' ? [futureManaFile(run.value)].filter((file): file is string => Boolean(file)) : [])
 				: []
@@ -447,6 +460,9 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			}
 			if (room) {
 				drawRoom(context, card, roomManaRuns, roomRulesRuns, roomReminderRuns, manaSymbols, family.layout.room!)
+			}
+			if (adventure) {
+				drawAdventure(context, card, adventureManaRuns, adventureRulesRuns, manaSymbols, family.layout.adventure!)
 			}
 			context.resetTransform()
 			if (family.layout.footer.unrotated) {

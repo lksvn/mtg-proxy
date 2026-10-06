@@ -62,3 +62,10 @@ export type RoomCardData = CustomCardData & {
 	otherRulesText: string
 	reminderText: string
 }
+
+export type AdventureCardData = CustomCardData & {
+	adventureName: string
+	adventureManaCost: string
+	adventureTypeLine: string
+	adventureRulesText: string
+}

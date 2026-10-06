@@ -119,6 +119,23 @@ const roomLayout: FrameLayout = {
 	},
 }
 
+const adventureLayout: FrameLayout = {
+	artwork: { dragLeft: 115, dragTop: 237, dragRight: 1386, dragBottom: 1167 },
+	title: { x: 128, y: 165, maxWidth: 1244, font: '70px belerenb, serif', color: '#111' },
+	mana: { right: 1391, centerY: 167, symbolSize: 64, gap: 4, font: '48px belerenb, serif', color: '#111' },
+	type: { x: 128, y: 1242, maxWidth: 1244, font: '54px belerenb, serif', color: '#111' },
+	rules: { x: 790, y: 1365, width: 580, height: 495, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 58, minFontSize: 30 },
+	adventure: {
+		title: { x: 128, y: 1370, maxWidth: 590, font: '48px belerenb, serif', color: '#fff' },
+		mana: { right: 720, centerY: 1370, symbolSize: 55, gap: 4, font: '42px belerenb, serif', color: '#fff' },
+		type: { x: 128, y: 1465, maxWidth: 590, font: '46px belerenb, serif', color: '#fff' },
+		rules: { x: 128, y: 1545, width: 592, height: 315, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 58, minFontSize: 30 },
+	},
+	symbol: { centerX: 1335, centerY: 1241, boxSize: 85 },
+	pt: { x: 1136, y: 1858, width: 282, height: 154, textX: 1292, textY: 1933, font: '70px belerenbsc, serif', color: '#111' },
+	footer: commonFooter,
+}
+
 function tokenFrames(style: string, variants: readonly FrameVariant[]): FrameFamily['frames'] {
 	return Object.fromEntries(variants.map((variant) => [variant, `img/frames/token/${style}/${variant.toLowerCase()}.png`]))
 }
@@ -1638,6 +1655,23 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: {},
 		fallbacks: { ...commonFallbacks, C: 'A' },
 		layout: roomLayout,
+		fonts: commonFonts,
+	},
+	'adventure-regular': {
+		id: 'adventure-regular',
+		frames: {
+			W: 'img/frames/adventure/regular/w.png',
+			U: 'img/frames/adventure/regular/u.png',
+			B: 'img/frames/adventure/regular/b.png',
+			R: 'img/frames/adventure/regular/r.png',
+			G: 'img/frames/adventure/regular/g.png',
+			M: 'img/frames/adventure/regular/m.png',
+			A: 'img/frames/adventure/regular/a.png',
+			L: 'img/frames/adventure/regular/l.png',
+		},
+		pt: m15Pt,
+		fallbacks: commonFallbacks,
+		layout: adventureLayout,
 		fonts: commonFonts,
 	},
 	'saga-regular': {

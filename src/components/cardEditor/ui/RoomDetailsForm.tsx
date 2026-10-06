@@ -28,11 +28,11 @@ export function RoomDetailsForm({ card, onChange, part }: RoomDetailsFormProps) 
 		<h5 className="mt-5">{t('roomOtherDoor')}</h5>
 		<div className="form-group gap-2">
 			<label htmlFor="room-other-name">{t('cardName')}</label>
-			<input id="room-other-name" value={card.otherName} onChange={(event) => update({ otherName: event.target.value })} />
+			<input id="room-other-name" type="text" value={card.otherName} onChange={(event) => update({ otherName: event.target.value })} />
 		</div>
 		<div className="form-group gap-2">
 			<label htmlFor="room-other-mana">{t('manaCost')}</label>
-			<input id="room-other-mana" value={card.otherManaCost} onChange={(event) => update({ otherManaCost: event.target.value })} />
+			<input id="room-other-mana" type="text" value={card.otherManaCost} onChange={(event) => update({ otherManaCost: event.target.value })} />
 		</div>
 		<div className="form-group gap-2">
 			<label htmlFor="room-other-rules">{t('rulesText')}</label>
@@ -40,7 +40,7 @@ export function RoomDetailsForm({ card, onChange, part }: RoomDetailsFormProps) 
 		</div>
 		<div className="form-group gap-2">
 			<label htmlFor="room-type">{t('typeLine')}</label>
-			<input id="room-type" value={card.typeLine} onChange={(event) => update({ typeLine: event.target.value })} />
+			<input id="room-type" type="text" value={card.typeLine} onChange={(event) => update({ typeLine: event.target.value })} />
 		</div>
 		<div className="form-group gap-2">
 			<label htmlFor="room-reminder">{t('roomReminder')}</label>

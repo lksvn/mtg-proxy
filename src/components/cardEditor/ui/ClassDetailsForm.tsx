@@ -27,6 +27,7 @@ export function ClassDetailsForm({ card, onChange, part }: ClassDetailsFormProps
 				<label htmlFor={`class-level-cost-${index}`}>{t('levelCost')}</label>
 				<input
 					id={`class-level-cost-${index}`}
+					type="text"
 					value={level.cost}
 					onChange={(event) => {
 						const levels = [...card.levels]
@@ -39,6 +40,7 @@ export function ClassDetailsForm({ card, onChange, part }: ClassDetailsFormProps
 				<label htmlFor={`class-level-name-${index}`}>{t('levelName')}</label>
 				<input
 					id={`class-level-name-${index}`}
+					type="text"
 					value={level.name}
 					onChange={(event) => {
 						const levels = [...card.levels]
