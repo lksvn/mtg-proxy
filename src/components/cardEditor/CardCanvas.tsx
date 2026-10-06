@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
-import { DUAL_FRAME_VARIANTS, type AdventureCardData, type CaseCardData, type ClassCardData, type CustomCardData, type FrameVariant, type PlaneswalkerCardData, type RoomCardData, type SagaCardData } from './types'
+import { DUAL_FRAME_VARIANTS, type AdventureCardData, type CaseCardData, type ClassCardData, type CustomCardData, type FrameVariant, type LevelerCardData, type PlaneswalkerCardData, type RoomCardData, type SagaCardData } from './types'
 import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
 import { drawCard, drawCardFooter, HEIGHT, WIDTH } from './render/drawCard'
 import { futureManaFile } from './render/drawManaCost'
@@ -15,6 +15,7 @@ import { CLASS_HEADER, drawClass } from './render/drawClass'
 import { drawCase } from './render/drawCase'
 import { drawRoom } from './render/drawRoom'
 import { drawAdventure } from './render/drawAdventure'
+import { drawLeveler } from './render/drawLeveler'
 import { Icon } from '../Icon'
 
 const DEBUG_CANVAS = import.meta.env.DEV
@@ -111,6 +112,18 @@ function getDebugRegions(family: FrameFamily): DebugRegion[] {
 		)
 	}
 
+	if (layout.leveler) {
+		regions.push(
+			{ label: 'Level up', ...layout.leveler.levelUp },
+			{ label: 'Level 2 label', x: layout.leveler.levelTwo.label.x - 60, y: layout.leveler.levelTwo.label.y - 60, width: 120, height: 120 },
+			{ label: 'Level 2 rules', ...layout.leveler.levelTwo.rules },
+			{ label: 'Level 2 P/T', x: layout.leveler.levelTwo.powerToughness.x - 105, y: layout.leveler.levelTwo.powerToughness.y - 50, width: 210, height: 100 },
+			{ label: 'Level 3 label', x: layout.leveler.levelThree.label.x - 60, y: layout.leveler.levelThree.label.y - 60, width: 120, height: 120 },
+			{ label: 'Level 3 rules', ...layout.leveler.levelThree.rules },
+			{ label: 'Level 3 P/T', x: layout.leveler.levelThree.powerToughness.x - 105, y: layout.leveler.levelThree.powerToughness.y - 50, width: 210, height: 100 },
+		)
+	}
+
 	return regions.filter(({ width, height }) => width > 0 && height > 0)
 }
 
@@ -147,7 +160,7 @@ type CardCanvasProps = {
 	borderStyle: FrameBorderStyle
 	frameVariant: FrameVariant
 	transform: ArtworkTransform,
-    card: CustomCardData | PlaneswalkerCardData | SagaCardData | ClassCardData | CaseCardData | RoomCardData | AdventureCardData,
+    card: CustomCardData | PlaneswalkerCardData | SagaCardData | ClassCardData | CaseCardData | RoomCardData | AdventureCardData | LevelerCardData,
     onTransformChange: (transform: ArtworkTransform) => void,
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
@@ -267,11 +280,12 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const caseCard = 'solveCondition' in card
 			const room = 'otherManaCost' in card
 			const adventure = 'adventureManaCost' in card
+			const leveler = 'levelUpText' in card
 			const drawableCard: CustomCardData = planeswalker ? {
 				...card,
 				name: family.id === 'planeswalker-nickname' ? card.nickname : card.name,
 				rulesText: '', centerRulesText: false, flavorText: '', powerToughness: card.startingLoyalty,
-			} : saga || classCard || caseCard || room ? { ...card, rulesText: '', flavorText: '' } : card
+			} : saga || classCard || caseCard || room || leveler ? { ...card, rulesText: '', flavorText: '' } : card
             const manaRuns = parseManaCost(card.manaCost)
             const rulesRuns = parseRulesText(drawableCard.rulesText)
 
@@ -296,6 +310,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const roomReminderRuns = room ? parseRulesText(card.reminderText) : []
 			const adventureManaRuns = adventure ? parseManaCost(card.adventureManaCost) : []
 			const adventureRulesRuns = adventure ? parseRulesText(card.adventureRulesText) : []
+			const levelerRuns = leveler ? [parseRulesText(card.levelUpText), parseRulesText(card.levelTwoRulesText), parseRulesText(card.levelThreeRulesText)] : []
 			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
 			const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 				? 'img/frames/planeswalker/mdfc/text.png'
@@ -307,7 +322,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
 					: PLANESWALKER_ASSETS.mask
 			const planeswalkerAssets = { ...PLANESWALKER_ASSETS, mask: planeswalkerMask }
-			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat(), ...sagaCreatureRulesRuns, ...classLevelRuns.flat(), ...classCostRuns.flat(), ...caseRuns.flat(), ...roomManaRuns.flat(), ...roomRulesRuns.flat(), ...roomReminderRuns, ...adventureManaRuns, ...adventureRulesRuns]
+			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat(), ...sagaCreatureRulesRuns, ...classLevelRuns.flat(), ...classCostRuns.flat(), ...caseRuns.flat(), ...roomManaRuns.flat(), ...roomRulesRuns.flat(), ...roomReminderRuns, ...adventureManaRuns, ...adventureRulesRuns, ...levelerRuns.flat()]
 			const futureManaFiles = family.id === 'future-sight'
 				? manaRuns.flatMap((run) => run.type === 'symbol' ? [futureManaFile(run.value)].filter((file): file is string => Boolean(file)) : [])
 				: []
@@ -463,6 +478,9 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			}
 			if (adventure) {
 				drawAdventure(context, card, adventureManaRuns, adventureRulesRuns, manaSymbols, family.layout.adventure!)
+			}
+			if (leveler) {
+				drawLeveler(context, card, levelerRuns, manaSymbols, family.layout.leveler!)
 			}
 			context.resetTransform()
 			if (family.layout.footer.unrotated) {

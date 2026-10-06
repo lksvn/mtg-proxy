@@ -136,6 +136,50 @@ const adventureLayout: FrameLayout = {
 	footer: commonFooter,
 }
 
+const levelerLayout: FrameLayout = {
+	artwork: { dragLeft: 115, dragTop: 237, dragRight: 1386, dragBottom: 1167 },
+	title: { x: 128, y: 165, maxWidth: 1244, font: '70px belerenb, serif', color: '#111' },
+	mana: { right: 1391, centerY: 167, symbolSize: 64, gap: 4, font: '48px belerenb, serif', color: '#111' },
+	type: { x: 128, y: 1242, maxWidth: 1244, font: '54px belerenb, serif', color: '#111' },
+	rules: { x: 0, y: 0, width: 0, height: 0, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0, maxFontSize: 1, minFontSize: 1 },
+	leveler: {
+		levelUp: { x: 129, y: 1324, width: 1025, height: 190, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 58, minFontSize: 30 },
+		levelTwo: {
+			label: {
+				x: 170,
+				y: 1610,
+				maxWidth: 220,
+				font: '58px belerenbsc, serif',
+				fixedFont: '24px belerenbsc, serif',
+				fixedOffsetY: -24,
+				rangeOffsetY: 20,
+				color: '#111',
+				align: 'center',
+			},
+			rules: { x: 310, y: 1518, width: 844, height: 200, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 58, minFontSize: 30 },
+			powerToughness: { x: 1292, y: 1615, maxWidth: 205, font: '60px belerenbsc, serif', color: '#111', align: 'center' },
+		},
+		levelThree: {
+			label: {
+				x: 170,
+				y: 1820,
+				maxWidth: 220,
+				font: '58px belerenbsc, serif',
+				fixedFont: '24px belerenbsc, serif',
+				fixedOffsetY: -24,
+				rangeOffsetY: 20,
+				color: '#111',
+				align: 'center',
+			},
+			rules: { x: 310, y: 1726, width: 844, height: 200, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 58, minFontSize: 30 },
+			powerToughness: { x: 1292, y: 1825, maxWidth: 205, font: '60px belerenbsc, serif', color: '#111', align: 'center' },
+		},
+	},
+	symbol: { centerX: 1335, centerY: 1241, boxSize: 85 },
+	pt: { x: 1136, y: 1347, width: 282, height: 560, textX: 1292, textY: 1420, font: '60px belerenbsc, serif', color: '#111' },
+	footer: commonFooter,
+}
+
 function tokenFrames(style: string, variants: readonly FrameVariant[]): FrameFamily['frames'] {
 	return Object.fromEntries(variants.map((variant) => [variant, `img/frames/token/${style}/${variant.toLowerCase()}.png`]))
 }
@@ -1688,6 +1732,32 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: m15Pt,
 		fallbacks: { ...commonFallbacks, C: 'A', L: 'M' },
 		layout: adventureLayout,
+		fonts: commonFonts,
+	},
+	'leveler-regular': {
+		id: 'leveler-regular',
+		frames: {
+			W: 'img/frames/leveler/regular/w.png',
+			U: 'img/frames/leveler/regular/u.png',
+			B: 'img/frames/leveler/regular/b.png',
+			R: 'img/frames/leveler/regular/r.png',
+			G: 'img/frames/leveler/regular/g.png',
+			M: 'img/frames/leveler/regular/m.png',
+			A: 'img/frames/leveler/regular/a.png',
+			V: 'img/frames/leveler/regular/v.png',
+		},
+		pt: {
+			W: 'img/frames/leveler/regular/pt/w.png',
+			U: 'img/frames/leveler/regular/pt/u.png',
+			B: 'img/frames/leveler/regular/pt/b.png',
+			R: 'img/frames/leveler/regular/pt/r.png',
+			G: 'img/frames/leveler/regular/pt/g.png',
+			M: 'img/frames/leveler/regular/pt/m.png',
+			A: 'img/frames/leveler/regular/pt/a.png',
+			V: 'img/frames/leveler/regular/pt/v.png',
+		},
+		fallbacks: { ...commonFallbacks, C: 'A' },
+		layout: levelerLayout,
 		fonts: commonFonts,
 	},
 	'saga-regular': {

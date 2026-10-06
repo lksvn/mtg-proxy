@@ -69,3 +69,13 @@ export type AdventureCardData = CustomCardData & {
 	adventureTypeLine: string
 	adventureRulesText: string
 }
+
+export type LevelerCardData = CustomCardData & {
+	levelUpText: string
+	levelTwo: string
+	levelTwoRulesText: string
+	levelTwoPowerToughness: string
+	levelThree: string
+	levelThreeRulesText: string
+	levelThreePowerToughness: string
+}
