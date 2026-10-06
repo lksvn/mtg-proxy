@@ -16,10 +16,12 @@ import { getFrameFamily, type FrameBorderStyle, type FrameFamilyId } from './fra
 import { FrameColorPicker } from './ui/FrameColorPicker'
 import {
 	FRAME_STYLE_GROUPS,
+	CLASS_STYLES,
 	PLANESWALKER_STYLES,
 	SAGA_STYLES,
 	TOKEN_STYLES,
 	type PlaneswalkerStyle,
+	type ClassStyle,
 	type SagaStyle,
 	type TokenStyle,
 } from './editorOptions'
@@ -64,6 +66,7 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 	const [tokenStyle, setTokenStyle] = useState<TokenStyle>('token-regular')
 	const [planeswalkerStyle, setPlaneswalkerStyle] = useState<PlaneswalkerStyle>('planeswalker-regular')
 	const [sagaStyle, setSagaStyle] = useState<SagaStyle>('saga-regular')
+	const [classStyle, setClassStyle] = useState<ClassStyle>('class-regular')
     const [card, setCard] = useState<CustomCardData>({
         name: 'Marrow-Gnawer',
         manaCost: '3bb',
@@ -123,7 +126,7 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 		],
 	})
 	const activeCard = layout === 'token' ? token : layout === 'planeswalker' ? planeswalker : layout === 'battle' ? battle : layout === 'saga' ? saga : layout === 'class' ? classCard : card
-	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : layout === 'saga' ? sagaStyle : layout === 'class' ? 'class-regular' : frameFamily
+	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : layout === 'saga' ? sagaStyle : layout === 'class' ? classStyle : frameFamily
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
 	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
 	const planeswalkerLimitedColors = planeswalkerStyle === 'planeswalker-transform-front' ||
@@ -330,9 +333,17 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 								/>
 							</div>
 						</>}
-						{layout === 'class' && <div className="form-group gap-2 mb-5">
-							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideLands hideColoredLands hideVehicles />
-						</div>}
+						{layout === 'class' && <>
+							<div className="form-group gap-2">
+								<label htmlFor="class-style">{t('classStyle')}</label>
+								<select id="class-style" value={classStyle} onChange={(event) => setClassStyle(event.target.value as ClassStyle)}>
+									{CLASS_STYLES.map(({ id, label }) => <option key={id} value={id}>{t(label)}</option>)}
+								</select>
+							</div>
+							<div className="form-group gap-2 mb-5">
+								<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideLands hideColoredLands hideVehicles />
+							</div>
+						</>}
 					</details>
 					<details className="form-section" open>
 					    <summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>

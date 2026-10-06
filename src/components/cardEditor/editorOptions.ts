@@ -32,6 +32,12 @@ export const FRAME_STYLE_GROUPS = [
 export type TokenStyle = Extract<FrameFamilyId, `token-${string}`>
 export type PlaneswalkerStyle = Extract<FrameFamilyId, `planeswalker-${string}`>
 export type SagaStyle = Extract<FrameFamilyId, `saga-${string}`>
+export type ClassStyle = Extract<FrameFamilyId, `class-${string}`>
+
+export const CLASS_STYLES: readonly { id: ClassStyle; label: TranslationKey }[] = [
+	{ id: 'class-regular', label: 'classStyleRegular' },
+	{ id: 'class-nyx', label: 'classStyleNyx' },
+]
 
 export const SAGA_STYLES: readonly { id: SagaStyle; label: TranslationKey }[] = [
 	{ id: 'saga-regular', label: 'sagaStyleRegular' },
