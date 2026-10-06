@@ -96,6 +96,29 @@ const caseLayout: FrameLayout = {
 	},
 }
 
+const roomLayout: FrameLayout = {
+	previewRotation: true,
+	artwork: { dragLeft: 206, dragTop: 99, dragRight: 1038, dragBottom: 1911 },
+	title: { x: 0, y: 0, maxWidth: 0, font: '1px belerenb, serif', color: '#111' },
+	mana: { right: 0, centerY: 0, symbolSize: 0, gap: 0, font: '1px belerenb, serif', color: '#111' },
+	type: { x: 0, y: 0, maxWidth: 0, font: '1px belerenb, serif', color: '#fff' },
+	rules: { x: 0, y: 0, width: 0, height: 0, fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0, maxFontSize: 1, minFontSize: 1 },
+	room: {
+		left: { originX: 78, originY: 1880 },
+		right: { originX: 78, originY: 920 },
+		titleWidth: 805,
+		rules: { x: 1050, width: 776, height: 372 },
+		type: { x: 825, y: 1880, width: 1755, height: 100, textY: 30 },
+		reminder: { x: 920, y: 1880, width: 1734, height: 110 },
+	},
+	symbol: { centerX: 863, centerY: 160, boxSize: 80, rotation: 'counterclockwise' },
+	pt: { x: 0, y: 0, width: 0, height: 0, textX: 0, textY: 0, font: '1px mplantin, serif', color: '#111' },
+	footer: {
+		x: 0, maxWidth: 0, metadataY: 0, metadata: { font: '1px mplantin, serif', color: '#fff' },
+		disclaimerY: 0, disclaimer: { font: '1px mplantin, serif', color: '#fff' },
+	},
+}
+
 function tokenFrames(style: string, variants: readonly FrameVariant[]): FrameFamily['frames'] {
 	return Object.fromEntries(variants.map((variant) => [variant, `img/frames/token/${style}/${variant.toLowerCase()}.png`]))
 }
@@ -1599,6 +1622,22 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: {},
 		fallbacks: commonFallbacks,
 		layout: caseLayout,
+		fonts: commonFonts,
+	},
+	'room-regular': {
+		id: 'room-regular',
+		frames: {
+			W: 'img/frames/room/regular/w.png',
+			U: 'img/frames/room/regular/u.png',
+			B: 'img/frames/room/regular/b.png',
+			R: 'img/frames/room/regular/r.png',
+			G: 'img/frames/room/regular/g.png',
+			M: 'img/frames/room/regular/m.png',
+			A: 'img/frames/room/regular/a.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, C: 'A' },
+		layout: roomLayout,
 		fonts: commonFonts,
 	},
 	'saga-regular': {

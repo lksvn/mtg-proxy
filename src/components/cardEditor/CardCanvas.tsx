@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
-import { DUAL_FRAME_VARIANTS, type CaseCardData, type ClassCardData, type CustomCardData, type FrameVariant, type PlaneswalkerCardData, type SagaCardData } from './types'
+import { DUAL_FRAME_VARIANTS, type CaseCardData, type ClassCardData, type CustomCardData, type FrameVariant, type PlaneswalkerCardData, type RoomCardData, type SagaCardData } from './types'
 import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
 import { drawCard, drawCardFooter, HEIGHT, WIDTH } from './render/drawCard'
 import { futureManaFile } from './render/drawManaCost'
@@ -13,6 +13,7 @@ import { drawIconlessPlaneswalkerAbilities, drawPlaneswalker, drawPlaneswalkerBa
 import { drawSaga, SAGA_ASSETS, type SagaImages } from './render/drawSaga'
 import { CLASS_HEADER, drawClass } from './render/drawClass'
 import { drawCase } from './render/drawCase'
+import { drawRoom } from './render/drawRoom'
 import { Icon } from '../Icon'
 
 const DEBUG_CANVAS = import.meta.env.DEV
@@ -88,6 +89,18 @@ function getDebugRegions(family: FrameFamily): DebugRegion[] {
 		if (layout.saga.reversePt) regions.push({ label: 'Reverse P/T', ...layout.saga.reversePt })
 	}
 
+	if (layout.room) {
+		const { left, right, titleWidth, rules, type, reminder } = layout.room
+		regions.push(
+			{ label: 'Left title / mana', x: left.originX, y: left.originY - titleWidth, width: 100, height: titleWidth },
+			{ label: 'Right title / mana', x: right.originX, y: right.originY - titleWidth, width: 100, height: titleWidth },
+			{ label: 'Left rules', x: rules.x, y: left.originY - 10 - rules.width, width: rules.height, height: rules.width },
+			{ label: 'Right rules', x: rules.x, y: right.originY - 10 - rules.width, width: rules.height, height: rules.width },
+			{ label: 'Room type', x: type.x, y: type.y - type.width, width: type.height, height: type.width },
+			{ label: 'Room reminder', x: reminder.x, y: reminder.y - reminder.width, width: reminder.height, height: reminder.width },
+		)
+	}
+
 	return regions.filter(({ width, height }) => width > 0 && height > 0)
 }
 
@@ -124,7 +137,7 @@ type CardCanvasProps = {
 	borderStyle: FrameBorderStyle
 	frameVariant: FrameVariant
 	transform: ArtworkTransform,
-    card: CustomCardData | PlaneswalkerCardData | SagaCardData | ClassCardData | CaseCardData,
+    card: CustomCardData | PlaneswalkerCardData | SagaCardData | ClassCardData | CaseCardData | RoomCardData,
     onTransformChange: (transform: ArtworkTransform) => void,
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
@@ -242,11 +255,12 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const saga = 'chapters' in card
 			const classCard = 'levels' in card
 			const caseCard = 'solveCondition' in card
+			const room = 'otherManaCost' in card
 			const drawableCard: CustomCardData = planeswalker ? {
 				...card,
 				name: family.id === 'planeswalker-nickname' ? card.nickname : card.name,
 				rulesText: '', centerRulesText: false, flavorText: '', powerToughness: card.startingLoyalty,
-			} : saga || classCard || caseCard ? { ...card, rulesText: '', flavorText: '' } : card
+			} : saga || classCard || caseCard || room ? { ...card, rulesText: '', flavorText: '' } : card
             const manaRuns = parseManaCost(card.manaCost)
             const rulesRuns = parseRulesText(drawableCard.rulesText)
 
@@ -266,6 +280,9 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const caseRuns = caseCard
 				? [parseRulesText(card.rulesText), parseRulesText(card.solveCondition), parseRulesText(card.solvedAbility)]
 				: []
+			const roomManaRuns = room ? [manaRuns, parseManaCost(card.otherManaCost)] : []
+			const roomRulesRuns = room ? [parseRulesText(card.rulesText), parseRulesText(card.otherRulesText)] : []
+			const roomReminderRuns = room ? parseRulesText(card.reminderText) : []
 			const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
 			const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 				? 'img/frames/planeswalker/mdfc/text.png'
@@ -277,7 +294,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 					? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
 					: PLANESWALKER_ASSETS.mask
 			const planeswalkerAssets = { ...PLANESWALKER_ASSETS, mask: planeswalkerMask }
-			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat(), ...sagaCreatureRulesRuns, ...classLevelRuns.flat(), ...classCostRuns.flat(), ...caseRuns.flat()]
+			const allRuns = [...manaRuns, ...reverseManaRuns, ...rulesRuns, ...flavorRuns, ...abilityRuns.flat(), ...sagaReminderRuns, ...sagaChapterRuns.flat(), ...sagaCreatureRulesRuns, ...classLevelRuns.flat(), ...classCostRuns.flat(), ...caseRuns.flat(), ...roomManaRuns.flat(), ...roomRulesRuns.flat(), ...roomReminderRuns]
 			const futureManaFiles = family.id === 'future-sight'
 				? manaRuns.flatMap((run) => run.type === 'symbol' ? [futureManaFile(run.value)].filter((file): file is string => Boolean(file)) : [])
 				: []
@@ -428,6 +445,9 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			if (caseCard) {
 				drawCase(context, caseRuns, manaSymbols, family.layout.case!)
 			}
+			if (room) {
+				drawRoom(context, card, roomManaRuns, roomRulesRuns, roomReminderRuns, manaSymbols, family.layout.room!)
+			}
 			context.resetTransform()
 			if (family.layout.footer.unrotated) {
 				drawCardFooter(context, drawableCard, family.layout, resolvedVariant)
@@ -537,7 +557,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
                 )}
             </div>
 			<small className="text-center text-muted block mt-2" style={{ display: 'block' }}>{t('dragImageHelp')}</small>
-			{family.layout.canvas && (
+			{(family.layout.canvas || family.layout.previewRotation) && (
                 <div className="text-center">
                     <button
                         type="button"

@@ -128,10 +128,13 @@ export function drawCard(
 	}
 
 	if (symbol && layout.symbol.boxSize > 0) {
-		const { boxSize, centerX, centerY } = layout.symbol
+		const { boxSize, centerX, centerY, rotation } = layout.symbol
 		const scale = Math.min(boxSize / symbol.width, boxSize / symbol.height)
 		const width = symbol.width * scale
 		const height = symbol.height * scale
+		let symbolImage: CanvasImageSource = symbol
+		let drawWidth = width
+		let drawHeight = height
 
 		if (card.tintSetSymbol) {
 			const tinted = document.createElement('canvas')
@@ -145,11 +148,17 @@ export function drawCard(
 				tintedContext.globalCompositeOperation = 'source-in'
 				tintedContext.fillStyle = RARITY_COLORS[card.rarity]
 				tintedContext.fillRect(0, 0, boxSize, boxSize)
-				context.drawImage(tinted, centerX - boxSize / 2, centerY - boxSize / 2)
+				symbolImage = tinted
+				drawWidth = boxSize
+				drawHeight = boxSize
 			}
-		} else {
-			context.drawImage(symbol, centerX - width / 2, centerY - height / 2, width, height)
 		}
+
+		context.save()
+		context.translate(centerX, centerY)
+		if (rotation === 'counterclockwise') context.rotate(-Math.PI / 2)
+		context.drawImage(symbolImage, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight)
+		context.restore()
 	}
 
 	context.fontKerning = 'normal'

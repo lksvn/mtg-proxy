@@ -55,3 +55,10 @@ export type CaseCardData = CustomCardData & {
 	solveCondition: string
 	solvedAbility: string
 }
+
+export type RoomCardData = CustomCardData & {
+	otherName: string
+	otherManaCost: string
+	otherRulesText: string
+	reminderText: string
+}
