@@ -50,8 +50,13 @@ export function CardResultItem({
         const errorKey = entry.error && ERROR_TRANSLATIONS[entry.error]
 		return (
 			<>
-				<p role="alert" className="error">
-					<strong>{entry.parsed.sourceLine}</strong> <br/> {errorKey ? t(errorKey) : entry.error}
+				<p role="alert" className="message error">
+					<Icon name="error" />
+					<span>
+						<strong>{entry.parsed.sourceLine}</strong>
+						<br />
+						{errorKey ? t(errorKey) : entry.error}
+					</span>
 				</p>
 				{!entry.parsed.error && (
 					<button
@@ -229,7 +234,10 @@ export function CardResultItem({
 				</div>
 				{entry.printingsError && (
 					<>
-						<p role="alert" className="error">{entry.printingsError}</p>
+						<p role="alert" className="message error">
+							<Icon name="error" />
+							<span>{entry.printingsError}</span>
+						</p>
 						<button
 							type="button"
 							className="btn center"

@@ -56,7 +56,7 @@ export function CardListForm({
             <fieldset disabled={loading}>
                 <div className="meh">
                     <div>
-                        <p className='text-muted'>{t('cardListHelp')}</p>
+                        <p className="text-muted">{t('cardListHelp')}</p>
                         <p className='text-muted'>
                             <mark>{t('autocompleteEnglish')}</mark> <br/>
                             {t('autocompleteBefore')} <mark>@</mark> {t('autocompleteAfter')}

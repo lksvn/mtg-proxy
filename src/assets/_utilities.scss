@@ -29,12 +29,47 @@ $spacing: (
     &muted { color: var(--text-muted) }
     &center { text-align: center }
 }
+.message {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.75rem;
+	padding: 0.75rem;
+	border-radius: var(--small-radius);
+	overflow-wrap: anywhere;
+
+	> .icon {
+		--size: 1.25em;
+		flex-shrink: 0;
+		margin-block-start: calc((1lh - 1.25em) / 2);
+	}
+
+	> span {
+		flex: 1;
+		min-width: 0;
+	}
+}
+
 .error {
     padding: 0.75rem !important;
     color: var(--text);
     background-color: light-dark(#A6425B, #7F394B);
     border-radius: var(--small-radius);
     overflow-wrap: anywhere;
+}
+
+.warning {
+	padding: 0.75rem;
+	color: light-dark(#493700, #fff0b3);
+	background-color: light-dark(#fff0b3, #493700);
+	border: 1px solid light-dark(#b88b16, #a78224);
+	border-radius: var(--small-radius);
+	overflow-wrap: anywhere;
+}
+
+.info {
+	color: light-dark(#103e65, #d6edff);
+	background-color: light-dark(#d6edff, #103e65);
+	border: 1px solid #4786b9;
 }
 
 .visually-hidden {

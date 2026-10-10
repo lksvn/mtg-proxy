@@ -17,6 +17,7 @@ import { drawCase } from './render/drawCase'
 import { drawRoom } from './render/drawRoom'
 import { drawAdventure } from './render/drawAdventure'
 import { drawLeveler } from './render/drawLeveler'
+import { hasRulesTextOverflow, resetRulesTextOverflow } from './render/drawRulesText'
 import { Icon } from '../Icon'
 
 const DEBUG_CANVAS = import.meta.env.DEV
@@ -391,6 +392,7 @@ export function CardCanvas({ input, onRenderResult, onTransformChange, canvasRef
 			const context = canvas?.getContext('2d')
 
 			if (!canvas || !context) throw new Error('Could not access the card canvas')
+			resetRulesTextOverflow(context)
 
 			const iconlessPlaneswalker = family.id === 'planeswalker-seventh'
 			context.resetTransform()
@@ -483,11 +485,12 @@ export function CardCanvas({ input, onRenderResult, onTransformChange, canvasRef
 			if (family.layout.footer.unrotated) {
 				drawCardFooter(context, drawableCard, family.layout, resolvedVariant)
 			}
+			return hasRulesTextOverflow(context)
 
 		}
 
-		void render().then(() => {
-			if (!cancelled) onRenderResult({ input, status: 'ready' })
+		void render().then((textOverflow) => {
+			if (!cancelled) onRenderResult({ input, status: 'ready', textOverflow })
 		}).catch((error: unknown) => {
 			if (cancelled) return
 			console.error('Could not render card', error)

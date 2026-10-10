@@ -83,8 +83,9 @@ export function FileInput({ id, accept, label, hasValue, onSelect, onClear, vali
 				<Icon name="trash-can"/>
 			</button>
 			{error && (
-				<p id={`${id}-error`} className="error" role="alert">
-					{error}
+				<p id={`${id}-error`} className="message error" role="alert">
+					<Icon name="error" />
+					<span>{error}</span>
 				</p>
 			)}
 		</div>

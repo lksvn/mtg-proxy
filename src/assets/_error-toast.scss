@@ -14,10 +14,15 @@
 	p {
 		margin: 0;
 		flex: 1;
+		min-width: 0;
 	}
 
 	.error-toast-close {
 		flex-shrink: 0;
-		padding: 0.25rem;
+		display: grid;
+		place-items: center;
+		padding: 0;
+		inline-size: 1.5em;
+		block-size: 1.5em;
 	}
 }

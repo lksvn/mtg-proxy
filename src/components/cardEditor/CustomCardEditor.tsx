@@ -471,6 +471,12 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
                 </div>
 
                 <div style={{position:'relative'}}>
+					{renderResult?.status === 'ready' && renderResult.textOverflow && (
+						<p role="status" className="message warning">
+							<Icon name="warning" />
+							<span>{t('cardTextOverflow')}</span>
+						</p>
+					)}
                     {!canExport && !renderFailed && <p role="status" className="visually-hidden">
                         {t('renderingCard')}
                     </p>}
@@ -502,8 +508,9 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 								aria-describedby={quantityError ? 'custom-card-quantity-error' : undefined}
 								onChange={(event) => setCustomCardQuantity(event.currentTarget.value)}
 							/>
-							{quantityError && <small id="custom-card-quantity-error" role="alert" className="error">
-								{t(quantity < 1 ? 'quantityAtLeastOne' : 'quantitySafeWholeNumber')}
+							{quantityError && <small id="custom-card-quantity-error" role="alert" className="message error">
+								<Icon name="error" />
+								<span>{t(quantity < 1 ? 'quantityAtLeastOne' : 'quantitySafeWholeNumber')}</span>
 							</small>}
 						</div>
                         <div className="pt-5">

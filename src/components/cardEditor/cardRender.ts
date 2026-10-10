@@ -15,6 +15,7 @@ export type CardRenderInput = {
 export type CardRenderResult = {
 	input: CardRenderInput
 	status: 'ready' | 'error'
+	textOverflow?: boolean
 }
 
 export function canExportCardRender(input: CardRenderInput, result: CardRenderResult | null) {

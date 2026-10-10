@@ -1,6 +1,16 @@
 import type { CardTextRun } from '../cardText'
 import { drawManaSymbol } from './drawGenericMana.ts'
 
+const overflowingContexts = new WeakSet<CanvasRenderingContext2D>()
+
+export function resetRulesTextOverflow(context: CanvasRenderingContext2D) {
+	overflowingContexts.delete(context)
+}
+
+export function hasRulesTextOverflow(context: CanvasRenderingContext2D) {
+	return overflowingContexts.has(context)
+}
+
 type Atom =
 	| { type: 'text'; value: string; italic: boolean }
 	| { type: 'symbol'; value: string }
@@ -147,6 +157,14 @@ export function drawRulesText(
 	const lines = layout(context, atomize(runs), maxWidth, fontSize, style)
 	const blockHeight = lines.length * lineHeight +
 		lines.reduce((total, line) => total + line.gapBefore, 0)
+	const tooWide = lines.some((line) => {
+		const last = line.atoms.at(-1)
+		const trailingSpaceWidth = last?.type === 'text' && last.value === ' '
+			? context.measureText(' ').width
+			: 0
+		return line.width - trailingSpaceWidth > maxWidth
+	})
+	if (blockHeight > maxHeight || tooWide) overflowingContexts.add(context)
 
 	context.save()
 	context.fillStyle = style.color

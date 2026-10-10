@@ -6,9 +6,10 @@ import { Icon } from './Icon'
 type ErrorToastProps = {
 	message: string
 	onClose: () => void
+	tone?: 'error' | 'warning' | 'info'
 }
 
-export function ErrorToast({ message, onClose }: ErrorToastProps) {
+export function ErrorToast({ message, onClose, tone = 'error' }: ErrorToastProps) {
 	const { t } = useI18n()
 	const [hovered, setHovered] = useState(false)
 	const [focused, setFocused] = useState(false)
@@ -33,8 +34,8 @@ export function ErrorToast({ message, onClose }: ErrorToastProps) {
 
 	return (
 		<div
-			role="alert"
-			className="error error-toast"
+			role={tone === 'error' ? 'alert' : 'status'}
+			className={`message ${tone} error-toast`}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			onFocus={() => setFocused(true)}
@@ -42,6 +43,7 @@ export function ErrorToast({ message, onClose }: ErrorToastProps) {
 				if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false)
 			}}
 		>
+			<Icon name={tone} />
 			<p>{message}</p>
 			<button type="button" className="btn error-toast-close" aria-label={t('close')} onClick={onClose}>
 				<Icon name="close" />
