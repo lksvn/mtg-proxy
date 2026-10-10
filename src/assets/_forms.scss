@@ -216,6 +216,7 @@ button.frame-color-choice {
 .symbol-reference-dialog {
 	width: min(36rem, calc(100% - 2rem));
 	max-height: calc(100% - 2rem);
+	overflow: auto;
 	padding: 1rem;
 	border: 1px solid var(--border);
 	border-radius: var(--small-radius);
@@ -244,11 +245,21 @@ button.frame-color-choice {
 }
 
 .symbol-reference-header {
+	position: sticky;
+	top: -1rem;
+	z-index: 1;
+	background: var(--surface);
+	padding: 1rem;
+	border-bottom: 1px solid var(--border);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 1rem;
-	margin-bottom: 0.75rem;
+	margin: -1rem -1rem 0.75rem;
+
+	.btn {
+		flex-shrink: 0;
+	}
 
 	h5 {
 		margin: 0;

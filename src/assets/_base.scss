@@ -75,6 +75,13 @@ mark {
     }
 }
 
+button.text-link {
+	padding: 0;
+	border: 0;
+	background: none;
+	font: inherit;
+}
+
 a, summary, .text-link {
     color: var(--accent);
     transition: color var(--transition-fast);
