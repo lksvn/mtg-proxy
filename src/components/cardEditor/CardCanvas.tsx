@@ -500,7 +500,7 @@ export function CardCanvas({ input, onRenderResult, onTransformChange, canvasRef
 	}, [input, artwork, setSymbol, frameVariant, borderStyle, transform, card, canvasRef, family, onRenderResult])
 
 	return (
-		<div style={{position: 'sticky', top: 0, zIndex: 2}}>
+		<div>
             {DEBUG_CANVAS && (
                 <label style={{ display: 'block', marginBottom: '0.5rem' }}>
                     <input
