@@ -171,8 +171,8 @@ async function findRegularPrinting(card: ScryfallCard): Promise<ScryfallCard | u
 	url.searchParams.set('dir', 'desc')
 	url.searchParams.set('unique', 'prints')
 
-	return enqueueRequest(async () => {
-		const response = await fetch(url, { headers: { Accept: 'application/json' } })
+	return enqueueRequest(async (signal) => {
+		const response = await fetch(url, { signal, headers: { Accept: 'application/json' } })
 		if (!response.ok) throw await responseError(response)
 		const result = await response.json() as { data: ScryfallCard[] }
 		return result.data.find((printing) =>
@@ -235,8 +235,9 @@ async function loadCanonicalName(name: string): Promise<string> {
 	url.searchParams.set('include_extras', 'true')
 	url.searchParams.set('unique', 'cards')
 
-	return enqueueRequest(async () => {
+	return enqueueRequest(async (signal) => {
 		const response = await fetch(url, {
+			signal,
 			headers: { Accept: 'application/json' }
 		})
 
@@ -268,8 +269,9 @@ export function findCard(card: ParsedCard): Promise<ScryfallCard> {
         ? `https://api.scryfall.com/cards/${encodeURIComponent(card.set)}/${encodeURIComponent(card.collectorNumber)}`
         : namedCardUrl(card)
 
-	return enqueueRequest(async () => {
+	return enqueueRequest(async (signal) => {
 		const response = await fetch(url, {
+			signal,
 			headers: { Accept: 'application/json' }
 		})
 
@@ -285,9 +287,10 @@ export function findCard(card: ParsedCard): Promise<ScryfallCard> {
 }
 
 function fetchCollection(identifiers: Identifier[]): Promise<{ data: ScryfallCard[] }> {
-	return enqueueRequest(async () => {
+	return enqueueRequest(async (signal) => {
 		const response = await fetch('https://api.scryfall.com/cards/collection',
 			{
+				signal,
 				method: 'POST',
 				headers: {
 					Accept: 'application/json',
@@ -350,10 +353,16 @@ function namedCardUrl(card: ParsedCard): string {
 	return url.toString()
 }
 
-function enqueueRequest<T>(request: () => Promise<T>, delay: number): Promise<T> {
+function enqueueRequest<T>(request: (signal: AbortSignal) => Promise<T>, delay: number): Promise<T> {
 	const queuedRequest = requestQueue.then(async () => {
 		await new Promise((resolve) => setTimeout(resolve, delay))
-		return request()
+		const signal = AbortSignal.timeout(15_000)
+		try {
+			return await request(signal)
+		} catch (error) {
+			if (signal.aborted) throw new Error('Scryfall request timed out', { cause: error })
+			throw error
+		}
 	})
 
 	requestQueue = queuedRequest.then(
@@ -404,8 +413,9 @@ async function loadPrintings(card: ScryfallCard): Promise<ScryfallCard[]> {
 	while (pageUrl) {
 		const currentUrl = pageUrl
 
-		const page = await enqueueRequest(async () => {
+		const page = await enqueueRequest(async (signal) => {
 			const response = await fetch(currentUrl, {
+				signal,
 				headers: { Accept: 'application/json' }
 			})
 

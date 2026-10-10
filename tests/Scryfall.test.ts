@@ -2,7 +2,63 @@
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { findCards, findPrintings, type ScryfallCard } from '../src/Scryfall.ts'
+import { findCard, findCards, findPrintings, type ScryfallCard } from '../src/Scryfall.ts'
+
+test('a timed-out request releases the queue for the next card', async () => {
+	const originalFetch = globalThis.fetch
+	const originalTimeout = AbortSignal.timeout
+	const requests: string[] = []
+	AbortSignal.timeout = (milliseconds) => {
+		assert.equal(milliseconds, 15_000)
+		return originalTimeout(10)
+	}
+	globalThis.fetch = (async (input, options) => {
+		const url = String(input)
+		requests.push(url)
+		const signal = options?.signal
+		assert.ok(signal)
+		if (url.includes('Timeout+Test')) {
+			return await new Promise<Response>((_resolve, reject) => {
+				signal.addEventListener('abort', () => reject(signal.reason), { once: true })
+			})
+		}
+		return Response.json({ name: 'Queue Recovery Test' })
+	}) as typeof fetch
+	try {
+		const failed = findCard({ quantity: 1, name: 'Timeout Test', sourceLine: 'Timeout Test' })
+		const recovered = findCard({ quantity: 1, name: 'Queue Recovery Test', sourceLine: 'Queue Recovery Test' })
+		await assert.rejects(failed, { message: 'Scryfall request timed out' })
+		assert.equal((await recovered).name, 'Queue Recovery Test')
+		assert.equal(requests.length, 2)
+	} finally {
+		globalThis.fetch = originalFetch
+		AbortSignal.timeout = originalTimeout
+	}
+})
+
+test('the timeout also covers a stalled response body', async () => {
+	const originalFetch = globalThis.fetch
+	const originalTimeout = AbortSignal.timeout
+	AbortSignal.timeout = () => originalTimeout(10)
+	globalThis.fetch = (async (_input, options) => {
+		const signal = options?.signal
+		assert.ok(signal)
+		return {
+			ok: true,
+			json: () => new Promise((_resolve, reject) => {
+				signal.addEventListener('abort', () => reject(signal.reason), { once: true })
+			}),
+		} as Response
+	}) as typeof fetch
+	try {
+		await assert.rejects(findCards([{
+			quantity: 1, name: 'Stalled Body Test', sourceLine: 'Stalled Body Test',
+		}]), { message: 'Scryfall request timed out' })
+	} finally {
+		globalThis.fetch = originalFetch
+		AbortSignal.timeout = originalTimeout
+	}
+})
 
 test('resolves a translated name without retrying the English named endpoint', async () => {
 	const originalFetch = globalThis.fetch

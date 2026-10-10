@@ -9,6 +9,7 @@ const ERROR_TRANSLATIONS: Record<string, TranslationKey> = {
 	'Invalid card line': 'invalidCardLine',
 	'Quantity must be at least 1': 'quantityAtLeastOne',
 	'Card not found': 'cardNotFound',
+	'Scryfall request timed out': 'scryfallRequestTimedOut',
 	'Your query didn’t match any cards. Adjust your search terms or refer to the syntax guide at https://scryfall.com/docs/reference': 'cardNotFound'
 }
 
