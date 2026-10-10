@@ -2,7 +2,20 @@
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { calculatePageLayout } from '../src/PdfLayout.ts'
+import { calculatePageLayout, validatePdfQuantities } from '../src/PdfLayout.ts'
+
+test('validates quantities and counts every face before allocating PDF images', () => {
+	assert.doesNotThrow(() => validatePdfQuantities([{ quantity: 150, faceCount: 2 }]))
+	assert.doesNotThrow(() => validatePdfQuantities([{ quantity: 500, faceCount: 1 }]))
+	assert.throws(() => validatePdfQuantities([{ quantity: 501, faceCount: 1 }]), /500 card faces/)
+	assert.throws(() => validatePdfQuantities([
+		{ quantity: 150, faceCount: 2 },
+		{ quantity: 201, faceCount: 1 },
+	]), /500 card faces/)
+	for (const quantity of [NaN, Infinity, 0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1]) {
+		assert.throws(() => validatePdfQuantities([{ quantity, faceCount: 1 }]))
+	}
+})
 
 test('calculates cards per supported paper size', () => {
 	assert.equal(calculatePageLayout('a4', 0.2).cardsPerPage, 9)

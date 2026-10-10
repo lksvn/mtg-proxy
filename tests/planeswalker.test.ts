@@ -1,7 +1,25 @@
 import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
 import test from 'node:test'
-import { getIconlessAbilityRuns, getPlaneswalkerRows, PLANESWALKER_ASSETS } from '../src/components/cardEditor/render/drawPlaneswalker.ts'
+import { drawPlaneswalker, getIconlessAbilityRuns, getPlaneswalkerRows, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from '../src/components/cardEditor/render/drawPlaneswalker.ts'
+import { SAMPLE_PLANESWALKER } from '../src/components/cardEditor/sampleCards.ts'
+
+test('ability text color does not change the white loyalty cost text', () => {
+	for (const color of ['#fff', '#111']) {
+		const drawn: { text: string; color: string }[] = []
+		const context = {
+			save() {}, restore() {}, drawImage() {}, strokeText() {},
+			measureText(value: string) { return { width: value.length * 10 } },
+			fillStyle: '',
+			fillText(text: string) { drawn.push({ text, color: this.fillStyle }) },
+		} as unknown as CanvasRenderingContext2D
+		drawPlaneswalker(context, {
+			...SAMPLE_PLANESWALKER,
+			abilities: [{ cost: '+1', text: 'Draw' }],
+		}, [[{ type: 'text', value: 'Draw', italic: false }]], new Map(), {} as PlaneswalkerIcons, 1310, 1870, color)
+		assert.deepEqual(drawn, [{ text: '+1', color: '#fff' }, { text: 'Draw', color }])
+	}
+})
 
 test('lays out one to four Planeswalker abilities inside the rules area', () => {
 	for (let count = 1; count <= 4; count++) {

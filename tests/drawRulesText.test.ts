@@ -2,7 +2,7 @@
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { drawRulesText } from '../src/components/cardEditor/render/drawRulesText.ts'
+import { drawRulesText, hasRulesTextOverflow, resetRulesTextOverflow } from '../src/components/cardEditor/render/drawRulesText.ts'
 
 test('Seventh rules and flavor share a vertically centered text block', () => {
 	const positions: number[] = []
@@ -56,4 +56,34 @@ test('does not draw rules text without a text box', () => {
 	)
 
 	assert.equal(drawn, false)
+})
+
+test('reports unfit text without changing drawing and clears it for the next render', () => {
+	const context = {
+		save() {}, restore() {}, fillText() {},
+		measureText(value: string) { return { width: value.length * 10 } },
+	} as unknown as CanvasRenderingContext2D
+	const style = { fontFamily: 'serif', italicFontFamily: 'serif', color: '#111', strokeColor: '#111', strokeWidth: 0, maxFontSize: 20, minFontSize: 20 }
+	function draw(value: string, width = 100, height = 100) {
+		drawRulesText(context, [{ type: 'text', value, italic: false }], new Map(), 0, 0, width, height, style)
+	}
+	draw('Short')
+	assert.equal(hasRulesTextOverflow(context), false)
+	draw('Unbreakablewordtoolong')
+	assert.equal(hasRulesTextOverflow(context), true)
+	resetRulesTextOverflow(context)
+	draw('One\nTwo\nThree', 100, 30)
+	assert.equal(hasRulesTextOverflow(context), true)
+	resetRulesTextOverflow(context)
+	draw('Short\nFine')
+	assert.equal(hasRulesTextOverflow(context), false)
+	draw('Tenletters ', 100)
+	assert.equal(hasRulesTextOverflow(context), false)
+	drawRulesText(context, [
+		{ type: 'symbol', value: 'W' },
+		{ type: 'text', value: ' Reminder text', italic: true },
+	], new Map(), 0, 0, 200, 100, style)
+	assert.equal(hasRulesTextOverflow(context), false)
+	drawRulesText(context, [{ type: 'symbol', value: 'W' }], new Map(), 0, 0, 10, 100, style)
+	assert.equal(hasRulesTextOverflow(context), true)
 })

@@ -111,7 +111,7 @@ const roomLayout: FrameLayout = {
 		type: { x: 825, y: 1880, width: 1755, height: 100, textY: 30 },
 		reminder: { x: 920, y: 1880, width: 1734, height: 110 },
 	},
-	symbol: { centerX: 863, centerY: 160, boxSize: 80, rotation: 'counterclockwise' },
+	symbol: { centerX: 855, centerY: 160, boxSize: 60, rotation: 'counterclockwise' },
 	pt: { x: 0, y: 0, width: 0, height: 0, textX: 0, textY: 0, font: '1px mplantin, serif', color: '#111' },
 	footer: {
 		x: 0, maxWidth: 0, metadataY: 0, metadata: { font: '1px mplantin, serif', color: '#fff' },

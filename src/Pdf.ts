@@ -11,11 +11,13 @@ import {
 	CARD_HEIGHT,
 	CARD_WIDTH,
 	calculatePageLayout,
+	validatePdfQuantities,
 	type PageLayout,
 	type Paper
 } from './PdfLayout'
 import type { ScryfallCard } from './Scryfall'
 import { isBasicLand } from './Cards'
+import { validatePdfNames } from './utils/validatePdfNames'
 
 const POINTS_PER_MILLIMETRE = 72 / 25.4
 
@@ -44,11 +46,17 @@ export async function createCardsPdf(cards: PrintableCard[], settings: PrintSett
         ? cards.filter(({ card }) => !isBasicLand(card))
         : cards
 
-	const imageUrls = printableCards.flatMap(({ quantity, card }) => {
-		const urls = cardImageUrls(card)
-
-		return Array.from({ length: quantity }, () => urls).flat()
-	})
+	const cardsWithImages = printableCards.map(({ quantity, card }) => ({
+		quantity,
+		urls: cardImageUrls(card),
+	}))
+	validatePdfQuantities(cardsWithImages.map(({ quantity, urls }) => ({
+		quantity,
+		faceCount: urls.length,
+	})))
+	const imageUrls = cardsWithImages.flatMap(({ quantity, urls }) =>
+		Array.from({ length: quantity }, () => urls).flat()
+	)
 
     if (imageUrls.length === 0) {
 		throw new Error('There are no card images to export')
@@ -62,6 +70,10 @@ export async function createCardsPdf(cards: PrintableCard[], settings: PrintSett
     const boldFont = settings.watermark || settings.deckList
         ? await pdf.embedFont(StandardFonts.HelveticaBold)
         : undefined
+
+	if (regularFont) {
+		validatePdfNames(printableCards.map(({ card }) => card.name), regularFont)
+	}
 
 	const layout = calculatePageLayout(settings.paper, settings.gap)
 	const images = await embedImages(pdf, imageUrls, settings.blackCorners, printableCards)

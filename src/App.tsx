@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { serializeCardList, addCardListToHistory, removeCardListFromHistory, isBasicLand, type CardListSaveMode } from './Cards'
 import { useCards } from './hooks/useCards'
 import { downloadBlob } from './utils/downloadBlob'
 import type { PrintSettings } from './Pdf'
+import { MAX_PRINTED_FACES } from './PdfLayout'
 import { PrintSettingsForm } from './components/PrintSettingsForm'
 import { CardListForm } from './components/CardListForm'
 import { CardResults } from './components/CardResults'
 import { PdfExport } from './components/PdfExport'
+import { ErrorToast } from './components/ErrorToast'
 import { BackToTop } from './components/BackToTop'
 import { Footer } from './components/Footer'
 import { Icon } from './components/Icon'
@@ -42,7 +44,11 @@ function App() {
 		watermark: false,
 	})
 	const [exporting, setExporting] = useState(false)
-	const [pdfError, setPdfError] = useState('')
+	const [uiError, setUiError] = useState<{ message: string; id: number } | null>(null)
+	const closeUiError = useCallback(() => setUiError(null), [])
+	const reportUiError = useCallback((message: string) => {
+		setUiError((current) => ({ message, id: (current?.id ?? 0) + 1 }))
+	}, [])
 	const canExport = cards.length > 0 && cards.every((entry) => entry.card)
 
     useEffect(() => {
@@ -53,6 +59,14 @@ function App() {
 
     function translatePdfError(error: unknown) {
         if (!(error instanceof Error)) return t('couldNotGeneratePdf')
+		if (error.message.startsWith('Unsupported PDF deck-list name: ')) {
+			return `${t('unsupportedPdfDeckListName')} ${error.message.slice('Unsupported PDF deck-list name: '.length)}`
+		}
+		if (error.message === 'Quantity must be at least 1') return t('quantityAtLeastOne')
+		if (error.message === 'Quantity must be a safe whole number') return t('quantitySafeWholeNumber')
+		if (error.message === `PDF export is limited to ${MAX_PRINTED_FACES} card faces`) {
+			return t('pdfFaceLimit')
+		}
 
         if (error.message === 'Could not prepare a card image') {
             return t('couldNotPrepareCardImage')
@@ -97,7 +111,7 @@ function App() {
 	}
 
 	function loadAndRememberCards(cardList: string) {
-		setPdfError('')
+		setUiError(null)
 
 		const nextHistory = addCardListToHistory(history, cardList)
 
@@ -114,7 +128,7 @@ function App() {
 
 	async function downloadCardsPdf() {
 		setExporting(true)
-		setPdfError('')
+		setUiError(null)
 
 		try {
 			const printableCards = cards.flatMap((entry) => entry.card ? [{ quantity: entry.parsed.quantity, card: entry.card }] : [])
@@ -124,7 +138,7 @@ function App() {
 
 			downloadBlob( pdf, `mtg-proxy-${new Intl.DateTimeFormat('en-CA').format(new Date(),)}.pdf` )
 		} catch (error) {
-			setPdfError(translatePdfError(error))
+			reportUiError(translatePdfError(error))
 		} finally {
 			setExporting(false)
 		}
@@ -201,7 +215,10 @@ function App() {
 			<h1 className="mb-2"><Icon name="cards-fan"/> MTG Proxy</h1>
 			<p>{t('tagline')}</p>
 		</header>
-		{hash === '#editor' ? (<CustomCardEditor onAddToDeckList={addCustomCardToDeckList} />) : (
+		<div hidden={hash !== '#editor'}>
+			<CustomCardEditor onAddToDeckList={addCustomCardToDeckList} onError={reportUiError} />
+		</div>
+		{hash !== '#editor' && (
             <main>
 
                 <CardListForm
@@ -214,6 +231,7 @@ function App() {
                     onChange={setCardList}
                     onLoad={loadAndRememberCards}
                     onSave={saveCardList}
+					onError={reportUiError}
                 />
 
                 {cards.length > 0 && (<div className="printing-settings">
@@ -221,7 +239,6 @@ function App() {
                         <PdfExport
                             exporting={exporting}
                             canExport={canExport}
-                            error={pdfError}
                             onExport={downloadCardsPdf}
                         />
                     </div>
@@ -244,6 +261,7 @@ function App() {
             </main>
         )}
 		<Footer />
+		{uiError && <ErrorToast key={uiError.id} message={uiError.message} onClose={closeUiError} />}
 		</>
 	)
 }

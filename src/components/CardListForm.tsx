@@ -1,9 +1,10 @@
-import { useState, type SubmitEvent } from 'react'
+import type { SubmitEvent } from 'react'
 import { Icon } from './Icon'
 import { EXAMPLE_CARD_LIST, type CardListSaveMode } from '../Cards'
 import { FileInput } from './FileInput'
 import { CardListInput } from './CardListInput'
 import { useI18n } from '../i18n/context'
+import { cleanMarkdownCardList } from '../utils/cleanMarkdownCardList'
 
 type CardListFormProps = {
 	value: string
@@ -15,6 +16,7 @@ type CardListFormProps = {
 	onChange: (value: string) => void
 	onLoad: (cardList: string) => void
 	onSave: (mode: CardListSaveMode) => void
+	onError: (message: string) => void
 }
 
 export function CardListForm({
@@ -26,17 +28,19 @@ export function CardListForm({
     onRemoveHistory,
 	onChange,
 	onLoad,
-	onSave
+	onSave,
+	onError,
 }: CardListFormProps) {
     const { t } = useI18n()
-    const [importError, setImportError] = useState('')
 
 	async function importCardList(file: File) {
-		setImportError('')
 		try {
-			onChange(await file.text())
+			const text = await file.text()
+			onChange(file.name.toLowerCase().endsWith('.md') || file.type === 'text/markdown'
+				? cleanMarkdownCardList(text)
+				: text)
 		} catch {
-			setImportError(t('couldNotReadFile'))
+			onError(t('couldNotReadFile'))
 		}
 	}
 
@@ -52,7 +56,7 @@ export function CardListForm({
             <fieldset disabled={loading}>
                 <div className="meh">
                     <div>
-                        <p className='text-muted'>{t('cardListHelp')}</p>
+                        <p className="text-muted">{t('cardListHelp')}</p>
                         <p className='text-muted'>
                             <mark>{t('autocompleteEnglish')}</mark> <br/>
                             {t('autocompleteBefore')} <mark>@</mark> {t('autocompleteAfter')}
@@ -62,10 +66,9 @@ export function CardListForm({
 
                         <FileInput
                             id="card-list-file"
-                            accept=".txt,text/plain"
+                            accept=".txt,.md,text/plain,text/markdown"
                             onSelect={importCardList}
                         />
-                        {importError && <p role="alert" className="error">{importError}</p>}
 
                         <div className="actions">
                             <button type="submit" disabled={loading} className="btn">

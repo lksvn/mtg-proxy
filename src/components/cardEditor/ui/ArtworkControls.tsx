@@ -97,6 +97,14 @@ export function ArtworkControls({
 						}
 					/> {t('grayscaleArtwork')}
 				</label>
+
+				<label>
+					<input
+						type="checkbox"
+						checked={transform.invert}
+						onChange={(event) => update({ invert: event.target.checked })}
+					/> {t('invertArtwork')}
+				</label>
 			</div>
 
             <div className="form-group gap-2">

@@ -2,7 +2,20 @@
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { addCardListToHistory, parseCardList, removeCardListFromHistory, serializeCardList, isBasicLand } from '../src/Cards.ts'
+import { addCardListToHistory, getQuantityError, parseCardList, removeCardListFromHistory, serializeCardList, isBasicLand } from '../src/Cards.ts'
+
+test('rejects invalid quantities without rounding or changing the input', () => {
+	for (const quantity of [NaN, Infinity, -Infinity, 0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1]) {
+		assert.ok(getQuantityError(quantity), String(quantity))
+	}
+	for (const quantity of [1, 10, 150, Number.MAX_SAFE_INTEGER]) {
+		assert.equal(getQuantityError(quantity), undefined)
+	}
+	const sourceLine = '9999999999999999999999999999999999999999 Rat'
+	const [parsed] = parseCardList(sourceLine)
+	assert.equal(parsed.error, 'Quantity must be a safe whole number')
+	assert.equal(serializeCardList([parsed]), `${sourceLine}\n`)
+})
 
 test('parses supported card-list syntax', () => {
     const cards = parseCardList(`
@@ -55,6 +68,21 @@ test('parses supported card-list syntax', () => {
             error: undefined
         }
     ])
+})
+
+test('recognizes decimal and negative quantities before attempting a card lookup', () => {
+	for (const prefix of ['1.5', '1.5x', '.5', '-1']) {
+		const sourceLine = `${prefix} Rats' Feast (lea) 1`
+		const [card] = parseCardList(sourceLine)
+		assert.equal(card.name, "Rats' Feast")
+		assert.equal(card.set, 'lea')
+		assert.equal(card.collectorNumber, '1')
+		assert.ok(card.error)
+		assert.equal(serializeCardList([card]), `${sourceLine}\n`)
+	}
+	assert.equal(parseCardList("1.5 Rats' Feast")[0].error, 'Quantity must be a safe whole number')
+	assert.equal(parseCardList("44444 Rats' Feast")[0].error, undefined)
+	assert.equal(parseCardList("Rats' Feast")[0].quantity, 1)
 })
 
 test('serializes a restorable card list', () => {

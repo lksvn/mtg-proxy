@@ -90,7 +90,7 @@ export function FrameColorPicker({
 					aria-controls={open ? 'frame-color-options' : undefined}
 					aria-activedescendant={open ? `frame-color-option-${activeIndex}` : undefined}
 					onClick={() => {
-						if (!open) setActiveIndex(options.findIndex((option) => option.value === value))
+						if (!open) setActiveIndex(options.indexOf(selected))
 						setOpen(!open)
 					}}
 					onKeyDown={(event) => {
@@ -102,12 +102,12 @@ export function FrameColorPicker({
 						}
 						if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return
 						event.preventDefault()
-						const current = open ? activeIndex : options.findIndex((option) => option.value === value)
+						const current = open ? activeIndex : options.indexOf(selected)
 						const next = event.key === 'Home' ? 0
 							: event.key === 'End' ? options.length - 1
 							: Math.max(0, Math.min(options.length - 1, current + (event.key === 'ArrowDown' ? 1 : -1)))
-						setOpen(true)
-						highlight(next)
+						onChange(options[next].value)
+						if (open) highlight(next)
 					}}
 				>
 					<span className="frame-color-choice" id="card-frame-selected">

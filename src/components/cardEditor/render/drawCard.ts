@@ -1,4 +1,5 @@
 import type { ArtworkTransform } from '../CardCanvas'
+import { artworkFilter } from './artworkFilter'
 import type { CardTextRun } from '../cardText'
 import type { FrameLayout } from '../frameFamilies'
 import { resolveFooterX, resolvePtTextColor, resolveTextColor, resolveTextX } from '../frameFamilies'
@@ -6,8 +7,8 @@ import type { CustomCardData, FrameVariant } from '../types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
 
-export const WIDTH = 1500
-export const HEIGHT = 2100
+import { HEIGHT, WIDTH } from '../canvasDimensions'
+export { HEIGHT, WIDTH } from '../canvasDimensions'
 
 const RARITY_COLORS: Record<CustomCardData['rarity'], string> = {
 	common: '#ffffff',
@@ -83,7 +84,7 @@ export function drawCard(
 		context.translate(canvasWidth / 2 + transform.x, canvasHeight / 2 + transform.y)
 		context.rotate(transform.rotation * Math.PI / 180)
 		context.scale(transform.flipX ? -1 : 1, transform.flipY ? -1 : 1)
-		if (transform.grayscale) context.filter = 'grayscale(1)'
+		context.filter = artworkFilter(transform)
 		context.drawImage(art, -width / 2, -height / 2, width, height)
 		context.restore()
 	}

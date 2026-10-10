@@ -13,6 +13,12 @@ export const EXAMPLE_CARD_LIST = `Shock
 4 Lightning Bolt
 1 Black Lotus (lea) 232
 Blood Artist (sld)`
+
+export function getQuantityError(quantity: number): string | undefined {
+	if (quantity < 1) return 'Quantity must be at least 1'
+	if (!Number.isSafeInteger(quantity)) return 'Quantity must be a safe whole number'
+	return undefined
+}
 const ABOUT_HEADER = /^about:{0,2}$/i
 const SECTION_HEADER = /^(commander|companion|deck|mainboard|maybeboard|sideboard|stickers?):{0,2}$/i
 
@@ -59,7 +65,7 @@ function cleanLine(line: string): string {
 }
 
 function parseCardLine(sourceLine: string): ParsedCard {
-    const match = sourceLine.match(/^(?:(\d+)[xX]?\s+)?(.+?)(?:\s+\(([a-zA-Z0-9]+)\)(?:\s+(\S+))?)?$/)
+    const match = sourceLine.match(/^(?:([+-]?(?:\d+(?:\.\d*)?|\.\d+))[xX]?\s+)?(.+?)(?:\s+\(([a-zA-Z0-9]+)\)(?:\s+(\S+))?)?$/)
 
     if (!match) {
         return {
@@ -80,7 +86,7 @@ function parseCardLine(sourceLine: string): ParsedCard {
         set: set?.toLowerCase(),
         collectorNumber,
         sourceLine,
-        error: quantity < 1 ? 'Quantity must be at least 1' : undefined
+        error: getQuantityError(quantity)
     }
 }
 

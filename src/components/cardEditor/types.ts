@@ -29,6 +29,7 @@ export type PlaneswalkerCardData = Omit<CustomCardData, 'rulesText' | 'centerRul
 	reverseFaceName: string
 	reverseFaceManaCost: string
 	abilities: PlaneswalkerAbility[]
+	abilityTextColor?: '#fff' | '#111'
 }
 
 export type SagaChapter = {
