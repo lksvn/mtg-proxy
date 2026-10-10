@@ -15,7 +15,19 @@ import { CaseDetailsForm } from './ui/CaseDetailsForm'
 import { RoomDetailsForm } from './ui/RoomDetailsForm'
 import { AdventureDetailsForm } from './ui/AdventureDetailsForm'
 import { LevelerDetailsForm } from './ui/LevelerDetailsForm'
-import type { AdventureCardData, CaseCardData, ClassCardData, CustomCardData, FrameVariant, LevelerCardData, PlaneswalkerCardData, RoomCardData, SagaCardData } from './types'
+import type { FrameVariant } from './types'
+import {
+	SAMPLE_CARD,
+	SAMPLE_TOKEN,
+	SAMPLE_PLANESWALKER,
+	SAMPLE_BATTLE,
+	SAMPLE_SAGA,
+	SAMPLE_CLASS,
+	SAMPLE_CASE,
+	SAMPLE_ROOM,
+	SAMPLE_ADVENTURE,
+	SAMPLE_LEVELER,
+} from './sampleCards'
 import { inferFrameVariant } from './cardText'
 import { useI18n } from '../../i18n/context'
 import { downloadBlob } from '../../utils/downloadBlob'
@@ -42,7 +54,7 @@ import {
 const SAMPLE_ARTWORK_URL = `${import.meta.env.BASE_URL}img/samples/marrow-gnawer.jpg`
 const SAMPLE_SET_SYMBOL_URL = `${import.meta.env.BASE_URL}img/setSymbols/chk.svg`
 function createDefaultArtworkTransform(grayscale = false): ArtworkTransform {
-	return { x: 0, y: 0, flipX: false, flipY: false, grayscale, scale: 0, rotation: 0 }
+	return { x: 0, y: 0, flipX: false, flipY: false, grayscale, invert: false, scale: 0, rotation: 0 }
 }
 
 function isDoubleFeatureStyle(style: PlaneswalkerStyle) {
@@ -86,93 +98,16 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const [classStyle, setClassStyle] = useState<ClassStyle>('class-regular')
 	const [caseStyle, setCaseStyle] = useState<CaseStyle>('case-regular')
 	const [adventureStyle, setAdventureStyle] = useState<AdventureStyle>('adventure-regular')
-    const [card, setCard] = useState<CustomCardData>({
-        name: 'Marrow-Gnawer',
-        manaCost: '3bb',
-        typeLine: 'Legendary Creature — Rat Rogue',
-        rulesText: `All Rats have fear.
-{T}, Sacrifice a Rat: Create X 1/1 black Rat creature tokens, where X is the number of Rats you control.`,
-		centerRulesText: false,
-        flavorText: 'Marrow-Gnawer united three nezumi gangs when he slew their leaders in a single night. Now they call him their first lord.',
-        powerToughness: '2/3',
-        artist: 'Wayne Reynolds',
-        number: '124',
-        rarity: 'rare',
-        tintSetSymbol: false,
-        backgroundColor: '#000000'
-    })
-	const [token, setToken] = useState<CustomCardData>({
-		name: 'Rat', manaCost: '', typeLine: 'Token Creature — Rat', rulesText: '', centerRulesText: false, flavorText: '',
-		powerToughness: '1/1', artist: '', number: '1', rarity: 'common', tintSetSymbol: false, backgroundColor: '#000000',
-	})
-	const [planeswalker, setPlaneswalker] = useState<PlaneswalkerCardData>({
-		name: 'Jace, Arcane Strategist', manaCost: '4uu', typeLine: 'Legendary Planeswalker — Jace', startingLoyalty: '4',
-		nickname: 'The Mind Sculptor',
-		reverseFaceName: '', reverseFaceManaCost: '',
-		abilities: [
-			{ cost: '+1', text: 'Draw a card.' },
-			{ cost: '-2', text: 'Return target creature to its owner’s hand.' },
-			{ cost: '-8', text: 'Draw seven cards. You get an emblem with “You have no maximum hand size.”' },
-		],
-		artist: '', number: '1', rarity: 'mythic', tintSetSymbol: false, backgroundColor: '#000000',
-	})
-	const [battle, setBattle] = useState<CustomCardData>({
-		name: 'Invasion of Zendikar', manaCost: '3g', typeLine: 'Battle — Siege',
-		rulesText: '(As a Siege enters, choose an opponent to protect it. You and others can attack it. When it’s defeated, exile it, then cast it transformed.)\n\nWhen Invasion of Zendikar enters, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.',
-		centerRulesText: false, flavorText: '', powerToughness: '3', artist: '', number: '194',
-		rarity: 'uncommon', tintSetSymbol: false, backgroundColor: '#000000',
-	})
-	const [saga, setSaga] = useState<SagaCardData>({
-		name: 'History of Benalia', manaCost: '1ww', typeLine: 'Enchantment — Saga',
-		rulesText: '(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)',
-		centerRulesText: false, flavorText: '', powerToughness: '', artist: '', number: '21',
-		rarity: 'mythic', tintSetSymbol: false, backgroundColor: '#000000',
-		chapters: [
-			{ chapterCount: 1, text: 'Create a 2/2 white Knight creature token with vigilance.' },
-			{ chapterCount: 1, text: 'Create a 2/2 white Knight creature token with vigilance.' },
-			{ chapterCount: 1, text: 'Knights you control get +2/+1 until end of turn.' },
-		],
-		reversePowerToughness: '',
-	})
-	const [classCard, setClassCard] = useState<ClassCardData>({
-		name: 'Wizard Class', manaCost: 'u', typeLine: 'Enchantment — Class',
-		rulesText: '', centerRulesText: false, flavorText: '', powerToughness: '', artist: '', number: '81',
-		rarity: 'uncommon', tintSetSymbol: false, backgroundColor: '#000000',
-		levels: [
-			{ cost: '', name: '', text: '(Gain the next level as a sorcery to add its ability.)\nYou have no maximum hand size.' },
-			{ cost: '{2}{U}', name: 'Level 2', text: 'When this Class becomes level 2, draw two cards.' },
-			{ cost: '{4}{U}', name: 'Level 3', text: 'Whenever you draw a card, put a +1/+1 counter on target creature you control.' },
-		],
-	})
-	const [caseCard, setCaseCard] = useState<CaseCardData>({
-		name: 'Case of the Uneaten Feast', manaCost: 'w', typeLine: 'Enchantment — Case',
-		rulesText: 'Whenever a creature enters under your control, you gain 1 life.',
-		solveCondition: '(If unsolved, solve at the beginning of your end step.) You gained 5 or more life this turn.',
-		solvedAbility: 'Creatures you control get +1/+1.',
-		centerRulesText: false, flavorText: '', powerToughness: '', artist: '', number: '10',
-		rarity: 'uncommon', tintSetSymbol: false, backgroundColor: '#000000',
-	})
-	const [room, setRoom] = useState<RoomCardData>({
-		name: 'Bottomless Pool', manaCost: 'u', rulesText: 'When you unlock this door, return up to one target creature to its owner’s hand.',
-		otherName: 'Locker Room', otherManaCost: '4u', otherRulesText: 'Whenever one or more creatures you control deal combat damage to a player, draw a card.',
-		typeLine: 'Enchantment — Room', reminderText: '(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)',
-		centerRulesText: false, flavorText: '', powerToughness: '', artist: '', number: '43',
-		rarity: 'uncommon', tintSetSymbol: false, backgroundColor: '#000000',
-	})
-	const [adventure, setAdventure] = useState<AdventureCardData>({
-		name: 'Beanstalk Giant', manaCost: '6g', typeLine: 'Creature — Giant', rulesText: 'Beanstalk Giant’s power and toughness are each equal to the number of lands you control.',
-		adventureName: 'Fertile Footsteps', adventureManaCost: '2g', adventureTypeLine: 'Sorcery — Adventure', adventureRulesText: 'Search your library for a basic land card, put it onto the battlefield, then shuffle.',
-		centerRulesText: false, flavorText: '', powerToughness: '*/*', artist: '', number: '149',
-		rarity: 'uncommon', tintSetSymbol: false, backgroundColor: '#000000',
-	})
-	const [leveler, setLeveler] = useState<LevelerCardData>({
-		name: 'Transcendent Master', manaCost: '1ww', typeLine: 'Creature — Human Cleric Avatar', rulesText: '',
-		levelUpText: 'Level up {1} ({1}: Put a level counter on this. Level up only as a sorcery.)',
-		levelTwo: '6-11', levelTwoRulesText: 'Lifelink', levelTwoPowerToughness: '6/6',
-		levelThree: '12+', levelThreeRulesText: 'Lifelink\nTranscendent Master is indestructible.', levelThreePowerToughness: '9/9',
-		centerRulesText: false, flavorText: '', powerToughness: '3/3', artist: '', number: '47',
-		rarity: 'mythic', tintSetSymbol: false, backgroundColor: '#000000',
-	})
+	const [card, setCard] = useState(SAMPLE_CARD)
+	const [token, setToken] = useState(SAMPLE_TOKEN)
+	const [planeswalker, setPlaneswalker] = useState(SAMPLE_PLANESWALKER)
+	const [battle, setBattle] = useState(SAMPLE_BATTLE)
+	const [saga, setSaga] = useState(SAMPLE_SAGA)
+	const [classCard, setClassCard] = useState(SAMPLE_CLASS)
+	const [caseCard, setCaseCard] = useState(SAMPLE_CASE)
+	const [room, setRoom] = useState(SAMPLE_ROOM)
+	const [adventure, setAdventure] = useState(SAMPLE_ADVENTURE)
+	const [leveler, setLeveler] = useState(SAMPLE_LEVELER)
 	const activeCard = layout === 'token' ? token : layout === 'planeswalker' ? planeswalker : layout === 'battle' ? battle : layout === 'saga' ? saga : layout === 'class' ? classCard : layout === 'case' ? caseCard : layout === 'room' ? room : layout === 'adventure' ? adventure : layout === 'leveler' ? leveler : card
 	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : layout === 'saga' ? sagaStyle : layout === 'class' ? classStyle : layout === 'case' ? caseStyle : layout === 'room' ? 'room-regular' : layout === 'adventure' ? adventureStyle : layout === 'leveler' ? 'leveler-regular' : frameFamily
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
@@ -377,6 +312,22 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
                                     ))}
                                 </select>
                             </div>
+							{planeswalkerStyle.startsWith('planeswalker-sdcc15') && (
+								<div className="form-group gap-2 mb-5">
+									<label htmlFor="planeswalker-ability-color">{t('abilityTextColor')}</label>
+									<select
+										id="planeswalker-ability-color"
+										value={planeswalker.abilityTextColor ?? '#fff'}
+										onChange={(event) => setPlaneswalker({
+											...planeswalker,
+											abilityTextColor: event.target.value as '#fff' | '#111',
+										})}
+									>
+										<option value="#fff">{t('frameBorderWhite')}</option>
+										<option value="#111">{t('frameBorderBlack')}</option>
+									</select>
+								</div>
+							)}
 							{!planeswalkerStyle.startsWith('planeswalker-sdcc15') && <div className="form-group gap-2 mb-5">
                                 <FrameColorPicker
                                     value={frameSelection}
