@@ -1,16 +1,23 @@
 # MTG Proxy
 
-Create printable Magic: The Gathering playtest cards in your browser.
+Create printable Magic: The Gathering playtest cards from deck lists or your own designs. Available in English and Brazilian Portuguese.
 
 [Open MTG Proxy](https://lksvn.com.br/mtg-proxy/) · [Open the Custom Card Editor](https://lksvn.com.br/mtg-proxy/#editor)
 
 ![MTG Proxy interface](docs/mtg-proxy.gif)
 
-Load a deck list to find card images through Scryfall, choose printings, and download a print-ready PDF. Or use the custom editor to make an ordinary single-faced card and export a 1500 × 2100 PNG. The interface supports English and Brazilian Portuguese.
+*MTG Proxy overview.*
 
-## Deck-list format
+## Deck Lists
 
-Enter one card per line. Quantity, set, and collector number are optional:
+Find cards through Scryfall and export a print-ready PDF.
+
+- Paste lists or import `.txt`/`.md` files.
+- Search names with `@` autocomplete in English.
+- Choose different printings and artwork.
+- Include custom cards with quantities.
+
+One card per line; quantity and printing details are optional:
 
 ```text
 Lightning Bolt
@@ -18,19 +25,28 @@ Lightning Bolt
 1 Black Lotus (lea) 232
 ```
 
-Type `@` before a name for English autocomplete, for example `4 @counter`.
-
 ![Autocomplete card names](docs/autocomplete.gif)
 
-After loading a list, you can search for a different printing before downloading the PDF.
+*Find card names with autocomplete.*
 
 ![Search and change a card printing](docs/printing-selection.gif)
 
+*Search and select a card printing.*
+
 ## Custom Card Editor
 
-[Open the editor](https://lksvn.com.br/mtg-proxy/#editor) to make an ordinary single-faced card. Add artwork, choose a frame and color, then enter the card text. Drag or zoom the artwork on the preview and download a 1500 × 2100 PNG, with optional 300 or 600 DPI metadata. Specialized card layouts are not supported yet.
+[Create custom cards](https://lksvn.com.br/mtg-proxy/#editor) with your own artwork and text.
+
+- Choose from different frames and layouts.
+- Drag and zoom artwork directly in the preview.
+- Apply grayscale or inverted artwork colors.
+- Download PNGs or add cards to a deck list for PDF printing.
+
+More frame styles are still being added.
 
 ![Custom Card Editor](docs/custom-card-editor.png)
+
+*Custom card editor preview.*
 
 ## Development
 
@@ -47,8 +63,10 @@ npm run lint
 npm run build
 ```
 
+Pull requests to `main` run tests, lint, and build automatically.
+
 ## Credits
 
 Card data and images come from [Scryfall](https://scryfall.com/). Custom frame assets are credited in [`public/img/frames`](public/img/frames).
 
-For personal, non-commercial playtesting. Not affiliated with or endorsed by Wizards of the Coast. Deck lists stay in your browser except for card lookups; custom-editor artwork and state stay in the current tab.
+For personal, non-commercial playtesting. Not affiliated with or endorsed by Wizards of the Coast.
