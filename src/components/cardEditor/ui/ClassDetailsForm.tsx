@@ -22,7 +22,7 @@ export function ClassDetailsForm({ card, onChange, part }: ClassDetailsFormProps
 	return <>
 		<CardDetailsForm card={card} onChange={update} hideRulesText hidePowerToughness part="content" />
 		<h5 className="mt-5">{t('classLevels')}</h5>
-		{card.levels.map((level, index) => <div key={index} className={'planeswalker-ability' + (index > 0 ? ' ' : ' nocols')}>
+		{card.levels.map((level, index) => <div key={index} className="class-level">
 			{index > 0 && <div className="form-group gap-2">
 				<label htmlFor={`class-level-cost-${index}`}>{t('levelCost')}</label>
 				<input

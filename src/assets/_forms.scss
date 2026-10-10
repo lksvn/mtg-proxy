@@ -100,6 +100,21 @@ label {
     font-weight: 600;
 }
 
+.class-level {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+
+	@media (max-width: 36rem) {
+		grid-template-columns: 1fr;
+	}
+
+	> .form-group:last-child {
+		grid-column: 1 / -1;
+	}
+}
+
 .file-input {
 	display: flex;
 	align-items: center;
