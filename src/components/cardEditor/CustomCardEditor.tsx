@@ -1,7 +1,10 @@
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { CardCanvas, type ArtworkTransform } from './CardCanvas'
 import { canExportCardRender, type CardRenderInput, type CardRenderResult } from './cardRender'
+import { getQuantityError } from '../../Cards'
+import { canvasToPng } from '../../utils/canvasToPng'
 import { FileInput } from '../FileInput'
+import { loadImageSource } from './render/loadImage'
 import { ArtworkControls } from './ui/ArtworkControls'
 import { CardDetailsForm } from './ui/CardDetailsForm'
 import { PlaneswalkerDetailsForm } from './ui/PlaneswalkerDetailsForm'
@@ -49,6 +52,7 @@ function isDoubleFeatureStyle(style: PlaneswalkerStyle) {
 }
 
 type CustomCardEditorProps = {
+	onError: (message: string) => void
 	onAddToDeckList?: (card: {
 		quantity: number
 		name: string
@@ -59,7 +63,7 @@ type CustomCardEditorProps = {
 	}) => void
 }
 
-export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
+export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorProps) {
 	const { t } = useI18n()
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const [renderResult, setRenderResult] = useState<CardRenderResult | null>(null)
@@ -71,7 +75,9 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
-	const [customCardQuantity, setCustomCardQuantity] = useState(1)
+	const [customCardQuantity, setCustomCardQuantity] = useState('1')
+	const quantity = Number(customCardQuantity)
+	const quantityError = getQuantityError(quantity)
 	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker' | 'battle' | 'saga' | 'class' | 'case' | 'room' | 'adventure' | 'leveler'>('card')
 	const [tokenStyle, setTokenStyle] = useState<TokenStyle>('token-regular')
 	const [planeswalkerStyle, setPlaneswalkerStyle] = useState<PlaneswalkerStyle>('planeswalker-regular')
@@ -189,37 +195,44 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 	}), [artwork, setSymbol, activeFamily, borderStyle, frameVariant, artworkTransform, activeCard])
 	const canExport = canExportCardRender(renderInput, renderResult)
 	const renderFailed = renderResult?.input === renderInput && renderResult.status === 'error'
+	const handleRenderResult = useCallback((result: CardRenderResult) => {
+		setRenderResult(result)
+		if (result.input === renderInput && result.status === 'error') {
+			onError(t('couldNotRenderCard'))
+		}
+	}, [renderInput, onError, t])
 	const search = frameStyleSearch.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 
-	function downloadPng(dpi?: number) {
+	async function downloadPng(dpi?: number) {
 		if (!canExport) return
-		canvasRef.current?.toBlob(async (blob) => {
-			if (!blob) return
-
+		try {
+			const blob = await canvasToPng(canvasRef.current)
 			if (!dpi) {
 				downloadBlob(blob, 'mtg-proxy-custom-card.png')
 				return
 			}
-
 			const png = setPngDpi(new Uint8Array(await blob.arrayBuffer()), dpi)
 			downloadBlob(new Blob([png.buffer as ArrayBuffer], { type: 'image/png' }), `mtg-proxy-custom-card-${dpi}dpi.png`)
-		}, 'image/png')
+		} catch {
+			onError(t('couldNotExportCard'))
+		}
 	}
 
-	function addToDeckList() {
-		if (!canExport) return
-		canvasRef.current?.toBlob((image) => {
-			if (!image) return
-
+	async function addToDeckList() {
+		if (!canExport || quantityError) return
+		try {
+			const image = await canvasToPng(canvasRef.current)
 			onAddToDeckList?.({
-				quantity: customCardQuantity,
+				quantity,
 				name: activeCard.name || t('customCard'),
 				typeLine: activeCard.typeLine,
 				artist: activeCard.artist,
 				collectorNumber: activeCard.number,
 				image,
 			})
-		}, 'image/png')
+		} catch {
+			onError(t('couldNotAddCustomCard'))
+		}
 	}
 
 	return (
@@ -233,6 +246,9 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
                                 id="custom-card-artwork"
                                 accept="image/*"
                                 label={t('chooseArtwork')}
+                                hasValue={Boolean(artwork)}
+                                validate={loadImageSource}
+                                validationError={t('invalidImageFile')}
                                 onSelect={(file) => {
                                     setArtwork(file)
                                     setArtworkTransform(createDefaultArtworkTransform(
@@ -246,6 +262,8 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
                             id="custom-card-set-symbol"
                             accept="image/*"
                             label={t('chooseSetSymbol')}
+                            validate={loadImageSource}
+                            validationError={t('invalidImageFile')}
                             hasValue={Boolean(setSymbol)}
                             onSelect={setSetSymbol}
                             onClear={() => setSetSymbol(undefined)}
@@ -453,14 +471,14 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
                 </div>
 
                 <div style={{position:'relative'}}>
-                    {!canExport && <p role={renderFailed ? 'alert' : 'status'}>
-                        {t(renderFailed ? 'couldNotRenderCard' : 'renderingCard')}
+                    {!canExport && !renderFailed && <p role="status" className="visually-hidden">
+                        {t('renderingCard')}
                     </p>}
                     <CardCanvas
 						key={activeFamily}
 						canvasRef={canvasRef}
                         input={renderInput}
-                        onRenderResult={setRenderResult}
+                        onRenderResult={handleRenderResult}
                         onTransformChange={setArtworkTransform}
                     />
                     {artwork && <ArtworkControls
@@ -480,11 +498,16 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 								min="1"
 								step="1"
 								value={customCardQuantity}
-								onChange={(event) => setCustomCardQuantity(Math.max(1, event.currentTarget.valueAsNumber || 1))}
+								aria-invalid={Boolean(quantityError)}
+								aria-describedby={quantityError ? 'custom-card-quantity-error' : undefined}
+								onChange={(event) => setCustomCardQuantity(event.currentTarget.value)}
 							/>
+							{quantityError && <small id="custom-card-quantity-error" role="alert" className="error">
+								{t(quantity < 1 ? 'quantityAtLeastOne' : 'quantitySafeWholeNumber')}
+							</small>}
 						</div>
                         <div className="pt-5">
-                            <button type="button" className="btn block" disabled={!canExport} onClick={addToDeckList}>
+                            <button type="button" className="btn block" disabled={!canExport || Boolean(quantityError)} onClick={addToDeckList}>
                                 <Icon name="plus"/> {t('addCustomCardToDeckList')}
                             </button>
                         </div>

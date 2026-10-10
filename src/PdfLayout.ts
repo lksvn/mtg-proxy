@@ -1,5 +1,20 @@
+import { getQuantityError } from './Cards.ts'
+
 export const CARD_WIDTH = 63
 export const CARD_HEIGHT = 88
+export const MAX_PRINTED_FACES = 500
+
+export function validatePdfQuantities(cards: { quantity: number; faceCount: number }[]) {
+	let totalFaces = 0
+	for (const { quantity, faceCount } of cards) {
+		const quantityError = getQuantityError(quantity)
+		if (quantityError) throw new Error(quantityError)
+		totalFaces += quantity * faceCount
+		if (totalFaces > MAX_PRINTED_FACES) {
+			throw new Error(`PDF export is limited to ${MAX_PRINTED_FACES} card faces`)
+		}
+	}
+}
 
 const PAPER_SIZES = {
 	a4: { width: 210, height: 297 },

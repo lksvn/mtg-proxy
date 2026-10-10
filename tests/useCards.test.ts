@@ -2,6 +2,14 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { createCustomCardEntry, withCustomCards } from '../src/hooks/cardEntries.ts'
 
+test('rejects invalid custom-card quantities', () => {
+	for (const quantity of [NaN, Infinity, 0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1]) {
+		assert.throws(() => createCustomCardEntry({
+			quantity, name: 'Invalid', typeLine: '', artist: '', collectorNumber: '', imageUrl: 'blob:test',
+		}))
+	}
+})
+
 test('creates a printable custom card entry without a Scryfall printing', () => {
 	const entry = createCustomCardEntry({
 		quantity: 10,

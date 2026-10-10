@@ -1,4 +1,4 @@
-import type { ParsedCard } from '../Cards.ts'
+import { getQuantityError, type ParsedCard } from '../Cards.ts'
 import type { ScryfallCard } from '../Scryfall.ts'
 
 export type CardEntry = {
@@ -22,6 +22,8 @@ export type CustomCardEntry = {
 }
 
 export function createCustomCardEntry(customCard: CustomCardEntry): CardEntry {
+	const quantityError = getQuantityError(customCard.quantity)
+	if (quantityError) throw new Error(quantityError)
 	const parsed: ParsedCard = {
 		quantity: customCard.quantity,
 		name: customCard.name,

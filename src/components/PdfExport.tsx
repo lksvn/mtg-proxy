@@ -4,14 +4,12 @@ import { useI18n } from '../i18n/context'
 type PdfExportProps = {
 	exporting: boolean
 	canExport: boolean
-	error: string
 	onExport: () => void
 }
 
 export function PdfExport({
 	exporting,
 	canExport,
-	error,
 	onExport
 }: PdfExportProps) {
 	const { t } = useI18n()
@@ -30,12 +28,6 @@ export function PdfExport({
 					<><Icon name="printer"/> {t('downloadPdf')}</>
 				)}
 			</button>
-
-			{error && (
-				<p role="alert" className="error">
-					{error}
-				</p>
-			)}
 		</>
 	)
 }
