@@ -37,11 +37,11 @@ import { getFrameFamily, type FrameBorderStyle, type FrameFamilyId } from './fra
 import { FrameColorPicker } from './ui/FrameColorPicker'
 import { CardFrameControls } from './ui/CardFrameControls'
 import { PlaneswalkerFrameControls } from './ui/PlaneswalkerFrameControls'
+import { SagaFrameControls } from './ui/SagaFrameControls'
 import {
 	ADVENTURE_STYLES,
 	CLASS_STYLES,
 	CASE_STYLES,
-	SAGA_STYLES,
 	TOKEN_STYLES,
 	type PlaneswalkerStyle,
 	type ClassStyle,
@@ -364,25 +364,14 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 						{layout === 'battle' && <div className="form-group gap-2 mb-5">
 							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideVehicles />
 						</div>}
-						{layout === 'saga' && <>
-							<div className="form-group gap-2">
-								<label htmlFor="saga-style">{t('sagaStyle')}</label>
-								<select id="saga-style" value={sagaStyle} onChange={(event) => setSagaStyle(event.target.value as SagaStyle)}>
-									{SAGA_STYLES.map(({ id, label }) => <option key={id} value={id}>{t(label)}</option>)}
-								</select>
-							</div>
-							<div className="form-group gap-2 mb-5">
-								<FrameColorPicker
-									value={frameSelection}
-									onChange={setFrameSelection}
-									hideVehicles
-									hideArtifacts={!['saga-nyx', 'saga-universes-beyond'].includes(sagaStyle)}
-									hideColorless={['saga-regular', 'saga-transform', 'saga-lord-of-the-rings', 'saga-universes-beyond-regular'].includes(sagaStyle)}
-									hideLands={!['saga-regular', 'saga-transform', 'saga-universes-beyond-regular', 'saga-creature-regular'].includes(sagaStyle)}
-									hideColoredLands
-								/>
-							</div>
-						</>}
+						{layout === 'saga' && (
+							<SagaFrameControls
+								style={sagaStyle}
+								onStyleChange={setSagaStyle}
+								frameSelection={frameSelection}
+								onFrameSelectionChange={setFrameSelection}
+							/>
+						)}
 						{layout === 'class' && <>
 							<div className="form-group gap-2">
 								<label htmlFor="class-style">{t('classStyle')}</label>
