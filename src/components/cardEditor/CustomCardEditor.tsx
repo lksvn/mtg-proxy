@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { CardCanvas, type ArtworkTransform } from './CardCanvas'
+import { canExportCardRender, type CardRenderInput, type CardRenderResult } from './cardRender'
 import { FileInput } from '../FileInput'
 import { ArtworkControls } from './ui/ArtworkControls'
 import { CardDetailsForm } from './ui/CardDetailsForm'
@@ -61,6 +62,7 @@ type CustomCardEditorProps = {
 export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 	const { t } = useI18n()
 	const canvasRef = useRef<HTMLCanvasElement>(null)
+	const [renderResult, setRenderResult] = useState<CardRenderResult | null>(null)
 	const [artwork, setArtwork] = useState<File | string | undefined>(SAMPLE_ARTWORK_URL)
     const [artworkTransform, setArtworkTransform] = useState(createDefaultArtworkTransform)
     const [setSymbol, setSetSymbol] = useState<File | string | undefined>(SAMPLE_SET_SYMBOL_URL)
@@ -176,9 +178,21 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 	const frameVariant = activeFrameSelection === 'auto'
 		? inferFrameVariant(activeCard.manaCost, activeCard.typeLine)
 		: activeFrameSelection
+	const renderInput = useMemo<CardRenderInput>(() => ({
+		artwork,
+		setSymbol,
+		frameFamily: activeFamily,
+		borderStyle: activeFamily === 'token-unglued' ? 'silver' : borderStyle,
+		frameVariant,
+		transform: artworkTransform,
+		card: activeCard,
+	}), [artwork, setSymbol, activeFamily, borderStyle, frameVariant, artworkTransform, activeCard])
+	const canExport = canExportCardRender(renderInput, renderResult)
+	const renderFailed = renderResult?.input === renderInput && renderResult.status === 'error'
 	const search = frameStyleSearch.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 
 	function downloadPng(dpi?: number) {
+		if (!canExport) return
 		canvasRef.current?.toBlob(async (blob) => {
 			if (!blob) return
 
@@ -193,6 +207,7 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 	}
 
 	function addToDeckList() {
+		if (!canExport) return
 		canvasRef.current?.toBlob((image) => {
 			if (!image) return
 
@@ -438,17 +453,15 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
                 </div>
 
                 <div style={{position:'relative'}}>
+                    {!canExport && <p role={renderFailed ? 'alert' : 'status'}>
+                        {t(renderFailed ? 'couldNotRenderCard' : 'renderingCard')}
+                    </p>}
                     <CardCanvas
 						key={activeFamily}
 						canvasRef={canvasRef}
-                        artwork={artwork}
-                        transform={artworkTransform}
+                        input={renderInput}
+                        onRenderResult={setRenderResult}
                         onTransformChange={setArtworkTransform}
-						card={activeCard}
-						setSymbol={setSymbol}
-						frameFamily={activeFamily}
-						borderStyle={activeFamily === 'token-unglued' ? 'silver' : borderStyle}
-						frameVariant={frameVariant}
                     />
                     {artwork && <ArtworkControls
                         transform={artworkTransform}
@@ -471,13 +484,13 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 							/>
 						</div>
                         <div className="pt-5">
-                            <button type="button" className="btn block" onClick={addToDeckList}>
+                            <button type="button" className="btn block" disabled={!canExport} onClick={addToDeckList}>
                                 <Icon name="plus"/> {t('addCustomCardToDeckList')}
                             </button>
                         </div>
 					</div>}
 					<div className="split-button mt-3">
-						<button type="button" className="btn" onClick={() => downloadPng()}>
+						<button type="button" className="btn" disabled={!canExport} onClick={() => downloadPng()}>
 							<Icon name="file-down"/> {t('downloadPng')}
 						</button>
 						<details>
@@ -485,8 +498,8 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 								<Icon name="chevron-down"/>
 							</summary>
 							<div className="split-button-options">
-								<button type="button" className="btn" onClick={() => downloadPng(300)}>300 DPI</button>
-								<button type="button" className="btn" onClick={() => downloadPng(600)}>600 DPI</button>
+								<button type="button" className="btn" disabled={!canExport} onClick={() => downloadPng(300)}>300 DPI</button>
+								<button type="button" className="btn" disabled={!canExport} onClick={() => downloadPng(600)}>600 DPI</button>
 							</div>
 						</details>
 					</div>

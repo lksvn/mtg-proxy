@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
-import { DUAL_FRAME_VARIANTS, type AdventureCardData, type CaseCardData, type ClassCardData, type CustomCardData, type FrameVariant, type LevelerCardData, type PlaneswalkerCardData, type RoomCardData, type SagaCardData } from './types'
+import { DUAL_FRAME_VARIANTS, type CustomCardData } from './types'
+import type { CardRenderInput, CardRenderResult } from './cardRender'
 import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from './cardText'
 import { drawCard, drawCardFooter, HEIGHT, WIDTH } from './render/drawCard'
 import { futureManaFile } from './render/drawManaCost'
@@ -8,7 +9,7 @@ import { loadDualFrame } from './render/composeDualFrame'
 import { loadAbuDualLand } from './render/composeAbuDualLand'
 import { loadBorderOverlay } from './render/composeBorder'
 import { useI18n } from '../../i18n/context'
-import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameBorderStyle, type FrameFamily, type FrameFamilyId } from './frameFamilies'
+import { getFrameFamily, resolveFrameVariant, resolvePtVariant, type FrameFamily } from './frameFamilies'
 import { drawIconlessPlaneswalkerAbilities, drawPlaneswalker, drawPlaneswalkerBackground, drawPlaneswalkerNickname, drawPlaneswalkerReverseFace, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from './render/drawPlaneswalker'
 import { drawSaga, SAGA_ASSETS, type SagaImages } from './render/drawSaga'
 import { CLASS_HEADER, drawClass } from './render/drawClass'
@@ -154,18 +155,14 @@ export type ArtworkTransform = {
 }
 
 type CardCanvasProps = {
-	artwork?: File | string
-	setSymbol?: File | string
-	frameFamily: FrameFamilyId
-	borderStyle: FrameBorderStyle
-	frameVariant: FrameVariant
-	transform: ArtworkTransform,
-    card: CustomCardData | PlaneswalkerCardData | SagaCardData | ClassCardData | CaseCardData | RoomCardData | AdventureCardData | LevelerCardData,
+	input: CardRenderInput
+	onRenderResult: (result: CardRenderResult) => void
     onTransformChange: (transform: ArtworkTransform) => void,
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
 
-export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, borderStyle, transform, card, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
+export function CardCanvas({ input, onRenderResult, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
+	const { artwork, setSymbol, frameFamily, frameVariant, borderStyle, transform, card } = input
 	const { t } = useI18n()
 	const family = getFrameFamily(frameFamily)
 	const debugRegions = DEBUG_CANVAS ? getDebugRegions(family) : []
@@ -393,7 +390,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const canvas = canvasRef.current
 			const context = canvas?.getContext('2d')
 
-			if (!canvas || !context) return
+			if (!canvas || !context) throw new Error('Could not access the card canvas')
 
 			const iconlessPlaneswalker = family.id === 'planeswalker-seventh'
 			context.resetTransform()
@@ -489,12 +486,18 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 
 		}
 
-		void render()
+		void render().then(() => {
+			if (!cancelled) onRenderResult({ input, status: 'ready' })
+		}).catch((error: unknown) => {
+			if (cancelled) return
+			console.error('Could not render card', error)
+			onRenderResult({ input, status: 'error' })
+		})
 
 		return () => {
 			cancelled = true
 		}
-	}, [artwork, setSymbol, frameVariant, borderStyle, transform, card, canvasRef, family])
+	}, [input, artwork, setSymbol, frameVariant, borderStyle, transform, card, canvasRef, family, onRenderResult])
 
 	return (
 		<div style={{position: 'sticky', top: 0, zIndex: 2}}>
