@@ -212,7 +212,7 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '1rem'}}>
                 <div>
 					<details className="form-section" open>
-                        <summary><h5 className="mt-5">1. {t('cardImageSection')}</h5></summary>
+                        <summary><h5 className="mt-5">{t('cardImageSection')}</h5></summary>
                         <div className="form-group gap-2">
                             <FileInput
                                 id="custom-card-artwork"
@@ -237,7 +237,7 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 						/></div>}
 					</details>
 					<details className="form-section" open>
-					    <summary><h5 className="mt-5">2. {t('cardEditionSection')}</h5></summary>
+					    <summary><h5 className="mt-5">{t('cardEditionSection')}</h5></summary>
                         <div className="form-group gap-2">
                             <label htmlFor="card-layout">{t('cardLayout')}</label>
                             <select id="card-layout" value={layout} onChange={(event) => setLayout(event.target.value as typeof layout)}>
@@ -416,23 +416,23 @@ export function CustomCardEditor({ onAddToDeckList }: CustomCardEditorProps) {
 							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideLands hideColoredLands hideColorless />
 						</div>}
 					</details>
-					<details className="form-section" open>
-					    <summary><h5 className="mt-5">3. {t('cardInformationSection')}</h5></summary>
+					{(layout !== 'token' || tokenStyle !== 'token-unglued') && <details className="form-section" open>
+					    <summary><h5 className="mt-5">{t('cardInformationSection')}</h5></summary>
 						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="content" showCreatureFields={['saga-creature', 'saga-creature-regular', 'saga-creature-transform-front', 'saga-creature-transform-back', 'saga-creature-transform-front-ub', 'saga-creature-transform-back-ub'].includes(sagaStyle)} showTransformFields={['saga-transform', 'saga-creature-transform-front', 'saga-creature-transform-front-ub'].includes(sagaStyle)} /> : layout === 'class' ? <ClassDetailsForm card={classCard} onChange={setClassCard} part="content" /> : layout === 'case' ? <CaseDetailsForm card={caseCard} onChange={setCaseCard} part="content" /> : layout === 'room' ? <RoomDetailsForm card={room} onChange={setRoom} part="content" /> : layout === 'adventure' ? <AdventureDetailsForm card={adventure} onChange={setAdventure} part="content" /> : layout === 'leveler' ? <LevelerDetailsForm card={leveler} onChange={setLeveler} part="content" /> : <CardDetailsForm
 							card={layout === 'token' ? token : layout === 'battle' ? battle : card}
 							onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard}
                             hideManaCost={layout === 'token' && !tokenOptions.showManaCost}
-                            hideRulesText={tokenOptions.hideRulesText}
-                            hideNameAndType={tokenOptions.hideNameAndType}
-                            hideTypeLine={tokenOptions.hideTypeLine}
-                            hidePowerToughness={tokenOptions.hidePowerToughness}
+							hideRulesText={layout === 'token' && tokenOptions.hideRulesText}
+							hideNameAndType={layout === 'token' && tokenOptions.hideNameAndType}
+							hideTypeLine={layout === 'token' && tokenOptions.hideTypeLine}
+							hidePowerToughness={layout === 'token' && tokenOptions.hidePowerToughness}
 							powerToughnessLabel={layout === 'battle' ? 'defense' : undefined}
                             maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
                             part="content"
                         />}
-					</details>
+					</details>}
 					<details className="form-section">
-                        <summary><h5 className="mt-5">4. {t('cardDetailsSection')}</h5></summary>
+                        <summary><h5 className="mt-5">{t('cardDetailsSection')}</h5></summary>
 						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="details" /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="details" /> : layout === 'class' ? <ClassDetailsForm card={classCard} onChange={setClassCard} part="details" /> : layout === 'case' ? <CaseDetailsForm card={caseCard} onChange={setCaseCard} part="details" /> : layout === 'room' ? <RoomDetailsForm card={room} onChange={setRoom} part="details" /> : layout === 'adventure' ? <AdventureDetailsForm card={adventure} onChange={setAdventure} part="details" /> : layout === 'leveler' ? <LevelerDetailsForm card={leveler} onChange={setLeveler} part="details" /> : <CardDetailsForm card={layout === 'token' ? token : layout === 'battle' ? battle : card} onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard} part="details" />}
 					</details>
                 </div>
