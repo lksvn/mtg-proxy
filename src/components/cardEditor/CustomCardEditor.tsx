@@ -108,8 +108,32 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const [room, setRoom] = useState(SAMPLE_ROOM)
 	const [adventure, setAdventure] = useState(SAMPLE_ADVENTURE)
 	const [leveler, setLeveler] = useState(SAMPLE_LEVELER)
-	const activeCard = layout === 'token' ? token : layout === 'planeswalker' ? planeswalker : layout === 'battle' ? battle : layout === 'saga' ? saga : layout === 'class' ? classCard : layout === 'case' ? caseCard : layout === 'room' ? room : layout === 'adventure' ? adventure : layout === 'leveler' ? leveler : card
-	const activeFamily: FrameFamilyId = layout === 'token' ? tokenStyle : layout === 'planeswalker' ? planeswalkerStyle : layout === 'battle' ? 'battle-regular' : layout === 'saga' ? sagaStyle : layout === 'class' ? classStyle : layout === 'case' ? caseStyle : layout === 'room' ? 'room-regular' : layout === 'adventure' ? adventureStyle : layout === 'leveler' ? 'leveler-regular' : frameFamily
+	const cardsByLayout = {
+		card,
+		token,
+		planeswalker,
+		battle,
+		saga,
+		class: classCard,
+		case: caseCard,
+		room,
+		adventure,
+		leveler,
+	}
+	const familiesByLayout = {
+		card: frameFamily,
+		token: tokenStyle,
+		planeswalker: planeswalkerStyle,
+		battle: 'battle-regular',
+		saga: sagaStyle,
+		class: classStyle,
+		case: caseStyle,
+		room: 'room-regular',
+		adventure: adventureStyle,
+		leveler: 'leveler-regular',
+	} satisfies Record<typeof layout, FrameFamilyId>
+	const activeCard = cardsByLayout[layout]
+	const activeFamily = familiesByLayout[layout]
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
 	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
 	const planeswalkerLimitedColors = planeswalkerStyle === 'planeswalker-transform-front' ||
@@ -138,6 +162,69 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 		}
 	}, [renderInput, onError, t])
 	const search = frameStyleSearch.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+
+	function renderCardForm(part: 'content' | 'details') {
+		switch (layout) {
+			case 'planeswalker':
+				return (
+					<PlaneswalkerDetailsForm
+						card={planeswalker}
+						onChange={setPlaneswalker}
+						part={part}
+						showNickname={planeswalkerStyle === 'planeswalker-nickname'}
+						showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'}
+					/>
+				)
+			case 'saga':
+				return (
+					<SagaDetailsForm
+						card={saga}
+						onChange={setSaga}
+						part={part}
+						showCreatureFields={[
+							'saga-creature',
+							'saga-creature-regular',
+							'saga-creature-transform-front',
+							'saga-creature-transform-back',
+							'saga-creature-transform-front-ub',
+							'saga-creature-transform-back-ub',
+						].includes(sagaStyle)}
+						showTransformFields={[
+							'saga-transform',
+							'saga-creature-transform-front',
+							'saga-creature-transform-front-ub',
+						].includes(sagaStyle)}
+					/>
+				)
+			case 'class':
+				return <ClassDetailsForm card={classCard} onChange={setClassCard} part={part} />
+			case 'case':
+				return <CaseDetailsForm card={caseCard} onChange={setCaseCard} part={part} />
+			case 'room':
+				return <RoomDetailsForm card={room} onChange={setRoom} part={part} />
+			case 'adventure':
+				return <AdventureDetailsForm card={adventure} onChange={setAdventure} part={part} />
+			case 'leveler':
+				return <LevelerDetailsForm card={leveler} onChange={setLeveler} part={part} />
+			default: {
+				const onChange = { card: setCard, token: setToken, battle: setBattle }[layout]
+				return (
+					<CardDetailsForm
+						card={cardsByLayout[layout]}
+						onChange={onChange}
+						part={part}
+						hideManaCost={layout === 'token' && !tokenOptions.showManaCost}
+						hideRulesText={layout === 'token' && tokenOptions.hideRulesText}
+						hideNameAndType={layout === 'token' && tokenOptions.hideNameAndType}
+						hideTypeLine={layout === 'token' && tokenOptions.hideTypeLine}
+						hidePowerToughness={layout === 'token' && tokenOptions.hidePowerToughness}
+						powerToughnessLabel={layout === 'battle' ? 'defense' : undefined}
+						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
+					/>
+				)
+			}
+		}
+	}
 
 	async function downloadPng(dpi?: number) {
 		if (!canExport) return
@@ -403,22 +490,11 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 					</details>
 					{(layout !== 'token' || tokenStyle !== 'token-unglued') && <details className="form-section" open>
 					    <summary><h5 className="mt-5">{t('cardInformationSection')}</h5></summary>
-						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="content" showNickname={planeswalkerStyle === 'planeswalker-nickname'} showReverseFace={planeswalkerStyle === 'planeswalker-mdfc-back'} /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="content" showCreatureFields={['saga-creature', 'saga-creature-regular', 'saga-creature-transform-front', 'saga-creature-transform-back', 'saga-creature-transform-front-ub', 'saga-creature-transform-back-ub'].includes(sagaStyle)} showTransformFields={['saga-transform', 'saga-creature-transform-front', 'saga-creature-transform-front-ub'].includes(sagaStyle)} /> : layout === 'class' ? <ClassDetailsForm card={classCard} onChange={setClassCard} part="content" /> : layout === 'case' ? <CaseDetailsForm card={caseCard} onChange={setCaseCard} part="content" /> : layout === 'room' ? <RoomDetailsForm card={room} onChange={setRoom} part="content" /> : layout === 'adventure' ? <AdventureDetailsForm card={adventure} onChange={setAdventure} part="content" /> : layout === 'leveler' ? <LevelerDetailsForm card={leveler} onChange={setLeveler} part="content" /> : <CardDetailsForm
-							card={layout === 'token' ? token : layout === 'battle' ? battle : card}
-							onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard}
-                            hideManaCost={layout === 'token' && !tokenOptions.showManaCost}
-							hideRulesText={layout === 'token' && tokenOptions.hideRulesText}
-							hideNameAndType={layout === 'token' && tokenOptions.hideNameAndType}
-							hideTypeLine={layout === 'token' && tokenOptions.hideTypeLine}
-							hidePowerToughness={layout === 'token' && tokenOptions.hidePowerToughness}
-							powerToughnessLabel={layout === 'battle' ? 'defense' : undefined}
-                            maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
-                            part="content"
-                        />}
+						{renderCardForm('content')}
 					</details>}
 					<details className="form-section">
                         <summary><h5 className="mt-5">{t('cardDetailsSection')}</h5></summary>
-						{layout === 'planeswalker' ? <PlaneswalkerDetailsForm card={planeswalker} onChange={setPlaneswalker} part="details" /> : layout === 'saga' ? <SagaDetailsForm card={saga} onChange={setSaga} part="details" /> : layout === 'class' ? <ClassDetailsForm card={classCard} onChange={setClassCard} part="details" /> : layout === 'case' ? <CaseDetailsForm card={caseCard} onChange={setCaseCard} part="details" /> : layout === 'room' ? <RoomDetailsForm card={room} onChange={setRoom} part="details" /> : layout === 'adventure' ? <AdventureDetailsForm card={adventure} onChange={setAdventure} part="details" /> : layout === 'leveler' ? <LevelerDetailsForm card={leveler} onChange={setLeveler} part="details" /> : <CardDetailsForm card={layout === 'token' ? token : layout === 'battle' ? battle : card} onChange={layout === 'token' ? setToken : layout === 'battle' ? setBattle : setCard} part="details" />}
+						{renderCardForm('details')}
 					</details>
                 </div>
 
