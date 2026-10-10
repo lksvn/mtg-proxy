@@ -59,6 +59,9 @@ function App() {
 
     function translatePdfError(error: unknown) {
         if (!(error instanceof Error)) return t('couldNotGeneratePdf')
+		if (error.message.startsWith('Unsupported PDF deck-list name: ')) {
+			return `${t('unsupportedPdfDeckListName')} ${error.message.slice('Unsupported PDF deck-list name: '.length)}`
+		}
 		if (error.message === 'Quantity must be at least 1') return t('quantityAtLeastOne')
 		if (error.message === 'Quantity must be a safe whole number') return t('quantitySafeWholeNumber')
 		if (error.message === `PDF export is limited to ${MAX_PRINTED_FACES} card faces`) {

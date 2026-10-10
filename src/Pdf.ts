@@ -17,6 +17,7 @@ import {
 } from './PdfLayout'
 import type { ScryfallCard } from './Scryfall'
 import { isBasicLand } from './Cards'
+import { validatePdfNames } from './utils/validatePdfNames'
 
 const POINTS_PER_MILLIMETRE = 72 / 25.4
 
@@ -69,6 +70,10 @@ export async function createCardsPdf(cards: PrintableCard[], settings: PrintSett
     const boldFont = settings.watermark || settings.deckList
         ? await pdf.embedFont(StandardFonts.HelveticaBold)
         : undefined
+
+	if (regularFont) {
+		validatePdfNames(printableCards.map(({ card }) => card.name), regularFont)
+	}
 
 	const layout = calculatePageLayout(settings.paper, settings.gap)
 	const images = await embedImages(pdf, imageUrls, settings.blackCorners, printableCards)
