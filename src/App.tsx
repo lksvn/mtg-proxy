@@ -201,7 +201,10 @@ function App() {
 			<h1 className="mb-2"><Icon name="cards-fan"/> MTG Proxy</h1>
 			<p>{t('tagline')}</p>
 		</header>
-		{hash === '#editor' ? (<CustomCardEditor onAddToDeckList={addCustomCardToDeckList} />) : (
+		<div hidden={hash !== '#editor'}>
+			<CustomCardEditor onAddToDeckList={addCustomCardToDeckList} />
+		</div>
+		{hash !== '#editor' && (
             <main>
 
                 <CardListForm
