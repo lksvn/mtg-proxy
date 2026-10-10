@@ -374,6 +374,8 @@ function enqueueRequest<T>(request: (signal: AbortSignal) => Promise<T>, delay: 
 }
 
 async function responseError(response: Response): Promise<Error> {
+	if (response.status === 404) return new Error('Card not found')
+
 	const body = (await response.json().catch(() => null)) as {
 		details?: string
 	} | null

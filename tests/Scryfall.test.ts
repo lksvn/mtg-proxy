@@ -4,6 +4,26 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { findCard, findCards, findPrintings, type ScryfallCard } from '../src/Scryfall.ts'
 
+test('a missing card returns a stable not-found message', async () => {
+	const originalFetch = globalThis.fetch
+	globalThis.fetch = (async (input) => {
+		if (String(input).endsWith('/cards/collection')) {
+			return Response.json({ data: [] })
+		}
+		return Response.json({ details: '' }, { status: 404 })
+	}) as typeof fetch
+	try {
+		const results = await findCards([{
+			quantity: 1,
+			name: 'Shcoling Missing Card Test',
+			sourceLine: '1 Shcoling Missing Card Test',
+		}])
+		assert.deepEqual(results, [{ error: 'Card not found' }])
+	} finally {
+		globalThis.fetch = originalFetch
+	}
+})
+
 test('a timed-out request releases the queue for the next card', async () => {
 	const originalFetch = globalThis.fetch
 	const originalTimeout = AbortSignal.timeout

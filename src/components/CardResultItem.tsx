@@ -55,7 +55,7 @@ export function CardResultItem({
 					<span>
 						<strong>{entry.parsed.sourceLine}</strong>
 						<br />
-						{errorKey ? t(errorKey) : entry.error}
+						{errorKey ? t(errorKey) : entry.error || t('unknownCardLookupError')}
 					</span>
 				</p>
 				{!entry.parsed.error && (
