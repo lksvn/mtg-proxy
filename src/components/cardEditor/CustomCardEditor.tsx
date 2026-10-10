@@ -3,6 +3,7 @@ import { CardCanvas, type ArtworkTransform } from './CardCanvas'
 import { canExportCardRender, type CardRenderInput, type CardRenderResult } from './cardRender'
 import { getQuantityError } from '../../Cards'
 import { canvasToPng } from '../../utils/canvasToPng'
+import { cardPngFilename } from '../../utils/cardPngFilename'
 import { FileInput } from '../FileInput'
 import { loadImageSource } from './render/loadImage'
 import { ArtworkControls } from './ui/ArtworkControls'
@@ -208,11 +209,11 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 		try {
 			const blob = await canvasToPng(canvasRef.current)
 			if (!dpi) {
-				downloadBlob(blob, 'mtg-proxy-custom-card.png')
+				downloadBlob(blob, cardPngFilename(activeCard.name))
 				return
 			}
 			const png = setPngDpi(new Uint8Array(await blob.arrayBuffer()), dpi)
-			downloadBlob(new Blob([png.buffer as ArrayBuffer], { type: 'image/png' }), `mtg-proxy-custom-card-${dpi}dpi.png`)
+			downloadBlob(new Blob([png.buffer as ArrayBuffer], { type: 'image/png' }), cardPngFilename(activeCard.name, dpi))
 		} catch {
 			onError(t('couldNotExportCard'))
 		}
