@@ -36,11 +36,11 @@ import { Icon } from '../Icon'
 import { getFrameFamily, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
 import { FrameColorPicker } from './ui/FrameColorPicker'
 import { CardFrameControls } from './ui/CardFrameControls'
+import { PlaneswalkerFrameControls } from './ui/PlaneswalkerFrameControls'
 import {
 	ADVENTURE_STYLES,
 	CLASS_STYLES,
 	CASE_STYLES,
-	PLANESWALKER_STYLES,
 	SAGA_STYLES,
 	TOKEN_STYLES,
 	type PlaneswalkerStyle,
@@ -333,61 +333,34 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
                         {layout === 'token' && !tokenOptions.hideColor && <div className="form-group gap-2 mb-5">
                             <FrameColorPicker value={tokenFrameSelection} onChange={setTokenFrameSelection} hideLands hideVehicles />
                         </div>}
-                        {layout === 'planeswalker' && <>
-                            <div className="form-group gap-2">
-                                <label htmlFor="planeswalker-style">{t('planeswalkerStyle')}</label>
-                                <select
-                                    id="planeswalker-style"
-                                    value={planeswalkerStyle}
-                                    onChange={(event) => {
-                                        const style = event.target.value as PlaneswalkerStyle
-                                        setPlaneswalkerStyle(style)
-										setArtworkTransform({
-											...artworkTransform,
-											grayscale: isDoubleFeatureStyle(style),
-										})
-                                        const limitedColors = style === 'planeswalker-transform-front' ||
-                                            style === 'planeswalker-transform-back' ||
-                                            style === 'planeswalker-mdfc-back' ||
-                                            style === 'planeswalker-compleated' ||
-											isDoubleFeatureStyle(style)
-                                        if (limitedColors && (frameSelection === 'A' || frameSelection === 'C')) {
-                                            setFrameSelection('auto')
-                                        }
-                                    }}
-                                >
-                                    {PLANESWALKER_STYLES.map(({ id, label }) => (
-                                        <option key={id} value={id}>{t(label)}</option>
-                                    ))}
-                                </select>
-                            </div>
-							{planeswalkerStyle.startsWith('planeswalker-sdcc15') && (
-								<div className="form-group gap-2 mb-5">
-									<label htmlFor="planeswalker-ability-color">{t('abilityTextColor')}</label>
-									<select
-										id="planeswalker-ability-color"
-										value={planeswalker.abilityTextColor ?? '#fff'}
-										onChange={(event) => setPlaneswalker({
-											...planeswalker,
-											abilityTextColor: event.target.value as '#fff' | '#111',
-										})}
-									>
-										<option value="#fff">{t('frameBorderWhite')}</option>
-										<option value="#111">{t('frameBorderBlack')}</option>
-									</select>
-								</div>
-							)}
-							{!planeswalkerStyle.startsWith('planeswalker-sdcc15') && <div className="form-group gap-2 mb-5">
-                                <FrameColorPicker
-                                    value={frameSelection}
-                                    onChange={setFrameSelection}
-                                    hideLands
-                                    hideVehicles
-                                    hideArtifacts={planeswalkerLimitedColors}
-                                    hideColorless={planeswalkerLimitedColors}
-                                />
-							</div>}
-                        </>}
+						{layout === 'planeswalker' && (
+							<PlaneswalkerFrameControls
+								style={planeswalkerStyle}
+								onStyleChange={(style) => {
+									setPlaneswalkerStyle(style)
+									setArtworkTransform({
+										...artworkTransform,
+										grayscale: isDoubleFeatureStyle(style),
+									})
+									const limitedColors = style === 'planeswalker-transform-front' ||
+										style === 'planeswalker-transform-back' ||
+										style === 'planeswalker-mdfc-back' ||
+										style === 'planeswalker-compleated' ||
+										isDoubleFeatureStyle(style)
+									if (limitedColors && (frameSelection === 'A' || frameSelection === 'C')) {
+										setFrameSelection('auto')
+									}
+								}}
+								abilityTextColor={planeswalker.abilityTextColor ?? '#fff'}
+								onAbilityTextColorChange={(abilityTextColor) => setPlaneswalker({
+									...planeswalker,
+									abilityTextColor,
+								})}
+								frameSelection={frameSelection}
+								onFrameSelectionChange={setFrameSelection}
+								limitedColors={planeswalkerLimitedColors}
+							/>
+						)}
 						{layout === 'battle' && <div className="form-group gap-2 mb-5">
 							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideVehicles />
 						</div>}
