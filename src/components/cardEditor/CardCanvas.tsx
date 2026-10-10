@@ -11,6 +11,7 @@ import { loadBorderOverlay } from './render/composeBorder'
 import { useI18n } from '../../i18n/context'
 import { getFrameFamily, resolveFrameVariant, resolvePtVariant } from './frameFamilies'
 import { getDebugRegions } from './render/getDebugRegions'
+import { isInsideArtwork } from './artworkHitArea'
 import { drawIconlessPlaneswalkerAbilities, drawPlaneswalker, drawPlaneswalkerBackground, drawPlaneswalkerNickname, drawPlaneswalkerReverseFace, PLANESWALKER_ASSETS, type PlaneswalkerIcons } from './render/drawPlaneswalker'
 import { drawSaga, SAGA_ASSETS, type SagaImages } from './render/drawSaga'
 import { CLASS_HEADER, drawClass } from './render/drawClass'
@@ -27,22 +28,6 @@ const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`
 const COLOR_INDICATOR_ORDER = ['W', 'U', 'B', 'R', 'G'] as const
 const DEBUG_COLORS = ['#ff3b30', '#ff9500', '#ffcc00', '#34c759', '#00c7be', '#007aff', '#5856d6', '#af52de', '#ff2d55']
 
-
-function isInsideArtwork(
-	clientX: number,
-	clientY: number,
-	bounds: DOMRect,
-	layout: ReturnType<typeof getFrameFamily>['layout'],
-) {
-	const canvasX = (clientX - bounds.left) * (WIDTH / bounds.width)
-	const canvasY = (clientY - bounds.top) * (HEIGHT / bounds.height)
-	const x = layout.canvas?.rotation === 'counterclockwise' ? HEIGHT - canvasY : canvasX
-	const y = layout.canvas?.rotation === 'counterclockwise' ? canvasX : canvasY
-	const artwork = layout.artwork
-
-	return x >= artwork.dragLeft && x <= artwork.dragRight &&
-		y >= artwork.dragTop && y <= artwork.dragBottom
-}
 
 export type ArtworkTransform = {
 	x: number

@@ -7,8 +7,8 @@ import type { CustomCardData, FrameVariant } from '../types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
 
-export const WIDTH = 1500
-export const HEIGHT = 2100
+import { HEIGHT, WIDTH } from '../canvasDimensions'
+export { HEIGHT, WIDTH } from '../canvasDimensions'
 
 const RARITY_COLORS: Record<CustomCardData['rarity'], string> = {
 	common: '#ffffff',
