@@ -35,8 +35,8 @@ import { setPngDpi } from '../../utils/pngDpi'
 import { Icon } from '../Icon'
 import { getFrameFamily, type FrameBorderStyle, type FrameFamilyId } from './frameFamilies'
 import { FrameColorPicker } from './ui/FrameColorPicker'
+import { CardFrameControls } from './ui/CardFrameControls'
 import {
-	FRAME_STYLE_GROUPS,
 	ADVENTURE_STYLES,
 	CLASS_STYLES,
 	CASE_STYLES,
@@ -161,7 +161,6 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 			onError(t('couldNotRenderCard'))
 		}
 	}, [renderInput, onError, t])
-	const search = frameStyleSearch.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 
 	function renderCardForm(part: 'content' | 'details') {
 		switch (layout) {
@@ -309,59 +308,22 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 								<option value="leveler">{t('cardLayoutLeveler')}</option>
                             </select>
                         </div>
-                        {layout === 'card' && <>
-                            <div style={{display:'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gridAutoFlow:'dense'}} className="gap-3">
-                                <div className="form-group gap-2">
-                                    <label htmlFor="card-frame-style-search">{t('searchFrameStyles')}</label>
-                                    <input
-                                        id="card-frame-style-search"
-                                        type="search"
-                                        value={frameStyleSearch}
-                                        onChange={(event) => setFrameStyleSearch(event.target.value)}
-                                    />
-                                </div>
-                                <div className="form-group gap-2">
-                                    <label htmlFor="card-frame-style">{t('frameStyle')}</label>
-                                    <select
-                                        id="card-frame-style"
-                                        value={frameFamily}
-                                        onChange={(event) => {
-                                            const family = event.target.value as FrameFamilyId
-                                            setFrameFamily(family)
-                                            setBorderStyle(getFrameFamily(family).defaultBorderStyle ?? 'black')
-                                            setFrameStyleSearch('')
-                                        }}
-                                    >
-                                        {FRAME_STYLE_GROUPS.map((group) => {
-                                            const options = group.options.filter((option) =>
-                                                option.id === frameFamily ||
-                                                t(option.label).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().includes(search) ||
-                                                option.id.includes(search),
-                                            )
-                                            return options.length > 0 && (
-                                                <optgroup key={group.label} label={t(group.label)}>
-                                                    {options.map((option) => <option key={option.id} value={option.id}>{t(option.label)}</option>)}
-                                                </optgroup>
-                                            )
-                                        })}
-                                    </select>
-                                </div>
-                            </div>
-                            {activeFamily !== 'token-unglued' && getFrameFamily(activeFamily).borderMask && (
-                                <div className="form-group gap-2">
-                                    <label htmlFor="card-frame-border">{t('frameBorder')}</label>
-                                    <select id="card-frame-border" value={borderStyle} onChange={(event) => setBorderStyle(event.target.value as FrameBorderStyle)}>
-                                        <option value="black">{t('frameBorderBlack')}</option>
-                                        <option value="white">{t('frameBorderWhite')}</option>
-                                        <option value="silver">{t('frameBorderSilver')}</option>
-                                        <option value="gold">{t('frameBorderGold')}</option>
-                                    </select>
-                                </div>
-                            )}
-                            <div className="form-group gap-2">
-                                <FrameColorPicker value={frameSelection} onChange={setFrameSelection} />
-							</div>
-                        </>}
+						{layout === 'card' && (
+							<CardFrameControls
+								frameFamily={frameFamily}
+								onFrameFamilyChange={(family) => {
+									setFrameFamily(family)
+									setBorderStyle(getFrameFamily(family).defaultBorderStyle ?? 'black')
+									setFrameStyleSearch('')
+								}}
+								borderStyle={borderStyle}
+								onBorderStyleChange={setBorderStyle}
+								frameSelection={frameSelection}
+								onFrameSelectionChange={setFrameSelection}
+								search={frameStyleSearch}
+								onSearchChange={setFrameStyleSearch}
+							/>
+						)}
                         {layout === 'token' && <div className="form-group gap-2">
                             <label htmlFor="token-style">{t('tokenStyle')}</label>
                             <select id="token-style" value={tokenStyle} onChange={(event) => setTokenStyle(event.target.value as typeof tokenStyle)}>
