@@ -7,7 +7,7 @@ test('only exports a successful render of the current card inputs', () => {
 		frameFamily: 'm15-regular',
 		borderStyle: 'black',
 		frameVariant: 'W',
-		transform: { x: 0, y: 0, rotation: 0, scale: 0, flipX: false, flipY: false, grayscale: false },
+		transform: { x: 0, y: 0, rotation: 0, scale: 0, flipX: false, flipY: false, grayscale: false, invert: false },
 		card: {
 			name: 'Test', manaCost: 'w', typeLine: 'Creature', rulesText: '',
 			centerRulesText: false, flavorText: '', powerToughness: '1/1',

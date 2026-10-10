@@ -151,6 +151,7 @@ export type ArtworkTransform = {
 	flipX: boolean
 	flipY: boolean
 	grayscale: boolean
+	invert: boolean
 	scale: number
     rotation: number
 }
@@ -446,7 +447,9 @@ export function CardCanvas({ input, onRenderResult, onTransformChange, canvasRef
 						planeswalkerIcons,
 						family.layout.rules.y,
 						family.layout.rules.y + family.layout.rules.height,
-						family.layout.rules.color,
+						family.id.startsWith('planeswalker-sdcc15')
+							? card.abilityTextColor ?? '#fff'
+							: family.layout.rules.color,
 					)
 				}
 				if (family.id === 'planeswalker-nickname') drawPlaneswalkerNickname(context, card.name)
