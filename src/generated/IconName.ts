@@ -5,6 +5,7 @@ export type IconName =
 	| "arrow-right"
 	| "cards-fan"
 	| "chevron-down"
+	| "close"
 	| "corner-up"
 	| "external-link"
 	| "file-down"
