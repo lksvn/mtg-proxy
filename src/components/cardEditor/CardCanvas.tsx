@@ -299,7 +299,7 @@ export function CardCanvas({ artwork, setSymbol, frameFamily, frameVariant, bord
 			const abilityRuns = planeswalker ? card.abilities.map(({ text }) => parseRulesText(text)) : []
 			const sagaReminderRuns = saga ? parseRulesText(card.rulesText) : []
 			const sagaChapterRuns = saga ? card.chapters.map(({ text }) => parseRulesText(text)) : []
-			const sagaCreatureRulesRuns = saga && family.id === 'saga-creature' ? parseRulesText(card.flavorText) : []
+			const sagaCreatureRulesRuns = saga && family.layout.saga?.creatureRules ? parseRulesText(card.flavorText) : []
 			const classLevelRuns = classCard ? card.levels.map(({ text }) => parseRulesText(text)) : []
 			const classCostRuns = classCard ? card.levels.map(({ cost }) => parseManaCost(cost)) : []
 			const caseRuns = caseCard
