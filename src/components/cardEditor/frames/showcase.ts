@@ -6,6 +6,40 @@ import {
 } from './shared.ts'
 
 export const showcaseFrames = {
+	'mystical-archive-soa': {
+		id: 'mystical-archive-soa',
+		frames: {
+			W: 'img/frames/mystical-archive-soa/w.png',
+			U: 'img/frames/mystical-archive-soa/u.png',
+			B: 'img/frames/mystical-archive-soa/b.png',
+			R: 'img/frames/mystical-archive-soa/r.png',
+			G: 'img/frames/mystical-archive-soa/g.png',
+			M: 'img/frames/mystical-archive-soa/m.png',
+			A: 'img/frames/mystical-archive-soa/a.png',
+			C: 'img/frames/mystical-archive-soa/c.png',
+		},
+		pt: {
+			W: 'img/frames/mystical-archive/pt/w.png',
+			U: 'img/frames/mystical-archive/pt/u.png',
+			B: 'img/frames/mystical-archive/pt/b.png',
+			R: 'img/frames/mystical-archive/pt/r.png',
+			G: 'img/frames/mystical-archive/pt/g.png',
+			M: 'img/frames/mystical-archive/pt/m.png',
+			A: 'img/frames/mystical-archive/pt/a.png',
+			C: 'img/frames/mystical-archive/pt/c.png',
+		},
+		fallbacks: { ...commonFallbacks, L: 'C', WL: 'C', UL: 'C', BL: 'C', RL: 'C', GL: 'C', ML: 'C' },
+		layout: {
+			...m15RegularLayout,
+			artwork: { dragLeft: 0, dragTop: 95, dragRight: 1500, dragBottom: 1951 },
+			title: { ...m15RegularLayout.title, color: '#fff' },
+			mana: { ...m15RegularLayout.mana, shadowColor: 'transparent', shadowOffsetX: 0, shadowOffsetY: 0 },
+			type: { ...m15RegularLayout.type, color: '#fff' },
+			rules: { ...m15RegularLayout.rules, x: 140, width: 1220, color: '#fff' },
+			pt: { ...m15RegularLayout.pt, x: 1135, y: 1848, width: 317, height: 159 },
+		},
+		fonts: commonFonts,
+	},
 	'mystical-archive-japanese': {
 		id: 'mystical-archive-japanese',
 		frames: {

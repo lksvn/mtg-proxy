@@ -311,6 +311,18 @@ test('Mystical Archive uses wide artwork and bundled outline symbols', () => {
 	}
 })
 
+test('SOA Archive uses expanded artwork, white text and standard mana symbols', () => {
+	const family = FRAME_FAMILIES['mystical-archive-soa']
+	assert.equal(family.layout.artwork.dragTop, 95)
+	assert.equal(family.layout.artwork.dragBottom, 1951)
+	assert.equal(family.layout.title.color, '#fff')
+	assert.equal(family.layout.type.color, '#fff')
+	assert.equal(family.layout.rules.color, '#fff')
+	assert.equal('manaSymbolOverrides' in family, false)
+	assert.equal(resolveFrameVariant(family, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(family, 'L'), 'C')
+})
+
 test('Japanese Mystical Archive reserves its vertical title and custom mana symbols', () => {
 	const family = FRAME_FAMILIES['mystical-archive-japanese']
 	assert.equal(family.layout.title.verticalHeight, 238)
