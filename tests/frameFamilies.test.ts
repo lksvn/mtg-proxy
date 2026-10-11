@@ -187,6 +187,21 @@ test('Snow modal faces retain colored lands and readable pale-panel text', () =>
 	assert.equal(FRAME_FAMILIES['m15-modal-snow-back'].layout.pt.color, '#fff')
 })
 
+test('UB modal faces use UB power/toughness and retain colored lands', () => {
+	const front = FRAME_FAMILIES['m15-modal-ub-front']
+	const back = FRAME_FAMILIES['m15-modal-ub-back']
+	for (const family of [front, back]) {
+		assert.ok(family.layout.reverseFace)
+		assert.equal(resolveFrameVariant(family, 'UL'), 'UL')
+		assert.equal(resolveFrameVariant(family, 'V'), 'V')
+		assert.equal(resolveFrameVariant(family, 'C'), 'C')
+	}
+	assert.ok(front.pt.U?.includes('/ub/pt/'))
+	assert.ok(back.pt.U?.includes('/ub-back/pt/'))
+	assert.equal(front.layout.reverseFace?.color, '#fff')
+	assert.equal(back.layout.reverseFace?.color, '#111')
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [
