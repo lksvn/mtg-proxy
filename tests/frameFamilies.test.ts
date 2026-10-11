@@ -245,6 +245,17 @@ test('borderless modal faces reserve the strip and keep artwork dragging full wi
 	assert.equal(FRAME_FAMILIES['m15-modal-borderless-back'].layout.rules.color, '#fff')
 })
 
+test('Kaldheim showcase uses its own geometry and same-family fallbacks', () => {
+	const family = FRAME_FAMILIES['kaldheim-showcase']
+	assert.deepEqual(family.layout.artwork, { dragLeft: 157, dragTop: 243, dragRight: 1343, dragBottom: 1213 })
+	assert.equal(family.layout.symbol.centerY, 1277)
+	assert.equal(family.layout.title.color, '#fff')
+	assert.ok(family.pt.U?.includes('/kaldheim/'))
+	assert.equal(resolveFrameVariant(family, 'L'), 'M')
+	assert.equal(resolveFrameVariant(family, 'V'), 'A')
+	assert.equal(resolveFrameVariant(family, 'C'), 'A')
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [

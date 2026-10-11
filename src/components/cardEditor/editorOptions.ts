@@ -46,6 +46,7 @@ export const FRAME_STYLE_GROUPS = [
 		{ id: 'm15-modal-borderless-back', label: 'frameStyleModalBorderlessBack' },
 	] },
 	{ label: 'frameStyleGroupShowcase', options: [
+		{ id: 'kaldheim-showcase', label: 'frameStyleKaldheimShowcase' },
 		{ id: 'neon-ink', label: 'frameStyleNeonInk' },
 		{ id: 'box-topper', label: 'frameStyleBoxTopper' },
 		{ id: 'm15-extended', label: 'frameStyleM15Extended' },
