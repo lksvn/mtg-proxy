@@ -16,7 +16,7 @@ import { drawRoom } from './drawRoom'
 import { drawSplit } from './drawSplit'
 import { drawAdventure } from './drawAdventure'
 import { drawLeveler } from './drawLeveler'
-import { hasRulesTextOverflow, resetRulesTextOverflow } from './drawRulesText'
+import { hasRulesTextOverflow, resetRulesTextOverflow, setRulesFontSize } from './drawRulesText'
 
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`
@@ -183,6 +183,7 @@ export async function renderCardPreview(
 
 	if (!canvas || !context) throw new Error('Could not access the card canvas')
 	resetRulesTextOverflow(context)
+	setRulesFontSize(context, input.rulesFontSizes)
 
 	const iconlessPlaneswalker = family.id === 'planeswalker-seventh'
 	context.resetTransform()

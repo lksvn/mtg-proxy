@@ -8,6 +8,7 @@ import { FileInput } from '../FileInput'
 import { loadImageSource } from './render/loadImage'
 import { ArtworkControls } from './ui/ArtworkControls'
 import { CardDetailsForm } from './ui/CardDetailsForm'
+import { RulesTextSizeContext } from './ui/rulesTextSizeContext'
 import { PlaneswalkerDetailsForm } from './ui/PlaneswalkerDetailsForm'
 import { SagaDetailsForm } from './ui/SagaDetailsForm'
 import { ClassDetailsForm } from './ui/ClassDetailsForm'
@@ -83,6 +84,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const { t } = useI18n()
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const [renderResult, setRenderResult] = useState<CardRenderResult | null>(null)
+	const [rulesFontSizes, setRulesFontSizes] = useState<Partial<Record<FrameFamilyId, Record<string, number | undefined>>>>({})
 	const [artwork, setArtwork] = useState<File | string | undefined>(SAMPLE_ARTWORK_URL)
 	const [splitArtwork, setSplitArtwork] = useState<File | string | undefined>(SAMPLE_ARTWORK_URL)
 	const [splitTransform, setSplitTransform] = useState(createDefaultArtworkTransform)
@@ -146,6 +148,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	} satisfies Record<typeof layout, FrameFamilyId>
 	const activeCard = cardsByLayout[layout]
 	const activeFamily = familiesByLayout[layout]
+	const baseRulesFontSize = getFrameFamily(activeFamily).layout.rules.maxFontSize
 	const editingSecondArtwork = layout === 'split' && splitArtworkSide === 'second'
 	const activeArtwork = editingSecondArtwork ? splitArtwork : artwork
 	const activeTransform = editingSecondArtwork ? splitTransform : artworkTransform
@@ -169,12 +172,13 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 		artwork,
 		setSymbol,
 		frameFamily: activeFamily,
+		rulesFontSizes: rulesFontSizes[activeFamily],
 		borderStyle: activeFamily === 'token-unglued' ? 'silver' : borderStyle,
 		frameVariant,
 		transform: artworkTransform,
 		card: activeCard,
 		split: layout === 'split' ? { artwork: splitArtwork, transform: splitTransform, frameVariant: secondFrameVariant } : undefined,
-	}), [artwork, setSymbol, activeFamily, borderStyle, frameVariant, artworkTransform, activeCard, layout, splitArtwork, splitTransform, secondFrameVariant])
+	}), [artwork, setSymbol, activeFamily, rulesFontSizes, borderStyle, frameVariant, artworkTransform, activeCard, layout, splitArtwork, splitTransform, secondFrameVariant])
 	const canExport = canExportCardRender(renderInput, renderResult)
 	const renderFailed = renderResult?.input === renderInput && renderResult.status === 'error'
 	const handleRenderResult = useCallback((result: CardRenderResult) => {
@@ -242,6 +246,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 						hideTypeLine={layout === 'token' && tokenOptions.hideTypeLine}
 						hidePowerToughness={layout === 'token' && tokenOptions.hidePowerToughness}
 						powerToughnessLabel={layout === 'battle' ? 'defense' : undefined}
+						showReversePowerToughness={activeFamily === 'm15-transform-front'}
 						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
 					/>
 				)
@@ -478,7 +483,14 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 					</details>
 					{(layout !== 'token' || tokenStyle !== 'token-unglued') && <details className="form-section" open>
 					    <summary><h5 className="mt-5">{t('cardInformationSection')}</h5></summary>
-						{renderCardForm('content')}
+						<RulesTextSizeContext.Provider value={{
+							sizes: rulesFontSizes[activeFamily] ?? {},
+							baseSize: baseRulesFontSize > 1 ? baseRulesFontSize : 64,
+							combinedAbilities: activeFamily === 'planeswalker-seventh',
+							onChange: (field, size) => setRulesFontSizes({ ...rulesFontSizes, [activeFamily]: { ...rulesFontSizes[activeFamily], [field]: size } }),
+						}}>
+							{renderCardForm('content')}
+						</RulesTextSizeContext.Provider>
 					</details>}
 					<details className="form-section">
                         <summary><h5 className="mt-5">{t('cardDetailsSection')}</h5></summary>

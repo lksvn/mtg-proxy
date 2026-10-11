@@ -1,7 +1,10 @@
+import { RulesTextarea } from './RulesTextarea'
+import { useState } from 'react'
 import { useI18n } from '../../../i18n/context'
 import { formatPowerToughnessInput } from '../cardText'
 import type { LevelerCardData } from '../types'
 import { CardDetailsForm } from './CardDetailsForm'
+import { ContentTabs } from './ContentTabs'
 
 type Props = {
 	card: LevelerCardData
@@ -11,24 +14,26 @@ type Props = {
 
 export function LevelerDetailsForm({ card, onChange, part }: Props) {
 	const { t } = useI18n()
+	const [tier, setTier] = useState(0)
 	const update = (changes: Partial<LevelerCardData>) => onChange({ ...card, ...changes })
 
 	if (part === 'details') return <CardDetailsForm card={card} onChange={update} part="details" />
 
-	return <>
+	return <ContentTabs labels={[t('levelBaseTab'), t('levelSecondTab'), t('levelThirdTab')]} activeIndex={tier} onChange={setTier} label={t('cardInformationSection')} numbered>
+		{tier === 0 && <>
 		<CardDetailsForm card={card} onChange={update} hideRulesText part="content" />
 		<div className="form-group gap-2">
 			<label htmlFor="leveler-level-up">{t('levelUpText')}</label>
-			<textarea id="leveler-level-up" rows={3} value={card.levelUpText} onChange={(event) => update({ levelUpText: event.target.value })} />
+			<RulesTextarea id="leveler-level-up" rows={6} value={card.levelUpText} onChange={(event) => update({ levelUpText: event.target.value })} />
 		</div>
-		<LevelTierFields prefix="two" label={t('levelTwo')} level={card.levelTwo} rules={card.levelTwoRulesText} powerToughness={card.levelTwoPowerToughness} onChange={update} />
-		<LevelTierFields prefix="three" label={t('levelThree')} level={card.levelThree} rules={card.levelThreeRulesText} powerToughness={card.levelThreePowerToughness} onChange={update} />
-	</>
+		</>}
+		{tier === 1 && <LevelTierFields prefix="two" level={card.levelTwo} rules={card.levelTwoRulesText} powerToughness={card.levelTwoPowerToughness} onChange={update} />}
+		{tier === 2 && <LevelTierFields prefix="three" level={card.levelThree} rules={card.levelThreeRulesText} powerToughness={card.levelThreePowerToughness} onChange={update} />}
+	</ContentTabs>
 }
 
-function LevelTierFields({ prefix, label, level, rules, powerToughness, onChange }: {
+function LevelTierFields({ prefix, level, rules, powerToughness, onChange }: {
 	prefix: 'two' | 'three'
-	label: string
 	level: string
 	rules: string
 	powerToughness: string
@@ -40,14 +45,13 @@ function LevelTierFields({ prefix, label, level, rules, powerToughness, onChange
 	const powerKey = prefix === 'two' ? 'levelTwoPowerToughness' : 'levelThreePowerToughness'
 
 	return <>
-		<h5 className="mt-5">{label}</h5>
 		<div className="form-group gap-2">
 			<label htmlFor={`leveler-${prefix}-range`}>{t('levelRange')}</label>
 			<input id={`leveler-${prefix}-range`} type="text" value={level} onChange={(event) => onChange({ [levelKey]: event.target.value })} />
 		</div>
 		<div className="form-group gap-2">
 			<label htmlFor={`leveler-${prefix}-rules`}>{t('rulesText')}</label>
-			<textarea id={`leveler-${prefix}-rules`} rows={3} value={rules} onChange={(event) => onChange({ [rulesKey]: event.target.value })} />
+			<RulesTextarea id={`leveler-${prefix}-rules`} rows={6} value={rules} onChange={(event) => onChange({ [rulesKey]: event.target.value })} />
 		</div>
 		<div className="form-group gap-2">
 			<label htmlFor={`leveler-${prefix}-pt`}>{t('powerToughness')}</label>

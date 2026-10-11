@@ -27,6 +27,7 @@ export function drawCase(
 		}
 
 		drawRulesText(context, sectionRuns, manaSymbols, layout.sections.x + 16, y + 16, layout.sections.width - 32, height - 28, {
+			fontSizeKey: ['case-rules', 'case-solve-condition', 'case-solved-ability'][index],
 			verticalAlign: 'middle',
 			fontFamily: 'mplantin',
 			italicFontFamily: 'mplantini',

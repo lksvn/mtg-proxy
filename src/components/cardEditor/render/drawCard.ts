@@ -148,15 +148,26 @@ export function drawCard(
 	const textRuns: CardTextRun[] = rulesRuns.length && flavorRuns.length
 		? [...rulesRuns, { type: 'text', value: '\n\n', italic: false }, ...flavorRuns]
 		: [...rulesRuns, ...flavorRuns]
+	const rulesHeight = card.reversePowerToughness && layout.reversePowerToughness
+		? Math.max(0, Math.min(layout.rules.height, layout.reversePowerToughness.y - parseFloat(layout.reversePowerToughness.font) - layout.rules.y))
+		: layout.rules.height
+	const rules = layout.rules
 	if (layout.flavorRules) {
-		const rulesStyle = card.centerRulesText ? { ...layout.rules, horizontalAlign: 'center' as const, verticalAlign: 'middle' as const } : layout.rules
+		const rulesStyle = card.centerRulesText ? { ...rules, horizontalAlign: 'center' as const, verticalAlign: 'middle' as const } : rules
 		const flavorStyle = card.centerRulesText ? { ...layout.flavorRules, horizontalAlign: 'center' as const, verticalAlign: 'middle' as const } : layout.flavorRules
-		drawRulesText(context, rulesRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, rulesStyle)
+		drawRulesText(context, rulesRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, rulesHeight, rulesStyle)
 		drawRulesText(context, flavorRuns, manaSymbols, layout.flavorRules.x, layout.flavorRules.y, layout.flavorRules.width, layout.flavorRules.height, flavorStyle)
 	} else {
-		drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, card.centerRulesText
-			? { ...layout.rules, horizontalAlign: 'center', verticalAlign: 'middle' }
-			: layout.rules)
+		drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, rulesHeight, card.centerRulesText
+			? { ...rules, horizontalAlign: 'center', verticalAlign: 'middle' }
+			: rules)
+	}
+
+	if (card.reversePowerToughness && layout.reversePowerToughness) {
+		const reverse = layout.reversePowerToughness
+		applyTextStyle(context, reverse, variant)
+		context.textAlign = reverse.align ?? 'right'
+		context.fillText(card.reversePowerToughness, reverse.x, reverse.y, reverse.maxWidth)
 	}
 
 	if (card.powerToughness && layout.pt.width > 0) {

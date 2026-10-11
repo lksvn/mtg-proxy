@@ -11,6 +11,7 @@ export type CustomCardData = {
 	centerRulesText: boolean
     flavorText: string
     powerToughness: string
+	reversePowerToughness?: string
     artist: string
     number: string
     rarity: CardRarity

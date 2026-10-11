@@ -1,3 +1,4 @@
+import { RulesTextarea } from './RulesTextarea'
 import { useI18n } from '../../../i18n/context'
 import type { CaseCardData } from '../types'
 import { CardDetailsForm } from './CardDetailsForm'
@@ -23,15 +24,15 @@ export function CaseDetailsForm({ card, onChange, part }: CaseDetailsFormProps) 
 		<CardDetailsForm card={card} onChange={update} hideRulesText hidePowerToughness part="content" />
 		<div className="form-group gap-2">
 			<label htmlFor="case-rules">{t('rulesText')}</label>
-			<textarea id="case-rules" rows={3} value={card.rulesText} onChange={(event) => update({ rulesText: event.target.value })} />
+			<RulesTextarea id="case-rules" rows={6} value={card.rulesText} onChange={(event) => update({ rulesText: event.target.value })} />
 		</div>
 		<div className="form-group gap-2">
 			<label htmlFor="case-solve-condition">{t('caseSolveCondition')}</label>
-			<textarea id="case-solve-condition" rows={3} value={card.solveCondition} onChange={(event) => update({ solveCondition: event.target.value })} />
+			<RulesTextarea id="case-solve-condition" rows={6} value={card.solveCondition} onChange={(event) => update({ solveCondition: event.target.value })} />
 		</div>
 		<div className="form-group gap-2">
 			<label htmlFor="case-solved-ability">{t('caseSolvedAbility')}</label>
-			<textarea id="case-solved-ability" rows={3} value={card.solvedAbility} onChange={(event) => update({ solvedAbility: event.target.value })} />
+			<RulesTextarea id="case-solved-ability" rows={6} value={card.solvedAbility} onChange={(event) => update({ solvedAbility: event.target.value })} />
 		</div>
 	</>
 }

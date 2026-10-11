@@ -7,6 +7,7 @@ export type CardRenderInput = {
 	artwork?: File | string
 	setSymbol?: File | string
 	frameFamily: FrameFamilyId
+	rulesFontSizes?: Record<string, number | undefined>
 	borderStyle: FrameBorderStyle
 	frameVariant: FrameVariant
 	transform: ArtworkTransform

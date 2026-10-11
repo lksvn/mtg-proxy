@@ -40,6 +40,15 @@ test('frame family assets exist', () => {
 })
 
 test('frame variants stay in the selected family and use declared fallbacks', () => {
+	const transformFront = FRAME_FAMILIES['m15-transform-front']
+	assert.equal(resolveFrameVariant(transformFront, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(transformFront, 'V'), 'V')
+	assert.equal(resolveFrameVariant(transformFront, 'WL'), 'WL')
+	assert.equal(transformFront.layout.title.x, 240)
+	assert.equal(transformFront.layout.reversePowerToughness?.align, 'right')
+	assert.ok(transformFront.layout.reversePowerToughness!.y < transformFront.layout.pt.y)
+	assert.equal(FRAME_FAMILIES['m15-regular'].layout.reversePowerToughness, undefined)
+	assert.deepEqual(transformFront.layout.artwork, FRAME_FAMILIES['m15-regular'].layout.artwork)
 	const regular = FRAME_FAMILIES['m15-regular']
 	assert.equal(resolveFrameVariant(regular, 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(regular, 'V'), 'V')

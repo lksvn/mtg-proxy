@@ -27,6 +27,7 @@ export function drawSaga(
 	const { reminder, abilities, creatureRules, chapter: chapterLayout, reversePt } = layout
 
 	drawRulesText(context, reminderRuns, manaSymbols, reminder.x, reminder.y, reminder.width, reminder.height, {
+		fontSizeKey: 'saga-reminder',
 		fontFamily: 'mplantin',
 		italicFontFamily: 'mplantini',
 		color: '#111',
@@ -37,6 +38,7 @@ export function drawSaga(
 	})
 	if (creatureRules) {
 		drawRulesText(context, creatureRulesRuns, manaSymbols, creatureRules.x, creatureRules.y, creatureRules.width, creatureRules.height, {
+			fontSizeKey: 'saga-creature-rules',
 			fontFamily: 'mplantin',
 			italicFontFamily: 'mplantini',
 			color: '#111',
@@ -62,6 +64,7 @@ export function drawSaga(
 
 		context.drawImage(images.divider, chapterLayout.dividerX, y + chapterLayout.dividerOffsetY, chapterLayout.dividerWidth, chapterLayout.dividerHeight)
 		drawRulesText(context, chapterRuns[index], manaSymbols, abilities.x + chapterLayout.textInsetX, y + chapterLayout.textInsetY, abilities.width - chapterLayout.textInsetX * 2, height - chapterLayout.textInsetY * 2, {
+			fontSizeKey: `saga-chapter-text-${index}`,
 			verticalAlign: 'middle',
 			fontFamily: 'mplantin',
 			italicFontFamily: 'mplantini',

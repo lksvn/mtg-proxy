@@ -1,3 +1,4 @@
+import { RulesTextarea } from './RulesTextarea'
 import { useState } from 'react'
 import { useI18n } from '../../../i18n/context'
 import type { SplitCardData } from '../types'
@@ -42,15 +43,16 @@ export function SplitDetailsForm({ card, onChange, part, showFuse, stacked }: Pr
 						centerRulesText: changes.centerRulesText,
 					})}
 					part="content"
+					rulesFieldId="split-second-rules"
 					hidePowerToughness
 				/>
 			)}
 		</SplitHalfTabs>
 		{showFuse && <div className="form-group gap-2 mt-3">
 			<label htmlFor="split-fuse-reminder">{t('fuseReminder')}</label>
-			<textarea
+			<RulesTextarea
 				id="split-fuse-reminder"
-				rows={2}
+				rows={6}
 				value={card.fuseReminderText ?? ''}
 				onChange={(event) => onChange({ ...card, fuseReminderText: event.target.value })}
 			/>

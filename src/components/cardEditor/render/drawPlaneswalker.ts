@@ -2,7 +2,7 @@ import type { CardTextRun } from '../cardText.ts'
 import type { FrameLayout } from '../frameFamilies.ts'
 import type { PlaneswalkerCardData } from '../types.ts'
 import { drawManaCost } from './drawManaCost.ts'
-import { drawRulesText, measureRulesTextHeight } from './drawRulesText.ts'
+import { drawRulesText, getRulesFontSize, measureRulesTextHeight } from './drawRulesText.ts'
 
 const WIDTH = 1500
 const HEIGHT = 2100
@@ -75,7 +75,7 @@ function getPlaneswalkerLayout(
 	}
 	const textHeights = abilityRuns.map((runs, index) => {
 		const width = card.abilities[index].cost ? 1120 : 1200
-		return measureRulesTextHeight(context, runs, width, textStyle.maxFontSize, textStyle)
+		return measureRulesTextHeight(context, runs, width, textStyle.maxFontSize, { ...textStyle, fontSizeKey: `planeswalker-ability-${index}` })
 	})
 	const desiredHeights = textHeights.map((height) => height + 30)
 	const rows = getPlaneswalkerRows(card.abilities.length, desiredHeights, top, bottom)
@@ -132,7 +132,7 @@ export function drawPlaneswalker(
 		if (ability.cost) {
 			const textAreaHeight = row.height - 30
 			const centeredTextOffset = Math.max(0, (textAreaHeight - textHeights[index]) / 2)
-			const firstLineCenter = row.y + 15 + centeredTextOffset + Math.round(textStyle.maxFontSize * 1.1) / 2
+			const firstLineCenter = row.y + 15 + centeredTextOffset + Math.round(getRulesFontSize(context, textStyle.maxFontSize, `planeswalker-ability-${index}`) * 1.1) / 2
 			const costCenter = rows.length === 1
 				? firstLineCenter
 				: row.center
@@ -162,7 +162,7 @@ export function drawPlaneswalker(
 			row.y + 15,
 			ability.cost ? 1100 : 1180,
 			row.height - 30,
-			textStyle,
+			{ ...textStyle, fontSizeKey: `planeswalker-ability-${index}` },
 		)
 	})
 }

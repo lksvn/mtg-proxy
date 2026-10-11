@@ -1,6 +1,9 @@
+import { RulesTextarea } from './RulesTextarea'
+import { useState } from 'react'
 import { useI18n } from '../../../i18n/context'
 import type { AdventureCardData } from '../types'
 import { CardDetailsForm } from './CardDetailsForm'
+import { SplitHalfTabs } from './SplitHalfTabs'
 
 type Props = {
 	card: AdventureCardData
@@ -10,15 +13,20 @@ type Props = {
 
 export function AdventureDetailsForm({ card, onChange, part }: Props) {
 	const { t } = useI18n()
+	const [side, setSide] = useState<'first' | 'second'>('second')
 	const update = (changes: Partial<AdventureCardData>) => onChange({ ...card, ...changes })
 
 	if (part === 'details') {
 		return <CardDetailsForm card={card} onChange={update} part="details" />
 	}
 
-	return <>
-		<CardDetailsForm card={card} onChange={update} part="content" />
-		<h5 className="mt-5">{t('adventureSpell')}</h5>
+	return <SplitHalfTabs
+		side={side}
+		onChange={setSide}
+		label={t('cardInformationSection')}
+		labels={[t('adventureSpell'), t('cardContent')]}
+	>
+		{side === 'second' ? <CardDetailsForm card={card} onChange={update} part="content" /> : <>
 		<div className="form-group gap-2">
 			<label htmlFor="adventure-name">{t('cardName')}</label>
 			<input id="adventure-name" type="text" value={card.adventureName} onChange={(event) => update({ adventureName: event.target.value })} />
@@ -33,7 +41,8 @@ export function AdventureDetailsForm({ card, onChange, part }: Props) {
 		</div>
 		<div className="form-group gap-2">
 			<label htmlFor="adventure-rules">{t('rulesText')}</label>
-			<textarea id="adventure-rules" rows={3} value={card.adventureRulesText} onChange={(event) => update({ adventureRulesText: event.target.value })} />
+			<RulesTextarea id="adventure-rules" rows={6} value={card.adventureRulesText} onChange={(event) => update({ adventureRulesText: event.target.value })} />
 		</div>
-	</>
+		</>}
+	</SplitHalfTabs>
 }

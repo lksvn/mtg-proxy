@@ -39,6 +39,7 @@ export function drawRoom(
 		context.translate(layout.rules.x, side.originY - 10)
 		context.rotate(-Math.PI / 2)
 		drawRulesText(context, rulesRuns[index], manaSymbols, 0, 0, layout.rules.width, layout.rules.height, {
+			fontSizeKey: index === 0 ? 'room-left-rules' : 'room-other-rules',
 			verticalAlign: 'middle',
 			fontFamily: 'mplantin',
 			italicFontFamily: 'mplantini',
@@ -65,6 +66,7 @@ export function drawRoom(
 	context.translate(layout.reminder.x, layout.reminder.y)
 	context.rotate(-Math.PI / 2)
 	drawRulesText(context, reminderRuns, manaSymbols, 0, 0, layout.reminder.width, layout.reminder.height, {
+		fontSizeKey: 'room-reminder',
 		verticalAlign: 'middle',
 		horizontalAlign: 'center',
 		fontFamily: 'mplantin',

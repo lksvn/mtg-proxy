@@ -32,6 +32,13 @@ export function getDebugRegions(family: FrameFamily): DebugRegion[] {
 		{ label: 'Rules', ...layout.rules },
 		...(layout.flavorRules ? [{ label: 'Flavor text', ...layout.flavorRules }] : []),
 		{ label: 'P/T', x: layout.pt.x, y: layout.pt.y, width: layout.pt.width, height: layout.pt.height },
+		...(layout.reversePowerToughness ? [{
+			label: 'Reverse P/T',
+			x: layout.reversePowerToughness.x - layout.reversePowerToughness.maxWidth,
+			y: layout.reversePowerToughness.y - 35,
+			width: layout.reversePowerToughness.maxWidth,
+			height: 70,
+		}] : []),
 		{
 			label: 'Footer metadata',
 			x: layout.footer.x,

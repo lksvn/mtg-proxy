@@ -1,3 +1,4 @@
+import { RulesTextarea } from './RulesTextarea'
 import type { CustomCardData } from '../types'
 import { countManaCostItems, formatPowerToughnessInput } from '../cardText'
 import { useI18n } from '../../../i18n/context'
@@ -12,11 +13,13 @@ type CardDetailsFormProps = {
 	hideNameAndType?: boolean
 	hideTypeLine?: boolean
 	hidePowerToughness?: boolean
+	showReversePowerToughness?: boolean
+	rulesFieldId?: string
 	powerToughnessLabel?: 'powerToughness' | 'defense'
 	part?: 'content' | 'details'
 }
 
-export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hideTypeLine, hidePowerToughness, powerToughnessLabel = 'powerToughness', part }: CardDetailsFormProps) {
+export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hideTypeLine, hidePowerToughness, showReversePowerToughness, rulesFieldId = 'card-rules-text', powerToughnessLabel = 'powerToughness', part }: CardDetailsFormProps) {
 	const { t } = useI18n()
 
 	function update(changes: Partial<CustomCardData>) {
@@ -67,10 +70,10 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 			</div>}
 
 			{!hideRulesText && <div className="form-group gap-2">
-				<label htmlFor="card-rules-text">{t('rulesText')}</label>
-				<textarea
-					id="card-rules-text"
-					rows={5}
+				<label htmlFor={rulesFieldId}>{t('rulesText')}</label>
+				<RulesTextarea
+					id={rulesFieldId}
+					rows={6}
 					value={card.rulesText}
 					onChange={(event) =>
 						update({ rulesText: event.target.value })
@@ -121,6 +124,16 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 								: formatPowerToughnessInput(event.target.value),
 						})
 					}
+				/>
+			</div>}
+			{showReversePowerToughness && <div className="form-group gap-2">
+				<label htmlFor="card-reverse-power-toughness">{t('reversePowerToughness')}</label>
+				<input
+					id="card-reverse-power-toughness"
+					type="text"
+					value={card.reversePowerToughness ?? ''}
+					placeholder="***/***"
+					onChange={(event) => update({ reversePowerToughness: formatPowerToughnessInput(event.target.value) })}
 				/>
 			</div>}
 			</>}
