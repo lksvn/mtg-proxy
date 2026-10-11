@@ -87,4 +87,5 @@ export type SplitCardData = CustomCardData & {
 	secondTypeLine: string
 	secondRulesText: string
 	secondFlavorText: string
+	fuseReminderText?: string
 }

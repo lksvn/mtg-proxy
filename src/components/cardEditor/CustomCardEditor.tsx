@@ -89,6 +89,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const [splitFrameSelection, setSplitFrameSelection] = useState<FrameVariant | 'auto'>('auto')
 	const [splitArtworkSide, setSplitArtworkSide] = useState<'first' | 'second'>('first')
 	const [splitFrameSide, setSplitFrameSide] = useState<'first' | 'second'>('first')
+	const [splitStyle, setSplitStyle] = useState<'split-regular' | 'split-fuse'>('split-regular')
     const [artworkTransform, setArtworkTransform] = useState(createDefaultArtworkTransform)
     const [setSymbol, setSetSymbol] = useState<File | string | undefined>(SAMPLE_SET_SYMBOL_URL)
 	const [frameSelection, setFrameSelection] = useState<FrameVariant | 'auto'>('auto')
@@ -139,7 +140,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 		class: classStyle,
 		case: caseStyle,
 		room: 'room-regular',
-		split: 'split-regular',
+		split: splitStyle,
 		adventure: adventureStyle,
 		leveler: 'leveler-regular',
 	} satisfies Record<typeof layout, FrameFamilyId>
@@ -223,7 +224,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 			case 'room':
 				return <RoomDetailsForm card={room} onChange={setRoom} part={part} />
 			case 'split':
-				return <SplitDetailsForm card={split} onChange={setSplit} part={part} />
+				return <SplitDetailsForm card={split} onChange={setSplit} part={part} showFuse={splitStyle === 'split-fuse'} />
 			case 'adventure':
 				return <AdventureDetailsForm card={adventure} onChange={setAdventure} part={part} />
 			case 'leveler':
@@ -298,6 +299,15 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 			onClear={() => setActiveArtwork(undefined)}
 		/>
 	)
+	const artworkControls = activeArtwork ? (
+		<ArtworkControls
+			transform={activeTransform}
+			onChange={setActiveTransform}
+			onReset={() => setActiveTransform(createDefaultArtworkTransform(
+				layout === 'planeswalker' && isDoubleFeatureStyle(planeswalkerStyle),
+			))}
+		/>
+	) : null
 
 	return (
 		<section>
@@ -430,17 +440,26 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 						{layout === 'room' && <div className="form-group gap-2 mb-5">
 							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideLands hideColoredLands hideVehicles hideColorless />
 						</div>}
-						{layout === 'split' && <SplitHalfTabs side={splitFrameSide} onChange={setSplitFrameSide} label={t('cardEditionSection')}>
-							<div className="form-group gap-2 mb-5">
-								<FrameColorPicker
-									key={splitFrameSide}
-									value={splitFrameSide === 'first' ? frameSelection : splitFrameSelection}
-									onChange={splitFrameSide === 'first' ? setFrameSelection : setSplitFrameSelection}
-									hideColoredLands
-									hideVehicles
-								/>
+						{layout === 'split' && <>
+							<div className="form-group gap-2">
+								<label htmlFor="split-style">{t('splitStyle')}</label>
+								<select id="split-style" value={splitStyle} onChange={(event) => setSplitStyle(event.target.value as typeof splitStyle)}>
+									<option value="split-regular">{t('splitRegular')}</option>
+									<option value="split-fuse">Fuse</option>
+								</select>
 							</div>
-						</SplitHalfTabs>}
+							<SplitHalfTabs side={splitFrameSide} onChange={setSplitFrameSide} label={t('cardEditionSection')}>
+								<div className="form-group gap-2 mb-5">
+									<FrameColorPicker
+										key={splitFrameSide}
+										value={splitFrameSide === 'first' ? frameSelection : splitFrameSelection}
+										onChange={splitFrameSide === 'first' ? setFrameSelection : setSplitFrameSelection}
+										hideColoredLands
+										hideVehicles
+									/>
+								</div>
+							</SplitHalfTabs>
+						</>}
 						{layout === 'adventure' && <>
 							<div className="form-group gap-2">
 								<label htmlFor="adventure-style">{t('adventureStyle')}</label>
@@ -484,14 +503,13 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
                         artworkSide={editingSecondArtwork ? 'second' : 'first'}
                         onTransformChange={setActiveTransform}
                     />
-                    {activeArtwork && <ArtworkControls
-                        transform={activeTransform}
-                        onChange={setActiveTransform}
-                        onReset={() => setActiveTransform(createDefaultArtworkTransform(
-								layout === 'planeswalker' && isDoubleFeatureStyle(planeswalkerStyle),
-							))}
-                        />
-                    }
+					{layout === 'split' ? (
+						<div className="mt-3">
+							<SplitHalfTabs side={splitArtworkSide} onChange={setSplitArtworkSide} label={t('artworkPosition')}>
+								{artworkControls ?? <small className="text-muted">{t('chooseArtwork')}</small>}
+							</SplitHalfTabs>
+						</div>
+					) : artworkControls}
 					{onAddToDeckList && <div style={{display:'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gridAutoFlow:'dense'}} className="gap-3 mt-3">
 						<div className="form-group gap-2">
 							<label htmlFor="custom-card-quantity">{t('quantity')}</label>

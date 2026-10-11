@@ -41,6 +41,7 @@ export const SAMPLE_SPLIT: SplitCardData = {
 	secondTypeLine: 'Instant',
 	secondRulesText: 'Tap target permanent.\nDraw a card.',
 	secondFlavorText: '',
+	fuseReminderText: 'Fuse (You may cast one or both halves of this card from your hand.)',
 }
 
 export const SAMPLE_TOKEN: CustomCardData = {

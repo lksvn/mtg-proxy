@@ -6,6 +6,7 @@ import { artworkFilter } from './artworkFilter'
 import { drawSetSymbol } from './drawCard'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
+import { HEIGHT, WIDTH } from '../canvasDimensions'
 
 export function drawSplit(
 	context: CanvasRenderingContext2D,
@@ -15,14 +16,15 @@ export function drawSplit(
 	transforms: ArtworkTransform[],
 	manaRuns: CardTextRun[][],
 	rulesRuns: CardTextRun[][],
+	reminderRuns: CardTextRun[],
 	manaSymbols: Map<string, HTMLImageElement>,
 	symbol: HTMLImageElement | undefined,
 	layout: FrameLayout,
 ) {
 	const split = layout.split!
 	const halves = [
-		{ originY: split.firstOriginY, artwork: layout.artwork, name: card.name, typeLine: card.typeLine, cropY: 1050 },
-		{ originY: split.secondOriginY, artwork: split.secondArtwork, name: card.secondName, typeLine: card.secondTypeLine, cropY: 0 },
+		{ originY: split.firstOriginY, artwork: layout.artwork, name: card.name, typeLine: card.typeLine, cropY: split.frameSplitY, cropHeight: HEIGHT - split.frameSplitY },
+		{ originY: split.secondOriginY, artwork: split.secondArtwork, name: card.secondName, typeLine: card.secondTypeLine, cropY: 0, cropHeight: split.frameSplitY },
 	]
 	context.fillStyle = card.backgroundColor
 	context.fillRect(0, 0, 1500, 2100)
@@ -43,7 +45,7 @@ export function drawSplit(
 			context.drawImage(art, -art.width * scale / 2, -art.height * scale / 2, art.width * scale, art.height * scale)
 		}
 		context.restore()
-		context.drawImage(frames[index], 0, half.cropY, 1500, 1050, 0, half.cropY, 1500, 1050)
+		context.drawImage(frames[index], 0, half.cropY, WIDTH, half.cropHeight, 0, half.cropY, WIDTH, half.cropHeight)
 		context.save()
 		context.translate(0, half.originY)
 		context.rotate(-Math.PI / 2)
@@ -65,6 +67,14 @@ export function drawSplit(
 		drawRulesText(context, rulesRuns[index], manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, card.centerRulesText
 			? { ...layout.rules, horizontalAlign: 'center', verticalAlign: 'middle' }
 			: layout.rules)
+		context.restore()
+	}
+	if (split.reminder) {
+		context.save()
+		context.translate(0, split.firstOriginY)
+		context.rotate(-Math.PI / 2)
+		const reminder = split.reminder
+		drawRulesText(context, reminderRuns, manaSymbols, reminder.x, reminder.y, reminder.width, reminder.height, reminder)
 		context.restore()
 	}
 }

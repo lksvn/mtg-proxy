@@ -124,6 +124,7 @@ const splitLayout: FrameLayout = {
 	room: undefined,
 	artwork: { dragLeft: 237, dragTop: 1070, dragRight: 797, dragBottom: 1888 },
 	split: {
+		frameSplitY: 1000,
 		firstOriginY: 1878,
 		secondOriginY: 920,
 		secondArtwork: { dragLeft: 237, dragTop: 112, dragRight: 797, dragBottom: 930 },
@@ -134,6 +135,24 @@ const splitLayout: FrameLayout = {
 	rules: { x: 0, y: 913, width: 776, height: 380, verticalAlign: 'middle', fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 70, minFontSize: 32 },
 	symbol: { centerX: 770, centerY: 855, boxSize: 60 },
 	footer: commonFooter,
+}
+
+const fuseLayout: FrameLayout = {
+	...splitLayout,
+	rules: { ...splitLayout.rules, height: 312 },
+	split: {
+		...splitLayout.split!,
+		reminder: {
+			...splitLayout.rules,
+			x: 0,
+			y: 1360,
+			width: 1763,
+			height: 60,
+			horizontalAlign: 'center',
+			maxFontSize: 50,
+			minFontSize: 28,
+		},
+	},
 }
 
 const adventureLayout: FrameLayout = {
@@ -1733,6 +1752,23 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: {},
 		fallbacks: { ...commonFallbacks, C: 'A' },
 		layout: splitLayout,
+		fonts: commonFonts,
+	},
+	'split-fuse': {
+		id: 'split-fuse',
+		frames: {
+			W: 'img/frames/split/fuse/w.png',
+			U: 'img/frames/split/fuse/u.png',
+			B: 'img/frames/split/fuse/b.png',
+			R: 'img/frames/split/fuse/r.png',
+			G: 'img/frames/split/fuse/g.png',
+			M: 'img/frames/split/fuse/m.png',
+			A: 'img/frames/split/fuse/a.png',
+			L: 'img/frames/split/fuse/l.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, C: 'A' },
+		layout: fuseLayout,
 		fonts: commonFonts,
 	},
 	'adventure-regular': {

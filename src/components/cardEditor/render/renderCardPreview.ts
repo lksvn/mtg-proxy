@@ -68,6 +68,7 @@ export async function renderCardPreview(
 	const roomRulesRuns = room ? [parseRulesText(card.rulesText), parseRulesText(card.otherRulesText)] : []
 	const roomReminderRuns = room ? parseRulesText(card.reminderText) : []
 	const splitManaRuns = split ? [manaRuns, parseManaCost(card.secondManaCost)] : []
+	const splitReminderRuns = split && family.layout.split?.reminder ? parseRulesText(card.fuseReminderText ?? '') : []
 	const splitRulesRuns = split ? [
 		parseRulesText(card.rulesText + (card.flavorText ? `\n\n*${card.flavorText}*` : '')),
 		parseRulesText(card.secondRulesText + (card.secondFlavorText ? `\n\n*${card.secondFlavorText}*` : '')),
@@ -103,6 +104,7 @@ export async function renderCardPreview(
 		...roomReminderRuns,
 		...splitManaRuns.flat(),
 		...splitRulesRuns.flat(),
+		...splitReminderRuns,
 		...adventureManaRuns,
 		...adventureRulesRuns,
 		...levelerRuns.flat(),
@@ -186,7 +188,7 @@ export async function renderCardPreview(
 	context.resetTransform()
 	context.clearRect(0, 0, WIDTH, HEIGHT)
 	if (split && input.split && secondFrame) {
-		drawSplit(context, card, [frame, secondFrame], [art, secondArt], [transform, input.split.transform], splitManaRuns, splitRulesRuns, manaSymbols, symbol, family.layout)
+		drawSplit(context, card, [frame, secondFrame], [art, secondArt], [transform, input.split.transform], splitManaRuns, splitRulesRuns, splitReminderRuns, manaSymbols, symbol, family.layout)
 		drawCardFooter(context, card, family.layout, resolvedVariant)
 		return hasRulesTextOverflow(context)
 	}

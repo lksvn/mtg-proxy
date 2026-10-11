@@ -52,6 +52,10 @@ export function getDebugRegions(family: FrameFamily): DebugRegion[] {
 	]
 
 	if (layout.split) {
+		if (layout.split.reminder) {
+			const reminder = layout.split.reminder
+			regions.push({ label: 'Fuse reminder', x: reminder.y, y: layout.split.firstOriginY - reminder.x - reminder.width, width: reminder.height, height: reminder.width })
+		}
 		const artwork = layout.split.secondArtwork
 		regions.push({ label: 'Right artwork / drag area', x: artwork.dragLeft, y: artwork.dragTop, width: artwork.dragRight - artwork.dragLeft, height: artwork.dragBottom - artwork.dragTop })
 		for (const [index, originY] of [layout.split.firstOriginY, layout.split.secondOriginY].entries()) {
@@ -65,7 +69,7 @@ export function getDebugRegions(family: FrameFamily): DebugRegion[] {
 			]
 			regions.push(...boxes.map((box) => ({ ...box, x: box.y, y: originY - box.x - box.width, width: box.height, height: box.width })))
 		}
-		return regions.filter((region) => region.label.includes('artwork') || region.label.includes('Artwork') || region.label.startsWith('Left') || region.label.startsWith('Right') || region.label.startsWith('Footer'))
+		return regions.filter((region) => region.label.includes('artwork') || region.label.includes('Artwork') || region.label.startsWith('Left') || region.label.startsWith('Right') || region.label.startsWith('Footer') || region.label === 'Fuse reminder')
 	}
 
 	if (layout.saga) {

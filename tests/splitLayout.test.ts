@@ -22,6 +22,7 @@ test('Split guides cover both halves and colors stay in the Split family', () =>
 	const family = FRAME_FAMILIES['split-regular']
 	assert.equal(family.layout.previewRotation, true)
 	assert.equal(family.layout.canvas, undefined)
+	assert.equal(family.layout.split!.frameSplitY, 1000)
 	assert.equal(family.layout.rules.verticalAlign, 'middle')
 	assert.notEqual(family.layout.rules.horizontalAlign, 'center')
 	assert.equal(resolveFrameVariant(family, 'R'), 'R')
@@ -37,4 +38,23 @@ test('Split guides cover both halves and colors stay in the Split family', () =>
 			assert.ok(guide.y >= 0 && guide.y + guide.height <= 2100)
 		}
 	}
+})
+
+test('Fuse reserves a shared reminder strip without changing artwork bounds', () => {
+	const regular = FRAME_FAMILIES['split-regular'].layout
+	const family = FRAME_FAMILIES['split-fuse']
+	const { layout } = family
+	assert.deepEqual(layout.artwork, regular.artwork)
+	assert.deepEqual(layout.split!.secondArtwork, regular.split!.secondArtwork)
+	assert.equal(layout.split!.frameSplitY, 1000)
+	assert.ok(layout.rules.height < regular.rules.height)
+	const reminder = layout.split!.reminder!
+	assert.ok(layout.rules.y + layout.rules.height < reminder.y)
+	assert.equal(reminder.horizontalAlign, 'center')
+	assert.equal(layout.previewRotation, true)
+	assert.equal(resolveFrameVariant(family, 'WU'), 'M')
+	const guide = getDebugRegions(family).find(({ label }) => label === 'Fuse reminder')!
+	assert.ok(guide)
+	assert.ok(guide.x + guide.width <= 1500)
+	assert.ok(guide.y >= 0 && guide.y + guide.height <= 2100)
 })
