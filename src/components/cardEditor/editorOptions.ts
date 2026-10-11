@@ -16,6 +16,7 @@ export const FRAME_STYLE_GROUPS = [
 		{ id: 'm15-transform-nyx-original-back', label: 'frameStyleTransformNyxOriginalBack' },
 		{ id: 'm15-transform-snow-front', label: 'frameStyleTransformSnowFront' },
 		{ id: 'm15-transform-snow-back', label: 'frameStyleTransformSnowBack' },
+		{ id: 'm15-transform-snow-original-back', label: 'frameStyleTransformSnowOriginalBack' },
 		{ id: 'm15-transform-double-feature-front', label: 'frameStyleTransformDoubleFeatureFront' },
 		{ id: 'm15-transform-double-feature-back', label: 'frameStyleTransformDoubleFeatureBack' },
 	] },

@@ -97,6 +97,20 @@ test('original Nyx transform back keeps fallbacks in its enchantment frames', ()
 	assert.equal(family.dual?.neutralVariant, 'A')
 })
 
+test('original Snow transform back uses readable text on pale panels', () => {
+	const family = FRAME_FAMILIES['m15-transform-snow-original-back']
+	assert.equal(family.layout.transformIcon?.x, 89)
+	assert.equal(family.layout.transformIcon?.defaultIcon, 'moon')
+	assert.equal(family.layout.title.color, '#111')
+	assert.equal(family.layout.type.color, '#111')
+	assert.equal(family.layout.pt.color, '#fff')
+	assert.equal(family.layout.showManaCost, false)
+	assert.equal(resolveFrameVariant(family, 'C'), 'A')
+	assert.equal(resolveFrameVariant(family, 'V'), 'A')
+	assert.equal(resolveFrameVariant(family, 'UL'), 'L')
+	assert.equal(family.dual?.neutralVariant, 'L')
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [
