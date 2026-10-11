@@ -144,6 +144,12 @@ export async function renderCardPreview(
 	const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 	const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
 	const frameOverlay = family.frameOverlays?.[resolvedVariant]
+	const faceOverlays = family.faceOverlays
+	const faceOverlayVariant = faceOverlays?.icons[ptVariant] ? ptVariant : 'M'
+	const faceOverlayImages = faceOverlays ? await Promise.all([
+		loadImage(assetUrl(faceOverlays.icons[faceOverlayVariant]!)),
+		loadImage(assetUrl(faceOverlays.reminders[faceOverlayVariant]!)),
+	]) : undefined
 	const colorIndicatorColors = family.layout.colorIndicator
 		? COLOR_INDICATOR_ORDER.filter((color) => card.manaCost.toUpperCase().includes(color))
 		: []
@@ -210,6 +216,10 @@ export async function renderCardPreview(
 		transform,
 		{
 			frame,
+			faceOverlays: faceOverlayImages && faceOverlays ? [
+				{ image: faceOverlayImages[0], ...faceOverlays.iconBounds },
+				{ image: faceOverlayImages[1], ...faceOverlays.reminderBounds },
+			] : undefined,
 			overlay: overlay && family.overlay ? { image: overlay, ...family.overlay } : undefined,
 			frameOverlay: frameOverlayImage && frameOverlay
 				? { image: frameOverlayImage, crops: frameOverlay.crops, bounds: frameOverlay.bounds }

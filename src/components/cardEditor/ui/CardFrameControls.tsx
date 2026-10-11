@@ -38,7 +38,7 @@ export function CardFrameControls({
 		'm15-modal-ub-nyx-front',
 		'm15-modal-ub-nyx-back',
 	].includes(frameFamily)
-	const isKaldheim = frameFamily === 'kaldheim-showcase'
+	const isKaldheim = ['kaldheim-showcase', 'kaldheim-modal-front', 'kaldheim-modal-back'].includes(frameFamily)
 	const isModalBorderless = frameFamily === 'm15-modal-borderless-front' || frameFamily === 'm15-modal-borderless-back'
 	const isModalExtended = frameFamily === 'm15-modal-extended-front' || frameFamily === 'm15-modal-extended-back'
 	const isModalSnow = frameFamily === 'm15-modal-snow-front' || frameFamily === 'm15-modal-snow-back'

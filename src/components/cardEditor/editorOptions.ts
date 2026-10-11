@@ -47,6 +47,8 @@ export const FRAME_STYLE_GROUPS = [
 	] },
 	{ label: 'frameStyleGroupShowcase', options: [
 		{ id: 'kaldheim-showcase', label: 'frameStyleKaldheimShowcase' },
+		{ id: 'kaldheim-modal-front', label: 'frameStyleKaldheimModalFront' },
+		{ id: 'kaldheim-modal-back', label: 'frameStyleKaldheimModalBack' },
 		{ id: 'neon-ink', label: 'frameStyleNeonInk' },
 		{ id: 'box-topper', label: 'frameStyleBoxTopper' },
 		{ id: 'm15-extended', label: 'frameStyleM15Extended' },

@@ -256,6 +256,22 @@ test('Kaldheim showcase uses its own geometry and same-family fallbacks', () => 
 	assert.equal(resolveFrameVariant(family, 'C'), 'A')
 })
 
+test('Kaldheim modal faces reserve the strip and load matching face overlays', () => {
+	for (const face of ['front', 'back'] as const) {
+		const family = FRAME_FAMILIES[`kaldheim-modal-${face}`]
+		const overlays = family.faceOverlays!
+		assert.ok(overlays.icons.U?.endsWith(face === 'front' ? 'uft.png' : 'ubt.png'))
+		assert.ok(overlays.reminders.U?.endsWith(face === 'front' ? 'ufb.png' : 'ubb.png'))
+		assert.ok(family.layout.rules.y + family.layout.rules.height < overlays.reminderBounds.y)
+		assert.ok(family.layout.title.x > overlays.iconBounds.x + overlays.iconBounds.width)
+		assert.ok(getDebugRegions(family).some(region => region.label === 'Modal face icon'))
+		assert.equal(family.layout.reverseFace?.color, face === 'front' ? '#fff' : '#111')
+		for (const path of [...Object.values(overlays.icons), ...Object.values(overlays.reminders)]) {
+			assert.equal(existsSync(resolve('public', path)), true, path)
+		}
+	}
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [

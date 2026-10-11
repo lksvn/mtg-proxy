@@ -32,6 +32,7 @@ const COLOR_INDICATOR_COLORS: Record<string, string> = {
 
 type CardImages = {
 	frame: CanvasImageSource
+	faceOverlays?: { image: CanvasImageSource; x: number; y: number; width: number; height: number }[]
 	overlay?: {
 		image: CanvasImageSource
 		x: number
@@ -65,7 +66,7 @@ export function drawCard(
 	context: CanvasRenderingContext2D,
 	card: CustomCardData,
 	transform: ArtworkTransform,
-	{ frame, overlay, frameOverlay, border, transformIcon, colorIndicatorBase, colorIndicatorColors, ptBackground, art, symbol, typeIcon, manaSymbols }: CardImages,
+	{ frame, faceOverlays, overlay, frameOverlay, border, transformIcon, colorIndicatorBase, colorIndicatorColors, ptBackground, art, symbol, typeIcon, manaSymbols }: CardImages,
 	{ manaRuns, rulesRuns, flavorRuns }: CardRuns,
 	layout: FrameLayout,
 	variant: FrameVariant,
@@ -100,6 +101,9 @@ export function drawCard(
 		context.drawImage(frameOverlay.image, x, y, width, height)
 	}
 	if (overlay) context.drawImage(overlay.image, overlay.x, overlay.y, overlay.width, overlay.height)
+	faceOverlays?.forEach(({ image, x, y, width, height }) => {
+		context.drawImage(image, x, y, width, height)
+	})
 	if (border) context.drawImage(border, 0, 0, canvasWidth, canvasHeight)
 	if (transformIcon && layout.transformIcon) {
 		const { x, y, width, height } = layout.transformIcon

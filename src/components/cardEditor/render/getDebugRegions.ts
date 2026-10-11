@@ -64,6 +64,10 @@ export function getDebugRegions(family: FrameFamily): DebugRegion[] {
 			unrotated: layout.footer.unrotated,
 		},
 		...(family.overlay ? [{ label: 'Frame overlay', ...family.overlay }] : []),
+		...(family.faceOverlays ? [
+			{ label: 'Modal face icon', ...family.faceOverlays.iconBounds },
+			{ label: 'Modal reminder overlay', ...family.faceOverlays.reminderBounds },
+		] : []),
 	]
 
 	if (layout.split) {
