@@ -217,6 +217,20 @@ test('UB Nyx modal faces keep fallbacks in their enchantment frames', () => {
 	assert.ok(back.pt.U?.includes('/ub-back/pt/'))
 })
 
+test('extended modal faces retain wide artwork, the strip, and regular P/T', () => {
+	for (const id of ['m15-modal-extended-front', 'm15-modal-extended-back'] as const) {
+		const family = FRAME_FAMILIES[id]
+		assert.deepEqual(family.layout.artwork, { dragLeft: 0, dragTop: 170, dragRight: 1500, dragBottom: 1285 })
+		assert.ok(family.layout.reverseFace)
+		assert.equal(family.layout.type.color, '#fff')
+		assert.equal(family.layout.pt.color, '#111')
+		assert.equal(family.pt.U, FRAME_FAMILIES['m15-regular'].pt.U)
+		assert.equal(resolveFrameVariant(family, 'UL'), 'L')
+		assert.equal(resolveFrameVariant(family, 'C'), 'A')
+		assert.equal(resolveFrameVariant(family, 'V'), 'A')
+	}
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [
