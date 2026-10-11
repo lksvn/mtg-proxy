@@ -9,16 +9,17 @@ type Props = {
 	onChange: (card: SplitCardData) => void
 	part: 'content' | 'details'
 	showFuse?: boolean
+	stacked?: boolean
 }
 
-export function SplitDetailsForm({ card, onChange, part, showFuse }: Props) {
+export function SplitDetailsForm({ card, onChange, part, showFuse, stacked }: Props) {
 	const { t } = useI18n()
 	const [side, setSide] = useState<'first' | 'second'>('first')
 	if (part === 'details') {
 		return <CardDetailsForm card={card} onChange={(changes) => onChange({ ...card, ...changes })} part="details" />
 	}
 	return <>
-		<SplitHalfTabs side={side} onChange={setSide} label={t('cardInformationSection')}>
+		<SplitHalfTabs side={side} onChange={setSide} label={t('cardInformationSection')} stacked={stacked}>
 			{side === 'first' ? (
 				<CardDetailsForm card={card} onChange={(changes) => onChange({ ...card, ...changes })} part="content" hidePowerToughness />
 			) : (

@@ -89,7 +89,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const [splitFrameSelection, setSplitFrameSelection] = useState<FrameVariant | 'auto'>('auto')
 	const [splitArtworkSide, setSplitArtworkSide] = useState<'first' | 'second'>('first')
 	const [splitFrameSide, setSplitFrameSide] = useState<'first' | 'second'>('first')
-	const [splitStyle, setSplitStyle] = useState<'split-regular' | 'split-fuse'>('split-regular')
+	const [splitStyle, setSplitStyle] = useState<'split-regular' | 'split-fuse' | 'split-aftermath'>('split-regular')
     const [artworkTransform, setArtworkTransform] = useState(createDefaultArtworkTransform)
     const [setSymbol, setSetSymbol] = useState<File | string | undefined>(SAMPLE_SET_SYMBOL_URL)
 	const [frameSelection, setFrameSelection] = useState<FrameVariant | 'auto'>('auto')
@@ -224,7 +224,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 			case 'room':
 				return <RoomDetailsForm card={room} onChange={setRoom} part={part} />
 			case 'split':
-				return <SplitDetailsForm card={split} onChange={setSplit} part={part} showFuse={splitStyle === 'split-fuse'} />
+				return <SplitDetailsForm card={split} onChange={setSplit} part={part} showFuse={splitStyle === 'split-fuse'} stacked={splitStyle === 'split-aftermath'} />
 			case 'adventure':
 				return <AdventureDetailsForm card={adventure} onChange={setAdventure} part={part} />
 			case 'leveler':
@@ -317,7 +317,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
                         <summary><h5 className="mt-5">{t('cardImageSection')}</h5></summary>
                         <div className="form-group gap-2">
                             {layout === 'split' ? (
-                                <SplitHalfTabs side={splitArtworkSide} onChange={setSplitArtworkSide} label={t('cardImageSection')}>
+                                <SplitHalfTabs side={splitArtworkSide} onChange={setSplitArtworkSide} label={t('cardImageSection')} stacked={splitStyle === 'split-aftermath'}>
                                     {artworkInput}
                                 </SplitHalfTabs>
                             ) : artworkInput}
@@ -446,9 +446,10 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 								<select id="split-style" value={splitStyle} onChange={(event) => setSplitStyle(event.target.value as typeof splitStyle)}>
 									<option value="split-regular">{t('splitRegular')}</option>
 									<option value="split-fuse">Fuse</option>
+									<option value="split-aftermath">Aftermath</option>
 								</select>
 							</div>
-							<SplitHalfTabs side={splitFrameSide} onChange={setSplitFrameSide} label={t('cardEditionSection')}>
+							<SplitHalfTabs side={splitFrameSide} onChange={setSplitFrameSide} label={t('cardEditionSection')} stacked={splitStyle === 'split-aftermath'}>
 								<div className="form-group gap-2 mb-5">
 									<FrameColorPicker
 										key={splitFrameSide}
@@ -505,7 +506,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
                     />
 					{layout === 'split' ? (
 						<div className="mt-3">
-							<SplitHalfTabs side={splitArtworkSide} onChange={setSplitArtworkSide} label={t('artworkPosition')}>
+							<SplitHalfTabs side={splitArtworkSide} onChange={setSplitArtworkSide} label={t('artworkPosition')} stacked={splitStyle === 'split-aftermath'}>
 								{artworkControls ?? <small className="text-muted">{t('chooseArtwork')}</small>}
 							</SplitHalfTabs>
 						</div>

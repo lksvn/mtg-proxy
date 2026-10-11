@@ -58,3 +58,27 @@ test('Fuse reserves a shared reminder strip without changing artwork bounds', ()
 	assert.ok(guide.x + guide.width <= 1500)
 	assert.ok(guide.y >= 0 && guide.y + guide.height <= 2100)
 })
+
+test('Aftermath keeps top and bottom artwork separate and guides follow the clockwise half', () => {
+	const family = FRAME_FAMILIES['split-aftermath']
+	const { layout } = family
+	const split = layout.split!
+	assert.equal(split.frameSplitY, 1139)
+	assert.equal(layout.previewRotation, 'counterclockwise')
+	assert.equal(split.reminder, undefined)
+	assert.ok(split.secondLayout)
+	const bounds = { left: 0, top: 0, width: 1500, height: 2100 }
+	const bottom = { ...layout, artwork: split.secondArtwork }
+	assert.equal(isInsideArtwork(750, 450, bounds, layout), true)
+	assert.equal(isInsideArtwork(1000, 1500, bounds, layout), false)
+	assert.equal(isInsideArtwork(1000, 1500, bounds, bottom), true)
+	assert.equal(isInsideArtwork(750, 450, bounds, bottom), false)
+	assert.equal(isInsideArtwork(500, 1500, bounds, bottom), false)
+	assert.equal(resolveFrameVariant(family, 'WU'), 'M')
+	for (const part of ['title', 'mana', 'type', 'rules', 'set symbol']) {
+		const guide = getDebugRegions(family).find(({ label }) => label === `Bottom ${part}`)!
+		assert.ok(guide)
+		assert.ok(guide.x >= 0 && guide.x + guide.width <= 1500)
+		assert.ok(guide.y >= split.frameSplitY && guide.y + guide.height <= 2100)
+	}
+})

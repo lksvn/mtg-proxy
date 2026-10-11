@@ -46,6 +46,7 @@ export function CardCanvas({ input, artworkSide = 'first', onRenderResult, onTra
 	const [artworkHovered, setArtworkHovered] = useState(false)
 	const [showDebug, setShowDebug] = useState(false)
 	const [previewRotated, setPreviewRotated] = useState(false)
+	const previewRotation = family.layout.previewRotation === 'counterclockwise' ? -90 : 90
     const dragRef = useRef<{
         pointerId: number
         clientX: number
@@ -155,7 +156,7 @@ export function CardCanvas({ input, artworkSide = 'first', onRenderResult, onTra
 		return () => {
 			cancelled = true
 		}
-	}, [input, canvasRef, onRenderResult])
+	}, [input, family, canvasRef, onRenderResult])
 
 	return (
 		<div>
@@ -169,10 +170,10 @@ export function CardCanvas({ input, artworkSide = 'first', onRenderResult, onTra
                     {t('showCanvasGuides')}
                 </label>
             )}
-			<div style={{
+			<div className={`card-canvas-preview${previewRotated ? ' is-rotated' : ''}`} style={{
 				position: 'relative',
 				lineHeight: 0,
-				aspectRatio: previewRotated ? `${HEIGHT} / ${WIDTH}` : undefined,
+				aspectRatio: previewRotated ? `${HEIGHT} / ${WIDTH}` : `${WIDTH} / ${HEIGHT}`,
 			}}>
                 <canvas
                     ref={canvasRef}
@@ -185,12 +186,12 @@ export function CardCanvas({ input, artworkSide = 'first', onRenderResult, onTra
                     onPointerCancel={stopDragging}
 					onPointerLeave={() => !dragging && setArtworkHovered(false)}
                     style={{
-						position: previewRotated ? 'absolute' : undefined,
-						top: previewRotated ? '50%' : undefined,
-						left: previewRotated ? '50%' : undefined,
+						position: 'absolute',
+						top: '50%',
+						left: '50%',
 						width: previewRotated ? `${WIDTH / HEIGHT * 100}%` : '100%',
                         height: 'auto',
-						transform: previewRotated ? 'translate(-50%, -50%) rotate(90deg)' : undefined,
+						transform: `translate(-50%, -50%) rotate(${previewRotated ? previewRotation : 0}deg)`,
                         background: 'var(--surface)',
                         border: '1px solid var(--border)',
                         borderRadius: 'var(--card-image-radius)',
@@ -206,11 +207,11 @@ export function CardCanvas({ input, artworkSide = 'first', onRenderResult, onTra
                         aria-hidden="true"
 						style={{
 							position: 'absolute',
-							top: previewRotated ? '50%' : 0,
-							left: previewRotated ? '50%' : 0,
+							top: '50%',
+							left: '50%',
 							width: previewRotated ? `${WIDTH / HEIGHT * 100}%` : '100%',
-							height: previewRotated ? 'auto' : '100%',
-							transform: previewRotated ? 'translate(-50%, -50%) rotate(90deg)' : undefined,
+							height: 'auto',
+							transform: `translate(-50%, -50%) rotate(${previewRotated ? previewRotation : 0}deg)`,
 							pointerEvents: 'none',
 						}}
                     >

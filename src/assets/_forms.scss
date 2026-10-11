@@ -332,3 +332,46 @@ button.frame-color-choice {
 .split-tab-arrow-left {
 	transform: rotate(180deg);
 }
+
+.split-tab-arrow-up {
+	transform: rotate(-90deg);
+}
+
+.split-tab-arrow-down {
+	transform: rotate(90deg);
+}
+
+.card-canvas-preview {
+	width: 100%;
+	margin-left: 0;
+	transition: transform 180ms ease-out, width 180ms ease-out, margin-left 180ms ease-out, aspect-ratio 180ms ease-out;
+
+	canvas, svg {
+		transition: transform 180ms ease-out, width 180ms ease-out;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		&, canvas, svg {
+			transition: none;
+		}
+	}
+
+	@media (min-width: 48rem) {
+		&.is-rotated {
+			width: 120%;
+			margin-left: -10%;
+			z-index: 2;
+			transform-origin: center;
+
+			@media (hover: hover) and (pointer: fine) {
+				&:hover {
+					transform: scale(1.15);
+				}
+
+				@media (prefers-reduced-motion: reduce) {
+					transition: none;
+				}
+			}
+		}
+	}
+}

@@ -58,6 +58,18 @@ export function getDebugRegions(family: FrameFamily): DebugRegion[] {
 		}
 		const artwork = layout.split.secondArtwork
 		regions.push({ label: 'Right artwork / drag area', x: artwork.dragLeft, y: artwork.dragTop, width: artwork.dragRight - artwork.dragLeft, height: artwork.dragBottom - artwork.dragTop })
+		if (layout.split.secondLayout) {
+			const second = layout.split.secondLayout
+			const boxes = [
+				{ label: 'Bottom title', x: second.title.x, y: second.title.y - 50, width: second.title.maxWidth, height: 100 },
+				{ label: 'Bottom mana', x: second.mana.right - 300, y: second.mana.centerY - second.mana.symbolSize / 2, width: 300, height: second.mana.symbolSize },
+				{ label: 'Bottom type', x: second.type.x, y: second.type.y - 40, width: second.type.maxWidth, height: 80 },
+				{ label: 'Bottom rules', ...second.rules },
+				{ label: 'Bottom set symbol', x: second.symbol.centerX - second.symbol.boxSize / 2, y: second.symbol.centerY - second.symbol.boxSize / 2, width: second.symbol.boxSize, height: second.symbol.boxSize },
+			]
+			regions.push(...boxes.map((box) => ({ ...box, x: second.originX - box.y - box.height, y: layout.split!.secondOriginY + box.x, width: box.height, height: box.width })))
+			return regions
+		}
 		for (const [index, originY] of [layout.split.firstOriginY, layout.split.secondOriginY].entries()) {
 			const side = index === 0 ? 'Left' : 'Right'
 			const boxes = [

@@ -7,9 +7,10 @@ type Props = {
 	onChange: (side: 'first' | 'second') => void
 	label: string
 	children: ReactNode
+	stacked?: boolean
 }
 
-export function SplitHalfTabs({ side, onChange, label, children }: Props) {
+export function SplitHalfTabs({ side, onChange, label, children, stacked }: Props) {
 	const id = useId()
 	const { t } = useI18n()
 	return <div className="split-half-tab-layout">
@@ -35,8 +36,12 @@ export function SplitHalfTabs({ side, onChange, label, children }: Props) {
 						document.getElementById(`${id}-${next}`)?.focus()
 					}}
 				>
-					<Icon name="arrow-right" className={half === 'first' ? 'split-tab-arrow-left' : undefined} />
-					{t(half === 'first' ? 'splitFirstHalf' : 'splitSecondHalf')}
+					<Icon name="arrow-right" className={stacked
+						? half === 'first' ? 'split-tab-arrow-up' : 'split-tab-arrow-down'
+						: half === 'first' ? 'split-tab-arrow-left' : undefined} />
+					{t(stacked
+						? half === 'first' ? 'splitTopHalf' : 'splitBottomHalf'
+						: half === 'first' ? 'splitFirstHalf' : 'splitSecondHalf')}
 				</button>
 			))}
 		</div>
