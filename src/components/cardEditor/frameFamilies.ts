@@ -136,6 +136,7 @@ export type FrameLayout = {
 	reversePowerToughness?: TextBox
 	symbol: { centerX: number; centerY: number; boxSize: number; rotation?: 'counterclockwise' }
 	colorIndicator?: { x: number; y: number; width: number; height: number; centerX: number; centerY: number; radius: number }
+	transformIcon?: { x: number; y: number; width: number; height: number }
 	pt: TextStyle & {
 		x: number
 		y: number

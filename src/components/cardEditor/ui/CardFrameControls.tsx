@@ -3,12 +3,15 @@ import { FRAME_STYLE_GROUPS } from '../editorOptions'
 import { getFrameFamily, type FrameBorderStyle, type FrameFamilyId } from '../frameFamilies'
 import type { FrameVariant } from '../types'
 import { FrameColorPicker } from './FrameColorPicker'
+import { TRANSFORM_ICONS, type TransformIcon } from '../transformIcons'
 
 type CardFrameControlsProps = {
 	frameFamily: FrameFamilyId
 	onFrameFamilyChange: (family: FrameFamilyId) => void
 	borderStyle: FrameBorderStyle
 	onBorderStyleChange: (border: FrameBorderStyle) => void
+	transformIcon?: TransformIcon
+	onTransformIconChange: (icon: TransformIcon | undefined) => void
 	frameSelection: FrameVariant | 'auto'
 	onFrameSelectionChange: (variant: FrameVariant | 'auto') => void
 	search: string
@@ -20,6 +23,8 @@ export function CardFrameControls({
 	onFrameFamilyChange,
 	borderStyle,
 	onBorderStyleChange,
+	transformIcon,
+	onTransformIconChange,
 	frameSelection,
 	onFrameSelectionChange,
 	search,
@@ -83,6 +88,21 @@ export function CardFrameControls({
 						<option value="white">{t('frameBorderWhite')}</option>
 						<option value="silver">{t('frameBorderSilver')}</option>
 						<option value="gold">{t('frameBorderGold')}</option>
+					</select>
+				</div>
+			)}
+			{getFrameFamily(frameFamily).layout.transformIcon && (
+				<div className="form-group gap-2">
+					<label htmlFor="card-transform-icon">{t('transformIcon')}</label>
+					<select
+						id="card-transform-icon"
+						value={transformIcon ?? ''}
+						onChange={(event) => onTransformIconChange(event.target.value ? event.target.value as TransformIcon : undefined)}
+					>
+						<option value="">{t('transformIconDefault')}</option>
+						{TRANSFORM_ICONS.map((icon) => (
+							<option key={icon.id} value={icon.id}>{t(icon.label)}</option>
+						))}
 					</select>
 				</div>
 			)}

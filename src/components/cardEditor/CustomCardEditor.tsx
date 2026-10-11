@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { CardCanvas, type ArtworkTransform } from './CardCanvas'
+import type { TransformIcon } from './transformIcons'
 import { canExportCardRender, type CardRenderInput, type CardRenderResult } from './cardRender'
 import { getQuantityError } from '../../Cards'
 import { canvasToPng } from '../../utils/canvasToPng'
@@ -98,6 +99,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const [tokenFrameSelection, setTokenFrameSelection] = useState<FrameVariant | 'auto'>('C')
 	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
+	const [transformIcons, setTransformIcons] = useState<Partial<Record<FrameFamilyId, TransformIcon>>>({})
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [customCardQuantity, setCustomCardQuantity] = useState('1')
 	const quantity = Number(customCardQuantity)
@@ -172,13 +174,14 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 		artwork,
 		setSymbol,
 		frameFamily: activeFamily,
+		transformIcon: transformIcons[activeFamily],
 		rulesFontSizes: rulesFontSizes[activeFamily],
 		borderStyle: activeFamily === 'token-unglued' ? 'silver' : borderStyle,
 		frameVariant,
 		transform: artworkTransform,
 		card: activeCard,
 		split: layout === 'split' ? { artwork: splitArtwork, transform: splitTransform, frameVariant: secondFrameVariant } : undefined,
-	}), [artwork, setSymbol, activeFamily, rulesFontSizes, borderStyle, frameVariant, artworkTransform, activeCard, layout, splitArtwork, splitTransform, secondFrameVariant])
+	}), [artwork, setSymbol, activeFamily, transformIcons, rulesFontSizes, borderStyle, frameVariant, artworkTransform, activeCard, layout, splitArtwork, splitTransform, secondFrameVariant])
 	const canExport = canExportCardRender(renderInput, renderResult)
 	const renderFailed = renderResult?.input === renderInput && renderResult.status === 'error'
 	const handleRenderResult = useCallback((result: CardRenderResult) => {
@@ -366,6 +369,8 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 								}}
 								borderStyle={borderStyle}
 								onBorderStyleChange={setBorderStyle}
+								transformIcon={transformIcons[frameFamily]}
+								onTransformIconChange={(icon) => setTransformIcons({ ...transformIcons, [frameFamily]: icon })}
 								frameSelection={frameSelection}
 								onFrameSelectionChange={setFrameSelection}
 								search={frameStyleSearch}

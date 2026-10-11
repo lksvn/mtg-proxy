@@ -1,5 +1,6 @@
 import { DUAL_FRAME_VARIANTS, type CustomCardData } from '../types'
 import type { CardRenderInput } from '../cardRender'
+import { transformIconPath } from '../transformIcons'
 import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from '../cardText'
 import { drawCard, drawCardFooter, HEIGHT, WIDTH } from './drawCard'
 import { futureManaFile } from './drawManaCost'
@@ -144,7 +145,8 @@ export async function renderCardPreview(
 	const colorIndicatorColors = family.layout.colorIndicator
 		? COLOR_INDICATOR_ORDER.filter((color) => card.manaCost.toUpperCase().includes(color))
 		: []
-	const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase, sagaImages, classHeader, secondFrame, secondArt] = await Promise.all([
+	const iconPath = family.layout.transformIcon ? transformIconPath(input.transformIcon) : undefined
+	const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase, sagaImages, classHeader, secondFrame, secondArt, transformIcon] = await Promise.all([
 		abuLandColors
 			? loadAbuDualLand(family, abuLandColors)
 			: dualPair
@@ -165,6 +167,7 @@ export async function renderCardPreview(
 		classCard ? loadImage(assetUrl(CLASS_HEADER)) : undefined,
 		input.split ? loadImage(assetUrl(family.frames[resolveFrameVariant(family, input.split.frameVariant)]!)) : undefined,
 		input.split?.artwork ? loadImageSource(input.split.artwork) : undefined,
+		iconPath ? loadImage(assetUrl(iconPath)) : undefined,
 	])
 	const manaSymbols = new Map(
 		await Promise.all(
@@ -208,6 +211,7 @@ export async function renderCardPreview(
 				? { image: frameOverlayImage, crops: frameOverlay.crops, bounds: frameOverlay.bounds }
 				: undefined,
 			border,
+			transformIcon,
 			colorIndicatorBase,
 			colorIndicatorColors,
 			ptBackground,

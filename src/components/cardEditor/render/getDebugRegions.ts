@@ -20,6 +20,7 @@ export function getDebugRegions(family: FrameFamily): DebugRegion[] {
 			height: layout.artwork.dragBottom - layout.artwork.dragTop,
 		},
 		{ label: 'Title', x: layout.title.x, y: layout.title.y - 50, width: layout.title.maxWidth, height: 100 },
+		...(layout.transformIcon ? [{ label: 'Transform icon', ...layout.transformIcon }] : []),
 		...(layout.showManaCost !== false ? [{ label: 'Mana', x: layout.mana.right - 420, y: layout.mana.centerY - layout.mana.symbolSize / 2, width: 420, height: layout.mana.symbolSize }] : []),
 		{ label: 'Type', x: layout.type.x, y: layout.type.y - 50, width: layout.type.maxWidth, height: 100 },
 		{

@@ -45,6 +45,7 @@ type CardImages = {
 		bounds?: { x: number; y: number; width: number; height: number }
 	}
 	border?: CanvasImageSource
+	transformIcon?: CanvasImageSource
 	colorIndicatorBase?: CanvasImageSource
 	colorIndicatorColors?: string[]
 	ptBackground?: HTMLImageElement
@@ -64,7 +65,7 @@ export function drawCard(
 	context: CanvasRenderingContext2D,
 	card: CustomCardData,
 	transform: ArtworkTransform,
-	{ frame, overlay, frameOverlay, border, colorIndicatorBase, colorIndicatorColors, ptBackground, art, symbol, typeIcon, manaSymbols }: CardImages,
+	{ frame, overlay, frameOverlay, border, transformIcon, colorIndicatorBase, colorIndicatorColors, ptBackground, art, symbol, typeIcon, manaSymbols }: CardImages,
 	{ manaRuns, rulesRuns, flavorRuns }: CardRuns,
 	layout: FrameLayout,
 	variant: FrameVariant,
@@ -100,6 +101,10 @@ export function drawCard(
 	}
 	if (overlay) context.drawImage(overlay.image, overlay.x, overlay.y, overlay.width, overlay.height)
 	if (border) context.drawImage(border, 0, 0, canvasWidth, canvasHeight)
+	if (transformIcon && layout.transformIcon) {
+		const { x, y, width, height } = layout.transformIcon
+		context.drawImage(transformIcon, x, y, width, height)
+	}
 	if (colorIndicatorBase && colorIndicatorColors?.length && layout.colorIndicator) {
 		const indicator = layout.colorIndicator
 		context.drawImage(colorIndicatorBase, indicator.x, indicator.y, indicator.width, indicator.height)
