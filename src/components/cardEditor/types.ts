@@ -80,3 +80,11 @@ export type LevelerCardData = CustomCardData & {
 	levelThreeRulesText: string
 	levelThreePowerToughness: string
 }
+
+export type SplitCardData = CustomCardData & {
+	secondName: string
+	secondManaCost: string
+	secondTypeLine: string
+	secondRulesText: string
+	secondFlavorText: string
+}

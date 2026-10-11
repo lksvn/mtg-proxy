@@ -1,4 +1,5 @@
 import type { ArtworkTransform } from './CardCanvas'
+import type { SplitCardData } from './types'
 import type { FrameBorderStyle, FrameFamilyId } from './frameFamilies'
 import type { AdventureCardData, CaseCardData, ClassCardData, CustomCardData, FrameVariant, LevelerCardData, PlaneswalkerCardData, RoomCardData, SagaCardData } from './types'
 
@@ -9,7 +10,12 @@ export type CardRenderInput = {
 	borderStyle: FrameBorderStyle
 	frameVariant: FrameVariant
 	transform: ArtworkTransform
-	card: CustomCardData | PlaneswalkerCardData | SagaCardData | ClassCardData | CaseCardData | RoomCardData | AdventureCardData | LevelerCardData
+	split?: {
+		artwork?: File | string
+		transform: ArtworkTransform
+		frameVariant: FrameVariant
+	}
+	card: CustomCardData | PlaneswalkerCardData | SagaCardData | ClassCardData | CaseCardData | RoomCardData | AdventureCardData | LevelerCardData | SplitCardData
 }
 
 export type CardRenderResult = {

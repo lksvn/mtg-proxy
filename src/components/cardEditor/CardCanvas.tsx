@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
 import { HEIGHT, WIDTH } from './canvasDimensions'
 import { getFrameFamily } from './frameFamilies'
 import type { CardRenderInput, CardRenderResult } from './cardRender'
@@ -24,15 +24,21 @@ export type ArtworkTransform = {
 
 type CardCanvasProps = {
 	input: CardRenderInput
+	artworkSide?: 'first' | 'second'
 	onRenderResult: (result: CardRenderResult) => void
     onTransformChange: (transform: ArtworkTransform) => void,
 	canvasRef?: RefObject<HTMLCanvasElement | null>
 }
 
-export function CardCanvas({ input, onRenderResult, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
-	const { artwork, frameFamily, transform } = input
+export function CardCanvas({ input, artworkSide = 'first', onRenderResult, onTransformChange, canvasRef: externalCanvasRef }: CardCanvasProps) {
+	const { frameFamily } = input
+	const artwork = artworkSide === 'second' && input.split ? input.split.artwork : input.artwork
+	const transform = artworkSide === 'second' && input.split ? input.split.transform : input.transform
 	const { t } = useI18n()
 	const family = getFrameFamily(frameFamily)
+	const interactionLayout = useMemo(() => artworkSide === 'second' && family.layout.split
+		? { ...family.layout, artwork: family.layout.split.secondArtwork }
+		: family.layout, [artworkSide, family])
 	const debugRegions = DEBUG_CANVAS ? getDebugRegions(family) : []
 	const internalCanvasRef = useRef<HTMLCanvasElement>(null)
 	const canvasRef = externalCanvasRef ?? internalCanvasRef
@@ -52,7 +58,7 @@ export function CardCanvas({ input, onRenderResult, onTransformChange, canvasRef
         if (!artwork) return
 
 		const bounds = event.currentTarget.getBoundingClientRect()
-		if (!isInsideArtwork(event.clientX, event.clientY, bounds, family.layout)) return
+		if (!isInsideArtwork(event.clientX, event.clientY, bounds, interactionLayout)) return
 
 		setArtworkHovered(true)
         setDragging(true)
@@ -69,7 +75,7 @@ export function CardCanvas({ input, onRenderResult, onTransformChange, canvasRef
 
     function dragArtwork(event: ReactPointerEvent<HTMLCanvasElement>) {
 		const bounds = event.currentTarget.getBoundingClientRect()
-		setArtworkHovered(isInsideArtwork(event.clientX, event.clientY, bounds, family.layout))
+		setArtworkHovered(isInsideArtwork(event.clientX, event.clientY, bounds, interactionLayout))
 
         const drag = dragRef.current
 
@@ -108,7 +114,7 @@ export function CardCanvas({ input, onRenderResult, onTransformChange, canvasRef
         function zoomArtwork(event: WheelEvent) {
             if (!artwork) return
 			const bounds = target.getBoundingClientRect()
-			if (!isInsideArtwork(event.clientX, event.clientY, bounds, family.layout)) return
+			if (!isInsideArtwork(event.clientX, event.clientY, bounds, interactionLayout)) return
 
             event.preventDefault()
 
@@ -133,7 +139,7 @@ export function CardCanvas({ input, onRenderResult, onTransformChange, canvasRef
         return () => {
             target.removeEventListener('wheel', zoomArtwork)
         }
-    }, [artwork, canvasRef, family, onTransformChange])
+    }, [artwork, canvasRef, interactionLayout, onTransformChange])
 
 	useEffect(() => {
 		let cancelled = false

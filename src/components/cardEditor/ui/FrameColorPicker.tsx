@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { Icon } from '../../Icon'
 import { useI18n } from '../../../i18n/context'
 import type { TranslationKey } from '../../../i18n/messages'
@@ -52,6 +52,7 @@ export function FrameColorPicker({
 	hideColorless?: boolean
 }) {
 	const { t } = useI18n()
+	const id = useId()
 	const options = OPTIONS.filter((option) =>
 		(!hideLands || !LAND_OPTIONS.includes(option.value)) &&
 		(!hideColoredLands || !COLORED_LAND_OPTIONS.includes(option.value)) &&
@@ -65,7 +66,7 @@ export function FrameColorPicker({
 
 	function highlight(index: number) {
 		setActiveIndex(index)
-		requestAnimationFrame(() => document.getElementById(`frame-color-option-${index}`)?.scrollIntoView({ block: 'nearest' }))
+		requestAnimationFrame(() => document.getElementById(`${id}-option-${index}`)?.scrollIntoView({ block: 'nearest' }))
 	}
 
 	function choose(option: FrameChoice) {
@@ -78,17 +79,17 @@ export function FrameColorPicker({
 		<div className="form-group gap-2" onBlur={(event) => {
 			if (!event.relatedTarget || !event.currentTarget.contains(event.relatedTarget)) setOpen(false)
 		}}>
-			<span id="card-frame-label">{t('frame')}</span>
+			<span id={`${id}-label`}>{t('frame')}</span>
 			<div className="frame-color-picker">
 				<button
 					ref={triggerRef}
 					type="button"
 					role="combobox"
-					aria-labelledby="card-frame-label card-frame-selected"
+					aria-labelledby={`${id}-label ${id}-selected`}
 					aria-haspopup="listbox"
 					aria-expanded={open}
-					aria-controls={open ? 'frame-color-options' : undefined}
-					aria-activedescendant={open ? `frame-color-option-${activeIndex}` : undefined}
+					aria-controls={open ? `${id}-options` : undefined}
+					aria-activedescendant={open ? `${id}-option-${activeIndex}` : undefined}
 					onClick={() => {
 						if (!open) setActiveIndex(options.indexOf(selected))
 						setOpen(!open)
@@ -110,15 +111,15 @@ export function FrameColorPicker({
 						if (open) highlight(next)
 					}}
 				>
-					<span className="frame-color-choice" id="card-frame-selected">
+					<span className="frame-color-choice" id={`${id}-selected`}>
 						<ChoiceIcon value={selected.value} symbol={selected.symbol} />{t(selected.label)}
 					</span>
 					<Icon name="chevron-down" />
 				</button>
-				{open && <div id="frame-color-options" role="listbox" aria-labelledby="card-frame-label" className="frame-color-options">
+				{open && <div id={`${id}-options`} role="listbox" aria-labelledby={`${id}-label`} className="frame-color-options">
 					{options.map((option, index) => <button
 						key={option.value}
-						id={`frame-color-option-${index}`}
+						id={`${id}-option-${index}`}
 						type="button"
 						role="option"
 						className="frame-color-choice"

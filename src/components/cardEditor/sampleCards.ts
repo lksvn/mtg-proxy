@@ -1,4 +1,5 @@
 import type {
+	SplitCardData,
 	AdventureCardData,
 	CaseCardData,
 	ClassCardData,
@@ -23,6 +24,23 @@ export const SAMPLE_CARD: CustomCardData = {
 	rarity: 'rare',
 	tintSetSymbol: false,
 	backgroundColor: '#000000',
+}
+
+export const SAMPLE_SPLIT: SplitCardData = {
+	...SAMPLE_CARD,
+	name: 'Fire',
+	manaCost: '1r',
+	typeLine: 'Instant',
+	rulesText: 'Fire deals 2 damage divided as you choose among one or two targets.',
+	flavorText: '',
+	powerToughness: '',
+	artist: '',
+	number: '',
+	secondName: 'Ice',
+	secondManaCost: '1u',
+	secondTypeLine: 'Instant',
+	secondRulesText: 'Tap target permanent.\nDraw a card.',
+	secondFlavorText: '',
 }
 
 export const SAMPLE_TOKEN: CustomCardData = {

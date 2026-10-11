@@ -13,6 +13,7 @@ import { drawSaga, SAGA_ASSETS, type SagaImages } from './drawSaga'
 import { CLASS_HEADER, drawClass } from './drawClass'
 import { drawCase } from './drawCase'
 import { drawRoom } from './drawRoom'
+import { drawSplit } from './drawSplit'
 import { drawAdventure } from './drawAdventure'
 import { drawLeveler } from './drawLeveler'
 import { hasRulesTextOverflow, resetRulesTextOverflow } from './drawRulesText'
@@ -33,6 +34,7 @@ export async function renderCardPreview(
 	const classCard = 'levels' in card
 	const caseCard = 'solveCondition' in card
 	const room = 'otherManaCost' in card
+	const split = 'secondManaCost' in card
 	const adventure = 'adventureManaCost' in card
 	const leveler = 'levelUpText' in card
 	const drawableCard: CustomCardData = planeswalker ? {
@@ -65,6 +67,11 @@ export async function renderCardPreview(
 	const roomManaRuns = room ? [manaRuns, parseManaCost(card.otherManaCost)] : []
 	const roomRulesRuns = room ? [parseRulesText(card.rulesText), parseRulesText(card.otherRulesText)] : []
 	const roomReminderRuns = room ? parseRulesText(card.reminderText) : []
+	const splitManaRuns = split ? [manaRuns, parseManaCost(card.secondManaCost)] : []
+	const splitRulesRuns = split ? [
+		parseRulesText(card.rulesText + (card.flavorText ? `\n\n*${card.flavorText}*` : '')),
+		parseRulesText(card.secondRulesText + (card.secondFlavorText ? `\n\n*${card.secondFlavorText}*` : '')),
+	] : []
 	const adventureManaRuns = adventure ? parseManaCost(card.adventureManaCost) : []
 	const adventureRulesRuns = adventure ? parseRulesText(card.adventureRulesText) : []
 	const levelerRuns = leveler ? [parseRulesText(card.levelUpText), parseRulesText(card.levelTwoRulesText), parseRulesText(card.levelThreeRulesText)] : []
@@ -94,6 +101,8 @@ export async function renderCardPreview(
 		...roomManaRuns.flat(),
 		...roomRulesRuns.flat(),
 		...roomReminderRuns,
+		...splitManaRuns.flat(),
+		...splitRulesRuns.flat(),
 		...adventureManaRuns,
 		...adventureRulesRuns,
 		...levelerRuns.flat(),
@@ -133,7 +142,7 @@ export async function renderCardPreview(
 	const colorIndicatorColors = family.layout.colorIndicator
 		? COLOR_INDICATOR_ORDER.filter((color) => card.manaCost.toUpperCase().includes(color))
 		: []
-	const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase, sagaImages, classHeader] = await Promise.all([
+	const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase, sagaImages, classHeader, secondFrame, secondArt] = await Promise.all([
 		abuLandColors
 			? loadAbuDualLand(family, abuLandColors)
 			: dualPair
@@ -152,6 +161,8 @@ export async function renderCardPreview(
 		colorIndicatorColors.length ? loadImage(assetUrl('img/frames/planeswalker/color-indicator/base.png')) : undefined,
 		saga ? Promise.all(Object.entries(SAGA_ASSETS).map(async ([key, path]) => [key, await loadImage(assetUrl(path))] as const)).then((entries) => Object.fromEntries(entries) as SagaImages) : undefined,
 		classCard ? loadImage(assetUrl(CLASS_HEADER)) : undefined,
+		input.split ? loadImage(assetUrl(family.frames[resolveFrameVariant(family, input.split.frameVariant)]!)) : undefined,
+		input.split?.artwork ? loadImageSource(input.split.artwork) : undefined,
 	])
 	const manaSymbols = new Map(
 		await Promise.all(
@@ -174,6 +185,11 @@ export async function renderCardPreview(
 	const iconlessPlaneswalker = family.id === 'planeswalker-seventh'
 	context.resetTransform()
 	context.clearRect(0, 0, WIDTH, HEIGHT)
+	if (split && input.split && secondFrame) {
+		drawSplit(context, card, [frame, secondFrame], [art, secondArt], [transform, input.split.transform], splitManaRuns, splitRulesRuns, manaSymbols, symbol, family.layout)
+		drawCardFooter(context, card, family.layout, resolvedVariant)
+		return hasRulesTextOverflow(context)
+	}
 	if (family.layout.canvas?.rotation === 'counterclockwise') {
 		context.translate(0, HEIGHT)
 		context.rotate(-Math.PI / 2)

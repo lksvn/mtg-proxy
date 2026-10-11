@@ -119,6 +119,23 @@ const roomLayout: FrameLayout = {
 	},
 }
 
+const splitLayout: FrameLayout = {
+	...roomLayout,
+	room: undefined,
+	artwork: { dragLeft: 237, dragTop: 1070, dragRight: 797, dragBottom: 1888 },
+	split: {
+		firstOriginY: 1878,
+		secondOriginY: 920,
+		secondArtwork: { dragLeft: 237, dragTop: 112, dragRight: 797, dragBottom: 930 },
+	},
+	title: { x: 0, y: 165, maxWidth: 805, font: '80px belerenb, serif', color: '#111' },
+	mana: { right: 815, centerY: 165, symbolSize: 68, gap: 4, font: '48px belerenb, serif', color: '#111' },
+	type: { x: 0, y: 855, maxWidth: 710, font: '58px belerenb, serif', color: '#111' },
+	rules: { x: 0, y: 913, width: 776, height: 380, verticalAlign: 'middle', fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 70, minFontSize: 32 },
+	symbol: { centerX: 770, centerY: 855, boxSize: 60 },
+	footer: commonFooter,
+}
+
 const adventureLayout: FrameLayout = {
 	artwork: { dragLeft: 115, dragTop: 237, dragRight: 1386, dragBottom: 1167 },
 	title: { x: 128, y: 165, maxWidth: 1244, font: '70px belerenb, serif', color: '#111' },
@@ -1699,6 +1716,23 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: {},
 		fallbacks: { ...commonFallbacks, C: 'A' },
 		layout: roomLayout,
+		fonts: commonFonts,
+	},
+	'split-regular': {
+		id: 'split-regular',
+		frames: {
+			W: 'img/frames/split/regular/w.png',
+			U: 'img/frames/split/regular/u.png',
+			B: 'img/frames/split/regular/b.png',
+			R: 'img/frames/split/regular/r.png',
+			G: 'img/frames/split/regular/g.png',
+			M: 'img/frames/split/regular/m.png',
+			A: 'img/frames/split/regular/a.png',
+			L: 'img/frames/split/regular/l.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, C: 'A' },
+		layout: splitLayout,
 		fonts: commonFonts,
 	},
 	'adventure-regular': {

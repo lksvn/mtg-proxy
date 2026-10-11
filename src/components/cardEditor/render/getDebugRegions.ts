@@ -51,6 +51,23 @@ export function getDebugRegions(family: FrameFamily): DebugRegion[] {
 		...(family.overlay ? [{ label: 'Frame overlay', ...family.overlay }] : []),
 	]
 
+	if (layout.split) {
+		const artwork = layout.split.secondArtwork
+		regions.push({ label: 'Right artwork / drag area', x: artwork.dragLeft, y: artwork.dragTop, width: artwork.dragRight - artwork.dragLeft, height: artwork.dragBottom - artwork.dragTop })
+		for (const [index, originY] of [layout.split.firstOriginY, layout.split.secondOriginY].entries()) {
+			const side = index === 0 ? 'Left' : 'Right'
+			const boxes = [
+				{ label: `${side} title`, x: layout.title.x, y: layout.title.y - 50, width: layout.title.maxWidth, height: 100 },
+				{ label: `${side} mana`, x: layout.mana.right - 300, y: layout.mana.centerY - layout.mana.symbolSize / 2, width: 300, height: layout.mana.symbolSize },
+				{ label: `${side} type`, x: layout.type.x, y: layout.type.y - 40, width: layout.type.maxWidth, height: 80 },
+				{ label: `${side} rules`, ...layout.rules },
+				{ label: `${side} set symbol`, x: layout.symbol.centerX - layout.symbol.boxSize / 2, y: layout.symbol.centerY - layout.symbol.boxSize / 2, width: layout.symbol.boxSize, height: layout.symbol.boxSize },
+			]
+			regions.push(...boxes.map((box) => ({ ...box, x: box.y, y: originY - box.x - box.width, width: box.height, height: box.width })))
+		}
+		return regions.filter((region) => region.label.includes('artwork') || region.label.includes('Artwork') || region.label.startsWith('Left') || region.label.startsWith('Right') || region.label.startsWith('Footer'))
+	}
+
 	if (layout.saga) {
 		regions.push(
 			{ label: 'Saga reminder', ...layout.saga.reminder },
