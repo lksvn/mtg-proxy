@@ -125,7 +125,7 @@ export function CardFrameControls({
 					onChange={onFrameSelectionChange}
 					hideColoredLands={hideColoredLands || isOriginalNyx || isOriginalSnow}
 					hideLands={isOriginalNyx || isUbNyx || frameFamily === 'm15-transform-borderless-back'}
-					hideVehicles={isOriginalSnow || isOriginalNyx || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature}
+					hideVehicles={frameFamily === 'm15-double-feature' || isOriginalSnow || isOriginalNyx || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature}
 				/>
 			</div>
 		</>

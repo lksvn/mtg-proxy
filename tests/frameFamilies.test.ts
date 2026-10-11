@@ -122,6 +122,18 @@ test('original UB transform back preserves vehicles and falls back for missing c
 	assert.ok(family.pt.U?.includes('/ub-back/pt/'))
 })
 
+test('regular Double Feature keeps colored lands and omits transform-only details', () => {
+	const family = FRAME_FAMILIES['m15-double-feature']
+	assert.equal(resolveFrameVariant(family, 'UL'), 'UL')
+	assert.equal(resolveFrameVariant(family, 'C'), 'A')
+	assert.equal(resolveFrameVariant(family, 'V'), 'A')
+	assert.equal(family.layout.transformIcon, undefined)
+	assert.equal(family.layout.reversePowerToughness, undefined)
+	assert.equal(family.layout.title.x, 125)
+	assert.equal(family.layout.rules.color, '#fff')
+	assert.equal(family.layout.artwork.dragBottom, 1165)
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [
