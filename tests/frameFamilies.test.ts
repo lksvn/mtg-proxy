@@ -54,6 +54,25 @@ test('extended transform faces keep artwork in the wide window', () => {
 	assert.equal(FRAME_FAMILIES['m15-transform-extended-back'].layout.showManaCost, false)
 })
 
+test('Double Feature transform shares frames but keeps face details separate', () => {
+	const front = FRAME_FAMILIES['m15-transform-double-feature-front']
+	const back = FRAME_FAMILIES['m15-transform-double-feature-back']
+	assert.deepEqual(front.frames, back.frames)
+	for (const family of [front, back]) {
+		assert.deepEqual(family.layout.artwork, { dragLeft: 116, dragTop: 238, dragRight: 1384, dragBottom: 1165 })
+		assert.equal(family.layout.rules.color, '#fff')
+		assert.equal(family.layout.pt.color, '#fff')
+		assert.equal(resolveFrameVariant(family, 'UL'), 'L')
+		assert.equal(resolveFrameVariant(family, 'V'), 'A')
+	}
+	assert.equal(front.layout.transformIcon?.defaultIcon, 'sun')
+	assert.equal(back.layout.transformIcon?.defaultIcon, 'moon')
+	assert.ok(front.layout.reversePowerToughness)
+	assert.equal(back.layout.reversePowerToughness, undefined)
+	assert.equal(back.layout.showManaCost, false)
+	assert.ok(back.layout.colorIndicator)
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [

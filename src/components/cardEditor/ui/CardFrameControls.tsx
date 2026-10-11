@@ -34,8 +34,9 @@ export function CardFrameControls({
 	const isUbNyx = frameFamily === 'm15-transform-ub-nyx-front' || frameFamily === 'm15-transform-ub-nyx-back'
 	const isBorderlessTransform = frameFamily === 'm15-transform-borderless-front' || frameFamily === 'm15-transform-borderless-back'
 	const isExtendedTransform = frameFamily === 'm15-transform-extended-front' || frameFamily === 'm15-transform-extended-back'
-	const hideColoredLands = isBorderlessTransform || isExtendedTransform || ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
-	const displayedSelection = (isUbNyx || isBorderlessTransform || isExtendedTransform) && frameSelection !== 'auto'
+	const isDoubleFeature = frameFamily === 'm15-transform-double-feature-front' || frameFamily === 'm15-transform-double-feature-back'
+	const hideColoredLands = isBorderlessTransform || isExtendedTransform || isDoubleFeature || ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
+	const displayedSelection = (isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature) && frameSelection !== 'auto'
 		? resolveFrameVariant(getFrameFamily(frameFamily), frameSelection)
 		: hideColoredLands && ['WL', 'UL', 'BL', 'RL', 'GL', 'ML'].includes(frameSelection)
 		? 'L'
@@ -121,7 +122,7 @@ export function CardFrameControls({
 					onChange={onFrameSelectionChange}
 					hideColoredLands={hideColoredLands}
 					hideLands={isUbNyx || frameFamily === 'm15-transform-borderless-back'}
-					hideVehicles={isUbNyx || isBorderlessTransform || isExtendedTransform}
+					hideVehicles={isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature}
 				/>
 			</div>
 		</>
