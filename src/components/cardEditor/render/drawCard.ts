@@ -128,39 +128,7 @@ export function drawCard(
 		}
 	}
 
-	if (symbol && layout.symbol.boxSize > 0) {
-		const { boxSize, centerX, centerY, rotation } = layout.symbol
-		const scale = Math.min(boxSize / symbol.width, boxSize / symbol.height)
-		const width = symbol.width * scale
-		const height = symbol.height * scale
-		let symbolImage: CanvasImageSource = symbol
-		let drawWidth = width
-		let drawHeight = height
-
-		if (card.tintSetSymbol) {
-			const tinted = document.createElement('canvas')
-			const tintedContext = tinted.getContext('2d')
-
-			tinted.width = boxSize
-			tinted.height = boxSize
-
-			if (tintedContext) {
-				tintedContext.drawImage(symbol, (boxSize - width) / 2, (boxSize - height) / 2, width, height)
-				tintedContext.globalCompositeOperation = 'source-in'
-				tintedContext.fillStyle = RARITY_COLORS[card.rarity]
-				tintedContext.fillRect(0, 0, boxSize, boxSize)
-				symbolImage = tinted
-				drawWidth = boxSize
-				drawHeight = boxSize
-			}
-		}
-
-		context.save()
-		context.translate(centerX, centerY)
-		if (rotation === 'counterclockwise') context.rotate(-Math.PI / 2)
-		context.drawImage(symbolImage, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight)
-		context.restore()
-	}
+	if (symbol) drawSetSymbol(context, card, symbol, layout)
 
 	context.fontKerning = 'normal'
 	context.textRendering = 'optimizeLegibility'
@@ -211,6 +179,47 @@ export function drawCard(
 	}
 
 	if (!layout.footer.unrotated) drawCardFooter(context, card, layout, variant)
+}
+
+export function drawSetSymbol(
+	context: CanvasRenderingContext2D,
+	card: CustomCardData,
+	symbol: HTMLImageElement,
+	layout: Pick<FrameLayout, 'symbol'>,
+) {
+	if (layout.symbol.boxSize > 0) {
+		const { boxSize, centerX, centerY, rotation } = layout.symbol
+		const scale = Math.min(boxSize / symbol.width, boxSize / symbol.height)
+		const width = symbol.width * scale
+		const height = symbol.height * scale
+		let symbolImage: CanvasImageSource = symbol
+		let drawWidth = width
+		let drawHeight = height
+
+		if (card.tintSetSymbol) {
+			const tinted = document.createElement('canvas')
+			const tintedContext = tinted.getContext('2d')
+
+			tinted.width = boxSize
+			tinted.height = boxSize
+
+			if (tintedContext) {
+				tintedContext.drawImage(symbol, (boxSize - width) / 2, (boxSize - height) / 2, width, height)
+				tintedContext.globalCompositeOperation = 'source-in'
+				tintedContext.fillStyle = RARITY_COLORS[card.rarity]
+				tintedContext.fillRect(0, 0, boxSize, boxSize)
+				symbolImage = tinted
+				drawWidth = boxSize
+				drawHeight = boxSize
+			}
+		}
+
+		context.save()
+		context.translate(centerX, centerY)
+		if (rotation === 'counterclockwise') context.rotate(-Math.PI / 2)
+		context.drawImage(symbolImage, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight)
+		context.restore()
+	}
 }
 
 export function drawCardFooter(

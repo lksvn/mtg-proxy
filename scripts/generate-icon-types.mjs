@@ -23,7 +23,14 @@ const type = [
 	''
 ].join('\n')
 
-await mkdir(outputDirectory, { recursive: true })
-await writeFile(outputPath, type)
+const existingType = await readFile(outputPath, 'utf8').catch((error) => {
+	if (error.code === 'ENOENT') return undefined
+	throw error
+})
+
+if (existingType !== type) {
+	await mkdir(outputDirectory, { recursive: true })
+	await writeFile(outputPath, type)
+}
 
 console.log(`Generated ${uniqueNames.length} icon names`)

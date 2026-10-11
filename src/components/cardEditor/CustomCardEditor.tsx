@@ -13,6 +13,8 @@ import { SagaDetailsForm } from './ui/SagaDetailsForm'
 import { ClassDetailsForm } from './ui/ClassDetailsForm'
 import { CaseDetailsForm } from './ui/CaseDetailsForm'
 import { RoomDetailsForm } from './ui/RoomDetailsForm'
+import { SplitDetailsForm } from './ui/SplitDetailsForm'
+import { SplitHalfTabs } from './ui/SplitHalfTabs'
 import { AdventureDetailsForm } from './ui/AdventureDetailsForm'
 import { LevelerDetailsForm } from './ui/LevelerDetailsForm'
 import type { FrameVariant } from './types'
@@ -25,6 +27,7 @@ import {
 	SAMPLE_CLASS,
 	SAMPLE_CASE,
 	SAMPLE_ROOM,
+	SAMPLE_SPLIT,
 	SAMPLE_ADVENTURE,
 	SAMPLE_LEVELER,
 } from './sampleCards'
@@ -81,6 +84,12 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const [renderResult, setRenderResult] = useState<CardRenderResult | null>(null)
 	const [artwork, setArtwork] = useState<File | string | undefined>(SAMPLE_ARTWORK_URL)
+	const [splitArtwork, setSplitArtwork] = useState<File | string | undefined>(SAMPLE_ARTWORK_URL)
+	const [splitTransform, setSplitTransform] = useState(createDefaultArtworkTransform)
+	const [splitFrameSelection, setSplitFrameSelection] = useState<FrameVariant | 'auto'>('auto')
+	const [splitArtworkSide, setSplitArtworkSide] = useState<'first' | 'second'>('first')
+	const [splitFrameSide, setSplitFrameSide] = useState<'first' | 'second'>('first')
+	const [splitStyle, setSplitStyle] = useState<'split-regular' | 'split-fuse' | 'split-aftermath'>('split-regular')
     const [artworkTransform, setArtworkTransform] = useState(createDefaultArtworkTransform)
     const [setSymbol, setSetSymbol] = useState<File | string | undefined>(SAMPLE_SET_SYMBOL_URL)
 	const [frameSelection, setFrameSelection] = useState<FrameVariant | 'auto'>('auto')
@@ -91,7 +100,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const [customCardQuantity, setCustomCardQuantity] = useState('1')
 	const quantity = Number(customCardQuantity)
 	const quantityError = getQuantityError(quantity)
-	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker' | 'battle' | 'saga' | 'class' | 'case' | 'room' | 'adventure' | 'leveler'>('card')
+	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker' | 'battle' | 'saga' | 'class' | 'case' | 'room' | 'adventure' | 'leveler' | 'split'>('card')
 	const [tokenStyle, setTokenStyle] = useState<TokenStyle>('token-regular')
 	const [planeswalkerStyle, setPlaneswalkerStyle] = useState<PlaneswalkerStyle>('planeswalker-regular')
 	const [sagaStyle, setSagaStyle] = useState<SagaStyle>('saga-regular')
@@ -106,6 +115,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const [classCard, setClassCard] = useState(SAMPLE_CLASS)
 	const [caseCard, setCaseCard] = useState(SAMPLE_CASE)
 	const [room, setRoom] = useState(SAMPLE_ROOM)
+	const [split, setSplit] = useState(SAMPLE_SPLIT)
 	const [adventure, setAdventure] = useState(SAMPLE_ADVENTURE)
 	const [leveler, setLeveler] = useState(SAMPLE_LEVELER)
 	const cardsByLayout = {
@@ -117,6 +127,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 		class: classCard,
 		case: caseCard,
 		room,
+		split,
 		adventure,
 		leveler,
 	}
@@ -129,11 +140,18 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 		class: classStyle,
 		case: caseStyle,
 		room: 'room-regular',
+		split: splitStyle,
 		adventure: adventureStyle,
 		leveler: 'leveler-regular',
 	} satisfies Record<typeof layout, FrameFamilyId>
 	const activeCard = cardsByLayout[layout]
 	const activeFamily = familiesByLayout[layout]
+	const editingSecondArtwork = layout === 'split' && splitArtworkSide === 'second'
+	const activeArtwork = editingSecondArtwork ? splitArtwork : artwork
+	const activeTransform = editingSecondArtwork ? splitTransform : artworkTransform
+	const setActiveArtwork = editingSecondArtwork ? setSplitArtwork : setArtwork
+	const setActiveTransform = editingSecondArtwork ? setSplitTransform : setArtworkTransform
+	const exportName = layout === 'split' ? `${split.name} // ${split.secondName}` : activeCard.name
 	const activeFrameSelection = layout === 'token' ? tokenFrameSelection : frameSelection
 	const tokenOptions = TOKEN_STYLES.find(({ id }) => id === tokenStyle)!
 	const planeswalkerLimitedColors = planeswalkerStyle === 'planeswalker-transform-front' ||
@@ -144,6 +162,9 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const frameVariant = activeFrameSelection === 'auto'
 		? inferFrameVariant(activeCard.manaCost, activeCard.typeLine)
 		: activeFrameSelection
+	const secondFrameVariant = splitFrameSelection === 'auto'
+		? inferFrameVariant(split.secondManaCost, split.secondTypeLine)
+		: splitFrameSelection
 	const renderInput = useMemo<CardRenderInput>(() => ({
 		artwork,
 		setSymbol,
@@ -152,7 +173,8 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 		frameVariant,
 		transform: artworkTransform,
 		card: activeCard,
-	}), [artwork, setSymbol, activeFamily, borderStyle, frameVariant, artworkTransform, activeCard])
+		split: layout === 'split' ? { artwork: splitArtwork, transform: splitTransform, frameVariant: secondFrameVariant } : undefined,
+	}), [artwork, setSymbol, activeFamily, borderStyle, frameVariant, artworkTransform, activeCard, layout, splitArtwork, splitTransform, secondFrameVariant])
 	const canExport = canExportCardRender(renderInput, renderResult)
 	const renderFailed = renderResult?.input === renderInput && renderResult.status === 'error'
 	const handleRenderResult = useCallback((result: CardRenderResult) => {
@@ -201,6 +223,8 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 				return <CaseDetailsForm card={caseCard} onChange={setCaseCard} part={part} />
 			case 'room':
 				return <RoomDetailsForm card={room} onChange={setRoom} part={part} />
+			case 'split':
+				return <SplitDetailsForm card={split} onChange={setSplit} part={part} showFuse={splitStyle === 'split-fuse'} stacked={splitStyle === 'split-aftermath'} />
 			case 'adventure':
 				return <AdventureDetailsForm card={adventure} onChange={setAdventure} part={part} />
 			case 'leveler':
@@ -230,11 +254,11 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 		try {
 			const blob = await canvasToPng(canvasRef.current)
 			if (!dpi) {
-				downloadBlob(blob, cardPngFilename(activeCard.name))
+				downloadBlob(blob, cardPngFilename(exportName))
 				return
 			}
 			const png = setPngDpi(new Uint8Array(await blob.arrayBuffer()), dpi)
-			downloadBlob(new Blob([png.buffer as ArrayBuffer], { type: 'image/png' }), cardPngFilename(activeCard.name, dpi))
+			downloadBlob(new Blob([png.buffer as ArrayBuffer], { type: 'image/png' }), cardPngFilename(exportName, dpi))
 		} catch {
 			onError(t('couldNotExportCard'))
 		}
@@ -246,7 +270,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 			const image = await canvasToPng(canvasRef.current)
 			onAddToDeckList?.({
 				quantity,
-				name: activeCard.name || t('customCard'),
+				name: exportName || t('customCard'),
 				typeLine: activeCard.typeLine,
 				artist: activeCard.artist,
 				collectorNumber: activeCard.number,
@@ -257,6 +281,34 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 		}
 	}
 
+	const artworkInput = (
+		<FileInput
+			key={editingSecondArtwork ? 'second' : 'first'}
+			id="custom-card-artwork"
+			accept="image/*"
+			label={t('chooseArtwork')}
+			hasValue={Boolean(activeArtwork)}
+			validate={loadImageSource}
+			validationError={t('invalidImageFile')}
+			onSelect={(file) => {
+				setActiveArtwork(file)
+				setActiveTransform(createDefaultArtworkTransform(
+					layout === 'planeswalker' && isDoubleFeatureStyle(planeswalkerStyle),
+				))
+			}}
+			onClear={() => setActiveArtwork(undefined)}
+		/>
+	)
+	const artworkControls = activeArtwork ? (
+		<ArtworkControls
+			transform={activeTransform}
+			onChange={setActiveTransform}
+			onReset={() => setActiveTransform(createDefaultArtworkTransform(
+				layout === 'planeswalker' && isDoubleFeatureStyle(planeswalkerStyle),
+			))}
+		/>
+	) : null
+
 	return (
 		<section>
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '1rem'}}>
@@ -264,21 +316,11 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 					<details className="form-section" open>
                         <summary><h5 className="mt-5">{t('cardImageSection')}</h5></summary>
                         <div className="form-group gap-2">
-                            <FileInput
-                                id="custom-card-artwork"
-                                accept="image/*"
-                                label={t('chooseArtwork')}
-                                hasValue={Boolean(artwork)}
-                                validate={loadImageSource}
-                                validationError={t('invalidImageFile')}
-                                onSelect={(file) => {
-                                    setArtwork(file)
-                                    setArtworkTransform(createDefaultArtworkTransform(
-										layout === 'planeswalker' && isDoubleFeatureStyle(planeswalkerStyle),
-									))
-                                }}
-                                onClear={() => setArtwork(undefined)}
-                            />
+                            {layout === 'split' ? (
+                                <SplitHalfTabs side={splitArtworkSide} onChange={setSplitArtworkSide} label={t('cardImageSection')} stacked={splitStyle === 'split-aftermath'}>
+                                    {artworkInput}
+                                </SplitHalfTabs>
+                            ) : artworkInput}
                         </div>
 						{(layout !== 'token' || !tokenOptions.hideSetSymbol) && <div className="form-group gap-2 mb-5"><FileInput
                             id="custom-card-set-symbol"
@@ -304,6 +346,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 								<option value="class">{t('cardLayoutClass')}</option>
 								<option value="case">{t('cardLayoutCase')}</option>
 								<option value="room">{t('cardLayoutRoom')}</option>
+								<option value="split">{t('cardLayoutSplit')}</option>
 								<option value="adventure">{t('cardLayoutAdventure')}</option>
 								<option value="leveler">{t('cardLayoutLeveler')}</option>
                             </select>
@@ -397,6 +440,27 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 						{layout === 'room' && <div className="form-group gap-2 mb-5">
 							<FrameColorPicker value={frameSelection} onChange={setFrameSelection} hideLands hideColoredLands hideVehicles hideColorless />
 						</div>}
+						{layout === 'split' && <>
+							<div className="form-group gap-2">
+								<label htmlFor="split-style">{t('splitStyle')}</label>
+								<select id="split-style" value={splitStyle} onChange={(event) => setSplitStyle(event.target.value as typeof splitStyle)}>
+									<option value="split-regular">{t('splitRegular')}</option>
+									<option value="split-fuse">Fuse</option>
+									<option value="split-aftermath">Aftermath</option>
+								</select>
+							</div>
+							<SplitHalfTabs side={splitFrameSide} onChange={setSplitFrameSide} label={t('cardEditionSection')} stacked={splitStyle === 'split-aftermath'}>
+								<div className="form-group gap-2 mb-5">
+									<FrameColorPicker
+										key={splitFrameSide}
+										value={splitFrameSide === 'first' ? frameSelection : splitFrameSelection}
+										onChange={splitFrameSide === 'first' ? setFrameSelection : setSplitFrameSelection}
+										hideColoredLands
+										hideVehicles
+									/>
+								</div>
+							</SplitHalfTabs>
+						</>}
 						{layout === 'adventure' && <>
 							<div className="form-group gap-2">
 								<label htmlFor="adventure-style">{t('adventureStyle')}</label>
@@ -437,16 +501,16 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 						canvasRef={canvasRef}
                         input={renderInput}
                         onRenderResult={handleRenderResult}
-                        onTransformChange={setArtworkTransform}
+                        artworkSide={editingSecondArtwork ? 'second' : 'first'}
+                        onTransformChange={setActiveTransform}
                     />
-                    {artwork && <ArtworkControls
-                        transform={artworkTransform}
-                        onChange={setArtworkTransform}
-                        onReset={() => setArtworkTransform(createDefaultArtworkTransform(
-								layout === 'planeswalker' && isDoubleFeatureStyle(planeswalkerStyle),
-							))}
-                        />
-                    }
+					{layout === 'split' ? (
+						<div className="mt-3">
+							<SplitHalfTabs side={splitArtworkSide} onChange={setSplitArtworkSide} label={t('artworkPosition')} stacked={splitStyle === 'split-aftermath'}>
+								{artworkControls ?? <small className="text-muted">{t('chooseArtwork')}</small>}
+							</SplitHalfTabs>
+						</div>
+					) : artworkControls}
 					{onAddToDeckList && <div style={{display:'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gridAutoFlow:'dense'}} className="gap-3 mt-3">
 						<div className="form-group gap-2">
 							<label htmlFor="custom-card-quantity">{t('quantity')}</label>

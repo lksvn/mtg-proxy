@@ -119,6 +119,67 @@ const roomLayout: FrameLayout = {
 	},
 }
 
+const splitLayout: FrameLayout = {
+	...roomLayout,
+	room: undefined,
+	artwork: { dragLeft: 237, dragTop: 1070, dragRight: 797, dragBottom: 1888 },
+	split: {
+		frameSplitY: 1000,
+		firstOriginY: 1878,
+		secondOriginY: 920,
+		secondArtwork: { dragLeft: 237, dragTop: 112, dragRight: 797, dragBottom: 930 },
+	},
+	title: { x: 0, y: 165, maxWidth: 805, font: '80px belerenb, serif', color: '#111' },
+	mana: { right: 815, centerY: 165, symbolSize: 68, gap: 4, font: '48px belerenb, serif', color: '#111' },
+	type: { x: 0, y: 855, maxWidth: 710, font: '58px belerenb, serif', color: '#111' },
+	rules: { x: 0, y: 913, width: 776, height: 500, verticalAlign: 'middle', fontFamily: 'mplantin', italicFontFamily: 'mplantini', color: '#111', strokeColor: '#fff', strokeWidth: 0.75, maxFontSize: 64, minFontSize: 32 },
+	symbol: { centerX: 770, centerY: 855, boxSize: 60 },
+	footer: commonFooter,
+}
+
+const fuseLayout: FrameLayout = {
+	...splitLayout,
+	rules: { ...splitLayout.rules, height: 400 },
+	split: {
+		...splitLayout.split!,
+		reminder: {
+			...splitLayout.rules,
+			x: 0,
+			y: 1360,
+			width: 1763,
+			height: 60,
+			horizontalAlign: 'center',
+			maxFontSize: 50,
+			minFontSize: 28,
+		},
+	},
+}
+
+const aftermathLayout: FrameLayout = {
+	...splitLayout,
+	previewRotation: 'counterclockwise',
+	artwork: { dragLeft: 114, dragTop: 236, dragRight: 1386, dragBottom: 705 },
+	title: { x: 128, y: 165, maxWidth: 1244, font: '80px belerenb, serif', color: '#111' },
+	mana: { ...splitLayout.mana, right: 1391, centerY: 165 },
+	type: { x: 128, y: 780, maxWidth: 1160, font: '64px belerenb, serif', color: '#111' },
+	rules: { ...splitLayout.rules, x: 129, y: 869, width: 1242, height: 252 },
+	symbol: { centerX: 1335, centerY: 780, boxSize: 75 },
+	split: {
+		frameSplitY: 1139,
+		firstOriginY: 0,
+		secondOriginY: 1186,
+		secondArtwork: { dragLeft: 825, dragTop: 1186, dragRight: 1270, dragBottom: 1904 },
+		secondLayout: {
+			originX: 1380,
+			title: { x: 0, y: 50, maxWidth: 720, font: '72px belerenb, serif', color: '#111' },
+			mana: { ...splitLayout.mana, right: 742, centerY: 50 },
+			type: { x: 0, y: 630, maxWidth: 625, font: '58px belerenb, serif', color: '#111' },
+			rules: { ...splitLayout.rules, x: 10, y: 706, width: 705, height: 540, maxFontSize: 55 },
+			symbol: { centerX: 685, centerY: 630, boxSize: 60 },
+		},
+	},
+}
+
 const adventureLayout: FrameLayout = {
 	artwork: { dragLeft: 115, dragTop: 237, dragRight: 1386, dragBottom: 1167 },
 	title: { x: 128, y: 165, maxWidth: 1244, font: '70px belerenb, serif', color: '#111' },
@@ -1699,6 +1760,57 @@ export const FRAME_FAMILIES: Record<FrameFamilyId, FrameFamily> = {
 		pt: {},
 		fallbacks: { ...commonFallbacks, C: 'A' },
 		layout: roomLayout,
+		fonts: commonFonts,
+	},
+	'split-regular': {
+		id: 'split-regular',
+		frames: {
+			W: 'img/frames/split/regular/w.png',
+			U: 'img/frames/split/regular/u.png',
+			B: 'img/frames/split/regular/b.png',
+			R: 'img/frames/split/regular/r.png',
+			G: 'img/frames/split/regular/g.png',
+			M: 'img/frames/split/regular/m.png',
+			A: 'img/frames/split/regular/a.png',
+			L: 'img/frames/split/regular/l.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, C: 'A' },
+		layout: splitLayout,
+		fonts: commonFonts,
+	},
+	'split-fuse': {
+		id: 'split-fuse',
+		frames: {
+			W: 'img/frames/split/fuse/w.png',
+			U: 'img/frames/split/fuse/u.png',
+			B: 'img/frames/split/fuse/b.png',
+			R: 'img/frames/split/fuse/r.png',
+			G: 'img/frames/split/fuse/g.png',
+			M: 'img/frames/split/fuse/m.png',
+			A: 'img/frames/split/fuse/a.png',
+			L: 'img/frames/split/fuse/l.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, C: 'A' },
+		layout: fuseLayout,
+		fonts: commonFonts,
+	},
+	'split-aftermath': {
+		id: 'split-aftermath',
+		frames: {
+			W: 'img/frames/split/aftermath/w.png',
+			U: 'img/frames/split/aftermath/u.png',
+			B: 'img/frames/split/aftermath/b.png',
+			R: 'img/frames/split/aftermath/r.png',
+			G: 'img/frames/split/aftermath/g.png',
+			M: 'img/frames/split/aftermath/m.png',
+			A: 'img/frames/split/aftermath/a.png',
+			L: 'img/frames/split/aftermath/l.png',
+		},
+		pt: {},
+		fallbacks: { ...commonFallbacks, C: 'A' },
+		layout: aftermathLayout,
 		fonts: commonFonts,
 	},
 	'adventure-regular': {

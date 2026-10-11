@@ -274,3 +274,104 @@ button.frame-color-choice {
 }
 .frame-color-swatch-A, .frame-color-swatch-V { background: #aeb4ba; }
 .frame-color-swatch-L { background: #c6ac82; }
+
+.split-half-tabs {
+	display: flex;
+	gap: 0.25rem;
+	border-bottom: 1px solid var(--border);
+}
+
+.split-half-tab {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	flex: 1;
+	padding: 0.65rem 0.5rem;
+	margin-bottom: -1px;
+	border: 1px solid var(--border);
+	border-top: 3px solid transparent;
+	border-radius: var(--small-radius) var(--small-radius) 0 0;
+	background: var(--background);
+	color: var(--text-muted);
+	font: inherit;
+	font-size: 0.875rem;
+	cursor: pointer;
+
+	&[aria-selected='true'] {
+		background: var(--surface);
+		color: var(--text);
+		border-top-color: var(--accent);
+		border-bottom-color: var(--surface);
+		font-weight: bold;
+	}
+
+	&[aria-selected='false'] {
+		border-color: transparent;
+		border-bottom-color: var(--border);
+	}
+
+	&:hover {
+		color: var(--text);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: -5px;
+	}
+}
+
+.split-half-panel {
+	padding: 1rem;
+	border: 1px solid var(--border);
+	border-top: 0;
+	border-radius: 0 0 var(--small-radius) var(--small-radius);
+	background: var(--surface);
+}
+
+.split-tab-arrow-left {
+	transform: rotate(180deg);
+}
+
+.split-tab-arrow-up {
+	transform: rotate(-90deg);
+}
+
+.split-tab-arrow-down {
+	transform: rotate(90deg);
+}
+
+.card-canvas-preview {
+	width: 100%;
+	margin-left: 0;
+	transition: transform 180ms ease-out, width 180ms ease-out, margin-left 180ms ease-out, aspect-ratio 180ms ease-out;
+
+	canvas, svg {
+		transition: transform 180ms ease-out, width 180ms ease-out;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		&, canvas, svg {
+			transition: none;
+		}
+	}
+
+	@media (min-width: 48rem) {
+		&.is-rotated {
+			width: 120%;
+			margin-left: -10%;
+			z-index: 2;
+			transform-origin: center;
+
+			@media (hover: hover) and (pointer: fine) {
+				&:hover {
+					transform: scale(1.15);
+				}
+
+				@media (prefers-reduced-motion: reduce) {
+					transition: none;
+				}
+			}
+		}
+	}
+}
