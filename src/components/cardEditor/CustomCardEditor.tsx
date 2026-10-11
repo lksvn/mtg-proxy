@@ -316,7 +316,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 
 	return (
 		<section>
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '1rem'}}>
+            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '2rem'}}>
                 <div>
 					<details className="form-section" open>
                         <summary><h5 className="mt-5">{t('cardImageSection')}</h5></summary>

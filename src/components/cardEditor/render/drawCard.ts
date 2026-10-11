@@ -139,7 +139,9 @@ export function drawCard(
 		context.fillText(card.name, resolveTextX(layout.title), layout.title.y, layout.title.maxWidth)
 	}
 	context.textAlign = 'right'
-	drawManaCost(context, manaRuns, manaSymbols, layout.mana.right, layout.mana.centerY, layout.mana)
+	if (layout.showManaCost !== false) {
+		drawManaCost(context, manaRuns, manaSymbols, layout.mana.right, layout.mana.centerY, layout.mana)
+	}
 	if (layout.type.maxWidth > 0) {
 		applyTextStyle(context, layout.type, variant)
 		context.textAlign = 'left'

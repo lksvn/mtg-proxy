@@ -5,6 +5,7 @@ import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import test from 'node:test'
 import { futureManaFile } from '../src/components/cardEditor/render/drawManaCost.ts'
+import { getDebugRegions } from '../src/components/cardEditor/render/getDebugRegions.ts'
 import {
 	FRAME_FAMILIES,
 	resolveFrameVariant,
@@ -40,6 +41,19 @@ test('frame family assets exist', () => {
 })
 
 test('frame variants stay in the selected family and use declared fallbacks', () => {
+	const transformBack = FRAME_FAMILIES['m15-transform-back']
+	assert.equal(resolveFrameVariant(transformBack, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(transformBack, 'C'), 'C')
+	assert.equal(resolveFrameVariant(transformBack, 'WL'), 'WL')
+	assert.equal(transformBack.layout.showManaCost, false)
+	assert.equal(getDebugRegions(transformBack).some(region => region.label === 'Mana'), false)
+	assert.equal(transformBack.layout.title.color, '#fff')
+	assert.equal(transformBack.layout.type.color, '#fff')
+	assert.equal(transformBack.layout.pt.color, '#fff')
+	assert.equal(transformBack.layout.reversePowerToughness, undefined)
+	assert.ok(transformBack.layout.type.x > transformBack.layout.colorIndicator!.x + transformBack.layout.colorIndicator!.width)
+	assert.equal(transformBack.pt.C, transformBack.pt.A)
+	assert.deepEqual(transformBack.layout.artwork, FRAME_FAMILIES['m15-regular'].layout.artwork)
 	const transformFront = FRAME_FAMILIES['m15-transform-front']
 	assert.equal(resolveFrameVariant(transformFront, 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(transformFront, 'V'), 'V')
