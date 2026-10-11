@@ -231,6 +231,20 @@ test('extended modal faces retain wide artwork, the strip, and regular P/T', () 
 	}
 })
 
+test('borderless modal faces reserve the strip and keep artwork dragging full width', () => {
+	for (const id of ['m15-modal-borderless-front', 'm15-modal-borderless-back'] as const) {
+		const family = FRAME_FAMILIES[id]
+		assert.deepEqual(family.layout.artwork, { dragLeft: 0, dragTop: 0, dragRight: 1500, dragBottom: 1937 })
+		assert.ok(family.layout.reverseFace)
+		assert.equal(resolveFrameVariant(family, 'UL'), 'M')
+		assert.equal(resolveFrameVariant(family, 'L'), 'M')
+		assert.equal(resolveFrameVariant(family, 'V'), 'A')
+		assert.equal(family.pt.U, FRAME_FAMILIES['m15-regular'].pt.U)
+	}
+	assert.equal(FRAME_FAMILIES['m15-modal-borderless-front'].layout.rules.color, '#111')
+	assert.equal(FRAME_FAMILIES['m15-modal-borderless-back'].layout.rules.color, '#fff')
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [
