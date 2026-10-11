@@ -16,6 +16,28 @@ import {
 	type FrameFamily,
 } from '../src/components/cardEditor/frameFamilies.ts'
 
+test('borderless transform faces use full artwork and face-specific geometry', () => {
+	const front = FRAME_FAMILIES['m15-transform-borderless-front']
+	const back = FRAME_FAMILIES['m15-transform-borderless-back']
+	for (const family of [front, back]) {
+		assert.equal(family.layout.artwork.dragLeft, 0)
+		assert.equal(family.layout.artwork.dragTop, 0)
+		assert.equal(family.layout.artwork.dragRight, 1500)
+		assert.equal(family.layout.artwork.dragBottom, 1937)
+		assert.equal(family.layout.transformIcon?.x, 89)
+		assert.equal(resolveFrameVariant(family, 'V'), 'A')
+		assert.equal(resolveFrameVariant(family, 'C'), 'A')
+	}
+	assert.equal(resolveFrameVariant(front, 'UL'), 'L')
+	assert.equal(resolveFrameVariant(back, 'UL'), 'M')
+	assert.equal(front.layout.reversePowerToughness?.color, '#666')
+	assert.equal(back.layout.reversePowerToughness, undefined)
+	assert.equal(back.layout.showManaCost, false)
+	assert.equal(back.layout.rules.color, '#fff')
+	assert.equal(back.layout.colorIndicator?.centerX, 150)
+	assert.equal(back.dual?.neutralVariant, 'A')
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [

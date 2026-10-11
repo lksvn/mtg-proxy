@@ -145,7 +145,9 @@ export async function renderCardPreview(
 	const colorIndicatorColors = family.layout.colorIndicator
 		? COLOR_INDICATOR_ORDER.filter((color) => card.manaCost.toUpperCase().includes(color))
 		: []
-	const iconPath = family.layout.transformIcon ? transformIconPath(input.transformIcon) : undefined
+	const iconPath = family.layout.transformIcon
+		? transformIconPath(input.transformIcon, family.layout.transformIcon.defaultIcon)
+		: undefined
 	const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase, sagaImages, classHeader, secondFrame, secondArt, transformIcon] = await Promise.all([
 		abuLandColors
 			? loadAbuDualLand(family, abuLandColors)

@@ -32,8 +32,9 @@ export function CardFrameControls({
 }: CardFrameControlsProps) {
 	const { t } = useI18n()
 	const isUbNyx = frameFamily === 'm15-transform-ub-nyx-front' || frameFamily === 'm15-transform-ub-nyx-back'
-	const hideColoredLands = ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
-	const displayedSelection = isUbNyx && frameSelection !== 'auto'
+	const isBorderlessTransform = frameFamily === 'm15-transform-borderless-front' || frameFamily === 'm15-transform-borderless-back'
+	const hideColoredLands = isBorderlessTransform || ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
+	const displayedSelection = (isUbNyx || isBorderlessTransform) && frameSelection !== 'auto'
 		? resolveFrameVariant(getFrameFamily(frameFamily), frameSelection)
 		: hideColoredLands && ['WL', 'UL', 'BL', 'RL', 'GL', 'ML'].includes(frameSelection)
 		? 'L'
@@ -118,8 +119,8 @@ export function CardFrameControls({
 					value={displayedSelection}
 					onChange={onFrameSelectionChange}
 					hideColoredLands={hideColoredLands}
-					hideLands={isUbNyx}
-					hideVehicles={isUbNyx}
+					hideLands={isUbNyx || frameFamily === 'm15-transform-borderless-back'}
+					hideVehicles={isUbNyx || isBorderlessTransform}
 				/>
 			</div>
 		</>

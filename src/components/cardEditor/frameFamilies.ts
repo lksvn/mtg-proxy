@@ -3,7 +3,7 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-type ClassFrameFamilyId = 'class-regular' | 'class-nyx' | 'class-universes-beyond' | 'class-universes-beyond-nyx' | 'case-regular' | 'case-nyx' | 'case-universes-beyond' | 'case-universes-beyond-nyx' | 'room-regular' | 'adventure-regular' | 'adventure-nyx' | 'leveler-regular' | 'split-regular' | 'split-fuse' | 'split-aftermath' | 'm15-transform-front' | 'm15-transform-back' | 'm15-transform-nyx-front' | 'm15-transform-nyx-back' | 'm15-transform-snow-front' | 'm15-transform-snow-back' | 'm15-transform-ub-front' | 'm15-transform-ub-back' | 'm15-transform-ub-nyx-front' | 'm15-transform-ub-nyx-back'
+type ClassFrameFamilyId = 'class-regular' | 'class-nyx' | 'class-universes-beyond' | 'class-universes-beyond-nyx' | 'case-regular' | 'case-nyx' | 'case-universes-beyond' | 'case-universes-beyond-nyx' | 'room-regular' | 'adventure-regular' | 'adventure-nyx' | 'leveler-regular' | 'split-regular' | 'split-fuse' | 'split-aftermath' | 'm15-transform-front' | 'm15-transform-back' | 'm15-transform-nyx-front' | 'm15-transform-nyx-back' | 'm15-transform-snow-front' | 'm15-transform-snow-back' | 'm15-transform-ub-front' | 'm15-transform-ub-back' | 'm15-transform-ub-nyx-front' | 'm15-transform-ub-nyx-back' | 'm15-transform-borderless-front' | 'm15-transform-borderless-back'
 export type FrameFamilyId = ClassFrameFamilyId | 'saga-regular' | 'saga-nyx' | 'saga-universes-beyond' | 'saga-universes-beyond-regular' | 'saga-creature' | 'saga-creature-regular' | 'saga-creature-transform-front' | 'saga-creature-transform-back' | 'saga-creature-transform-front-ub' | 'saga-creature-transform-back-ub' | 'saga-transform' | 'saga-lord-of-the-rings' | 'battle-regular' | 'planeswalker-regular' | 'planeswalker-transform-front' | 'planeswalker-transform-back' | 'planeswalker-mdfc-back' | 'planeswalker-borderless' | 'planeswalker-box-topper' | 'planeswalker-compleated' | 'planeswalker-double-feature' | 'planeswalker-tall-double-feature' | 'planeswalker-transform-front-double-feature' | 'planeswalker-transform-back-double-feature' | 'planeswalker-sdcc15' | 'planeswalker-sdcc15-transform' | 'planeswalker-nickname' | 'planeswalker-seventh' | 'planeswalker-tall' | 'planeswalker-tall-borderless' | 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight' | 'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'
 export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
@@ -136,7 +136,7 @@ export type FrameLayout = {
 	reversePowerToughness?: TextBox
 	symbol: { centerX: number; centerY: number; boxSize: number; rotation?: 'counterclockwise' }
 	colorIndicator?: { x: number; y: number; width: number; height: number; centerX: number; centerY: number; radius: number }
-	transformIcon?: { x: number; y: number; width: number; height: number }
+	transformIcon?: { x: number; y: number; width: number; height: number; defaultIcon?: import('./transformIcons').TransformIcon }
 	pt: TextStyle & {
 		x: number
 		y: number

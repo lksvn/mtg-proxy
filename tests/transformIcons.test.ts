@@ -9,6 +9,11 @@ import { FRAME_FAMILIES } from '../src/components/cardEditor/frameFamilies.ts'
 
 test('Transform icons exist and replace only the icon interior on either face', () => {
 	assert.equal(transformIconPath(undefined), undefined)
+	const borderlessFront = FRAME_FAMILIES['m15-transform-borderless-front'].layout.transformIcon!
+	const borderlessBack = FRAME_FAMILIES['m15-transform-borderless-back'].layout.transformIcon!
+	assert.equal(transformIconPath(undefined, borderlessFront.defaultIcon), transformIconPath('up'))
+	assert.equal(transformIconPath(undefined, borderlessBack.defaultIcon), transformIconPath('down'))
+	assert.equal(transformIconPath('sun', borderlessBack.defaultIcon), transformIconPath('sun'))
 	for (const icon of TRANSFORM_ICONS) {
 		assert.ok(existsSync(resolve('public', transformIconPath(icon.id)!)), icon.id)
 	}

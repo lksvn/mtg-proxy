@@ -17,7 +17,7 @@ export const TRANSFORM_ICONS = [
 
 export type TransformIcon = typeof TRANSFORM_ICONS[number]['id']
 
-export function transformIconPath(icon: TransformIcon | undefined) {
-	const option = TRANSFORM_ICONS.find(option => option.id === icon)
+export function transformIconPath(icon: TransformIcon | undefined, defaultIcon?: TransformIcon) {
+	const option = TRANSFORM_ICONS.find(option => option.id === (icon ?? defaultIcon))
 	return option ? `img/frames/m15/transform/icons/${option.file}` : undefined
 }

@@ -22,6 +22,8 @@ export const FRAME_STYLE_GROUPS = [
 	] },
 	{ label: 'frameStyleGroupShowcase', options: [
 		{ id: 'borderless', label: 'frameStyleBorderless' },
+		{ id: 'm15-transform-borderless-front', label: 'frameStyleTransformBorderlessFront' },
+		{ id: 'm15-transform-borderless-back', label: 'frameStyleTransformBorderlessBack' },
 	] },
 	{ label: 'frameStyleGroupPromo', options: [
 		{ id: 'promo-regular', label: 'frameStylePromoRegular' },
