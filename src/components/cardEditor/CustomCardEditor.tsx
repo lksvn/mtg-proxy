@@ -250,6 +250,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 						hidePowerToughness={layout === 'token' && tokenOptions.hidePowerToughness}
 						powerToughnessLabel={layout === 'battle' ? 'defense' : undefined}
 						showReversePowerToughness={Boolean(getFrameFamily(activeFamily).layout.reversePowerToughness)}
+						showReverseFace={Boolean(getFrameFamily(activeFamily).layout.reverseFace)}
 						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
 					/>
 				)

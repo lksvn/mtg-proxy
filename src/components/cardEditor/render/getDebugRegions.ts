@@ -23,6 +23,13 @@ export function getDebugRegions(family: FrameFamily): DebugRegion[] {
 		...(layout.transformIcon ? [{ label: 'Transform icon', ...layout.transformIcon }] : []),
 		...(layout.showManaCost !== false ? [{ label: 'Mana', x: layout.mana.right - 420, y: layout.mana.centerY - layout.mana.symbolSize / 2, width: 420, height: layout.mana.symbolSize }] : []),
 		{ label: 'Type', x: layout.type.x, y: layout.type.y - 50, width: layout.type.maxWidth, height: 100 },
+		...(layout.reverseFace ? [{
+			label: 'Opposite face strip',
+			x: layout.reverseFace.x,
+			y: layout.reverseFace.y - 30,
+			width: layout.reverseFace.manaRight - layout.reverseFace.x,
+			height: 60,
+		}] : []),
 		{
 			label: 'Set symbol',
 			x: layout.symbol.centerX - layout.symbol.boxSize / 2,

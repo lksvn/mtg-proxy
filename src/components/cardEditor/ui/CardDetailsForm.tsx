@@ -14,12 +14,13 @@ type CardDetailsFormProps = {
 	hideTypeLine?: boolean
 	hidePowerToughness?: boolean
 	showReversePowerToughness?: boolean
+	showReverseFace?: boolean
 	rulesFieldId?: string
 	powerToughnessLabel?: 'powerToughness' | 'defense'
 	part?: 'content' | 'details'
 }
 
-export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hideTypeLine, hidePowerToughness, showReversePowerToughness, rulesFieldId = 'card-rules-text', powerToughnessLabel = 'powerToughness', part }: CardDetailsFormProps) {
+export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hideRulesText, hideNameAndType, hideTypeLine, hidePowerToughness, showReversePowerToughness, showReverseFace, rulesFieldId = 'card-rules-text', powerToughnessLabel = 'powerToughness', part }: CardDetailsFormProps) {
 	const { t } = useI18n()
 
 	function update(changes: Partial<CustomCardData>) {
@@ -126,6 +127,27 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 					}
 				/>
 			</div>}
+			{showReverseFace && <>
+				<div className="form-group gap-2">
+					<label htmlFor="card-reverse-name">{t('reverseFaceName')}</label>
+					<input
+						id="card-reverse-name"
+						type="text"
+						value={card.reverseFaceName ?? ''}
+						onChange={(event) => update({ reverseFaceName: event.target.value })}
+					/>
+				</div>
+				<div className="form-group gap-2">
+					<label htmlFor="card-reverse-mana">{t('reverseFaceManaCost')}</label>
+					<input
+						id="card-reverse-mana"
+						type="text"
+						value={card.reverseFaceManaCost ?? ''}
+						onChange={(event) => update({ reverseFaceManaCost: event.target.value })}
+					/>
+					<small className="text-muted">{t('manaCostHelp')}</small>
+				</div>
+			</>}
 			{showReversePowerToughness && <div className="form-group gap-2">
 				<label htmlFor="card-reverse-power-toughness">{t('reversePowerToughness')}</label>
 				<input

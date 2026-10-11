@@ -12,6 +12,8 @@ export type CustomCardData = {
     flavorText: string
     powerToughness: string
 	reversePowerToughness?: string
+	reverseFaceName?: string
+	reverseFaceManaCost?: string
     artist: string
     number: string
     rarity: CardRarity

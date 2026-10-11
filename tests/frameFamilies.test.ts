@@ -147,6 +147,21 @@ test('Neon Ink uses full artwork and keeps its P/T overlay separate from the tex
 	assert.equal(FRAME_FAMILIES['m15-regular'].layout.pt.backgroundBounds, undefined)
 })
 
+test('regular modal faces keep mana costs and reserve the opposite-face strip', () => {
+	const front = FRAME_FAMILIES['m15-modal-front']
+	const back = FRAME_FAMILIES['m15-modal-back']
+	for (const family of [front, back]) {
+		assert.notEqual(family.layout.showManaCost, false)
+		assert.ok(family.layout.rules.y + family.layout.rules.height < family.layout.reverseFace!.y)
+		assert.equal(family.layout.transformIcon, undefined)
+		assert.equal(resolveFrameVariant(family, 'UL'), 'UL')
+		assert.ok(getDebugRegions(family).some(region => region.label === 'Opposite face strip'))
+	}
+	assert.equal(front.layout.reverseFace?.color, '#fff')
+	assert.equal(back.layout.reverseFace?.color, '#111')
+	assert.equal(back.layout.title.color, '#fff')
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [

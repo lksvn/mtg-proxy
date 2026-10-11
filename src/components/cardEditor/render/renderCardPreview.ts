@@ -77,7 +77,9 @@ export async function renderCardPreview(
 	const adventureManaRuns = adventure ? parseManaCost(card.adventureManaCost) : []
 	const adventureRulesRuns = adventure ? parseRulesText(card.adventureRulesText) : []
 	const levelerRuns = leveler ? [parseRulesText(card.levelUpText), parseRulesText(card.levelTwoRulesText), parseRulesText(card.levelThreeRulesText)] : []
-	const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
+	const reverseManaRuns = planeswalker || family.layout.reverseFace
+		? parseManaCost(card.reverseFaceManaCost ?? '')
+		: []
 	const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 		? 'img/frames/planeswalker/mdfc/text.png'
 		: family.id === 'planeswalker-compleated'

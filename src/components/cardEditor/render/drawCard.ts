@@ -1,6 +1,6 @@
 import type { ArtworkTransform } from '../CardCanvas'
 import { artworkFilter } from './artworkFilter'
-import type { CardTextRun } from '../cardText'
+import { parseManaCost, type CardTextRun } from '../cardText'
 import type { FrameLayout } from '../frameFamilies'
 import { resolveFooterX, resolvePtTextColor, resolveTextColor, resolveTextX } from '../frameFamilies'
 import type { CustomCardData, FrameVariant } from '../types'
@@ -194,6 +194,19 @@ export function drawCard(
 			layout.pt.textY,
 			layout.pt.width,
 		)
+	}
+
+	if (layout.reverseFace) {
+		const reverse = layout.reverseFace
+		applyTextStyle(context, reverse)
+		context.textAlign = 'left'
+		context.fillText(card.reverseFaceName ?? '', reverse.x, reverse.y, reverse.maxWidth)
+		drawManaCost(context, parseManaCost(card.reverseFaceManaCost ?? ''), manaSymbols, reverse.manaRight, reverse.y, {
+			symbolSize: reverse.manaSize,
+			gap: 2,
+			font: '40px belerenb, serif',
+			color: reverse.color,
+		})
 	}
 
 	if (!layout.footer.unrotated) drawCardFooter(context, card, layout, variant)
