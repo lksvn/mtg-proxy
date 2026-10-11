@@ -9,11 +9,11 @@ const HEIGHT = 2100
 
 export const PLANESWALKER_ASSETS = {
 	mask: 'img/frames/planeswalker/text.svg',
-	plus: 'img/frames/planeswalker/planeswalkerPlus.png',
-	neutral: 'img/frames/planeswalker/planeswalkerNeutral.png',
-	minus: 'img/frames/planeswalker/planeswalkerMinus.png',
-	lightToDark: 'img/frames/planeswalker/abilityLineOdd.png',
-	darkToLight: 'img/frames/planeswalker/abilityLineEven.png',
+	plus: 'img/frames/planeswalker/planeswalkerPlus.webp',
+	neutral: 'img/frames/planeswalker/planeswalkerNeutral.webp',
+	minus: 'img/frames/planeswalker/planeswalkerMinus.webp',
+	lightToDark: 'img/frames/planeswalker/abilityLineOdd.webp',
+	darkToLight: 'img/frames/planeswalker/abilityLineEven.webp',
 } as const
 
 const ABILITY_CENTERS = [

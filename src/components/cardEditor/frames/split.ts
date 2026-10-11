@@ -46,11 +46,11 @@ export const splitFrames = {
 		id: 'split-aftermath',
 		frames: {
 			W: 'img/frames/split/aftermath/w.png',
-			U: 'img/frames/split/aftermath/u.png',
+			U: 'img/frames/split/aftermath/u.webp',
 			B: 'img/frames/split/aftermath/b.png',
 			R: 'img/frames/split/aftermath/r.png',
 			G: 'img/frames/split/aftermath/g.png',
-			M: 'img/frames/split/aftermath/m.png',
+			M: 'img/frames/split/aftermath/m.webp',
 			A: 'img/frames/split/aftermath/a.png',
 			L: 'img/frames/split/aftermath/l.png',
 		},
