@@ -29,15 +29,15 @@ export const commonFallbacks: Partial<Record<FrameVariant, FrameVariant>> = {
 }
 
 export const m15Pt = {
-	W: 'img/frames/m15/regular/m15PTW.png',
-	U: 'img/frames/m15/regular/m15PTU.png',
-	B: 'img/frames/m15/regular/m15PTB.png',
-	R: 'img/frames/m15/regular/m15PTR.png',
-	G: 'img/frames/m15/regular/m15PTG.png',
-	M: 'img/frames/m15/regular/m15PTM.png',
-	A: 'img/frames/m15/regular/m15PTA.png',
-	C: 'img/frames/m15/regular/m15PTC.png',
-	V: 'img/frames/m15/regular/m15PTV.png',
+	W: 'img/frames/m15/regular/m15PTW.webp',
+	U: 'img/frames/m15/regular/m15PTU.webp',
+	B: 'img/frames/m15/regular/m15PTB.webp',
+	R: 'img/frames/m15/regular/m15PTR.webp',
+	G: 'img/frames/m15/regular/m15PTG.webp',
+	M: 'img/frames/m15/regular/m15PTM.webp',
+	A: 'img/frames/m15/regular/m15PTA.webp',
+	C: 'img/frames/m15/regular/m15PTC.webp',
+	V: 'img/frames/m15/regular/m15PTV.webp',
 }
 
 export const commonFooter: FrameLayout['footer'] = {
@@ -407,8 +407,8 @@ export const seventhLayout: FrameLayout = {
 
 export const abuFrames: FrameFamily['frames'] = {
 	W: 'img/frames/old/abu/w.png', U: 'img/frames/old/abu/u.png',
-	B: 'img/frames/old/abu/b.png', R: 'img/frames/old/abu/r.png',
-	G: 'img/frames/old/abu/g.png', A: 'img/frames/old/abu/a.png',
+	B: 'img/frames/old/abu/b.png', R: 'img/frames/old/abu/r.webp',
+	G: 'img/frames/old/abu/g.webp', A: 'img/frames/old/abu/a.png',
 	L: 'img/frames/old/abu/l.png', WL: 'img/frames/old/abu/wl.png',
 	UL: 'img/frames/old/abu/ul.png', BL: 'img/frames/old/abu/bl.png',
 	RL: 'img/frames/old/abu/rl.png', GL: 'img/frames/old/abu/gl.png',

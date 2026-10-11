@@ -19,3 +19,12 @@ New styles also need an ID in `../frameFamilies.ts`, an option in
 `../editorOptions.ts`, EN/PT-BR labels in `../../../i18n/messages.ts`, and the vault's
 Frame Naming Reference. Keep assets under `public/img/frames/`; no asset paths
 need to change when reorganizing these TypeScript files.
+
+Raster assets use lossless WebP when it is smaller and decodes to exactly
+the same RGBA pixels as the source PNG, including fully transparent pixels.
+Keep the original dimensions and color metadata. SVGs and images that do not
+benefit from conversion or pass that comparison stay in their original format. Source notes
+refer to Card Conjurer's original filenames, not the optimized extension.
+PNG exports are unchanged; the renderer loads either asset format normally.
+`npm run build` checks the final deployment against a 985 MB budget. This leaves
+little room for new frames; optimize additions before increasing this budget.

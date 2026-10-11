@@ -6,7 +6,7 @@ import { romanNumeral } from './sagaNumbers'
 
 export const SAGA_ASSETS = {
 	chapter: 'img/frames/saga/sagaChapter.png',
-	divider: 'img/frames/saga/sagaDivider.png',
+	divider: 'img/frames/saga/sagaDivider.webp',
 }
 
 export type SagaImages = {

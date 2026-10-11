@@ -82,13 +82,13 @@ export async function renderCardPreview(
 		? parseManaCost(card.reverseFaceManaCost ?? '')
 		: []
 	const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
-		? 'img/frames/planeswalker/mdfc/text.png'
+		? 'img/frames/planeswalker/mdfc/text.webp'
 		: family.id === 'planeswalker-compleated'
 			? 'img/frames/planeswalker/compleated/text.svg'
 		: family.id === 'planeswalker-transform-front' || family.id === 'planeswalker-transform-front-double-feature'
 			? 'img/frames/planeswalker/transform/textFront.svg'
 		: family.id === 'planeswalker-tall' || family.id === 'planeswalker-tall-borderless' || family.id === 'planeswalker-tall-double-feature'
-			? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.png'
+			? 'img/frames/planeswalker/tall/planeswalkerTallMaskRules.webp'
 			: PLANESWALKER_ASSETS.mask
 	const planeswalkerAssets = { ...PLANESWALKER_ASSETS, mask: planeswalkerMask }
 	const allRuns = [
@@ -173,7 +173,7 @@ export async function renderCardPreview(
 		setSymbol ? loadImageSource(setSymbol) : undefined,
 		typeIconPath ? loadImage(assetUrl(typeIconPath)) : undefined,
 		planeswalker ? Promise.all(Object.entries(planeswalkerAssets).map(async ([key, path]) => [key, await loadImage(assetUrl(path))] as const)).then((entries) => Object.fromEntries(entries) as PlaneswalkerIcons) : undefined,
-		colorIndicatorColors.length ? loadImage(assetUrl('img/frames/planeswalker/color-indicator/base.png')) : undefined,
+		colorIndicatorColors.length ? loadImage(assetUrl('img/frames/planeswalker/color-indicator/base.webp')) : undefined,
 		saga ? Promise.all(Object.entries(SAGA_ASSETS).map(async ([key, path]) => [key, await loadImage(assetUrl(path))] as const)).then((entries) => Object.fromEntries(entries) as SagaImages) : undefined,
 		classCard ? loadImage(assetUrl(CLASS_HEADER)) : undefined,
 		input.split ? loadImage(assetUrl(family.frames[resolveFrameVariant(family, input.split.frameVariant)]!)) : undefined,
