@@ -1,4 +1,4 @@
-// Generated from public/icons.svg
+// Generated from src/assets/icons.svg
 
 export type IconName =
 	| "arrow-left-right"
