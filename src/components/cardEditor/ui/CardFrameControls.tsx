@@ -1,6 +1,6 @@
 import { useI18n } from '../../../i18n/context'
 import { FRAME_STYLE_GROUPS } from '../editorOptions'
-import { getFrameFamily, type FrameBorderStyle, type FrameFamilyId } from '../frameFamilies'
+import { getFrameFamily, resolveFrameVariant, type FrameBorderStyle, type FrameFamilyId } from '../frameFamilies'
 import type { FrameVariant } from '../types'
 import { FrameColorPicker } from './FrameColorPicker'
 import { TRANSFORM_ICONS, type TransformIcon } from '../transformIcons'
@@ -31,8 +31,11 @@ export function CardFrameControls({
 	onSearchChange,
 }: CardFrameControlsProps) {
 	const { t } = useI18n()
+	const isUbNyx = frameFamily === 'm15-transform-ub-nyx-front' || frameFamily === 'm15-transform-ub-nyx-back'
 	const hideColoredLands = ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
-	const displayedSelection = hideColoredLands && ['WL', 'UL', 'BL', 'RL', 'GL', 'ML'].includes(frameSelection)
+	const displayedSelection = isUbNyx && frameSelection !== 'auto'
+		? resolveFrameVariant(getFrameFamily(frameFamily), frameSelection)
+		: hideColoredLands && ['WL', 'UL', 'BL', 'RL', 'GL', 'ML'].includes(frameSelection)
 		? 'L'
 		: frameSelection
 	const normalizedSearch = search.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
@@ -115,6 +118,8 @@ export function CardFrameControls({
 					value={displayedSelection}
 					onChange={onFrameSelectionChange}
 					hideColoredLands={hideColoredLands}
+					hideLands={isUbNyx}
+					hideVehicles={isUbNyx}
 				/>
 			</div>
 		</>
