@@ -38,6 +38,7 @@ export function CardFrameControls({
 		'm15-modal-ub-nyx-front',
 		'm15-modal-ub-nyx-back',
 	].includes(frameFamily)
+	const isZendikarShowcase = frameFamily === 'zendikar-rising-showcase'
 	const isKaldheim = ['kaldheim-showcase', 'kaldheim-modal-front', 'kaldheim-modal-back'].includes(frameFamily)
 	const isModalBorderless = frameFamily === 'm15-modal-borderless-front' || frameFamily === 'm15-modal-borderless-back'
 	const isModalExtended = frameFamily === 'm15-modal-extended-front' || frameFamily === 'm15-modal-extended-back'
@@ -50,7 +51,7 @@ export function CardFrameControls({
 	const isOriginalBack = frameFamily === 'm15-transform-original-back' || frameFamily === 'm15-transform-ub-original-back'
 	const isNeonInk = frameFamily === 'neon-ink'
 	const hideColoredLands = isModalExtended || isOriginalBack || isBorderlessTransform || isExtendedTransform || isDoubleFeature || ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
-	const displayedSelection = (isKaldheim || isModalBorderless || isModalExtended || isModalSnow || isModalNyx || isNeonInk || isOriginalSnow || isOriginalNyx || isOriginalBack || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature) && frameSelection !== 'auto'
+	const displayedSelection = (isZendikarShowcase || isKaldheim || isModalBorderless || isModalExtended || isModalSnow || isModalNyx || isNeonInk || isOriginalSnow || isOriginalNyx || isOriginalBack || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature) && frameSelection !== 'auto'
 		? resolveFrameVariant(getFrameFamily(frameFamily), frameSelection)
 		: hideColoredLands && ['WL', 'UL', 'BL', 'RL', 'GL', 'ML'].includes(frameSelection)
 		? 'L'
@@ -134,9 +135,9 @@ export function CardFrameControls({
 				<FrameColorPicker
 					value={displayedSelection}
 					onChange={onFrameSelectionChange}
-					hideColoredLands={isNeonInk || hideColoredLands || isOriginalNyx || isOriginalSnow}
+					hideColoredLands={isZendikarShowcase || isNeonInk || hideColoredLands || isOriginalNyx || isOriginalSnow}
 					hideLands={isKaldheim || isModalBorderless || isModalNyx || isOriginalNyx || isUbNyx || frameFamily === 'm15-transform-borderless-back'}
-					hideVehicles={isKaldheim || isModalBorderless || isModalExtended || isModalSnow || isModalNyx || isNeonInk || frameFamily === 'm15-double-feature' || isOriginalSnow || isOriginalNyx || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature}
+					hideVehicles={isZendikarShowcase || isKaldheim || isModalBorderless || isModalExtended || isModalSnow || isModalNyx || isNeonInk || frameFamily === 'm15-double-feature' || isOriginalSnow || isOriginalNyx || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature}
 				/>
 			</div>
 		</>

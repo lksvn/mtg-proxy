@@ -272,6 +272,18 @@ test('Kaldheim modal faces reserve the strip and load matching face overlays', (
 	}
 })
 
+test('Zendikar Rising showcase keeps wide artwork and white text', () => {
+	const family = FRAME_FAMILIES['zendikar-rising-showcase']
+	assert.deepEqual(family.layout.artwork, { dragLeft: 60, dragTop: 60, dragRight: 1440, dragBottom: 1876 })
+	assert.equal(family.layout.title.color, '#fff')
+	assert.equal(family.layout.rules.color, '#fff')
+	assert.equal(family.layout.pt.color, '#fff')
+	assert.equal(resolveFrameVariant(family, 'UL'), 'L')
+	assert.equal(resolveFrameVariant(family, 'V'), 'A')
+	assert.equal(resolveFrameVariant(family, 'C'), 'C')
+	assert.ok(family.pt.U?.includes('/zendikar-rising/'))
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [
