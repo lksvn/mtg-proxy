@@ -41,6 +41,13 @@ test('frame family assets exist', () => {
 })
 
 test('frame variants stay in the selected family and use declared fallbacks', () => {
+	const nyxFront = FRAME_FAMILIES['m15-transform-nyx-front']
+	assert.equal(resolveFrameVariant(nyxFront, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(nyxFront, 'V'), 'A')
+	assert.equal(resolveFrameVariant(nyxFront, 'L'), 'M')
+	assert.equal(resolveFrameVariant(nyxFront, 'WL'), 'M')
+	assert.equal(nyxFront.dual?.neutralVariant, 'C')
+	assert.deepEqual(nyxFront.layout, FRAME_FAMILIES['m15-transform-front'].layout)
 	const transformBack = FRAME_FAMILIES['m15-transform-back']
 	assert.equal(resolveFrameVariant(transformBack, 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(transformBack, 'C'), 'C')
