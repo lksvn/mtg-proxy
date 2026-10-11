@@ -73,6 +73,18 @@ test('Double Feature transform shares frames but keeps face details separate', (
 	assert.ok(back.layout.colorIndicator)
 })
 
+test('original transform back uses the left icon without changing the modern back', () => {
+	const original = FRAME_FAMILIES['m15-transform-original-back']
+	assert.equal(original.layout.transformIcon?.x, 89)
+	assert.equal(original.layout.transformIcon?.defaultIcon, 'moon')
+	assert.equal(original.layout.title.x, 240)
+	assert.equal(original.layout.showManaCost, false)
+	assert.equal(resolveFrameVariant(original, 'UL'), 'L')
+	assert.equal(resolveFrameVariant(original, 'C'), 'A')
+	assert.equal(resolveFrameVariant(original, 'V'), 'V')
+	assert.equal(FRAME_FAMILIES['m15-transform-back'].layout.transformIcon?.x, 1296)
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [
