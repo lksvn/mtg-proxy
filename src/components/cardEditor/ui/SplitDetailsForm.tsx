@@ -41,6 +41,7 @@ export function SplitDetailsForm({ card, onChange, part, showFuse, stacked }: Pr
 						secondRulesText: changes.rulesText,
 						secondFlavorText: changes.flavorText,
 						centerRulesText: changes.centerRulesText,
+						centerRulesTextVertically: changes.centerRulesTextVertically,
 					})}
 					part="content"
 					rulesFieldId="split-second-rules"

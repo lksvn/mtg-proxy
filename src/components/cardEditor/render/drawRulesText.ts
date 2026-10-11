@@ -1,5 +1,6 @@
 import type { CardTextRun } from '../cardText'
 import { drawManaSymbol } from './drawGenericMana.ts'
+import { splitRulesWords } from './splitRulesWords.ts'
 
 const overflowingContexts = new WeakSet<CanvasRenderingContext2D>()
 const manualFontSizes = new WeakMap<CanvasRenderingContext2D, Record<string, number | undefined>>()
@@ -36,9 +37,7 @@ function atomize(runs: CardTextRun[]): Atom[] {
 	return runs.flatMap((run): Atom[] => {
 		if (run.type === 'symbol') return [run]
 
-		return run.value
-			.split(/(\n|[^\S\n]+)/)
-			.filter(Boolean)
+		return splitRulesWords(run.value)
 			.map((value) => {
 				if (value === '\n') return { type: 'newline' }
 				if (/^\s+$/.test(value)) value = ' '

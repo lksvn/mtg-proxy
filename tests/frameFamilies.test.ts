@@ -311,6 +311,19 @@ test('Mystical Archive uses wide artwork and bundled outline symbols', () => {
 	}
 })
 
+test('Japanese Mystical Archive reserves its vertical title and custom mana symbols', () => {
+	const family = FRAME_FAMILIES['mystical-archive-japanese']
+	assert.equal(family.layout.title.verticalHeight, 238)
+	assert.equal(family.layout.title.font, '40px belerenb, serif')
+	assert.equal(family.layout.type.font, '54px belerenb, serif')
+	assert.equal(family.layout.type.align, 'center')
+	assert.equal(resolveFrameVariant(family, 'C'), 'L')
+	assert.equal(resolveFrameVariant(family, 'WU'), 'M')
+	for (const path of Object.values(family.manaSymbolOverrides ?? {})) {
+		assert.equal(existsSync(resolve('public/img/manaSymbols', path)), true, path)
+	}
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [

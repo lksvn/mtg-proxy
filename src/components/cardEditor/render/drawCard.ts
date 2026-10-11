@@ -6,6 +6,8 @@ import { resolveFooterX, resolvePtTextColor, resolveTextColor, resolveTextX } fr
 import type { CustomCardData, FrameVariant } from '../types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
+import { drawVerticalTitle } from './drawVerticalTitle.ts'
+import { rulesAlignment } from './rulesAlignment.ts'
 
 import { HEIGHT, WIDTH } from '../canvasDimensions'
 export { HEIGHT, WIDTH } from '../canvasDimensions'
@@ -145,7 +147,11 @@ export function drawCard(
 	if (layout.title.maxWidth > 0) {
 		applyTextStyle(context, layout.title, variant)
 		context.textAlign = layout.title.align ?? 'left'
-		context.fillText(card.name, resolveTextX(layout.title), layout.title.y, layout.title.maxWidth)
+		if (layout.title.verticalHeight) {
+			drawVerticalTitle(context, card.name, layout.title.x, layout.title.y, layout.title.maxWidth, layout.title.verticalHeight)
+		} else {
+			context.fillText(card.name, resolveTextX(layout.title), layout.title.y, layout.title.maxWidth)
+		}
 	}
 	context.textAlign = 'right'
 	if (layout.showManaCost !== false) {
@@ -153,7 +159,7 @@ export function drawCard(
 	}
 	if (layout.type.maxWidth > 0) {
 		applyTextStyle(context, layout.type, variant)
-		context.textAlign = 'left'
+		context.textAlign = layout.type.align ?? 'left'
 		context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), layout.type.x, layout.type.y, layout.type.maxWidth)
 	}
 	const textRuns: CardTextRun[] = rulesRuns.length && flavorRuns.length
@@ -164,14 +170,12 @@ export function drawCard(
 		: layout.rules.height
 	const rules = layout.rules
 	if (layout.flavorRules) {
-		const rulesStyle = card.centerRulesText ? { ...rules, horizontalAlign: 'center' as const, verticalAlign: 'middle' as const } : rules
-		const flavorStyle = card.centerRulesText ? { ...layout.flavorRules, horizontalAlign: 'center' as const, verticalAlign: 'middle' as const } : layout.flavorRules
+		const rulesStyle = { ...rules, ...rulesAlignment(card) }
+		const flavorStyle = { ...layout.flavorRules, ...rulesAlignment(card) }
 		drawRulesText(context, rulesRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, rulesHeight, rulesStyle)
 		drawRulesText(context, flavorRuns, manaSymbols, layout.flavorRules.x, layout.flavorRules.y, layout.flavorRules.width, layout.flavorRules.height, flavorStyle)
 	} else {
-		drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, rulesHeight, card.centerRulesText
-			? { ...rules, horizontalAlign: 'center', verticalAlign: 'middle' }
-			: rules)
+		drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, rulesHeight, { ...rules, ...rulesAlignment(card) })
 	}
 
 	if (card.reversePowerToughness && layout.reversePowerToughness) {

@@ -9,6 +9,7 @@ export type CustomCardData = {
     typeLine: string
     rulesText: string
 	centerRulesText: boolean
+	centerRulesTextVertically?: boolean
     flavorText: string
     powerToughness: string
 	reversePowerToughness?: string

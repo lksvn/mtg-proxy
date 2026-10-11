@@ -43,6 +43,7 @@ export async function renderCardPreview(
 		name: family.id === 'planeswalker-nickname' ? card.nickname : card.name,
 		rulesText: '',
 		centerRulesText: false,
+		centerRulesTextVertically: false,
 		flavorText: '',
 		powerToughness: card.startingLoyalty,
 	} : saga || classCard || caseCard || room || leveler ? { ...card, rulesText: '', flavorText: '' } : card

@@ -6,6 +6,7 @@ import { artworkFilter } from './artworkFilter'
 import { drawSetSymbol } from './drawCard'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
+import { rulesAlignment } from './rulesAlignment.ts'
 import { HEIGHT, WIDTH } from '../canvasDimensions'
 
 export function drawSplit(
@@ -82,9 +83,7 @@ export function drawSplit(
 		context.fillStyle = style.type.color
 		context.fillText(half.typeLine.replace(/\s+-\s+/, ' — '), style.type.x, style.type.y, style.type.maxWidth)
 		if (symbol) drawSetSymbol(context, card, symbol, style)
-		drawRulesText(context, rulesRuns[index], manaSymbols, style.rules.x, style.rules.y, style.rules.width, style.rules.height, card.centerRulesText
-			? { ...rulesStyle, horizontalAlign: 'center', verticalAlign: 'middle' }
-			: rulesStyle)
+		drawRulesText(context, rulesRuns[index], manaSymbols, style.rules.x, style.rules.y, style.rules.width, style.rules.height, { ...rulesStyle, ...rulesAlignment(card) })
 		context.restore()
 	}
 	if (split.reminder) {

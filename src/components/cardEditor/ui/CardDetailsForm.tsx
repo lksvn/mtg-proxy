@@ -84,8 +84,15 @@ export function CardDetailsForm({ card, onChange, maxManaItems, hideManaCost, hi
 					<input
 						type="checkbox"
 						checked={card.centerRulesText}
-						onChange={(event) => update({ centerRulesText: event.target.checked })}
+						onChange={(event) => update({ centerRulesText: event.target.checked, centerRulesTextVertically: card.centerRulesTextVertically ?? card.centerRulesText })}
 					/> {t('centerRulesText')}
+				</label>
+				<label>
+					<input
+						type="checkbox"
+						checked={card.centerRulesTextVertically ?? card.centerRulesText}
+						onChange={(event) => update({ centerRulesTextVertically: event.target.checked })}
+					/> {t('centerRulesTextVertically')}
 				</label>
                 <details>
 					<summary>{t('formatting')}</summary>
