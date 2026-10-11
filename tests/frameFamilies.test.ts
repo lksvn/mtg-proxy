@@ -162,6 +162,18 @@ test('regular modal faces keep mana costs and reserve the opposite-face strip', 
 	assert.equal(back.layout.title.color, '#fff')
 })
 
+test('Nyx modal faces reuse the strip and keep fallbacks in Nyx', () => {
+	for (const id of ['m15-modal-nyx-front', 'm15-modal-nyx-back'] as const) {
+		const family = FRAME_FAMILIES[id]
+		assert.ok(family.layout.reverseFace)
+		assert.equal(resolveFrameVariant(family, 'V'), 'A')
+		assert.equal(resolveFrameVariant(family, 'UL'), 'M')
+		assert.equal(resolveFrameVariant(family, 'L'), 'M')
+		assert.equal(resolveFrameVariant(family, 'C'), 'C')
+		assert.equal(family.dual?.neutralVariant, 'C')
+	}
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [

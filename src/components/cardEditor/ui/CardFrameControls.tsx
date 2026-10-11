@@ -32,6 +32,7 @@ export function CardFrameControls({
 }: CardFrameControlsProps) {
 	const { t } = useI18n()
 	const isUbNyx = frameFamily === 'm15-transform-ub-nyx-front' || frameFamily === 'm15-transform-ub-nyx-back'
+	const isModalNyx = frameFamily === 'm15-modal-nyx-front' || frameFamily === 'm15-modal-nyx-back'
 	const isOriginalNyx = frameFamily === 'm15-transform-nyx-original-back'
 	const isOriginalSnow = frameFamily === 'm15-transform-snow-original-back'
 	const isBorderlessTransform = frameFamily === 'm15-transform-borderless-front' || frameFamily === 'm15-transform-borderless-back'
@@ -40,7 +41,7 @@ export function CardFrameControls({
 	const isOriginalBack = frameFamily === 'm15-transform-original-back' || frameFamily === 'm15-transform-ub-original-back'
 	const isNeonInk = frameFamily === 'neon-ink'
 	const hideColoredLands = isOriginalBack || isBorderlessTransform || isExtendedTransform || isDoubleFeature || ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
-	const displayedSelection = (isNeonInk || isOriginalSnow || isOriginalNyx || isOriginalBack || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature) && frameSelection !== 'auto'
+	const displayedSelection = (isModalNyx || isNeonInk || isOriginalSnow || isOriginalNyx || isOriginalBack || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature) && frameSelection !== 'auto'
 		? resolveFrameVariant(getFrameFamily(frameFamily), frameSelection)
 		: hideColoredLands && ['WL', 'UL', 'BL', 'RL', 'GL', 'ML'].includes(frameSelection)
 		? 'L'
@@ -125,8 +126,8 @@ export function CardFrameControls({
 					value={displayedSelection}
 					onChange={onFrameSelectionChange}
 					hideColoredLands={isNeonInk || hideColoredLands || isOriginalNyx || isOriginalSnow}
-					hideLands={isOriginalNyx || isUbNyx || frameFamily === 'm15-transform-borderless-back'}
-					hideVehicles={isNeonInk || frameFamily === 'm15-double-feature' || isOriginalSnow || isOriginalNyx || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature}
+					hideLands={isModalNyx || isOriginalNyx || isUbNyx || frameFamily === 'm15-transform-borderless-back'}
+					hideVehicles={isModalNyx || isNeonInk || frameFamily === 'm15-double-feature' || isOriginalSnow || isOriginalNyx || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature}
 				/>
 			</div>
 		</>
