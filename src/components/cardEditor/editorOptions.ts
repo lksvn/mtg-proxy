@@ -11,6 +11,7 @@ export const FRAME_STYLE_GROUPS = [
 		{ id: 'm15-transform-nyx-back', label: 'frameStyleTransformNyxBack' },
 		{ id: 'm15-extended', label: 'frameStyleM15Extended' },
 		{ id: 'snow', label: 'frameStyleSnow' },
+		{ id: 'm15-transform-snow-front', label: 'frameStyleTransformSnowFront' },
 		{ id: 'nyx', label: 'frameStyleNyx' },
 		{ id: 'universes-beyond', label: 'frameStyleUniversesBeyond' },
 	] },

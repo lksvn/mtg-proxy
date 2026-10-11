@@ -70,6 +70,13 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(transformBack.pt.C, transformBack.pt.A)
 	assert.deepEqual(transformBack.layout.artwork, FRAME_FAMILIES['m15-regular'].layout.artwork)
 	const transformFront = FRAME_FAMILIES['m15-transform-front']
+	const snowFront = FRAME_FAMILIES['m15-transform-snow-front']
+	assert.equal(resolveFrameVariant(snowFront, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(snowFront, 'V'), 'A')
+	assert.equal(resolveFrameVariant(snowFront, 'C'), 'A')
+	assert.equal(resolveFrameVariant(snowFront, 'WL'), 'WL')
+	assert.equal(snowFront.dual?.neutralVariant, 'L')
+	assert.deepEqual(snowFront.layout, transformFront.layout)
 	assert.equal(resolveFrameVariant(transformFront, 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(transformFront, 'V'), 'V')
 	assert.equal(resolveFrameVariant(transformFront, 'WL'), 'WL')
