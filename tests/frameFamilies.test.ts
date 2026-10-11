@@ -202,6 +202,21 @@ test('UB modal faces use UB power/toughness and retain colored lands', () => {
 	assert.equal(back.layout.reverseFace?.color, '#111')
 })
 
+test('UB Nyx modal faces keep fallbacks in their enchantment frames', () => {
+	const front = FRAME_FAMILIES['m15-modal-ub-nyx-front']
+	const back = FRAME_FAMILIES['m15-modal-ub-nyx-back']
+	for (const family of [front, back]) {
+		assert.ok(family.layout.reverseFace)
+		assert.equal(resolveFrameVariant(family, 'UL'), 'M')
+		assert.equal(resolveFrameVariant(family, 'L'), 'M')
+		assert.equal(resolveFrameVariant(family, 'V'), 'A')
+		assert.equal(resolveFrameVariant(family, 'C'), 'C')
+		assert.equal(family.dual?.neutralVariant, 'C')
+	}
+	assert.ok(front.pt.U?.includes('/ub/pt/'))
+	assert.ok(back.pt.U?.includes('/ub-back/pt/'))
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [

@@ -32,7 +32,12 @@ export function CardFrameControls({
 }: CardFrameControlsProps) {
 	const { t } = useI18n()
 	const isUbNyx = frameFamily === 'm15-transform-ub-nyx-front' || frameFamily === 'm15-transform-ub-nyx-back'
-	const isModalNyx = frameFamily === 'm15-modal-nyx-front' || frameFamily === 'm15-modal-nyx-back'
+	const isModalNyx = [
+		'm15-modal-nyx-front',
+		'm15-modal-nyx-back',
+		'm15-modal-ub-nyx-front',
+		'm15-modal-ub-nyx-back',
+	].includes(frameFamily)
 	const isModalSnow = frameFamily === 'm15-modal-snow-front' || frameFamily === 'm15-modal-snow-back'
 	const isOriginalNyx = frameFamily === 'm15-transform-nyx-original-back'
 	const isOriginalSnow = frameFamily === 'm15-transform-snow-original-back'
