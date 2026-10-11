@@ -49,6 +49,18 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(nyxFront.dual?.neutralVariant, 'C')
 	assert.deepEqual(nyxFront.layout, FRAME_FAMILIES['m15-transform-front'].layout)
 	const transformBack = FRAME_FAMILIES['m15-transform-back']
+	const snowBack = FRAME_FAMILIES['m15-transform-snow-back']
+	assert.equal(resolveFrameVariant(snowBack, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(snowBack, 'V'), 'A')
+	assert.equal(resolveFrameVariant(snowBack, 'C'), 'A')
+	assert.equal(resolveFrameVariant(snowBack, 'WL'), 'L')
+	assert.equal(snowBack.dual?.neutralVariant, 'L')
+	assert.deepEqual(snowBack.layout.artwork, transformBack.layout.artwork)
+	assert.deepEqual(snowBack.layout.transformIcon, transformBack.layout.transformIcon)
+	assert.equal(snowBack.layout.title.color, '#111')
+	assert.equal(snowBack.layout.type.color, '#111')
+	assert.equal(snowBack.layout.showManaCost, false)
+	assert.deepEqual(snowBack.pt, transformBack.pt)
 	const nyxBack = FRAME_FAMILIES['m15-transform-nyx-back']
 	assert.equal(resolveFrameVariant(nyxBack, 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(nyxBack, 'V'), 'A')
