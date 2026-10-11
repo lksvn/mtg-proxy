@@ -297,6 +297,20 @@ test('Commander Legends etched retains readable text and same-family fallbacks',
 	assert.ok(family.pt.U?.includes('/commander-legends/'))
 })
 
+test('Mystical Archive uses wide artwork and bundled outline symbols', () => {
+	const family = FRAME_FAMILIES['mystical-archive']
+	assert.equal(family.layout.mana.shadowColor, 'transparent')
+	assert.equal(family.layout.mana.shadowOffsetX, 0)
+	assert.equal(family.layout.mana.shadowOffsetY, 0)
+	assert.equal(family.layout.artwork.dragTop, 253)
+	assert.equal(family.layout.artwork.dragRight, 1500)
+	assert.equal(resolveFrameVariant(family, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(family, 'L'), 'C')
+	for (const path of Object.values(family.manaSymbolOverrides ?? {})) {
+		assert.equal(existsSync(resolve('public/img/manaSymbols', path)), true, path)
+	}
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [

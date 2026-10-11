@@ -38,7 +38,7 @@ export function CardFrameControls({
 		'm15-modal-ub-nyx-front',
 		'm15-modal-ub-nyx-back',
 	].includes(frameFamily)
-	const isCommanderEtched = frameFamily === 'commander-legends-etched'
+	const isCommanderEtched = ['commander-legends-etched', 'mystical-archive'].includes(frameFamily)
 	const isZendikarShowcase = frameFamily === 'zendikar-rising-showcase'
 	const isKaldheim = ['kaldheim-showcase', 'kaldheim-modal-front', 'kaldheim-modal-back'].includes(frameFamily)
 	const isModalBorderless = frameFamily === 'm15-modal-borderless-front' || frameFamily === 'm15-modal-borderless-back'

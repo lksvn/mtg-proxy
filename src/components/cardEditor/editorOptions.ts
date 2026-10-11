@@ -46,6 +46,7 @@ export const FRAME_STYLE_GROUPS = [
 		{ id: 'm15-modal-borderless-back', label: 'frameStyleModalBorderlessBack' },
 	] },
 	{ label: 'frameStyleGroupShowcase', options: [
+		{ id: 'mystical-archive', label: 'frameStyleMysticalArchive' },
 		{ id: 'commander-legends-etched', label: 'frameStyleCommanderLegendsEtched' },
 		{ id: 'zendikar-rising-showcase', label: 'frameStyleZendikarRisingShowcase' },
 		{ id: 'kaldheim-showcase', label: 'frameStyleKaldheimShowcase' },
