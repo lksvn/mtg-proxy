@@ -284,6 +284,19 @@ test('Zendikar Rising showcase keeps wide artwork and white text', () => {
 	assert.ok(family.pt.U?.includes('/zendikar-rising/'))
 })
 
+test('Commander Legends etched retains readable text and same-family fallbacks', () => {
+	const family = FRAME_FAMILIES['commander-legends-etched']
+	assert.equal(family.layout.rules.x, 139)
+	assert.equal(family.layout.rules.width, 1222)
+	assert.equal(family.layout.rules.color, '#fff')
+	assert.equal(family.layout.pt.color, '#fff')
+	assert.equal(family.dual?.neutralVariant, 'C')
+	assert.equal(resolveFrameVariant(family, 'L'), 'C')
+	assert.equal(resolveFrameVariant(family, 'UL'), 'C')
+	assert.equal(resolveFrameVariant(family, 'V'), 'A')
+	assert.ok(family.pt.U?.includes('/commander-legends/'))
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [
