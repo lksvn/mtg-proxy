@@ -30,6 +30,7 @@ export const FRAME_STYLE_GROUPS = [
 		{ id: 'm15-transform-ub-nyx-back', label: 'frameStyleTransformUbNyxBack' },
 	] },
 	{ label: 'frameStyleGroupShowcase', options: [
+		{ id: 'neon-ink', label: 'frameStyleNeonInk' },
 		{ id: 'box-topper', label: 'frameStyleBoxTopper' },
 		{ id: 'm15-extended', label: 'frameStyleM15Extended' },
 		{ id: 'm15-transform-extended-front', label: 'frameStyleTransformExtendedFront' },

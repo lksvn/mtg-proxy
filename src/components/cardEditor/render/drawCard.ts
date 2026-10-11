@@ -180,10 +180,10 @@ export function drawCard(
 	if (card.powerToughness && layout.pt.width > 0) {
 		if (ptBackground) context.drawImage(
 			ptBackground,
-			layout.pt.x,
-			layout.pt.y,
-			layout.pt.width,
-			layout.pt.height,
+			layout.pt.backgroundBounds?.x ?? layout.pt.x,
+			layout.pt.backgroundBounds?.y ?? layout.pt.y,
+			layout.pt.backgroundBounds?.width ?? layout.pt.width,
+			layout.pt.backgroundBounds?.height ?? layout.pt.height,
 		)
 		applyTextStyle(context, layout.pt)
 		context.fillStyle = resolvePtTextColor(variant, resolveTextColor(layout.pt, variant))

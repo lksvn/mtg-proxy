@@ -134,6 +134,19 @@ test('regular Double Feature keeps colored lands and omits transform-only detail
 	assert.equal(family.layout.artwork.dragBottom, 1165)
 })
 
+test('Neon Ink uses full artwork and keeps its P/T overlay separate from the text box', () => {
+	const family = FRAME_FAMILIES['neon-ink']
+	assert.equal(family.layout.artwork.dragBottom, 2100)
+	assert.equal(family.layout.artwork.dragTop, 0)
+	assert.ok(family.layout.rules.y + family.layout.rules.height < family.layout.type.y)
+	assert.equal(family.layout.rules.color, '#fff')
+	assert.deepEqual(family.layout.pt.backgroundBounds, { x: 0, y: 0, width: 1500, height: 2100 })
+	assert.equal(family.layout.pt.width, 260)
+	assert.equal(resolveFrameVariant(family, 'WU'), 'M')
+	assert.equal(resolveFrameVariant(family, 'UL'), 'L')
+	assert.equal(FRAME_FAMILIES['m15-regular'].layout.pt.backgroundBounds, undefined)
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [
