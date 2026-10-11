@@ -85,6 +85,18 @@ test('original transform back uses the left icon without changing the modern bac
 	assert.equal(FRAME_FAMILIES['m15-transform-back'].layout.transformIcon?.x, 1296)
 })
 
+test('original Nyx transform back keeps fallbacks in its enchantment frames', () => {
+	const family = FRAME_FAMILIES['m15-transform-nyx-original-back']
+	assert.equal(family.layout.transformIcon?.x, 89)
+	assert.equal(family.layout.transformIcon?.defaultIcon, 'moon')
+	assert.equal(family.layout.showManaCost, false)
+	assert.equal(resolveFrameVariant(family, 'C'), 'A')
+	assert.equal(resolveFrameVariant(family, 'V'), 'A')
+	assert.equal(resolveFrameVariant(family, 'UL'), 'M')
+	assert.equal(resolveFrameVariant(family, 'WU'), 'WU')
+	assert.equal(family.dual?.neutralVariant, 'A')
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [
