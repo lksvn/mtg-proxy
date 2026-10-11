@@ -38,6 +38,22 @@ test('borderless transform faces use full artwork and face-specific geometry', (
 	assert.equal(back.dual?.neutralVariant, 'A')
 })
 
+test('extended transform faces keep artwork in the wide window', () => {
+	for (const id of ['m15-transform-extended-front', 'm15-transform-extended-back'] as const) {
+		const family = FRAME_FAMILIES[id]
+		assert.deepEqual(family.layout.artwork, { dragLeft: 0, dragTop: 170, dragRight: 1500, dragBottom: 1285 })
+		assert.equal(resolveFrameVariant(family, 'UL'), 'L')
+		assert.equal(resolveFrameVariant(family, 'C'), 'A')
+		assert.equal(resolveFrameVariant(family, 'V'), 'A')
+		assert.equal(family.layout.type.color, '#fff')
+		assert.equal(family.layout.rules.color, '#111')
+		assert.equal(family.dual?.neutralVariant, 'L')
+	}
+	assert.equal(FRAME_FAMILIES['m15-transform-extended-front'].layout.transformIcon?.defaultIcon, 'up')
+	assert.equal(FRAME_FAMILIES['m15-transform-extended-back'].layout.transformIcon?.defaultIcon, 'down')
+	assert.equal(FRAME_FAMILIES['m15-transform-extended-back'].layout.showManaCost, false)
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [

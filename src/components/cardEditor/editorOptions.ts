@@ -3,17 +3,19 @@ import type { FrameFamilyId } from './frameFamilies'
 
 export const FRAME_STYLE_GROUPS = [
 	{ label: 'frameStyleGroupM15', options: [
-		{ id: 'box-topper', label: 'frameStyleBoxTopper' },
 		{ id: 'm15-regular', label: 'frameStyleM15Regular' },
+		{ id: 'nyx', label: 'frameStyleNyx' },
+		{ id: 'snow', label: 'frameStyleSnow' },
+	] },
+	{ label: 'frameStyleGroupTransform', options: [
 		{ id: 'm15-transform-front', label: 'frameStyleTransformFront' },
 		{ id: 'm15-transform-back', label: 'frameStyleTransformBack' },
 		{ id: 'm15-transform-nyx-front', label: 'frameStyleTransformNyxFront' },
 		{ id: 'm15-transform-nyx-back', label: 'frameStyleTransformNyxBack' },
-		{ id: 'm15-extended', label: 'frameStyleM15Extended' },
-		{ id: 'snow', label: 'frameStyleSnow' },
 		{ id: 'm15-transform-snow-front', label: 'frameStyleTransformSnowFront' },
 		{ id: 'm15-transform-snow-back', label: 'frameStyleTransformSnowBack' },
-		{ id: 'nyx', label: 'frameStyleNyx' },
+	] },
+	{ label: 'frameStyleGroupUniversesBeyond', options: [
 		{ id: 'universes-beyond', label: 'frameStyleUniversesBeyond' },
 		{ id: 'm15-transform-ub-front', label: 'frameStyleTransformUbFront' },
 		{ id: 'm15-transform-ub-back', label: 'frameStyleTransformUbBack' },
@@ -21,6 +23,10 @@ export const FRAME_STYLE_GROUPS = [
 		{ id: 'm15-transform-ub-nyx-back', label: 'frameStyleTransformUbNyxBack' },
 	] },
 	{ label: 'frameStyleGroupShowcase', options: [
+		{ id: 'box-topper', label: 'frameStyleBoxTopper' },
+		{ id: 'm15-extended', label: 'frameStyleM15Extended' },
+		{ id: 'm15-transform-extended-front', label: 'frameStyleTransformExtendedFront' },
+		{ id: 'm15-transform-extended-back', label: 'frameStyleTransformExtendedBack' },
 		{ id: 'borderless', label: 'frameStyleBorderless' },
 		{ id: 'm15-transform-borderless-front', label: 'frameStyleTransformBorderlessFront' },
 		{ id: 'm15-transform-borderless-back', label: 'frameStyleTransformBorderlessBack' },
