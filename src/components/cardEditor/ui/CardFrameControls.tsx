@@ -37,7 +37,7 @@ export function CardFrameControls({
 	const isBorderlessTransform = frameFamily === 'm15-transform-borderless-front' || frameFamily === 'm15-transform-borderless-back'
 	const isExtendedTransform = frameFamily === 'm15-transform-extended-front' || frameFamily === 'm15-transform-extended-back'
 	const isDoubleFeature = frameFamily === 'm15-transform-double-feature-front' || frameFamily === 'm15-transform-double-feature-back'
-	const isOriginalBack = frameFamily === 'm15-transform-original-back'
+	const isOriginalBack = frameFamily === 'm15-transform-original-back' || frameFamily === 'm15-transform-ub-original-back'
 	const hideColoredLands = isOriginalBack || isBorderlessTransform || isExtendedTransform || isDoubleFeature || ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
 	const displayedSelection = (isOriginalSnow || isOriginalNyx || isOriginalBack || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature) && frameSelection !== 'auto'
 		? resolveFrameVariant(getFrameFamily(frameFamily), frameSelection)

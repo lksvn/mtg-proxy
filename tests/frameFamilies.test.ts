@@ -111,6 +111,17 @@ test('original Snow transform back uses readable text on pale panels', () => {
 	assert.equal(family.dual?.neutralVariant, 'L')
 })
 
+test('original UB transform back preserves vehicles and falls back for missing colorless', () => {
+	const family = FRAME_FAMILIES['m15-transform-ub-original-back']
+	assert.equal(family.layout.transformIcon?.x, 89)
+	assert.equal(family.layout.transformIcon?.defaultIcon, 'down')
+	assert.equal(family.layout.showManaCost, false)
+	assert.equal(resolveFrameVariant(family, 'C'), 'A')
+	assert.equal(resolveFrameVariant(family, 'V'), 'V')
+	assert.equal(resolveFrameVariant(family, 'UL'), 'L')
+	assert.ok(family.pt.U?.includes('/ub-back/pt/'))
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [

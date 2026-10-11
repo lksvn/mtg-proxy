@@ -24,6 +24,7 @@ export const FRAME_STYLE_GROUPS = [
 		{ id: 'universes-beyond', label: 'frameStyleUniversesBeyond' },
 		{ id: 'm15-transform-ub-front', label: 'frameStyleTransformUbFront' },
 		{ id: 'm15-transform-ub-back', label: 'frameStyleTransformUbBack' },
+		{ id: 'm15-transform-ub-original-back', label: 'frameStyleTransformUbOriginalBack' },
 		{ id: 'm15-transform-ub-nyx-front', label: 'frameStyleTransformUbNyxFront' },
 		{ id: 'm15-transform-ub-nyx-back', label: 'frameStyleTransformUbNyxBack' },
 	] },
