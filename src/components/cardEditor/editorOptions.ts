@@ -46,6 +46,7 @@ export const FRAME_STYLE_GROUPS = [
 		{ id: 'm15-modal-borderless-back', label: 'frameStyleModalBorderlessBack' },
 	] },
 	{ label: 'frameStyleGroupShowcase', options: [
+		{ id: 'mh2-sketch', label: 'frameStyleMh2Sketch' },
 		{ id: 'mystical-archive', label: 'frameStyleMysticalArchive' },
 		{ id: 'mystical-archive-soa', label: 'frameStyleMysticalArchiveSoa' },
 		{ id: 'mystical-archive-japanese', label: 'frameStyleMysticalArchiveJapanese' },

@@ -6,6 +6,47 @@ import {
 } from './shared.ts'
 
 export const showcaseFrames = {
+	'mh2-sketch': {
+		id: 'mh2-sketch',
+		frames: {
+			W: 'img/frames/mh2-sketch/w.png',
+			U: 'img/frames/mh2-sketch/u.png',
+			B: 'img/frames/mh2-sketch/b.png',
+			R: 'img/frames/mh2-sketch/r.png',
+			G: 'img/frames/mh2-sketch/g.png',
+			M: 'img/frames/mh2-sketch/m.png',
+			A: 'img/frames/mh2-sketch/a.png',
+			L: 'img/frames/mh2-sketch/l.png',
+		},
+		pt: {
+			W: 'img/frames/mh2-sketch/wpt.png',
+			U: 'img/frames/mh2-sketch/upt.png',
+			B: 'img/frames/mh2-sketch/bpt.png',
+			R: 'img/frames/mh2-sketch/rpt.png',
+			G: 'img/frames/mh2-sketch/gpt.png',
+			M: 'img/frames/mh2-sketch/mpt.png',
+			A: 'img/frames/mh2-sketch/apt.png',
+			C: 'img/frames/mh2-sketch/apt.png',
+		},
+		fallbacks: { ...commonFallbacks, C: 'A' },
+		borderMask: 'img/frames/m15/regular/m15MaskBorder.png',
+		dual: {
+			neutralVariant: 'A',
+			rulesMask: 'img/frames/mh2-sketch/pinline.png',
+			pinlineMask: 'img/frames/mh2-sketch/pinline.png',
+			titleMask: 'img/frames/mh2-sketch/title.png',
+			typeMask: 'img/frames/mh2-sketch/type.png',
+			frameMask: 'img/frames/mh2-sketch/frame.png',
+			rightHalfMask: 'img/frames/m15/regular/maskRightHalf.png',
+		},
+		layout: {
+			...m15RegularLayout,
+            mana: { ...m15RegularLayout.mana, centerY: 155 },
+			rules: { ...m15RegularLayout.rules, x: 139, width: 1222 },
+			pt: { ...m15RegularLayout.pt, x: 1122, y: 1847, width: 306, height: 151 },
+		},
+		fonts: commonFonts,
+	},
 	'mystical-archive-soa': {
 		id: 'mystical-archive-soa',
 		frames: {
@@ -33,7 +74,6 @@ export const showcaseFrames = {
 			...m15RegularLayout,
 			artwork: { dragLeft: 0, dragTop: 95, dragRight: 1500, dragBottom: 1951 },
 			title: { ...m15RegularLayout.title, color: '#fff' },
-			mana: { ...m15RegularLayout.mana, shadowColor: 'transparent', shadowOffsetX: 0, shadowOffsetY: 0 },
 			type: { ...m15RegularLayout.type, color: '#fff' },
 			rules: { ...m15RegularLayout.rules, x: 140, width: 1220, color: '#fff' },
 			pt: { ...m15RegularLayout.pt, x: 1135, y: 1848, width: 317, height: 159 },
@@ -85,7 +125,7 @@ export const showcaseFrames = {
 		layout: {
 			...m15RegularLayout,
 			artwork: { dragLeft: 0, dragTop: 0, dragRight: 1500, dragBottom: 1950 },
-			title: { x: 135, y: 150, maxWidth: 179, verticalHeight: 238, font: '40px belerenb, serif', color: '#fff' },
+			title: { x: 135, y: 150, maxWidth: 179, verticalHeight: 238, font: '50px belerenb, serif', color: '#fff' },
 			mana: { ...m15RegularLayout.mana, right: 1412, centerY: 156, symbolSize: 92, gap: 2, shadowColor: 'transparent', shadowOffsetX: 0, shadowOffsetY: 0 },
 			type: { ...m15RegularLayout.type, x: 335, y: 1220, maxWidth: 430, align: 'center' },
 			rules: { ...m15RegularLayout.rules, x: 140, y: 1312, width: 1220, height: 616 },

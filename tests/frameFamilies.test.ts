@@ -311,8 +311,25 @@ test('Mystical Archive uses wide artwork and bundled outline symbols', () => {
 	}
 })
 
+test('MH2 Sketch uses dedicated dual masks, P/T and regular artwork bounds', () => {
+	const family = FRAME_FAMILIES['mh2-sketch']
+	assert.notEqual(family.layout.mana.shadowColor, 'transparent')
+	assert.notEqual(family.layout.mana.shadowOffsetY, 0)
+	assert.equal(resolveFrameVariant(family, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(family, 'C'), 'A')
+	assert.equal(resolveFrameVariant(family, 'V'), 'A')
+	assert.equal(resolveFrameVariant(family, 'WL'), 'L')
+	assert.equal(family.layout.artwork.dragTop, 237)
+	assert.equal(family.layout.artwork.dragBottom, 1167)
+	assert.equal(family.layout.pt.width, 306)
+	assert.equal(family.dual.neutralVariant, 'A')
+	assert.equal(family.pt.C, family.pt.A)
+})
+
 test('SOA Archive uses expanded artwork, white text and standard mana symbols', () => {
 	const family = FRAME_FAMILIES['mystical-archive-soa']
+	assert.notEqual(family.layout.mana.shadowColor, 'transparent')
+	assert.notEqual(family.layout.mana.shadowOffsetY, 0)
 	assert.equal(family.layout.artwork.dragTop, 95)
 	assert.equal(family.layout.artwork.dragBottom, 1951)
 	assert.equal(family.layout.title.color, '#fff')
@@ -326,7 +343,7 @@ test('SOA Archive uses expanded artwork, white text and standard mana symbols', 
 test('Japanese Mystical Archive reserves its vertical title and custom mana symbols', () => {
 	const family = FRAME_FAMILIES['mystical-archive-japanese']
 	assert.equal(family.layout.title.verticalHeight, 238)
-	assert.equal(family.layout.title.font, '40px belerenb, serif')
+	assert.equal(family.layout.title.font, '50px belerenb, serif')
 	assert.equal(family.layout.type.font, '54px belerenb, serif')
 	assert.equal(family.layout.type.align, 'center')
 	assert.equal(resolveFrameVariant(family, 'C'), 'L')

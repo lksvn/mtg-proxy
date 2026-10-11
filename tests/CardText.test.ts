@@ -105,6 +105,20 @@ test('keeps unknown symbols as ordinary text', () => {
 	])
 })
 
+test('rules accept grouped mana without changing hybrid or unknown tokens', () => {
+	assert.deepEqual(parseRulesText('Add {BBBB}.'), parseRulesText('Add {B}{B}{B}{B}.'))
+	assert.deepEqual(parseRulesText('({2bb})'), parseRulesText('({2}{B}{B})'))
+	assert.deepEqual(parseRulesText('{W/U}{B/P}{2/W}{123}'), [
+		{ type: 'symbol', value: 'W/U' },
+		{ type: 'symbol', value: 'B/P' },
+		{ type: 'symbol', value: '2/W' },
+		{ type: 'symbol', value: '123' },
+	])
+	assert.deepEqual(parseRulesText('{BNOPE} {}'), [
+		{ type: 'text', value: '{BNOPE} {}', italic: false },
+	])
+})
+
 test('maps loyalty symbols to bundled assets', () => {
 	assert.equal(getLoyaltySymbolFile('-1'), '-1.svg')
 	assert.equal(getLoyaltySymbolFile('−3'), '-3.svg')

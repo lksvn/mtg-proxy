@@ -65,9 +65,10 @@ export function parseCardText(text: string): CardTextRun[] {
 				.trim()
 				.toUpperCase()
 
-				if (getSymbolFile(token) || /^\d+$/.test(token)) {
+				const symbols = parseManaCost(token)
+				if (symbols.length && symbols.every((run) => run.type === 'symbol')) {
 					flush()
-					runs.push({ type: 'symbol', value: token })
+					runs.push(...symbols)
 					index = closingBrace
 					continue
 				}

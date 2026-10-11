@@ -41,6 +41,7 @@ export function CardFrameControls({
 	const isJapaneseArchive = frameFamily === 'mystical-archive-japanese'
 	const isCommanderEtched = ['commander-legends-etched', 'mystical-archive', 'mystical-archive-soa'].includes(frameFamily)
 	const isZendikarShowcase = frameFamily === 'zendikar-rising-showcase'
+	const isSketch = frameFamily === 'mh2-sketch'
 	const isKaldheim = ['kaldheim-showcase', 'kaldheim-modal-front', 'kaldheim-modal-back'].includes(frameFamily)
 	const isModalBorderless = frameFamily === 'm15-modal-borderless-front' || frameFamily === 'm15-modal-borderless-back'
 	const isModalExtended = frameFamily === 'm15-modal-extended-front' || frameFamily === 'm15-modal-extended-back'
@@ -52,8 +53,8 @@ export function CardFrameControls({
 	const isDoubleFeature = frameFamily === 'm15-transform-double-feature-front' || frameFamily === 'm15-transform-double-feature-back'
 	const isOriginalBack = frameFamily === 'm15-transform-original-back' || frameFamily === 'm15-transform-ub-original-back'
 	const isNeonInk = frameFamily === 'neon-ink'
-	const hideColoredLands = isModalExtended || isOriginalBack || isBorderlessTransform || isExtendedTransform || isDoubleFeature || ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
-	const displayedSelection = (isJapaneseArchive || isCommanderEtched || isZendikarShowcase || isKaldheim || isModalBorderless || isModalExtended || isModalSnow || isModalNyx || isNeonInk || isOriginalSnow || isOriginalNyx || isOriginalBack || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature) && frameSelection !== 'auto'
+	const hideColoredLands = isSketch || isModalExtended || isOriginalBack || isBorderlessTransform || isExtendedTransform || isDoubleFeature || ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
+	const displayedSelection = (isSketch || isJapaneseArchive || isCommanderEtched || isZendikarShowcase || isKaldheim || isModalBorderless || isModalExtended || isModalSnow || isModalNyx || isNeonInk || isOriginalSnow || isOriginalNyx || isOriginalBack || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature) && frameSelection !== 'auto'
 		? resolveFrameVariant(getFrameFamily(frameFamily), frameSelection)
 		: hideColoredLands && ['WL', 'UL', 'BL', 'RL', 'GL', 'ML'].includes(frameSelection)
 		? 'L'
@@ -139,7 +140,7 @@ export function CardFrameControls({
 					onChange={onFrameSelectionChange}
 					hideColoredLands={isJapaneseArchive || isZendikarShowcase || isNeonInk || hideColoredLands || isOriginalNyx || isOriginalSnow}
 					hideLands={isCommanderEtched || isKaldheim || isModalBorderless || isModalNyx || isOriginalNyx || isUbNyx || frameFamily === 'm15-transform-borderless-back'}
-					hideVehicles={isCommanderEtched || isZendikarShowcase || isKaldheim || isModalBorderless || isModalExtended || isModalSnow || isModalNyx || isNeonInk || frameFamily === 'm15-double-feature' || isOriginalSnow || isOriginalNyx || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature}
+					hideVehicles={isSketch || isCommanderEtched || isZendikarShowcase || isKaldheim || isModalBorderless || isModalExtended || isModalSnow || isModalNyx || isNeonInk || frameFamily === 'm15-double-feature' || isOriginalSnow || isOriginalNyx || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature}
 				/>
 			</div>
 		</>
