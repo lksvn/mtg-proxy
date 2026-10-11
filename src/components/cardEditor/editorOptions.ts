@@ -34,6 +34,8 @@ export const FRAME_STYLE_GROUPS = [
 		{ id: 'm15-modal-back', label: 'frameStyleModalBack' },
 		{ id: 'm15-modal-nyx-front', label: 'frameStyleModalNyxFront' },
 		{ id: 'm15-modal-nyx-back', label: 'frameStyleModalNyxBack' },
+		{ id: 'm15-modal-snow-front', label: 'frameStyleModalSnowFront' },
+		{ id: 'm15-modal-snow-back', label: 'frameStyleModalSnowBack' },
 	] },
 	{ label: 'frameStyleGroupShowcase', options: [
 		{ id: 'neon-ink', label: 'frameStyleNeonInk' },

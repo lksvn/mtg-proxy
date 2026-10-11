@@ -174,6 +174,19 @@ test('Nyx modal faces reuse the strip and keep fallbacks in Nyx', () => {
 	}
 })
 
+test('Snow modal faces retain colored lands and readable pale-panel text', () => {
+	for (const id of ['m15-modal-snow-front', 'm15-modal-snow-back'] as const) {
+		const family = FRAME_FAMILIES[id]
+		assert.ok(family.layout.reverseFace)
+		assert.equal(resolveFrameVariant(family, 'V'), 'A')
+		assert.equal(resolveFrameVariant(family, 'C'), 'A')
+		assert.equal(resolveFrameVariant(family, 'UL'), 'UL')
+		assert.equal(family.layout.title.color, '#111')
+		assert.equal(family.layout.type.color, '#111')
+	}
+	assert.equal(FRAME_FAMILIES['m15-modal-snow-back'].layout.pt.color, '#fff')
+})
+
 test('frame family assets exist', () => {
 	for (const family of Object.values(FRAME_FAMILIES)) {
 		const paths = [
