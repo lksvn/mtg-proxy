@@ -1,7 +1,18 @@
 import type { CardTextRun } from '../cardText'
 import { drawManaSymbol } from './drawGenericMana.ts'
+import { splitRulesWords } from './splitRulesWords.ts'
 
 const overflowingContexts = new WeakSet<CanvasRenderingContext2D>()
+const manualFontSizes = new WeakMap<CanvasRenderingContext2D, Record<string, number | undefined>>()
+
+export function setRulesFontSize(context: CanvasRenderingContext2D, sizes?: Record<string, number | undefined>) {
+	if (sizes === undefined) manualFontSizes.delete(context)
+	else manualFontSizes.set(context, sizes)
+}
+
+export function getRulesFontSize(context: CanvasRenderingContext2D, baseSize: number, field = 'card-rules-text') {
+	return manualFontSizes.get(context)?.[field] ?? baseSize
+}
 
 export function resetRulesTextOverflow(context: CanvasRenderingContext2D) {
 	overflowingContexts.delete(context)
@@ -26,9 +37,7 @@ function atomize(runs: CardTextRun[]): Atom[] {
 	return runs.flatMap((run): Atom[] => {
 		if (run.type === 'symbol') return [run]
 
-		return run.value
-			.split(/(\n|[^\S\n]+)/)
-			.filter(Boolean)
+		return splitRulesWords(run.value)
 			.map((value) => {
 				if (value === '\n') return { type: 'newline' }
 				if (/^\s+$/.test(value)) value = ' '
@@ -43,6 +52,7 @@ function atomize(runs: CardTextRun[]): Atom[] {
 }
 
 type RulesTextStyle = {
+	fontSizeKey?: string
 	verticalAlign?: 'top' | 'middle'
 	horizontalAlign?: 'left' | 'center'
 	fontFamily: string
@@ -61,6 +71,8 @@ export function fitRulesText(
 	maxHeight: number,
 	style: RulesTextStyle,
 ) {
+	const manualSize = manualFontSizes.get(context)?.[style.fontSizeKey ?? 'card-rules-text']
+	if (manualSize !== undefined) return manualSize
 	for (let fontSize = style.maxFontSize; fontSize >= style.minFontSize; fontSize--) {
 		const lineHeight = Math.round(fontSize * 1.1)
 		const lines = layout(context, atomize(runs), maxWidth, fontSize, style)
@@ -79,6 +91,7 @@ export function measureRulesTextHeight(
 	fontSize: number,
 	style: RulesTextStyle,
 ) {
+	fontSize = getRulesFontSize(context, fontSize, style.fontSizeKey)
 	const lines = layout(context, atomize(runs), maxWidth, fontSize, style)
 	const lineHeight = Math.round(fontSize * 1.1)
 

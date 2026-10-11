@@ -1,14 +1,17 @@
 import { useI18n } from '../../../i18n/context'
 import { FRAME_STYLE_GROUPS } from '../editorOptions'
-import { getFrameFamily, type FrameBorderStyle, type FrameFamilyId } from '../frameFamilies'
+import { getFrameFamily, resolveFrameVariant, type FrameBorderStyle, type FrameFamilyId } from '../frameFamilies'
 import type { FrameVariant } from '../types'
 import { FrameColorPicker } from './FrameColorPicker'
+import { TRANSFORM_ICONS, type TransformIcon } from '../transformIcons'
 
 type CardFrameControlsProps = {
 	frameFamily: FrameFamilyId
 	onFrameFamilyChange: (family: FrameFamilyId) => void
 	borderStyle: FrameBorderStyle
 	onBorderStyleChange: (border: FrameBorderStyle) => void
+	transformIcon?: TransformIcon
+	onTransformIconChange: (icon: TransformIcon | undefined) => void
 	frameSelection: FrameVariant | 'auto'
 	onFrameSelectionChange: (variant: FrameVariant | 'auto') => void
 	search: string
@@ -20,12 +23,42 @@ export function CardFrameControls({
 	onFrameFamilyChange,
 	borderStyle,
 	onBorderStyleChange,
+	transformIcon,
+	onTransformIconChange,
 	frameSelection,
 	onFrameSelectionChange,
 	search,
 	onSearchChange,
 }: CardFrameControlsProps) {
 	const { t } = useI18n()
+	const isUbNyx = frameFamily === 'm15-transform-ub-nyx-front' || frameFamily === 'm15-transform-ub-nyx-back'
+	const isModalNyx = [
+		'm15-modal-nyx-front',
+		'm15-modal-nyx-back',
+		'm15-modal-ub-nyx-front',
+		'm15-modal-ub-nyx-back',
+	].includes(frameFamily)
+	const isJapaneseArchive = frameFamily === 'mystical-archive-japanese'
+	const isCommanderEtched = ['commander-legends-etched', 'mystical-archive', 'mystical-archive-soa'].includes(frameFamily)
+	const isZendikarShowcase = frameFamily === 'zendikar-rising-showcase'
+	const isSketch = frameFamily === 'mh2-sketch'
+	const isKaldheim = ['kaldheim-showcase', 'kaldheim-modal-front', 'kaldheim-modal-back'].includes(frameFamily)
+	const isModalBorderless = frameFamily === 'm15-modal-borderless-front' || frameFamily === 'm15-modal-borderless-back'
+	const isModalExtended = frameFamily === 'm15-modal-extended-front' || frameFamily === 'm15-modal-extended-back'
+	const isModalSnow = frameFamily === 'm15-modal-snow-front' || frameFamily === 'm15-modal-snow-back'
+	const isOriginalNyx = frameFamily === 'm15-transform-nyx-original-back'
+	const isOriginalSnow = frameFamily === 'm15-transform-snow-original-back'
+	const isBorderlessTransform = frameFamily === 'm15-transform-borderless-front' || frameFamily === 'm15-transform-borderless-back'
+	const isExtendedTransform = frameFamily === 'm15-transform-extended-front' || frameFamily === 'm15-transform-extended-back'
+	const isDoubleFeature = frameFamily === 'm15-transform-double-feature-front' || frameFamily === 'm15-transform-double-feature-back'
+	const isOriginalBack = frameFamily === 'm15-transform-original-back' || frameFamily === 'm15-transform-ub-original-back'
+	const isNeonInk = frameFamily === 'neon-ink'
+	const hideColoredLands = isSketch || isModalExtended || isOriginalBack || isBorderlessTransform || isExtendedTransform || isDoubleFeature || ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
+	const displayedSelection = (isSketch || isJapaneseArchive || isCommanderEtched || isZendikarShowcase || isKaldheim || isModalBorderless || isModalExtended || isModalSnow || isModalNyx || isNeonInk || isOriginalSnow || isOriginalNyx || isOriginalBack || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature) && frameSelection !== 'auto'
+		? resolveFrameVariant(getFrameFamily(frameFamily), frameSelection)
+		: hideColoredLands && ['WL', 'UL', 'BL', 'RL', 'GL', 'ML'].includes(frameSelection)
+		? 'L'
+		: frameSelection
 	const normalizedSearch = search.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 
 	return (
@@ -86,8 +119,29 @@ export function CardFrameControls({
 					</select>
 				</div>
 			)}
+			{getFrameFamily(frameFamily).layout.transformIcon && (
+				<div className="form-group gap-2">
+					<label htmlFor="card-transform-icon">{t('transformIcon')}</label>
+					<select
+						id="card-transform-icon"
+						value={transformIcon ?? ''}
+						onChange={(event) => onTransformIconChange(event.target.value ? event.target.value as TransformIcon : undefined)}
+					>
+						<option value="">{t('transformIconDefault')}</option>
+						{TRANSFORM_ICONS.map((icon) => (
+							<option key={icon.id} value={icon.id}>{t(icon.label)}</option>
+						))}
+					</select>
+				</div>
+			)}
 			<div className="form-group gap-2">
-				<FrameColorPicker value={frameSelection} onChange={onFrameSelectionChange} />
+				<FrameColorPicker
+					value={displayedSelection}
+					onChange={onFrameSelectionChange}
+					hideColoredLands={isJapaneseArchive || isZendikarShowcase || isNeonInk || hideColoredLands || isOriginalNyx || isOriginalSnow}
+					hideLands={isCommanderEtched || isKaldheim || isModalBorderless || isModalNyx || isOriginalNyx || isUbNyx || frameFamily === 'm15-transform-borderless-back'}
+					hideVehicles={isSketch || isCommanderEtched || isZendikarShowcase || isKaldheim || isModalBorderless || isModalExtended || isModalSnow || isModalNyx || isNeonInk || frameFamily === 'm15-double-feature' || isOriginalSnow || isOriginalNyx || isUbNyx || isBorderlessTransform || isExtendedTransform || isDoubleFeature}
+				/>
 			</div>
 		</>
 	)

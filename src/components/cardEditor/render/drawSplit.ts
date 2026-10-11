@@ -6,6 +6,7 @@ import { artworkFilter } from './artworkFilter'
 import { drawSetSymbol } from './drawCard'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
+import { rulesAlignment } from './rulesAlignment.ts'
 import { HEIGHT, WIDTH } from '../canvasDimensions'
 
 export function drawSplit(
@@ -47,6 +48,7 @@ export function drawSplit(
 		const transform = transforms[index]
 		const bounds = half.artwork
 		const style = half.layout
+		const rulesStyle = { ...style.rules, fontSizeKey: index === 0 ? 'card-rules-text' : 'split-second-rules' }
 		context.save()
 		context.beginPath()
 		context.rect(bounds.dragLeft, bounds.dragTop, bounds.dragRight - bounds.dragLeft, bounds.dragBottom - bounds.dragTop)
@@ -81,9 +83,7 @@ export function drawSplit(
 		context.fillStyle = style.type.color
 		context.fillText(half.typeLine.replace(/\s+-\s+/, ' — '), style.type.x, style.type.y, style.type.maxWidth)
 		if (symbol) drawSetSymbol(context, card, symbol, style)
-		drawRulesText(context, rulesRuns[index], manaSymbols, style.rules.x, style.rules.y, style.rules.width, style.rules.height, card.centerRulesText
-			? { ...style.rules, horizontalAlign: 'center', verticalAlign: 'middle' }
-			: style.rules)
+		drawRulesText(context, rulesRuns[index], manaSymbols, style.rules.x, style.rules.y, style.rules.width, style.rules.height, { ...rulesStyle, ...rulesAlignment(card) })
 		context.restore()
 	}
 	if (split.reminder) {
@@ -91,7 +91,7 @@ export function drawSplit(
 		context.translate(0, split.firstOriginY)
 		context.rotate(-Math.PI / 2)
 		const reminder = split.reminder
-		drawRulesText(context, reminderRuns, manaSymbols, reminder.x, reminder.y, reminder.width, reminder.height, reminder)
+		drawRulesText(context, reminderRuns, manaSymbols, reminder.x, reminder.y, reminder.width, reminder.height, { ...reminder, fontSizeKey: 'split-fuse-reminder' })
 		context.restore()
 	}
 }

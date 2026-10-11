@@ -1,0 +1,77 @@
+import type { FrameFamily } from '../frameFamilies.ts'
+import {
+	commonFonts,
+	commonFallbacks,
+	classLayout,
+} from './shared.ts'
+
+export const classFrames = {
+	'class-regular': {
+		id: 'class-regular',
+		frames: {
+			W: 'img/frames/class/w.png',
+			U: 'img/frames/class/u.png',
+			B: 'img/frames/class/b.png',
+			R: 'img/frames/class/r.png',
+			G: 'img/frames/class/g.png',
+			M: 'img/frames/class/m.png',
+			A: 'img/frames/class/a.png',
+			C: 'img/frames/class/c.png',
+		},
+		pt: {},
+		fallbacks: commonFallbacks,
+		layout: classLayout,
+		fonts: commonFonts,
+	},
+	'class-nyx': {
+		id: 'class-nyx',
+		frames: {
+			W: 'img/frames/class/nyx/w.png',
+			U: 'img/frames/class/nyx/u.png',
+			B: 'img/frames/class/nyx/b.png',
+			R: 'img/frames/class/nyx/r.png',
+			G: 'img/frames/class/nyx/g.png',
+			M: 'img/frames/class/nyx/m.png',
+			A: 'img/frames/class/nyx/a.png',
+			C: 'img/frames/class/nyx/c.png',
+		},
+		pt: {},
+		fallbacks: commonFallbacks,
+		layout: classLayout,
+		fonts: commonFonts,
+	},
+	'class-universes-beyond': {
+		id: 'class-universes-beyond',
+		frames: {
+			W: 'img/frames/class/universes-beyond/w.png',
+			U: 'img/frames/class/universes-beyond/u.png',
+			B: 'img/frames/class/universes-beyond/b.png',
+			R: 'img/frames/class/universes-beyond/r.png',
+			G: 'img/frames/class/universes-beyond/g.png',
+			M: 'img/frames/class/universes-beyond/m.png',
+			A: 'img/frames/class/universes-beyond/a.png',
+			C: 'img/frames/class/universes-beyond/c.png',
+		},
+		pt: {},
+		fallbacks: commonFallbacks,
+		layout: classLayout,
+		fonts: commonFonts,
+	},
+	'class-universes-beyond-nyx': {
+		id: 'class-universes-beyond-nyx',
+		frames: {
+			W: 'img/frames/class/universes-beyond-nyx/w.png',
+			U: 'img/frames/class/universes-beyond-nyx/u.png',
+			B: 'img/frames/class/universes-beyond-nyx/b.png',
+			R: 'img/frames/class/universes-beyond-nyx/r.png',
+			G: 'img/frames/class/universes-beyond-nyx/g.png',
+			M: 'img/frames/class/universes-beyond-nyx/m.png',
+			A: 'img/frames/class/universes-beyond-nyx/a.png',
+			C: 'img/frames/class/universes-beyond-nyx/c.png',
+		},
+		pt: {},
+		fallbacks: commonFallbacks,
+		layout: classLayout,
+		fonts: commonFonts,
+	},
+} satisfies Record<string, FrameFamily>

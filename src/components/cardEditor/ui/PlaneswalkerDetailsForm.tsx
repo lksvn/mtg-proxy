@@ -1,3 +1,4 @@
+import { RulesTextarea } from './RulesTextarea'
 import { useI18n } from '../../../i18n/context'
 import { Icon } from '../../Icon'
 import type { PlaneswalkerCardData } from '../types'
@@ -172,9 +173,9 @@ export function PlaneswalkerDetailsForm({ card, onChange, part, showNickname = f
 					</div>
 					<div className="form-group gap-2">
 						<label htmlFor={`planeswalker-ability-${index}`}>{t('abilityText')}</label>
-						<textarea
+						<RulesTextarea
 							id={`planeswalker-ability-${index}`}
-							rows={ability.text ? 3 : 2}
+							rows={6}
 							value={ability.text}
 							onChange={(event) => updateAbility(index, { text: event.target.value })}
 						/>

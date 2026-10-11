@@ -1,3 +1,4 @@
+import { RulesTextarea } from './RulesTextarea'
 import { Icon } from '../../Icon'
 import { useI18n } from '../../../i18n/context'
 import { formatPowerToughnessInput } from '../cardText'
@@ -42,9 +43,9 @@ export function SagaDetailsForm({ card, onChange, part, showCreatureFields = fal
 
 			<div className="form-group gap-2">
 				<label htmlFor="saga-reminder">{t('sagaReminder')}</label>
-				<textarea
+				<RulesTextarea
 					id="saga-reminder"
-					rows={3}
+					rows={6}
 					value={card.rulesText}
 					onChange={(event) => update({ rulesText: event.target.value })}
 				/>
@@ -73,9 +74,9 @@ export function SagaDetailsForm({ card, onChange, part, showCreatureFields = fal
 					</div>
 					<div className="form-group gap-2">
 						<label htmlFor={`saga-chapter-text-${index}`}>{t('abilityText')}</label>
-						<textarea
+						<RulesTextarea
 							id={`saga-chapter-text-${index}`}
-							rows={2}
+							rows={6}
 							value={chapter.text}
 							onChange={(event) => {
 								const chapters = [...card.chapters]
@@ -109,9 +110,9 @@ export function SagaDetailsForm({ card, onChange, part, showCreatureFields = fal
 			{showCreatureFields && <>
 				<div className="form-group gap-2 mt-5">
 					<label htmlFor="saga-creature-rules">{t('rulesText')}</label>
-					<textarea
+					<RulesTextarea
 						id="saga-creature-rules"
-						rows={3}
+						rows={6}
 						value={card.flavorText}
 						onChange={(event) => update({ flavorText: event.target.value })}
 					/>

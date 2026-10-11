@@ -32,6 +32,6 @@ export function drawAdventure(
 		layout.rules.y,
 		layout.rules.width,
 		layout.rules.height,
-		layout.rules,
+		{ ...layout.rules, fontSizeKey: 'adventure-rules' },
 	)
 }

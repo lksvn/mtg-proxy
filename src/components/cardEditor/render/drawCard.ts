@@ -1,11 +1,13 @@
 import type { ArtworkTransform } from '../CardCanvas'
 import { artworkFilter } from './artworkFilter'
-import type { CardTextRun } from '../cardText'
+import { parseManaCost, type CardTextRun } from '../cardText'
 import type { FrameLayout } from '../frameFamilies'
 import { resolveFooterX, resolvePtTextColor, resolveTextColor, resolveTextX } from '../frameFamilies'
 import type { CustomCardData, FrameVariant } from '../types'
 import { drawManaCost } from './drawManaCost'
 import { drawRulesText } from './drawRulesText'
+import { drawVerticalTitle } from './drawVerticalTitle.ts'
+import { rulesAlignment } from './rulesAlignment.ts'
 
 import { HEIGHT, WIDTH } from '../canvasDimensions'
 export { HEIGHT, WIDTH } from '../canvasDimensions'
@@ -32,6 +34,7 @@ const COLOR_INDICATOR_COLORS: Record<string, string> = {
 
 type CardImages = {
 	frame: CanvasImageSource
+	faceOverlays?: { image: CanvasImageSource; x: number; y: number; width: number; height: number }[]
 	overlay?: {
 		image: CanvasImageSource
 		x: number
@@ -45,6 +48,7 @@ type CardImages = {
 		bounds?: { x: number; y: number; width: number; height: number }
 	}
 	border?: CanvasImageSource
+	transformIcon?: CanvasImageSource
 	colorIndicatorBase?: CanvasImageSource
 	colorIndicatorColors?: string[]
 	ptBackground?: HTMLImageElement
@@ -64,7 +68,7 @@ export function drawCard(
 	context: CanvasRenderingContext2D,
 	card: CustomCardData,
 	transform: ArtworkTransform,
-	{ frame, overlay, frameOverlay, border, colorIndicatorBase, colorIndicatorColors, ptBackground, art, symbol, typeIcon, manaSymbols }: CardImages,
+	{ frame, faceOverlays, overlay, frameOverlay, border, transformIcon, colorIndicatorBase, colorIndicatorColors, ptBackground, art, symbol, typeIcon, manaSymbols }: CardImages,
 	{ manaRuns, rulesRuns, flavorRuns }: CardRuns,
 	layout: FrameLayout,
 	variant: FrameVariant,
@@ -99,7 +103,14 @@ export function drawCard(
 		context.drawImage(frameOverlay.image, x, y, width, height)
 	}
 	if (overlay) context.drawImage(overlay.image, overlay.x, overlay.y, overlay.width, overlay.height)
+	faceOverlays?.forEach(({ image, x, y, width, height }) => {
+		context.drawImage(image, x, y, width, height)
+	})
 	if (border) context.drawImage(border, 0, 0, canvasWidth, canvasHeight)
+	if (transformIcon && layout.transformIcon) {
+		const { x, y, width, height } = layout.transformIcon
+		context.drawImage(transformIcon, x, y, width, height)
+	}
 	if (colorIndicatorBase && colorIndicatorColors?.length && layout.colorIndicator) {
 		const indicator = layout.colorIndicator
 		context.drawImage(colorIndicatorBase, indicator.x, indicator.y, indicator.width, indicator.height)
@@ -136,36 +147,51 @@ export function drawCard(
 	if (layout.title.maxWidth > 0) {
 		applyTextStyle(context, layout.title, variant)
 		context.textAlign = layout.title.align ?? 'left'
-		context.fillText(card.name, resolveTextX(layout.title), layout.title.y, layout.title.maxWidth)
+		if (layout.title.verticalHeight) {
+			drawVerticalTitle(context, card.name, layout.title.x, layout.title.y, layout.title.maxWidth, layout.title.verticalHeight)
+		} else {
+			context.fillText(card.name, resolveTextX(layout.title), layout.title.y, layout.title.maxWidth)
+		}
 	}
 	context.textAlign = 'right'
-	drawManaCost(context, manaRuns, manaSymbols, layout.mana.right, layout.mana.centerY, layout.mana)
+	if (layout.showManaCost !== false) {
+		drawManaCost(context, manaRuns, manaSymbols, layout.mana.right, layout.mana.centerY, layout.mana)
+	}
 	if (layout.type.maxWidth > 0) {
 		applyTextStyle(context, layout.type, variant)
-		context.textAlign = 'left'
+		context.textAlign = layout.type.align ?? 'left'
 		context.fillText(card.typeLine.replace(/\s+-\s+/, ' — '), layout.type.x, layout.type.y, layout.type.maxWidth)
 	}
 	const textRuns: CardTextRun[] = rulesRuns.length && flavorRuns.length
 		? [...rulesRuns, { type: 'text', value: '\n\n', italic: false }, ...flavorRuns]
 		: [...rulesRuns, ...flavorRuns]
+	const rulesHeight = card.reversePowerToughness && layout.reversePowerToughness
+		? Math.max(0, Math.min(layout.rules.height, layout.reversePowerToughness.y - parseFloat(layout.reversePowerToughness.font) - layout.rules.y))
+		: layout.rules.height
+	const rules = layout.rules
 	if (layout.flavorRules) {
-		const rulesStyle = card.centerRulesText ? { ...layout.rules, horizontalAlign: 'center' as const, verticalAlign: 'middle' as const } : layout.rules
-		const flavorStyle = card.centerRulesText ? { ...layout.flavorRules, horizontalAlign: 'center' as const, verticalAlign: 'middle' as const } : layout.flavorRules
-		drawRulesText(context, rulesRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, rulesStyle)
+		const rulesStyle = { ...rules, ...rulesAlignment(card) }
+		const flavorStyle = { ...layout.flavorRules, ...rulesAlignment(card) }
+		drawRulesText(context, rulesRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, rulesHeight, rulesStyle)
 		drawRulesText(context, flavorRuns, manaSymbols, layout.flavorRules.x, layout.flavorRules.y, layout.flavorRules.width, layout.flavorRules.height, flavorStyle)
 	} else {
-		drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, card.centerRulesText
-			? { ...layout.rules, horizontalAlign: 'center', verticalAlign: 'middle' }
-			: layout.rules)
+		drawRulesText(context, textRuns, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, rulesHeight, { ...rules, ...rulesAlignment(card) })
+	}
+
+	if (card.reversePowerToughness && layout.reversePowerToughness) {
+		const reverse = layout.reversePowerToughness
+		applyTextStyle(context, reverse, variant)
+		context.textAlign = reverse.align ?? 'right'
+		context.fillText(card.reversePowerToughness, reverse.x, reverse.y, reverse.maxWidth)
 	}
 
 	if (card.powerToughness && layout.pt.width > 0) {
 		if (ptBackground) context.drawImage(
 			ptBackground,
-			layout.pt.x,
-			layout.pt.y,
-			layout.pt.width,
-			layout.pt.height,
+			layout.pt.backgroundBounds?.x ?? layout.pt.x,
+			layout.pt.backgroundBounds?.y ?? layout.pt.y,
+			layout.pt.backgroundBounds?.width ?? layout.pt.width,
+			layout.pt.backgroundBounds?.height ?? layout.pt.height,
 		)
 		applyTextStyle(context, layout.pt)
 		context.fillStyle = resolvePtTextColor(variant, resolveTextColor(layout.pt, variant))
@@ -176,6 +202,19 @@ export function drawCard(
 			layout.pt.textY,
 			layout.pt.width,
 		)
+	}
+
+	if (layout.reverseFace) {
+		const reverse = layout.reverseFace
+		applyTextStyle(context, reverse)
+		context.textAlign = 'left'
+		context.fillText(card.reverseFaceName ?? '', reverse.x, reverse.y, reverse.maxWidth)
+		drawManaCost(context, parseManaCost(card.reverseFaceManaCost ?? ''), manaSymbols, reverse.manaRight, reverse.y, {
+			symbolSize: reverse.manaSize,
+			gap: 2,
+			font: '40px belerenb, serif',
+			color: reverse.color,
+		})
 	}
 
 	if (!layout.footer.unrotated) drawCardFooter(context, card, layout, variant)

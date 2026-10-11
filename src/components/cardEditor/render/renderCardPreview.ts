@@ -1,5 +1,6 @@
 import { DUAL_FRAME_VARIANTS, type CustomCardData } from '../types'
 import type { CardRenderInput } from '../cardRender'
+import { transformIconPath } from '../transformIcons'
 import { getAbuDualLandColors, getRunSymbolFile, hasHybridManaSymbol, parseCardText, parseRulesText, parseManaCost, type CardTextRun } from '../cardText'
 import { drawCard, drawCardFooter, HEIGHT, WIDTH } from './drawCard'
 import { futureManaFile } from './drawManaCost'
@@ -16,7 +17,7 @@ import { drawRoom } from './drawRoom'
 import { drawSplit } from './drawSplit'
 import { drawAdventure } from './drawAdventure'
 import { drawLeveler } from './drawLeveler'
-import { hasRulesTextOverflow, resetRulesTextOverflow } from './drawRulesText'
+import { hasRulesTextOverflow, resetRulesTextOverflow, setRulesFontSize } from './drawRulesText'
 
 const MANA_SYMBOLS_URL = `${import.meta.env.BASE_URL}img/manaSymbols/`
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`
@@ -42,6 +43,7 @@ export async function renderCardPreview(
 		name: family.id === 'planeswalker-nickname' ? card.nickname : card.name,
 		rulesText: '',
 		centerRulesText: false,
+		centerRulesTextVertically: false,
 		flavorText: '',
 		powerToughness: card.startingLoyalty,
 	} : saga || classCard || caseCard || room || leveler ? { ...card, rulesText: '', flavorText: '' } : card
@@ -76,7 +78,9 @@ export async function renderCardPreview(
 	const adventureManaRuns = adventure ? parseManaCost(card.adventureManaCost) : []
 	const adventureRulesRuns = adventure ? parseRulesText(card.adventureRulesText) : []
 	const levelerRuns = leveler ? [parseRulesText(card.levelUpText), parseRulesText(card.levelTwoRulesText), parseRulesText(card.levelThreeRulesText)] : []
-	const reverseManaRuns = planeswalker ? parseManaCost(card.reverseFaceManaCost) : []
+	const reverseManaRuns = planeswalker || family.layout.reverseFace
+		? parseManaCost(card.reverseFaceManaCost ?? '')
+		: []
 	const planeswalkerMask = family.id === 'planeswalker-mdfc-back'
 		? 'img/frames/planeswalker/mdfc/text.png'
 		: family.id === 'planeswalker-compleated'
@@ -141,10 +145,19 @@ export async function renderCardPreview(
 	const ptVariant = resolvePtVariant(resolvedVariant, hybrid)
 	const ptPath = family.pt[ptVariant] ?? family.pt.C ?? Object.values(family.pt)[0]
 	const frameOverlay = family.frameOverlays?.[resolvedVariant]
+	const faceOverlays = family.faceOverlays
+	const faceOverlayVariant = faceOverlays?.icons[ptVariant] ? ptVariant : 'M'
+	const faceOverlayImages = faceOverlays ? await Promise.all([
+		loadImage(assetUrl(faceOverlays.icons[faceOverlayVariant]!)),
+		loadImage(assetUrl(faceOverlays.reminders[faceOverlayVariant]!)),
+	]) : undefined
 	const colorIndicatorColors = family.layout.colorIndicator
 		? COLOR_INDICATOR_ORDER.filter((color) => card.manaCost.toUpperCase().includes(color))
 		: []
-	const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase, sagaImages, classHeader, secondFrame, secondArt] = await Promise.all([
+	const iconPath = family.layout.transformIcon
+		? transformIconPath(input.transformIcon, family.layout.transformIcon.defaultIcon)
+		: undefined
+	const [frame, overlay, frameOverlayImage, border, ptBackground, art, symbol, typeIcon, planeswalkerIcons, colorIndicatorBase, sagaImages, classHeader, secondFrame, secondArt, transformIcon] = await Promise.all([
 		abuLandColors
 			? loadAbuDualLand(family, abuLandColors)
 			: dualPair
@@ -165,6 +178,7 @@ export async function renderCardPreview(
 		classCard ? loadImage(assetUrl(CLASS_HEADER)) : undefined,
 		input.split ? loadImage(assetUrl(family.frames[resolveFrameVariant(family, input.split.frameVariant)]!)) : undefined,
 		input.split?.artwork ? loadImageSource(input.split.artwork) : undefined,
+		iconPath ? loadImage(assetUrl(iconPath)) : undefined,
 	])
 	const manaSymbols = new Map(
 		await Promise.all(
@@ -183,6 +197,7 @@ export async function renderCardPreview(
 
 	if (!canvas || !context) throw new Error('Could not access the card canvas')
 	resetRulesTextOverflow(context)
+	setRulesFontSize(context, input.rulesFontSizes)
 
 	const iconlessPlaneswalker = family.id === 'planeswalker-seventh'
 	context.resetTransform()
@@ -202,11 +217,16 @@ export async function renderCardPreview(
 		transform,
 		{
 			frame,
+			faceOverlays: faceOverlayImages && faceOverlays ? [
+				{ image: faceOverlayImages[0], ...faceOverlays.iconBounds },
+				{ image: faceOverlayImages[1], ...faceOverlays.reminderBounds },
+			] : undefined,
 			overlay: overlay && family.overlay ? { image: overlay, ...family.overlay } : undefined,
 			frameOverlay: frameOverlayImage && frameOverlay
 				? { image: frameOverlayImage, crops: frameOverlay.crops, bounds: frameOverlay.bounds }
 				: undefined,
 			border,
+			transformIcon,
 			colorIndicatorBase,
 			colorIndicatorColors,
 			ptBackground,

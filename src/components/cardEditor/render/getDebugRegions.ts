@@ -19,9 +19,17 @@ export function getDebugRegions(family: FrameFamily): DebugRegion[] {
 			width: layout.artwork.dragRight - layout.artwork.dragLeft,
 			height: layout.artwork.dragBottom - layout.artwork.dragTop,
 		},
-		{ label: 'Title', x: layout.title.x, y: layout.title.y - 50, width: layout.title.maxWidth, height: 100 },
-		{ label: 'Mana', x: layout.mana.right - 420, y: layout.mana.centerY - layout.mana.symbolSize / 2, width: 420, height: layout.mana.symbolSize },
+		{ label: 'Title', x: layout.title.x, y: layout.title.verticalHeight ? layout.title.y : layout.title.y - 50, width: layout.title.maxWidth, height: layout.title.verticalHeight ?? 100 },
+		...(layout.transformIcon ? [{ label: 'Transform icon', ...layout.transformIcon }] : []),
+		...(layout.showManaCost !== false ? [{ label: 'Mana', x: layout.mana.right - 420, y: layout.mana.centerY - layout.mana.symbolSize / 2, width: 420, height: layout.mana.symbolSize }] : []),
 		{ label: 'Type', x: layout.type.x, y: layout.type.y - 50, width: layout.type.maxWidth, height: 100 },
+		...(layout.reverseFace ? [{
+			label: 'Opposite face strip',
+			x: layout.reverseFace.x,
+			y: layout.reverseFace.y - 30,
+			width: layout.reverseFace.manaRight - layout.reverseFace.x,
+			height: 60,
+		}] : []),
 		{
 			label: 'Set symbol',
 			x: layout.symbol.centerX - layout.symbol.boxSize / 2,
@@ -32,6 +40,13 @@ export function getDebugRegions(family: FrameFamily): DebugRegion[] {
 		{ label: 'Rules', ...layout.rules },
 		...(layout.flavorRules ? [{ label: 'Flavor text', ...layout.flavorRules }] : []),
 		{ label: 'P/T', x: layout.pt.x, y: layout.pt.y, width: layout.pt.width, height: layout.pt.height },
+		...(layout.reversePowerToughness ? [{
+			label: 'Reverse P/T',
+			x: layout.reversePowerToughness.x - layout.reversePowerToughness.maxWidth,
+			y: layout.reversePowerToughness.y - 35,
+			width: layout.reversePowerToughness.maxWidth,
+			height: 70,
+		}] : []),
 		{
 			label: 'Footer metadata',
 			x: layout.footer.x,
@@ -49,6 +64,10 @@ export function getDebugRegions(family: FrameFamily): DebugRegion[] {
 			unrotated: layout.footer.unrotated,
 		},
 		...(family.overlay ? [{ label: 'Frame overlay', ...family.overlay }] : []),
+		...(family.faceOverlays ? [
+			{ label: 'Modal face icon', ...family.faceOverlays.iconBounds },
+			{ label: 'Modal reminder overlay', ...family.faceOverlays.reminderBounds },
+		] : []),
 	]
 
 	if (layout.split) {

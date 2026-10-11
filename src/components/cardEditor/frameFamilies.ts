@@ -3,8 +3,8 @@ import { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
 export { FRAME_FAMILIES } from './frameFamilyRegistry.ts'
 
-type ClassFrameFamilyId = 'class-regular' | 'class-nyx' | 'class-universes-beyond' | 'class-universes-beyond-nyx' | 'case-regular' | 'case-nyx' | 'case-universes-beyond' | 'case-universes-beyond-nyx' | 'room-regular' | 'adventure-regular' | 'adventure-nyx' | 'leveler-regular' | 'split-regular' | 'split-fuse' | 'split-aftermath'
-export type FrameFamilyId = ClassFrameFamilyId | 'saga-regular' | 'saga-nyx' | 'saga-universes-beyond' | 'saga-universes-beyond-regular' | 'saga-creature' | 'saga-creature-regular' | 'saga-creature-transform-front' | 'saga-creature-transform-back' | 'saga-creature-transform-front-ub' | 'saga-creature-transform-back-ub' | 'saga-transform' | 'saga-lord-of-the-rings' | 'battle-regular' | 'planeswalker-regular' | 'planeswalker-transform-front' | 'planeswalker-transform-back' | 'planeswalker-mdfc-back' | 'planeswalker-borderless' | 'planeswalker-box-topper' | 'planeswalker-compleated' | 'planeswalker-double-feature' | 'planeswalker-tall-double-feature' | 'planeswalker-transform-front-double-feature' | 'planeswalker-transform-back-double-feature' | 'planeswalker-sdcc15' | 'planeswalker-sdcc15-transform' | 'planeswalker-nickname' | 'planeswalker-seventh' | 'planeswalker-tall' | 'planeswalker-tall-borderless' | 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight' | 'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'
+type ClassFrameFamilyId = 'class-regular' | 'class-nyx' | 'class-universes-beyond' | 'class-universes-beyond-nyx' | 'case-regular' | 'case-nyx' | 'case-universes-beyond' | 'case-universes-beyond-nyx' | 'room-regular' | 'adventure-regular' | 'adventure-nyx' | 'leveler-regular' | 'split-regular' | 'split-fuse' | 'split-aftermath' | 'm15-transform-front' | 'm15-transform-back' | 'm15-transform-nyx-front' | 'm15-transform-nyx-back' | 'm15-transform-snow-front' | 'm15-transform-snow-back' | 'm15-transform-ub-front' | 'm15-transform-ub-back' | 'm15-transform-ub-nyx-front' | 'm15-transform-ub-nyx-back' | 'm15-transform-borderless-front' | 'm15-transform-borderless-back' | 'm15-transform-extended-front' | 'm15-transform-extended-back' | 'm15-transform-double-feature-front' | 'm15-transform-double-feature-back' | 'm15-transform-original-back' | 'm15-transform-nyx-original-back' | 'm15-transform-snow-original-back' | 'm15-transform-ub-original-back' | 'm15-double-feature' | 'neon-ink' | 'm15-modal-front' | 'm15-modal-back' | 'm15-modal-nyx-front' | 'm15-modal-nyx-back' | 'm15-modal-snow-front' | 'm15-modal-snow-back' | 'm15-modal-ub-front' | 'm15-modal-ub-back' | 'm15-modal-ub-nyx-front' | 'm15-modal-ub-nyx-back'
+export type FrameFamilyId = 'mh2-sketch' | 'mystical-archive-soa' | 'mystical-archive-japanese' | 'mystical-archive' | 'commander-legends-etched' | 'zendikar-rising-showcase' | 'kaldheim-modal-front' | 'kaldheim-modal-back' | 'kaldheim-showcase' | 'm15-modal-borderless-front' | 'm15-modal-borderless-back' | 'm15-modal-extended-front' | 'm15-modal-extended-back' | ClassFrameFamilyId | 'saga-regular' | 'saga-nyx' | 'saga-universes-beyond' | 'saga-universes-beyond-regular' | 'saga-creature' | 'saga-creature-regular' | 'saga-creature-transform-front' | 'saga-creature-transform-back' | 'saga-creature-transform-front-ub' | 'saga-creature-transform-back-ub' | 'saga-transform' | 'saga-lord-of-the-rings' | 'battle-regular' | 'planeswalker-regular' | 'planeswalker-transform-front' | 'planeswalker-transform-back' | 'planeswalker-mdfc-back' | 'planeswalker-borderless' | 'planeswalker-box-topper' | 'planeswalker-compleated' | 'planeswalker-double-feature' | 'planeswalker-tall-double-feature' | 'planeswalker-transform-front-double-feature' | 'planeswalker-transform-back-double-feature' | 'planeswalker-sdcc15' | 'planeswalker-sdcc15-transform' | 'planeswalker-nickname' | 'planeswalker-seventh' | 'planeswalker-tall' | 'planeswalker-tall-borderless' | 'box-topper' | 'm15-regular' | 'm15-extended' | 'snow' | 'nyx' | 'universes-beyond' | 'borderless' | 'promo-regular' | 'eighth-edition' | 'seventh-edition' | 'old-floating' | 'abu' | 'revised' | 'fourth-era' | 'colorshifted' | 'classicshifted' | 'future-sight' | 'token-regular' | 'token-tall' | 'token-short' | 'token-textless' | 'token-textless-borderless' | 'token-nyx' | 'token-nyx-textless' | 'token-old' | 'token-unglued' | 'token-monarch' | 'token-marker' | 'token-initiative' | 'token-day-night' | 'token-jumpstart'
 export type FrameBorderStyle = 'black' | 'white' | 'silver' | 'gold'
 
 type TextStyle = {
@@ -21,6 +21,7 @@ type TextBox = TextStyle & {
 	y: number
 	maxWidth: number
 	align?: CanvasTextAlign
+	verticalHeight?: number
 }
 
 type RulesBox = {
@@ -112,6 +113,8 @@ export type FrameLayout = {
 	artwork: { dragLeft: number; dragTop: number; dragRight: number; dragBottom: number }
 	title: TextBox
 	mana: TextStyle & { right: number; centerY: number; symbolSize: number; gap: number; verticalPositions?: readonly (readonly [number, number])[] }
+	showManaCost?: boolean
+	reverseFace?: TextBox & { manaRight: number; manaSize: number }
 	type: TextBox
 	rules: RulesBox
 	flavorRules?: RulesBox
@@ -132,9 +135,12 @@ export type FrameLayout = {
 	}
 	adventure?: AdventureLayout
 	leveler?: LevelerLayout
+	reversePowerToughness?: TextBox
 	symbol: { centerX: number; centerY: number; boxSize: number; rotation?: 'counterclockwise' }
 	colorIndicator?: { x: number; y: number; width: number; height: number; centerX: number; centerY: number; radius: number }
+	transformIcon?: { x: number; y: number; width: number; height: number; defaultIcon?: import('./transformIcons').TransformIcon }
 	pt: TextStyle & {
+		backgroundBounds?: { x: number; y: number; width: number; height: number }
 		x: number
 		y: number
 		width: number
@@ -160,6 +166,12 @@ export type FrameLayout = {
 
 export type FrameFamily = {
 	id: FrameFamilyId
+	faceOverlays?: {
+		icons: Partial<Record<FrameVariant, string>>
+		reminders: Partial<Record<FrameVariant, string>>
+		iconBounds: { x: number; y: number; width: number; height: number }
+		reminderBounds: { x: number; y: number; width: number; height: number }
+	}
 	overlay?: { path: string; x: number; y: number; width: number; height: number }
 	frameOverlays?: Partial<Record<FrameVariant, {
 		path: string

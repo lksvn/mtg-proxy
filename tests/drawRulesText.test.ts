@@ -2,7 +2,30 @@
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { drawRulesText, hasRulesTextOverflow, resetRulesTextOverflow } from '../src/components/cardEditor/render/drawRulesText.ts'
+import { drawRulesText, fitRulesText, hasRulesTextOverflow, resetRulesTextOverflow, setRulesFontSize } from '../src/components/cardEditor/render/drawRulesText.ts'
+
+test('shared font override applies to any rules style and Reset restores its base', () => {
+	const context = { measureText(value: string) { return { width: value.length } } } as unknown as CanvasRenderingContext2D
+	const runs = [{ type: 'text' as const, value: 'Flying', italic: false }]
+	const style = { fontFamily: 'serif', italicFontFamily: 'serif', color: '#111', strokeColor: '#111', strokeWidth: 0, maxFontSize: 64, minFontSize: 32 }
+	setRulesFontSize(context, { 'card-rules-text': 52, 'other-rules': 40 })
+	assert.equal(fitRulesText(context, runs, 500, 500, style), 52)
+	assert.equal(fitRulesText(context, runs, 500, 500, { ...style, maxFontSize: 70 }), 52)
+	assert.equal(fitRulesText(context, runs, 500, 500, { ...style, fontSizeKey: 'other-rules' }), 40)
+	assert.equal(fitRulesText(context, runs, 500, 500, { ...style, fontSizeKey: 'untouched-rules' }), 64)
+	setRulesFontSize(context)
+	assert.equal(fitRulesText(context, runs, 500, 500, style), 64)
+})
+
+test('manual font size stays fixed for short and overflowing rules text', () => {
+	const context = {
+		measureText(value: string) { return { width: value.length * 10 } },
+	} as unknown as CanvasRenderingContext2D
+	const style = { fontFamily: 'serif', italicFontFamily: 'serif', color: '#111', strokeColor: '#111', strokeWidth: 0, maxFontSize: 52, minFontSize: 52 }
+	for (const value of ['Flying', 'Long rules text '.repeat(30)]) {
+		assert.equal(fitRulesText(context, [{ type: 'text', value, italic: false }], 200, 100, style), 52)
+	}
+})
 
 test('Seventh rules and flavor share a vertically centered text block', () => {
 	const positions: number[] = []

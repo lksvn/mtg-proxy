@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { CardCanvas, type ArtworkTransform } from './CardCanvas'
+import type { TransformIcon } from './transformIcons'
 import { canExportCardRender, type CardRenderInput, type CardRenderResult } from './cardRender'
 import { getQuantityError } from '../../Cards'
 import { canvasToPng } from '../../utils/canvasToPng'
@@ -8,6 +9,7 @@ import { FileInput } from '../FileInput'
 import { loadImageSource } from './render/loadImage'
 import { ArtworkControls } from './ui/ArtworkControls'
 import { CardDetailsForm } from './ui/CardDetailsForm'
+import { RulesTextSizeContext } from './ui/rulesTextSizeContext'
 import { PlaneswalkerDetailsForm } from './ui/PlaneswalkerDetailsForm'
 import { SagaDetailsForm } from './ui/SagaDetailsForm'
 import { ClassDetailsForm } from './ui/ClassDetailsForm'
@@ -83,6 +85,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const { t } = useI18n()
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const [renderResult, setRenderResult] = useState<CardRenderResult | null>(null)
+	const [rulesFontSizes, setRulesFontSizes] = useState<Partial<Record<FrameFamilyId, Record<string, number | undefined>>>>({})
 	const [artwork, setArtwork] = useState<File | string | undefined>(SAMPLE_ARTWORK_URL)
 	const [splitArtwork, setSplitArtwork] = useState<File | string | undefined>(SAMPLE_ARTWORK_URL)
 	const [splitTransform, setSplitTransform] = useState(createDefaultArtworkTransform)
@@ -96,6 +99,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const [tokenFrameSelection, setTokenFrameSelection] = useState<FrameVariant | 'auto'>('C')
 	const [frameFamily, setFrameFamily] = useState<FrameFamilyId>('box-topper')
 	const [borderStyle, setBorderStyle] = useState<FrameBorderStyle>('black')
+	const [transformIcons, setTransformIcons] = useState<Partial<Record<FrameFamilyId, TransformIcon>>>({})
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [customCardQuantity, setCustomCardQuantity] = useState('1')
 	const quantity = Number(customCardQuantity)
@@ -146,6 +150,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	} satisfies Record<typeof layout, FrameFamilyId>
 	const activeCard = cardsByLayout[layout]
 	const activeFamily = familiesByLayout[layout]
+	const baseRulesFontSize = getFrameFamily(activeFamily).layout.rules.maxFontSize
 	const editingSecondArtwork = layout === 'split' && splitArtworkSide === 'second'
 	const activeArtwork = editingSecondArtwork ? splitArtwork : artwork
 	const activeTransform = editingSecondArtwork ? splitTransform : artworkTransform
@@ -169,12 +174,14 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 		artwork,
 		setSymbol,
 		frameFamily: activeFamily,
+		transformIcon: transformIcons[activeFamily],
+		rulesFontSizes: rulesFontSizes[activeFamily],
 		borderStyle: activeFamily === 'token-unglued' ? 'silver' : borderStyle,
 		frameVariant,
 		transform: artworkTransform,
 		card: activeCard,
 		split: layout === 'split' ? { artwork: splitArtwork, transform: splitTransform, frameVariant: secondFrameVariant } : undefined,
-	}), [artwork, setSymbol, activeFamily, borderStyle, frameVariant, artworkTransform, activeCard, layout, splitArtwork, splitTransform, secondFrameVariant])
+	}), [artwork, setSymbol, activeFamily, transformIcons, rulesFontSizes, borderStyle, frameVariant, artworkTransform, activeCard, layout, splitArtwork, splitTransform, secondFrameVariant])
 	const canExport = canExportCardRender(renderInput, renderResult)
 	const renderFailed = renderResult?.input === renderInput && renderResult.status === 'error'
 	const handleRenderResult = useCallback((result: CardRenderResult) => {
@@ -242,6 +249,8 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 						hideTypeLine={layout === 'token' && tokenOptions.hideTypeLine}
 						hidePowerToughness={layout === 'token' && tokenOptions.hidePowerToughness}
 						powerToughnessLabel={layout === 'battle' ? 'defense' : undefined}
+						showReversePowerToughness={Boolean(getFrameFamily(activeFamily).layout.reversePowerToughness)}
+						showReverseFace={Boolean(getFrameFamily(activeFamily).layout.reverseFace)}
 						maxManaItems={activeFamily === 'future-sight' ? 6 : undefined}
 					/>
 				)
@@ -311,7 +320,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 
 	return (
 		<section>
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '1rem'}}>
+            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '2rem'}}>
                 <div>
 					<details className="form-section" open>
                         <summary><h5 className="mt-5">{t('cardImageSection')}</h5></summary>
@@ -361,6 +370,8 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 								}}
 								borderStyle={borderStyle}
 								onBorderStyleChange={setBorderStyle}
+								transformIcon={transformIcons[frameFamily]}
+								onTransformIconChange={(icon) => setTransformIcons({ ...transformIcons, [frameFamily]: icon })}
 								frameSelection={frameSelection}
 								onFrameSelectionChange={setFrameSelection}
 								search={frameStyleSearch}
@@ -478,7 +489,14 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 					</details>
 					{(layout !== 'token' || tokenStyle !== 'token-unglued') && <details className="form-section" open>
 					    <summary><h5 className="mt-5">{t('cardInformationSection')}</h5></summary>
-						{renderCardForm('content')}
+						<RulesTextSizeContext.Provider value={{
+							sizes: rulesFontSizes[activeFamily] ?? {},
+							baseSize: baseRulesFontSize > 1 ? baseRulesFontSize : 64,
+							combinedAbilities: activeFamily === 'planeswalker-seventh',
+							onChange: (field, size) => setRulesFontSizes({ ...rulesFontSizes, [activeFamily]: { ...rulesFontSizes[activeFamily], [field]: size } }),
+						}}>
+							{renderCardForm('content')}
+						</RulesTextSizeContext.Provider>
 					</details>}
 					<details className="form-section">
                         <summary><h5 className="mt-5">{t('cardDetailsSection')}</h5></summary>

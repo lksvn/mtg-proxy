@@ -1,6 +1,9 @@
+import { RulesTextarea } from './RulesTextarea'
+import { useState } from 'react'
 import { useI18n } from '../../../i18n/context'
 import type { ClassCardData } from '../types'
 import { CardDetailsForm } from './CardDetailsForm'
+import { ContentTabs } from './ContentTabs'
 
 type ClassDetailsFormProps = {
 	card: ClassCardData
@@ -10,6 +13,7 @@ type ClassDetailsFormProps = {
 
 export function ClassDetailsForm({ card, onChange, part }: ClassDetailsFormProps) {
 	const { t } = useI18n()
+	const [activeLevel, setActiveLevel] = useState(0)
 
 	function update(changes: Partial<ClassCardData>) {
 		onChange({ ...card, ...changes })
@@ -22,7 +26,14 @@ export function ClassDetailsForm({ card, onChange, part }: ClassDetailsFormProps
 	return <>
 		<CardDetailsForm card={card} onChange={update} hideRulesText hidePowerToughness part="content" />
 		<h5 className="mt-5">{t('classLevels')}</h5>
-		{card.levels.map((level, index) => <div key={index} className="class-level">
+		<ContentTabs
+			labels={[t('classLevelOne'), t('classLevelTwo'), t('classLevelThree')]}
+			activeIndex={activeLevel}
+			onChange={setActiveLevel}
+			label={t('classLevels')}
+			showIcons={false}
+		>
+		{card.levels.map((level, index) => index === activeLevel && <div key={index} className="class-level">
 			{index > 0 && <div className="form-group gap-2">
 				<label htmlFor={`class-level-cost-${index}`}>{t('levelCost')}</label>
 				<input
@@ -51,9 +62,9 @@ export function ClassDetailsForm({ card, onChange, part }: ClassDetailsFormProps
 			</div>}
 			<div className="form-group gap-2">
 				<label htmlFor={`class-level-text-${index}`}>{t('abilityText')}</label>
-				<textarea
+				<RulesTextarea
 					id={`class-level-text-${index}`}
-					rows={3}
+					rows={6}
 					value={level.text}
 					onChange={(event) => {
 						const levels = [...card.levels]
@@ -63,5 +74,6 @@ export function ClassDetailsForm({ card, onChange, part }: ClassDetailsFormProps
 				/>
 			</div>
 		</div>)}
+		</ContentTabs>
 	</>
 }

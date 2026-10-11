@@ -10,9 +10,9 @@ export function drawLeveler(
 	manaSymbols: Map<string, HTMLImageElement>,
 	layout: NonNullable<FrameLayout['leveler']>,
 ) {
-	drawRulesText(context, runs[0], manaSymbols, layout.levelUp.x, layout.levelUp.y, layout.levelUp.width, layout.levelUp.height, layout.levelUp)
-	drawTier(context, card.levelTwo, card.levelTwoPowerToughness, runs[1], manaSymbols, layout.levelTwo)
-	drawTier(context, card.levelThree, card.levelThreePowerToughness, runs[2], manaSymbols, layout.levelThree)
+	drawRulesText(context, runs[0], manaSymbols, layout.levelUp.x, layout.levelUp.y, layout.levelUp.width, layout.levelUp.height, { ...layout.levelUp, fontSizeKey: 'leveler-level-up' })
+	drawTier(context, card.levelTwo, card.levelTwoPowerToughness, runs[1], manaSymbols, layout.levelTwo, 'leveler-two-rules')
+	drawTier(context, card.levelThree, card.levelThreePowerToughness, runs[2], manaSymbols, layout.levelThree, 'leveler-three-rules')
 }
 
 function drawTier(
@@ -22,6 +22,7 @@ function drawTier(
 	runs: CardTextRun[],
 	manaSymbols: Map<string, HTMLImageElement>,
 	layout: NonNullable<FrameLayout['leveler']>['levelTwo'],
+	fontSizeKey: string,
 ) {
 	context.textBaseline = 'middle'
 	context.textAlign = layout.label.align ?? 'left'
@@ -43,7 +44,7 @@ function drawTier(
 		layout.label.maxWidth,
 	)
 
-	drawRulesText(context, runs, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, layout.rules)
+	drawRulesText(context, runs, manaSymbols, layout.rules.x, layout.rules.y, layout.rules.width, layout.rules.height, { ...layout.rules, fontSizeKey })
 
 	context.textAlign = layout.powerToughness.align ?? 'left'
 	context.font = layout.powerToughness.font

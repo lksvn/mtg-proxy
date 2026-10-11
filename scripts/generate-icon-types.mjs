@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 
-const svgPath = new URL('../public/icons.svg', import.meta.url)
+const svgPath = new URL('../src/assets/icons.svg', import.meta.url)
 const outputDirectory = new URL('../src/generated/', import.meta.url)
 const outputPath = new URL('IconName.ts', outputDirectory)
 
@@ -16,7 +16,7 @@ if (uniqueNames.length === 0) {
 }
 
 const type = [
-	'// Generated from public/icons.svg',
+	'// Generated from src/assets/icons.svg',
 	'',
 	'export type IconName =',
 	...uniqueNames.map((name) => `\t| ${JSON.stringify(name)}`),

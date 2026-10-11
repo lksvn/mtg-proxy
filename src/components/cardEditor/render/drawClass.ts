@@ -24,6 +24,7 @@ export function drawClass(
 		if (index > 0) {
 			context.drawImage(header, layout.header.x, y, layout.header.width, layout.header.height)
 			drawRulesText(context, costRuns[index], manaSymbols, layout.levels.x + 12, y + 10, layout.levels.width / 2, layout.header.height - 20, {
+				fontSizeKey: `class-level-cost-${index}`,
 				verticalAlign: 'middle',
 				fontFamily: 'belerenb',
 				italicFontFamily: 'belerenb',
@@ -45,6 +46,7 @@ export function drawClass(
 			? layout.levels.y + layout.levels.height - y
 			: textHeight * weights[index] / totalWeight
 		drawRulesText(context, levelRuns[index], manaSymbols, layout.levels.x + 16, y + 12, layout.levels.width - 32, height - 24, {
+			fontSizeKey: `class-level-text-${index}`,
 			verticalAlign: 'middle',
 			fontFamily: 'mplantin',
 			italicFontFamily: 'mplantini',
