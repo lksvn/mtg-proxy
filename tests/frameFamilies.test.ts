@@ -49,6 +49,14 @@ test('frame variants stay in the selected family and use declared fallbacks', ()
 	assert.equal(nyxFront.dual?.neutralVariant, 'C')
 	assert.deepEqual(nyxFront.layout, FRAME_FAMILIES['m15-transform-front'].layout)
 	const transformBack = FRAME_FAMILIES['m15-transform-back']
+	const ubBack = FRAME_FAMILIES['m15-transform-ub-back']
+	assert.equal(resolveFrameVariant(ubBack, 'WU'), 'WU')
+	assert.equal(resolveFrameVariant(ubBack, 'V'), 'V')
+	assert.equal(resolveFrameVariant(ubBack, 'C'), 'C')
+	assert.equal(resolveFrameVariant(ubBack, 'WL'), 'L')
+	assert.deepEqual(ubBack.layout, transformBack.layout)
+	assert.equal(ubBack.pt.C, ubBack.pt.A)
+	assert.ok(ubBack.pt.V!.includes('/ub-back/pt/'))
 	const snowBack = FRAME_FAMILIES['m15-transform-snow-back']
 	assert.equal(resolveFrameVariant(snowBack, 'WU'), 'WU')
 	assert.equal(resolveFrameVariant(snowBack, 'V'), 'A')

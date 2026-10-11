@@ -31,6 +31,10 @@ export function CardFrameControls({
 	onSearchChange,
 }: CardFrameControlsProps) {
 	const { t } = useI18n()
+	const hideColoredLands = ['m15-transform-ub-back', 'm15-transform-snow-back', 'm15-transform-nyx-back'].includes(frameFamily)
+	const displayedSelection = hideColoredLands && ['WL', 'UL', 'BL', 'RL', 'GL', 'ML'].includes(frameSelection)
+		? 'L'
+		: frameSelection
 	const normalizedSearch = search.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 
 	return (
@@ -107,7 +111,11 @@ export function CardFrameControls({
 				</div>
 			)}
 			<div className="form-group gap-2">
-				<FrameColorPicker value={frameSelection} onChange={onFrameSelectionChange} />
+				<FrameColorPicker
+					value={displayedSelection}
+					onChange={onFrameSelectionChange}
+					hideColoredLands={hideColoredLands}
+				/>
 			</div>
 		</>
 	)
