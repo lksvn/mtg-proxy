@@ -160,16 +160,6 @@ export function CardCanvas({ input, artworkSide = 'first', onRenderResult, onTra
 
 	return (
 		<div>
-            {DEBUG_CANVAS && (
-                <label style={{ display: 'block', marginBottom: '0.5rem' }}>
-                    <input
-                        type="checkbox"
-                        checked={showDebug}
-                        onChange={(event) => setShowDebug(event.target.checked)}
-                    />{' '}
-                    {t('showCanvasGuides')}
-                </label>
-            )}
 			<div className={`card-canvas-preview${previewRotated ? ' is-rotated' : ''}`} style={{
 				position: 'relative',
 				lineHeight: 0,
@@ -253,6 +243,16 @@ export function CardCanvas({ input, artworkSide = 'first', onRenderResult, onTra
                 )}
             </div>
 			<small className="text-center text-muted block mt-2" style={{ display: 'block' }}>{t('dragImageHelp')}</small>
+            {DEBUG_CANVAS && (
+                <label style={{ display: 'block', marginBottom: '0.5rem', textAlign: 'center' }}>
+                    <input
+                        type="checkbox"
+                        checked={showDebug}
+                        onChange={(event) => setShowDebug(event.target.checked)}
+                    />{' '}
+                    {t('showCanvasGuides')}
+                </label>
+            )}
 			{(family.layout.canvas || family.layout.previewRotation) && (
                 <div className="text-center">
                     <button
