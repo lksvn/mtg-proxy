@@ -19,6 +19,7 @@ export type IconName =
 	| "layout-list"
 	| "list-clock"
 	| "loading"
+	| "panel-toggle"
 	| "plus"
 	| "printer"
 	| "refresh-cw"

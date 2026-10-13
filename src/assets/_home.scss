@@ -12,6 +12,9 @@ body {
     width: calc(100vw - var(--page-gutter) - var(--page-gutter));
     margin-inline: calc(50% - 50vw + var(--page-gutter));
     > * { min-width: 0; }
+    &.input-hidden {
+        grid-template-columns: minmax(0, 1fr);
+    }
 
     @media (min-width: 64rem) {
         grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
@@ -23,7 +26,7 @@ body {
     width: 100%;
     z-index: 4;
     top: 0;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 1rem;
     padding: 0.5rem 0;
@@ -31,11 +34,13 @@ body {
     flex-wrap: wrap;
 
     details {
-        flex: 1;
+        flex: 1 0 max-content;
         min-width: 0;
         position: relative;
 
-        summary { width: 100%; }
+        summary {
+            white-space: nowrap;
+        }
 
         .wrapper {
             position: absolute;

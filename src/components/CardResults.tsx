@@ -24,29 +24,31 @@ export function CardResults({
 
 	return (
 		<section id="cards-result">
-            <div className="mb-3" role="group" aria-label={t('resultsView')}>
-                <button
-                    type="button"
-                    className={`mr-2 btn${!compactView ? '' : ' outline'}`}
-                    aria-pressed={!compactView}
-                    onClick={() => setCompactView(false)}
-                >
-                    <Icon name="layout-grid" />
-                    {t('gridView')}
-                </button>
-                <button
-                    type="button"
-                    className={`btn${compactView ? '' : ' outline'}`}
-                    aria-pressed={compactView}
-                    onClick={() => setCompactView(true)}
-                >
-                    <Icon name="layout-list" />
-                    {t('compactView')}
-                </button>
-            </div>
 			{cards.length === 0 ? (
-				<p className="text-muted mt-5 pt-5 text-center">{t('emptyCards')}</p>
-			) : (
+				<p className="results-empty text-muted">
+                    {t('emptyCards')}
+                </p>
+			) : (<>
+                <div className="mb-3" role="group" aria-label={t('resultsView')}>
+                    <button
+                        type="button"
+                        className={`mr-2 btn${!compactView ? '' : ' outline'}`}
+                        aria-pressed={!compactView}
+                        onClick={() => setCompactView(false)}
+                    >
+                        <Icon name="layout-grid" />
+                        {t('gridView')}
+                    </button>
+                    <button
+                        type="button"
+                        className={`btn${compactView ? '' : ' outline'}`}
+                        aria-pressed={compactView}
+                        onClick={() => setCompactView(true)}
+                    >
+                        <Icon name="layout-list" />
+                        {t('compactView')}
+                    </button>
+                </div>
 				<ul className={`cardList${compactView ? ' is-compact' : ''}`}>
 					{cards.map((entry, index) => (
 						<li key={`${entry.parsed.sourceLine}-${index}`} className={`card${entry.status === 'error' ? ' has-error' : ''}`}>
@@ -62,7 +64,7 @@ export function CardResults({
 						</li>
 					))}
 				</ul>
-			)}
+			</>)}
 		</section>
 	)
 }

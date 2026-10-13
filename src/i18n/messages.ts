@@ -379,6 +379,8 @@ const en = {
     compactView: 'Compact',
     gridView: 'Grid',
     resultsView: 'Results view',
+    hideDeckInput: 'Hide list',
+    showDeckInput: 'Show list',
 }
 
 const pt: Record<keyof typeof en, string> = {
@@ -760,6 +762,8 @@ const pt: Record<keyof typeof en, string> = {
     compactView: 'Compacta',
     gridView: 'Grade',
     resultsView: 'Visualização de resultados',
+    hideDeckInput: 'Ocultar lista',
+    showDeckInput: 'Mostrar lista',
 }
 
 export const messages = {

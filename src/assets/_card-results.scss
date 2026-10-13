@@ -1,18 +1,18 @@
 .cardList {
     display: grid;
     grid-template-columns: repeat(auto-fill,minmax(min(100%, calc(var(--card-image-width) + 2rem)), 1fr));
-    gap: 2rem 1rem;
+    gap: 2rem;
     position: relative;
     padding: 0;
     margin: 0;
     list-style: none;
 
     &.is-compact {
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
         gap: 0.75rem;
 
         .card:has(> .card-image) {
-            grid-template-columns: 10rem minmax(0, 1fr);
+            grid-template-columns: 9rem minmax(0, 1fr);
             grid-template-rows: auto auto 1fr;
         }
 
@@ -27,15 +27,36 @@
 
         .change-printing {
             align-self: start;
-            > .btn { width: auto; }
+            display: contents;
+            > .btn.block {
+                width: auto;
+                grid-column: 2;
+                grid-row: 3;
+                justify-self: start;
+                align-self: start;
+            }
+            > .message {
+                grid-column: 1 / -1;
+                grid-row: 5;
+            }
+
+            > .btn:not(.block) {
+                grid-column: 1 / -1;
+                grid-row: 6;
+                justify-self: start;
+                align-self: start;
+            }
         }
 
         .form {
             position: relative;
             bottom: auto;
             background-color: rgba($color: #000000, $alpha: 0.35);
+            grid-column: 1 / -1;
+            grid-row: 4;
             &:not(.open) { border: 0; }
         }
+
     }
 
     p:not(.message) {
@@ -180,7 +201,14 @@
         }
     }
 }
-
+.results-empty {
+    margin: 0;
+    padding: 2rem 1rem;
+    text-align: center;
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--card-radius);
+}
 @media (prefers-reduced-motion: reduce) {
 	.cardList .form { transition: none; }
 }

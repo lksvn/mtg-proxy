@@ -250,7 +250,7 @@ export function CardResultItem({
 				</div>
 				{entry.printingsError && (
 					<>
-						<p role="alert" className="message error">
+						<p role="alert" className={`message error${compactView ? '' : ' mt-3'}`}>
 							<Icon name="error" />
 							<span>{entry.printingsError}</span>
 						</p>

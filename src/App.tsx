@@ -20,6 +20,7 @@ const HISTORY_KEY = 'mtg-proxy-card-list-history'
 
 function App() {
 	const { t } = useI18n()
+    const [showDeckInput, setShowDeckInput] = useState(true)
     const [hash, setHash] = useState(window.location.hash)
 	const [cardList, setCardList] = useState('')
 	const [history, setHistory] = useState<string[]>(() => {
@@ -33,6 +34,7 @@ function App() {
 		}
 	})
 	const { cards, loading, loadCards, loadCardPrintings, selectPrinting, retryCard, addCustomCard, removeCustomCard } = useCards()
+    const deckInputVisible = showDeckInput || cards.length === 0
 	const [printSettings, setPrintSettings] = useState<PrintSettings>({
 		paper: 'a4',
 		gap: 0.3,
@@ -208,6 +210,13 @@ function App() {
 		window.location.hash = ''
 	}
 
+	function removeCustomCardFromDeckList(index: number) {
+		removeCustomCard(index)
+		if (cards.length === 1) {
+			setShowDeckInput(true)
+		}
+	}
+
 	return (
 		<>
         <NavigationBar label={t('headerNavigation')} className="mb-3"/>
@@ -220,42 +229,55 @@ function App() {
 		</div>
 		{hash !== '#editor' && (
             <main>
-                <div className="deck-workspace">
-                    <CardListForm
-                        value={cardList}
-                        history={history}
-                        onClearHistory={clearHistory}
-                        onRemoveHistory={removeHistoryItem}
-                        loading={loading}
-                        canSave={cards.length > 0}
-                        onChange={setCardList}
-                        onLoad={loadAndRememberCards}
-                        onSave={saveCardList}
-                        onError={reportUiError}
-                    />
+                <div className={`deck-workspace${deckInputVisible ? '' : ' input-hidden'}`}>
+                    <div id="deck-input-panel" hidden={!deckInputVisible}>
+                        <CardListForm
+                            value={cardList}
+                            history={history}
+                            onClearHistory={clearHistory}
+                            onRemoveHistory={removeHistoryItem}
+                            loading={loading}
+                            canSave={cards.length > 0}
+                            onChange={setCardList}
+                            onLoad={loadAndRememberCards}
+                            onSave={saveCardList}
+                            onError={reportUiError}
+                        />
+                    </div>
 
                     <div className="deck-workspace-results">
-                        {cards.length > 0 && (<div className="printing-settings">
-                            <div style={{minWidth: '160px'}}>
+                        <div className="printing-settings">
+                            {cards.length > 0 && (<>
+                                <button
+                                    type="button"
+                                    className="btn"
+                                    aria-expanded={deckInputVisible}
+                                    aria-controls="deck-input-panel"
+                                    onClick={() => setShowDeckInput(!deckInputVisible)}
+                                >
+                                    <Icon name="panel-toggle" className={deckInputVisible ? '' : 'flip-h'}/>
+                                    {t(deckInputVisible ? 'hideDeckInput' : 'showDeckInput')}
+                                </button>
+
                                 <PdfExport
                                     exporting={exporting}
                                     canExport={canExport}
                                     onExport={downloadCardsPdf}
                                 />
-                            </div>
 
-                            <PrintSettingsForm
-                                settings={printSettings}
-                                onChange={setPrintSettings}
-                            />
-                        </div>)}
+                                <PrintSettingsForm
+                                    settings={printSettings}
+                                    onChange={setPrintSettings}
+                                />
+                            </>)}
+                        </div>
 
                         <CardResults
                             cards={cards}
                             onLoadPrintings={loadCardPrintings}
                             onSelectPrinting={selectPrinting}
                             onRetry={retryCard}
-                            onRemoveCustomCard={removeCustomCard}
+                            onRemoveCustomCard={removeCustomCardFromDeckList}
                         />
                     </div>
                 </div>
