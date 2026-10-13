@@ -17,6 +17,11 @@
     &.sm { font-size: 0.75em }
     &.md { font-size: 1.125em }
     &.center { justify-content: center; }
+    &.outline {
+        color: var(--accent);
+        border-color: var(--accent);
+        background-color: transparent;
+    }
     &.danger {
 		color: var(--text);
 		background-color: light-dark(#a6425b, #7f394b);

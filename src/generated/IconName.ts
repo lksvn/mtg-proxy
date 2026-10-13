@@ -15,6 +15,8 @@ export type IconName =
 	| "images"
 	| "info"
 	| "language"
+	| "layout-grid"
+	| "layout-list"
 	| "list-clock"
 	| "loading"
 	| "plus"

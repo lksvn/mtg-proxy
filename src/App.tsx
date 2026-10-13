@@ -220,43 +220,45 @@ function App() {
 		</div>
 		{hash !== '#editor' && (
             <main>
+                <div className="deck-workspace">
+                    <CardListForm
+                        value={cardList}
+                        history={history}
+                        onClearHistory={clearHistory}
+                        onRemoveHistory={removeHistoryItem}
+                        loading={loading}
+                        canSave={cards.length > 0}
+                        onChange={setCardList}
+                        onLoad={loadAndRememberCards}
+                        onSave={saveCardList}
+                        onError={reportUiError}
+                    />
 
-                <CardListForm
-                    value={cardList}
-                    history={history}
-                    onClearHistory={clearHistory}
-                    onRemoveHistory={removeHistoryItem}
-                    loading={loading}
-                    canSave={cards.length > 0}
-                    onChange={setCardList}
-                    onLoad={loadAndRememberCards}
-                    onSave={saveCardList}
-					onError={reportUiError}
-                />
+                    <div className="deck-workspace-results">
+                        {cards.length > 0 && (<div className="printing-settings">
+                            <div style={{minWidth: '160px'}}>
+                                <PdfExport
+                                    exporting={exporting}
+                                    canExport={canExport}
+                                    onExport={downloadCardsPdf}
+                                />
+                            </div>
 
-                {cards.length > 0 && (<div className="printing-settings">
-                    <div style={{minWidth: '160px'}}>
-                        <PdfExport
-                            exporting={exporting}
-                            canExport={canExport}
-                            onExport={downloadCardsPdf}
+                            <PrintSettingsForm
+                                settings={printSettings}
+                                onChange={setPrintSettings}
+                            />
+                        </div>)}
+
+                        <CardResults
+                            cards={cards}
+                            onLoadPrintings={loadCardPrintings}
+                            onSelectPrinting={selectPrinting}
+                            onRetry={retryCard}
+                            onRemoveCustomCard={removeCustomCard}
                         />
                     </div>
-
-                    <PrintSettingsForm
-                        settings={printSettings}
-                        onChange={setPrintSettings}
-                    />
-                </div>)}
-
-                <CardResults
-                    cards={cards}
-                    onLoadPrintings={loadCardPrintings}
-                    onSelectPrinting={selectPrinting}
-                    onRetry={retryCard}
-					 onRemoveCustomCard={removeCustomCard}
-                />
-
+                </div>
                 <BackToTop />
             </main>
         )}

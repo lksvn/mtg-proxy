@@ -5,14 +5,22 @@ body {
     font-variation-settings: "wdth" 100;
 }
 
-#cards-result,
-.printing-settings {
+.deck-workspace {
+    display: grid;
+    gap: 2rem;
+    align-items: start;
     width: calc(100vw - var(--page-gutter) - var(--page-gutter));
     margin-inline: calc(50% - 50vw + var(--page-gutter));
+    > * { min-width: 0; }
+
+    @media (min-width: 64rem) {
+        grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+    }
 }
 
 .printing-settings {
     position: sticky;
+    width: 100%;
     z-index: 4;
     top: 0;
     display: inline-flex;
@@ -20,18 +28,31 @@ body {
     gap: 1rem;
     padding: 0.5rem 0;
     background-color: var(--background);
+    flex-wrap: wrap;
 
     details {
-        width: 100%;
+        flex: 1;
+        min-width: 0;
+        position: relative;
 
         summary { width: 100%; }
 
         .wrapper {
-            display: flex;
-            flex-wrap: balance;
-            align-items: end;
-            gap: 1rem;
-            padding-top: 0.5rem;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            @media (min-width: 64rem) {
+                left: 0;
+                right: auto;
+            }
+            width: min(30rem, calc(100vw - 2 * var(--page-gutter)));
+            padding: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--small-radius);
+            box-shadow: 0 0.5rem 1rem var(--shadow);
+            max-height: 70vh;
+            overflow-y: auto;
         }
 
         input[type="checkbox"] {
