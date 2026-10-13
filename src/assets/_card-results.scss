@@ -1,11 +1,81 @@
 .cardList {
     display: grid;
     grid-template-columns: repeat(auto-fill,minmax(min(100%, calc(var(--card-image-width) + 2rem)), 1fr));
-    gap: 2rem 1rem;
+    gap: 2rem;
     position: relative;
     padding: 0;
     margin: 0;
     list-style: none;
+
+    &.is-compact {
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+        gap: 0.75rem;
+
+        .card:has(> .card-image) {
+            grid-template-columns: clamp(5rem, 25vw, 9rem) minmax(0, 1fr);
+            grid-template-rows: auto auto 1fr;
+        }
+
+        .card-image {
+            grid-column: 1;
+            grid-row: 1 / span 3;
+            width: 100%;
+            margin: 0;
+
+            .flip-card {
+                right: 0.25rem;
+                bottom: 0.25rem;
+                max-width: calc(100% - 0.5rem);
+                padding: 0.25rem;
+                gap: 0.25rem;
+                flex-wrap: wrap;
+                font-size: 0.65rem;
+            }
+
+            .loading {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                max-width: calc(100% - 0.5rem);
+            }
+        }
+
+        small { text-align: left; }
+
+        .change-printing {
+            align-self: start;
+            display: contents;
+            > .btn.block {
+                width: auto;
+                grid-column: 2;
+                grid-row: 3;
+                justify-self: start;
+                align-self: start;
+            }
+            > .message {
+                grid-column: 1 / -1;
+                grid-row: 5;
+            }
+
+            > .btn:not(.block) {
+                grid-column: 1 / -1;
+                grid-row: 6;
+                justify-self: start;
+                align-self: start;
+            }
+        }
+
+        .form {
+            position: relative;
+            bottom: auto;
+            background-color: var(--surface);
+            grid-column: 1 / -1;
+            grid-row: 4;
+            &:not(.open) { border: 0; }
+        }
+
+    }
+
     p:not(.message) {
         margin: 0;
         padding: 0;
@@ -22,17 +92,27 @@
         }
     }
 
-    .card {
-        position: relative;
+    .card-search-loading {
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        align-content: start;
+        position: relative;
         gap: 0.675rem;
         padding: 1rem;
         overflow: hidden;
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--card-radius);
-        &.has-error { justify-content: center; }
+        &:has(> .card-image) { grid-template-rows: auto auto auto 1fr; }
+        &:has(> .card-search-loading) { align-content: center; }
+        &.has-error { align-content: center; }
     }
 
     .card-image {
@@ -101,6 +181,7 @@
 
     .change-printing {
         position: relative;
+        align-self: end;
 
         .btn.block { justify-content: center; }
     }
@@ -115,7 +196,8 @@
         overflow: hidden;
         opacity: 0;
         pointer-events: none;
-        background-color: rgba($color: #000000, $alpha: 0.85);
+        background-color: var(--surface);
+        border: 1px solid var(--border);
         border-radius: var(--small-radius);
         transition:
             max-height 0.2s ease,
@@ -130,6 +212,14 @@
             pointer-events: auto;
         }
 
+        &:not(.open) {
+            border: 0;
+        }
+
+        .form-group:first-child > label {
+            padding-inline-end: 2.5rem;
+        }
+
         button {
             position: absolute;
             top: -1px;
@@ -137,7 +227,14 @@
         }
     }
 }
-
+.results-empty {
+    margin: 0;
+    padding: 2rem 1rem;
+    text-align: center;
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--card-radius);
+}
 @media (prefers-reduced-motion: reduce) {
 	.cardList .form { transition: none; }
 }

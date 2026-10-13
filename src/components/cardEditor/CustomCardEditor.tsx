@@ -102,6 +102,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	const [transformIcons, setTransformIcons] = useState<Partial<Record<FrameFamilyId, TransformIcon>>>({})
 	const [frameStyleSearch, setFrameStyleSearch] = useState('')
 	const [customCardQuantity, setCustomCardQuantity] = useState('1')
+	const [addingCard, setAddingCard] = useState(false)
 	const quantity = Number(customCardQuantity)
 	const quantityError = getQuantityError(quantity)
 	const [layout, setLayout] = useState<'card' | 'token' | 'planeswalker' | 'battle' | 'saga' | 'class' | 'case' | 'room' | 'adventure' | 'leveler' | 'split'>('card')
@@ -274,7 +275,8 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 	}
 
 	async function addToDeckList() {
-		if (!canExport || quantityError) return
+		if (!canExport || quantityError || addingCard) return
+		setAddingCard(true)
 		try {
 			const image = await canvasToPng(canvasRef.current)
 			onAddToDeckList?.({
@@ -287,6 +289,8 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 			})
 		} catch {
 			onError(t('couldNotAddCustomCard'))
+		} finally {
+			setAddingCard(false)
 		}
 	}
 
@@ -320,10 +324,10 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 
 	return (
 		<section>
-            <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: '2rem'}}>
+            <div className="editor-workspace">
                 <div>
 					<details className="form-section" open>
-                        <summary><h5 className="mt-5">{t('cardImageSection')}</h5></summary>
+                        <summary><h5>{t('cardImageSection')}</h5></summary>
                         <div className="form-group gap-2">
                             {layout === 'split' ? (
                                 <SplitHalfTabs side={splitArtworkSide} onChange={setSplitArtworkSide} label={t('cardImageSection')} stacked={splitStyle === 'split-aftermath'}>
@@ -343,7 +347,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 						/></div>}
 					</details>
 					<details className="form-section" open>
-					    <summary><h5 className="mt-5">{t('cardEditionSection')}</h5></summary>
+					    <summary><h5>{t('cardEditionSection')}</h5></summary>
                         <div className="form-group gap-2">
                             <label htmlFor="card-layout">{t('cardLayout')}</label>
                             <select id="card-layout" value={layout} onChange={(event) => setLayout(event.target.value as typeof layout)}>
@@ -488,7 +492,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 						</div>}
 					</details>
 					{(layout !== 'token' || tokenStyle !== 'token-unglued') && <details className="form-section" open>
-					    <summary><h5 className="mt-5">{t('cardInformationSection')}</h5></summary>
+					    <summary><h5>{t('cardInformationSection')}</h5></summary>
 						<RulesTextSizeContext.Provider value={{
 							sizes: rulesFontSizes[activeFamily] ?? {},
 							baseSize: baseRulesFontSize > 1 ? baseRulesFontSize : 64,
@@ -499,12 +503,15 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 						</RulesTextSizeContext.Provider>
 					</details>}
 					<details className="form-section">
-                        <summary><h5 className="mt-5">{t('cardDetailsSection')}</h5></summary>
+                        <summary><h5>{t('cardDetailsSection')}</h5></summary>
 						{renderCardForm('details')}
 					</details>
                 </div>
 
-                <div style={{position:'relative'}}>
+                <div className="editor-preview">
+                    <h2 className="editor-preview-title">
+                        {t('customCardPreview')}
+                    </h2>
 					{renderResult?.status === 'ready' && renderResult.textOverflow && (
 						<p role="status" className="message warning">
 							<Icon name="warning" />
@@ -529,7 +536,7 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 							</SplitHalfTabs>
 						</div>
 					) : artworkControls}
-					{onAddToDeckList && <div style={{display:'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gridAutoFlow:'dense'}} className="gap-3 mt-3">
+					{onAddToDeckList && <div className="editor-add-card mt-3">
 						<div className="form-group gap-2">
 							<label htmlFor="custom-card-quantity">{t('quantity')}</label>
 							<input
@@ -542,16 +549,26 @@ export function CustomCardEditor({ onAddToDeckList, onError }: CustomCardEditorP
 								aria-describedby={quantityError ? 'custom-card-quantity-error' : undefined}
 								onChange={(event) => setCustomCardQuantity(event.currentTarget.value)}
 							/>
-							{quantityError && <small id="custom-card-quantity-error" role="alert" className="message error">
-								<Icon name="error" />
-								<span>{t(quantity < 1 ? 'quantityAtLeastOne' : 'quantitySafeWholeNumber')}</span>
-							</small>}
 						</div>
-                        <div className="pt-5">
-                            <button type="button" className="btn block" disabled={!canExport || Boolean(quantityError)} onClick={addToDeckList}>
-                                <Icon name="plus"/> {t('addCustomCardToDeckList')}
+                        <div>
+                            <button
+                                type="button"
+                                className={`btn block ${addingCard ? ' center' : ''}`}
+                                disabled={!canExport || Boolean(quantityError) || addingCard}
+                                aria-busy={addingCard}
+                                onClick={addToDeckList}
+                            >
+                                <Icon
+                                    name={addingCard ? 'loading' : 'plus'}
+                                    className={addingCard ? 'hourglass' : undefined}
+                                />
+                                {t(addingCard ? 'loading' : 'addCustomCardToDeckList')}
                             </button>
                         </div>
+                        {quantityError && <small id="custom-card-quantity-error" role="alert" className="message error">
+                            <Icon name="error" />
+                            <span>{t(quantity < 1 ? 'quantityAtLeastOne' : 'quantitySafeWholeNumber')}</span>
+                        </small>}
 					</div>}
 					<div className="split-button mt-3">
 						<button type="button" className="btn" disabled={!canExport} onClick={() => downloadPng()}>

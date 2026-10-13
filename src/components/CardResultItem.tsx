@@ -24,6 +24,7 @@ type CardResultProps = {
 	onSelectPrinting: (index: number, cardId: string) => void
 	onRetry: (index: number) => void
 	onRemoveCustomCard: (index: number) => void
+    compactView: boolean
 }
 
 export function CardResultItem({
@@ -33,6 +34,7 @@ export function CardResultItem({
 	onSelectPrinting,
 	onRetry,
 	onRemoveCustomCard,
+	compactView
 }: CardResultProps) {
 	const { t } = useI18n()
 	const [imageLoading, setImageLoading] = useState(true)
@@ -43,7 +45,11 @@ export function CardResultItem({
 	const [showBackFace, setShowBackFace] = useState(false)
 
 	if (entry.status === 'loading') {
-		return <div style={{display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'}}><Icon name="loading" className="hourglass"/> {t('loading')}</div>
+		return (
+            <div role="status" className="card-search-loading">
+                <Icon name="loading" className="hourglass"/> <span>{t('loading')}</span>
+            </div>
+        )
 	}
 
 	if (entry.status === 'error') {
@@ -89,24 +95,10 @@ export function CardResultItem({
 	const visiblePrintings = entry.card && filteredPrintings && !filteredPrintings.some((printing) => printing.id === entry.card?.id)
 		? [entry.card, ...filteredPrintings]
 		: filteredPrintings
-	const cardName = `${entry.custom && entry.parsed.quantity > 1 ? `${entry.parsed.quantity}x ` : ''}${entry.card?.name ?? ''}`
+	const cardName = `${entry.parsed.quantity > 1 ? `${entry.parsed.quantity}x ` : ''}${entry.card?.name ?? ''}`
 
 	return (
 		<>
-			<p>
-				<strong
-					title={cardName}
-					className="truncate"
-				>
-					{cardName.toUpperCase()}
-				</strong>
-				<span
-					title={`${entry.card?.set_name} (${entry.card?.set.toUpperCase()}) ${entry.card?.collector_number}`}
-					className="truncate"
-				>
-					{entry.card?.set_name} ({entry.card?.set.toUpperCase()}){' '}{entry.card?.collector_number}
-				</span>
-			</p>
 			<div
 				className={`card-image${backImage ? ' has-back' : ''}${showBackFace ? ' show-back' : ''}`}
 			>
@@ -170,6 +162,20 @@ export function CardResultItem({
 					<span role="status" className="loading"><Icon name="loading" className="hourglass"/> {t('loading')}</span>)
 				}
 			</div>
+            <p>
+				<strong
+					title={cardName}
+					className="truncate"
+				>
+					{cardName.toUpperCase()}
+				</strong>
+				<span
+					title={`${entry.card?.set_name} (${entry.card?.set.toUpperCase()}) ${entry.card?.collector_number}`}
+					className="truncate"
+				>
+					{entry.card?.set_name} ({entry.card?.set.toUpperCase()}){' '}{entry.card?.collector_number}
+				</span>
+			</p>
 			{entry.custom ? <small>{t('customCardResult')}</small> : <small>
 				<a href={entry.card?.scryfall_uri} target="_blank" rel="noreferrer">{t('viewOnScryfall')}</a>
 			</small>}
@@ -183,8 +189,11 @@ export function CardResultItem({
 					type="button"
 					disabled={entry.loadingPrintings}
 					onClick={() => {
-						setShowPrintingForm(true)
-						onLoadPrintings(index)
+                        const opening = !showPrintingForm
+						setShowPrintingForm(opening)
+                        if (opening) {
+                            onLoadPrintings(index)
+                        }
 					}}
 					className="btn block center"
 					aria-expanded={Boolean(entry.printings && showPrintingForm)}
@@ -230,11 +239,18 @@ export function CardResultItem({
 
 						{filteredPrintings?.length === 0 && <p style={{margin: 0, padding: 0}}>{t('noMatchingPrintings')}</p>}
 					</div>
-					<button type="button" onClick={() => setShowPrintingForm(false)} aria-label={t('closePrintingSelection')} className="btn md"><Icon name="chevron-down"/></button>
+					<button
+                        type="button"
+                        onClick={() => setShowPrintingForm(false)}
+                        aria-label={t('closePrintingSelection')}
+                        className="btn md"
+                    >
+                        <Icon name="chevron-down" className={compactView ? 'flip-v' : ''}/>
+                    </button>
 				</div>
 				{entry.printingsError && (
 					<>
-						<p role="alert" className="message error">
+						<p role="alert" className={`message error${compactView ? '' : ' mt-3'}`}>
 							<Icon name="error" />
 							<span>{entry.printingsError}</span>
 						</p>

@@ -20,10 +20,12 @@ export function ArtworkControls({
 	}
 
 	return (
-		<fieldset className="mt-3">
-			<strong style={{ display: 'block' }}>{t('artworkPosition')}</strong>
+		<fieldset className="artwork-controls mt-3">
+			<legend>
+				<strong>{t('artworkPosition')}</strong>
+			</legend>
 
-            <div className="form-group gap-2" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            <div className="form-group artwork-sliders">
                 <label>
                     {t('horizontal')} ({transform.x.toFixed(0)})
                     <input
@@ -67,7 +69,7 @@ export function ArtworkControls({
                 </label>
             </div>
 
-			<div className="form-group gap-2">
+			<div className="form-group artwork-options">
 				<label>
 					<input
 						type="checkbox"

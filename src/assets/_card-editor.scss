@@ -1,0 +1,103 @@
+.editor-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+
+    @media (min-width: 54rem) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+    }
+
+    > * {
+        min-width: 0;
+    }
+
+    .form-section {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--card-radius);
+
+        > summary {
+            cursor: pointer;
+
+            h5 {
+                display: inline;
+                margin: 0;
+            }
+        }
+
+        &[open] > summary {
+            margin-bottom: 1rem;
+        }
+    }
+
+    .editor-preview {
+        position: relative;
+        width: 100%;
+        max-width: 26rem;
+        justify-self: center;
+        container-type: inline-size;
+    }
+
+    .editor-preview-title {
+        margin: 0 0 1rem;
+        font-size: 1.1rem;
+        text-align: left;
+    }
+
+    .artwork-controls {
+        padding: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--card-radius);
+
+        legend {
+            padding-inline: 0.25rem;
+        }
+
+        > .form-group {
+            margin-bottom: 1rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+    }
+
+    .artwork-sliders,
+    .artwork-options {
+        display: grid;
+        gap: 1rem;
+
+        > label {
+            min-width: 0;
+        }
+    }
+
+    .artwork-sliders {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+    }
+
+    .artwork-options {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    }
+
+    .editor-add-card {
+        display: grid;
+        grid-template-columns: 6rem minmax(0, 1fr);
+        gap: 1rem;
+        align-items: end;
+
+        @container (max-width: 23rem) {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        > .form-group {
+            margin-bottom: 0;
+        }
+
+        .message.error { grid-column: 1 / -1; }
+    }
+}

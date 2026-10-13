@@ -375,7 +375,12 @@ const en = {
 	backgroundColor: 'Background color',
 	backgroundColorHelp: "Fills the area around the image when it doesn't cover the whole card",
     headerNavigation: 'Header navigation',
-    dragImageHelp: 'Try dragging the image to position it'
+    dragImageHelp: 'Try dragging the image to position it',
+    compactView: 'Compact',
+    gridView: 'Grid',
+    resultsView: 'Results view',
+    hideDeckInput: 'Hide list',
+    showDeckInput: 'Show list',
 }
 
 const pt: Record<keyof typeof en, string> = {
@@ -753,7 +758,12 @@ const pt: Record<keyof typeof en, string> = {
 	backgroundColor: 'Cor de fundo',
 	backgroundColorHelp: 'Preenche a área ao redor da imagem quando ela não cobre toda a carta',
     headerNavigation: 'Navegação do cabeçalho',
-    dragImageHelp: 'Experimente arrastar a imagem para posicioná-la'
+    dragImageHelp: 'Experimente arrastar a imagem para posicioná-la',
+    compactView: 'Compacta',
+    gridView: 'Grade',
+    resultsView: 'Visualização de resultados',
+    hideDeckInput: 'Ocultar lista',
+    showDeckInput: 'Mostrar lista',
 }
 
 export const messages = {
