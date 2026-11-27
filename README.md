@@ -12,7 +12,9 @@ Create printable Magic: The Gathering playtest cards from deck lists or your own
 
 Find cards through Scryfall and export a print-ready PDF.
 
-- Paste lists or import `.txt`/`.md` files.
+- Paste lists or import `.txt`/`.md` files, or `.csv` exports from LigaMagic, ManaBox and Delver Lens.
+- Read Scry & Trade exports, including printing and language.
+- Print Portuguese versions when Scryfall has them.
 - Search names with `@` autocomplete in English.
 - Choose different printings and artwork.
 - Include custom cards with quantities.

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { parseCardList } from '../Cards'
-import { findCards, findPrintings } from '../Scryfall'
+import { findCardLanguage, findCards, findPrintings } from '../Scryfall'
 import { createCustomCardEntry, withCustomCards, type CardEntry, type CustomCardEntry } from './cardEntries'
 
 export type { CardEntry } from './cardEntries'
@@ -9,9 +9,11 @@ export function useCards() {
 	const [cards, setCards] = useState<CardEntry[]>([])
 	const [loading, setLoading] = useState(false)
 
-	async function loadCards(cardList: string) {
+	async function loadCards(cardList: string, preferredLanguage?: string) {
 		const entries: CardEntry[] = parseCardList(cardList).map((parsed) => ({
-			parsed,
+			parsed: preferredLanguage && !parsed.error && !parsed.language
+				? { ...parsed, language: preferredLanguage }
+				: parsed,
 			status: parsed.error ? 'error' : 'loading',
 			error: parsed.error
 		}))
@@ -32,7 +34,7 @@ export function useCards() {
 				lookupIndex += 1
 
 				if (lookup.card) {
-					return { ...entry, status: 'ready', card: lookup.card }
+					return { ...entry, status: 'ready', card: lookup.card, languageMissing: lookup.languageMissing }
 				}
 
 				return {
@@ -81,7 +83,7 @@ export function useCards() {
 					if (itemIndex !== index || item.parsed !== parsed) return item
 
 					return lookup?.card
-						? { ...item, status: 'ready', card: lookup.card, error: undefined }
+						? { ...item, status: 'ready', card: lookup.card, languageMissing: lookup.languageMissing, error: undefined }
 						: { ...item, status: 'error', error: lookup?.error ?? 'Card not found' }
 				})
 			)
@@ -142,14 +144,27 @@ export function useCards() {
 		}
 	}
 
-	function selectPrinting(index: number, cardId: string) {
-		setCards((current) =>
-			current.map((entry, entryIndex) => {
-				if (entryIndex !== index) return entry
+	async function selectPrinting(index: number, cardId: string) {
+		const entry = cards[index]
+		const printing = entry?.printings?.find((card) => card.id === cardId) ??
+			(entry?.card?.id === cardId ? entry.card : undefined)
+		if (!entry || !printing) return
 
-				const printing = entry.printings?.find((card) => card.id === cardId)
-				return printing ? { ...entry, card: printing } : entry
-			})
+		const update = (card: CardEntry['card'], languageMissing?: boolean) => setCards((current) =>
+			current.map((item, itemIndex) => itemIndex === index && item.parsed === entry.parsed
+				? { ...item, card, languageMissing }
+				: item)
+		)
+		update(printing)
+
+		const language = entry.parsed.language
+		if (!language || printing.lang === language) return
+		// The printing list is in English; swap in the chosen printing in the requested language.
+		const lookup = await findCardLanguage(printing, language, true).catch(() => ({ card: printing, languageMissing: true }))
+		setCards((current) =>
+			current.map((item, itemIndex) => itemIndex === index && item.card?.id === printing.id
+				? { ...item, card: lookup.card, languageMissing: lookup.languageMissing }
+				: item)
 		)
 	}
 

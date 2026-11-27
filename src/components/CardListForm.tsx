@@ -5,12 +5,16 @@ import { FileInput } from './FileInput'
 import { CardListInput } from './CardListInput'
 import { useI18n } from '../i18n/context'
 import { cleanMarkdownCardList } from '../utils/cleanMarkdownCardList'
+import { importLigaMagicCsv, importScannerCsv } from '../utils/importCsv'
+import { findSetCodesByName } from '../Scryfall'
 
 type CardListFormProps = {
 	value: string
     history: string[]
 	loading: boolean
 	canSave: boolean
+	portuguese: boolean
+	onPortugueseChange: (portuguese: boolean) => void
     onClearHistory: () => void
     onRemoveHistory: (list: string) => void
 	onChange: (value: string) => void
@@ -24,6 +28,8 @@ export function CardListForm({
     history,
 	loading,
 	canSave,
+	portuguese,
+	onPortugueseChange,
     onClearHistory,
     onRemoveHistory,
 	onChange,
@@ -34,13 +40,24 @@ export function CardListForm({
     const { t } = useI18n()
 
 	async function importCardList(file: File) {
+		const name = file.name.toLowerCase()
+		let text: string
 		try {
-			const text = await file.text()
-			onChange(file.name.toLowerCase().endsWith('.md') || file.type === 'text/markdown'
-				? cleanMarkdownCardList(text)
-				: text)
+			text = name.endsWith('.csv') ? await readCsvText(file) : await file.text()
 		} catch {
 			onError(t('couldNotReadFile'))
+			return
+		}
+		try {
+			if (name.endsWith('.csv')) {
+				onChange(importScannerCsv(text) ?? importLigaMagicCsv(text, await findSetCodesByName()))
+			} else {
+				onChange(name.endsWith('.md') || file.type === 'text/markdown' ? cleanMarkdownCardList(text) : text)
+			}
+		} catch (error) {
+			onError(error instanceof Error && error.message === 'Unrecognised CSV'
+				? t('unrecognizedCsv')
+				: error instanceof Error ? error.message : t('couldNotReadFile'))
 		}
 	}
 
@@ -66,9 +83,23 @@ export function CardListForm({
 
                         <FileInput
                             id="card-list-file"
-                            accept=".txt,.md,text/plain,text/markdown"
+                            accept=".txt,.md,.csv,text/plain,text/markdown,text/csv"
                             onSelect={importCardList}
                         />
+                        <p className="text-muted">{t('csvImportHelp')}</p>
+
+                        <div className="form-group">
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={portuguese}
+                                    aria-describedby="portuguese-cards-help"
+                                    onChange={(event) => onPortugueseChange(event.target.checked)}
+                                />
+                                {t('portugueseCards')}
+                            </label>
+                            <small id="portuguese-cards-help" className="text-muted">{t('portugueseCardsHelp')}</small>
+                        </div>
 
                         <div className="actions">
                             <button type="submit" disabled={loading} className="btn">
@@ -151,4 +182,15 @@ export function CardListForm({
             </fieldset>
 		</form>
 	)
+}
+
+// LigaMagic may mix a UTF-8 BOM with Windows-1252 content.
+async function readCsvText(file: File): Promise<string> {
+	let bytes = new Uint8Array(await file.arrayBuffer())
+	if (bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) bytes = bytes.subarray(3)
+	try {
+		return new TextDecoder('utf-8', { fatal: true }).decode(bytes)
+	} catch {
+		return new TextDecoder('windows-1252').decode(bytes)
+	}
 }

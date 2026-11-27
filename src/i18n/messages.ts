@@ -49,7 +49,7 @@ const en = {
 	noMatchingPrintings: 'No printings match this search.',
 	closePrintingSelection: 'Close printing selection',
 	searching: 'Searching',
-	importTextList: 'Import .txt list',
+	importTextList: 'Import list',
 	noFileSelected: 'No file selected',
 	clearSelectedFile: 'Clear selected file',
 	useLightScheme: 'Use light color scheme',
@@ -381,6 +381,11 @@ const en = {
     resultsView: 'Results view',
     hideDeckInput: 'Hide list',
     showDeckInput: 'Show list',
+    portugueseCards: 'Portuguese cards',
+    portugueseCardsHelp: 'Uses the Portuguese version when Scryfall has one. A language written on the line, such as "en", takes priority.',
+    languageUnavailable: 'No version on Scryfall in this language',
+    csvImportHelp: 'Also accepts .csv from LigaMagic, ManaBox and Delver Lens.',
+    unrecognizedCsv: 'CSV not recognised. Use a LigaMagic, ManaBox or Delver Lens export.',
 }
 
 const pt: Record<keyof typeof en, string> = {
@@ -432,7 +437,7 @@ const pt: Record<keyof typeof en, string> = {
 	noMatchingPrintings: 'Nenhuma edição corresponde à pesquisa.',
 	closePrintingSelection: 'Fechar seleção de edição',
 	searching: 'Pesquisando',
-	importTextList: 'Importar lista .txt',
+	importTextList: 'Importar lista',
 	noFileSelected: 'Nenhum arquivo selecionado',
 	clearSelectedFile: 'Limpar arquivo selecionado',
 	useLightScheme: 'Usar tema claro',
@@ -764,6 +769,11 @@ const pt: Record<keyof typeof en, string> = {
     resultsView: 'Visualização de resultados',
     hideDeckInput: 'Ocultar lista',
     showDeckInput: 'Mostrar lista',
+    portugueseCards: 'Cartas em português',
+    portugueseCardsHelp: 'Usa a versão em português quando o Scryfall tiver. Um idioma escrito na linha, como "en", tem prioridade.',
+    languageUnavailable: 'Sem versão no Scryfall neste idioma',
+    csvImportHelp: 'Também aceita .csv da LigaMagic, do ManaBox e do Delver Lens.',
+    unrecognizedCsv: 'CSV não reconhecido. Use uma exportação da LigaMagic, do ManaBox ou do Delver Lens.',
 }
 
 export const messages = {

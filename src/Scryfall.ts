@@ -43,13 +43,17 @@ export type ScryfallCard = {
 export type CardLookup = {
 	card?: ScryfallCard
 	error?: string
+	// The requested language has no printing on Scryfall; the card stays in another language.
+	languageMissing?: boolean
 }
 
-type Identifier = { name: string } | { set: string; collector_number: string }
+type Identifier = { name: string } | { set: string; collector_number: string } | { id: string }
 
 const cache = new Map<string, ScryfallCard>()
 const printingsCache = new Map<string, Promise<ScryfallCard[]>>()
 const translatedNamesCache = new Map<string, Promise<string>>()
+const languageCache = new Map<string, Promise<CardLookup>>()
+let setCodesByName: Promise<Map<string, string[]>> | undefined
 
 let requestQueue = Promise.resolve()
 
@@ -71,7 +75,7 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
 
 		if (cached) {
 			results.set(key, { card: cached })
-		} else if (card.set && !card.collectorNumber) {
+		} else if (card.set && !card.collectorNumber && !card.scryfallId) {
 			individualCards.push({ parsedCard: card })
 		} else {
 			identifiers.set(key, identifierFor(card))
@@ -100,7 +104,9 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
 		for (const [key, identifier] of chunk) {
 			const parsedCard = cardsByKey.get(key)
 
-			const identifiedCard = ('name' in identifier
+			const identifiedCard = ('id' in identifier
+				? response.data.find((candidate) => candidate.id === identifier.id)
+				: undefined) ?? ('name' in identifier
 				? response.data.find((candidate) => candidate.name.toLowerCase() === identifier.name.toLowerCase())
 				: undefined) ?? response.data.find((candidate) => matchesIdentifier(candidate, identifier))
 
@@ -138,7 +144,7 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
     )
 
 	await Promise.all(cards.map(async (parsedCard) => {
-		if (parsedCard.set) return
+		if (parsedCard.set || parsedCard.scryfallId) return
 		const key = cardKey(parsedCard)
 		const result = results.get(key)
 		if (!result?.card || !isSpecialPrinting(result.card)) return
@@ -150,9 +156,52 @@ export async function findCards(cards: ParsedCard[]): Promise<CardLookup[]> {
 		}
 	}))
 
-	return cards.map((card) => {
-		return results.get(cardKey(card)) ?? { error: 'Card not found' }
-	})
+	return Promise.all(cards.map(async (card) => {
+		const result = results.get(cardKey(card)) ?? { error: 'Card not found' }
+		if (!result.card || !card.language) return result
+		return findCardLanguage(result.card, card.language, Boolean(card.set || card.scryfallId))
+	}))
+}
+
+// Same printing in another language; without a fixed printing, the newest printing in that language.
+export function findCardLanguage(card: ScryfallCard, language: string, keepPrinting: boolean): Promise<CardLookup> {
+	if (card.lang === language || card.set === 'custom') return Promise.resolve({ card })
+
+	const key = `${card.id}:${language}:${keepPrinting}`
+	const cached = languageCache.get(key)
+	if (cached) return cached
+
+	const request = loadCardLanguage(card, language, keepPrinting)
+	languageCache.set(key, request)
+	request.catch(() => languageCache.delete(key))
+	return request
+}
+
+async function loadCardLanguage(card: ScryfallCard, language: string, keepPrinting: boolean): Promise<CardLookup> {
+	const samePrinting = await enqueueRequest(async (signal) => {
+		const url = `https://api.scryfall.com/cards/${encodeURIComponent(card.set)}/${encodeURIComponent(card.collector_number)}/${encodeURIComponent(language)}`
+		const response = await fetch(url, { signal, headers: { Accept: 'application/json' } })
+		if (response.status === 404) return undefined
+		if (!response.ok) throw await responseError(response)
+		return await response.json() as ScryfallCard
+	}, 125)
+	if (samePrinting) return { card: samePrinting }
+	if (keepPrinting || !card.prints_search_uri) return { card, languageMissing: true }
+
+	const url = new URL(card.prints_search_uri)
+	url.searchParams.set('q', `${url.searchParams.get('q')} game:paper lang:${language}`)
+	url.searchParams.set('order', 'released')
+	url.searchParams.set('dir', 'desc')
+	url.searchParams.set('unique', 'prints')
+
+	const printings = await enqueueRequest(async (signal) => {
+		const response = await fetch(url, { signal, headers: { Accept: 'application/json' } })
+		if (response.status === 404) return []
+		if (!response.ok) throw await responseError(response)
+		return (await response.json() as { data: ScryfallCard[] }).data
+	}, 125)
+	const printing = printings.find((candidate) => !isSpecialPrinting(candidate)) ?? printings[0]
+	return printing ? { card: printing } : { card, languageMissing: true }
 }
 
 function isSpecialPrinting(card: ScryfallCard): boolean {
@@ -265,7 +314,9 @@ export function findCard(card: ParsedCard): Promise<ScryfallCard> {
 		return Promise.resolve(cached)
 	}
 
-	const url = card.set && card.collectorNumber
+	const url = card.scryfallId
+		? `https://api.scryfall.com/cards/${encodeURIComponent(card.scryfallId)}`
+		: card.set && card.collectorNumber
         ? `https://api.scryfall.com/cards/${encodeURIComponent(card.set)}/${encodeURIComponent(card.collectorNumber)}`
         : namedCardUrl(card)
 
@@ -309,6 +360,8 @@ function fetchCollection(identifiers: Identifier[]): Promise<{ data: ScryfallCar
 }
 
 function identifierFor(card: ParsedCard): Identifier {
+	if (card.scryfallId) return { id: card.scryfallId }
+
 	if (card.set && card.collectorNumber) {
 		return {
 			set: card.set,
@@ -324,6 +377,8 @@ function matchesIdentifier(card: ScryfallCard, identifier: Identifier): boolean 
         return matchesCardName(card, identifier.name)
     }
 
+	if ('id' in identifier) return card.id === identifier.id
+
 	return (
 		card.set.toLowerCase() === identifier.set.toLowerCase() &&
 		card.collector_number.toLowerCase() === identifier.collector_number.toLowerCase()
@@ -331,6 +386,8 @@ function matchesIdentifier(card: ScryfallCard, identifier: Identifier): boolean 
 }
 
 function cardKey(card: ParsedCard): string {
+	if (card.scryfallId) return `id:${card.scryfallId}`
+
 	if (card.set && card.collectorNumber) {
 		return `${card.set}:${card.collectorNumber}`.toLowerCase()
 	}
@@ -451,4 +508,21 @@ function matchesCardName(card: ScryfallCard, name: string): boolean {
 	return names.some(
 		(candidate) => candidate?.toLowerCase() === expected
 	)
+}
+
+/** Lower-case English set names mapped to Scryfall set codes, for LigaMagic imports. */
+export function findSetCodesByName(): Promise<Map<string, string[]>> {
+	setCodesByName ??= enqueueRequest(async (signal) => {
+		const response = await fetch('https://api.scryfall.com/sets', { signal, headers: { Accept: 'application/json' } })
+		if (!response.ok) throw await responseError(response)
+		const { data } = await response.json() as { data: Array<{ name: string; code: string }> }
+		const result = new Map<string, string[]>()
+		for (const { name, code } of data) {
+			const key = name.trim().toLocaleLowerCase('en')
+			result.set(key, [...(result.get(key) ?? []), code.toLowerCase()])
+		}
+		return result
+	}, 125)
+	setCodesByName.catch(() => { setCodesByName = undefined })
+	return setCodesByName
 }

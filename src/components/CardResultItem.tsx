@@ -92,7 +92,12 @@ export function CardResultItem({
 		return text.includes(printingSearch.toLowerCase())
 	})
 
-	const visiblePrintings = entry.card && filteredPrintings && !filteredPrintings.some((printing) => printing.id === entry.card?.id)
+	// A translated card keeps the English printing selected in the list.
+	const selectedPrintingId = entry.printings?.find((printing) =>
+		printing.set === entry.card?.set && printing.collector_number === entry.card?.collector_number
+	)?.id ?? entry.card?.id
+
+	const visiblePrintings = entry.card && filteredPrintings && !filteredPrintings.some((printing) => printing.id === selectedPrintingId)
 		? [entry.card, ...filteredPrintings]
 		: filteredPrintings
 	const cardName = `${entry.parsed.quantity > 1 ? `${entry.parsed.quantity}x ` : ''}${entry.card?.name ?? ''}`
@@ -174,8 +179,12 @@ export function CardResultItem({
 					className="truncate"
 				>
 					{entry.card?.set_name} ({entry.card?.set.toUpperCase()}){' '}{entry.card?.collector_number}
+					{entry.card && entry.card.lang !== 'en' && ` · ${entry.card.lang.toUpperCase()}`}
 				</span>
 			</p>
+			{entry.languageMissing && entry.parsed.language && (
+				<small className="text-muted">{t('languageUnavailable')} ({entry.parsed.language.toUpperCase()})</small>
+			)}
 			{entry.custom ? <small>{t('customCardResult')}</small> : <small>
 				<a href={entry.card?.scryfall_uri} target="_blank" rel="noreferrer">{t('viewOnScryfall')}</a>
 			</small>}
@@ -220,7 +229,7 @@ export function CardResultItem({
 						<label htmlFor={`printing-${index}`}>{t('printing')}</label>
 						<select
 							id={`printing-${index}`}
-							value={entry.card?.id}
+							value={selectedPrintingId}
 							onChange={(event) => {
 								setImageLoading(true)
 								setFrontImageError(false)
