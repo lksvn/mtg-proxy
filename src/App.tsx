@@ -17,6 +17,7 @@ import { useI18n } from './i18n/context'
 import { NavigationBar } from './components/navigationBar'
 
 const HISTORY_KEY = 'mtg-proxy-card-list-history'
+const PORTUGUESE_KEY = 'mtg-proxy-portuguese-cards'
 
 function App() {
 	const { t } = useI18n()
@@ -31,6 +32,13 @@ function App() {
 				: []
 		} catch {
 			return []
+		}
+	})
+	const [portuguese, setPortuguese] = useState(() => {
+		try {
+			return localStorage.getItem(PORTUGUESE_KEY) === 'true'
+		} catch {
+			return false
 		}
 	})
 	const { cards, loading, loadCards, loadCardPrintings, selectPrinting, retryCard, addCustomCard, removeCustomCard } = useCards()
@@ -125,7 +133,17 @@ function App() {
 			// Card loading should still work if browser storage is unavailable.
 		}
 
-		loadCards(cardList)
+		loadCards(cardList, portuguese ? 'pt' : undefined)
+	}
+
+	function changePortuguese(value: boolean) {
+		setPortuguese(value)
+
+		try {
+			localStorage.setItem(PORTUGUESE_KEY, String(value))
+		} catch {
+			// The choice still applies to the current tab.
+		}
 	}
 
 	async function downloadCardsPdf() {
@@ -163,6 +181,7 @@ function App() {
 							mode === 'clean'
 								? undefined
 								: entry.parsed.collectorNumber,
+						language: mode === 'clean' ? undefined : entry.parsed.language,
 						error:
 							mode === 'clean'
 								? entry.parsed.error
@@ -178,6 +197,7 @@ function App() {
 						mode === 'clean'
 							? undefined
 							: entry.card.collector_number,
+					language: mode === 'clean' ? undefined : entry.parsed.language,
 					error: undefined
 				}
 			})
@@ -238,6 +258,8 @@ function App() {
                             onRemoveHistory={removeHistoryItem}
                             loading={loading}
                             canSave={cards.length > 0}
+                            portuguese={portuguese}
+                            onPortugueseChange={changePortuguese}
                             onChange={setCardList}
                             onLoad={loadAndRememberCards}
                             onSave={saveCardList}

@@ -7,6 +7,7 @@ export type CardEntry = {
 	custom?: boolean
 	card?: ScryfallCard
 	error?: string
+	languageMissing?: boolean
 	printings?: ScryfallCard[]
 	loadingPrintings?: boolean
 	printingsError?: string

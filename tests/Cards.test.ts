@@ -190,3 +190,40 @@ test('identifies regular and snow basic lands', () => {
 	assert.equal(isBasicLand({ type_line: 'Basic Snow Land — Forest' }), true)
 	assert.equal(isBasicLand({ type_line: 'Land Creature — Dryad' }), false)
 })
+
+test('reads Scry & Trade exports with printing and language', async () => {
+	const { importLigaMagicCsv, importScannerCsv } = await import('../src/utils/importCsv.ts')
+	const cards = parseCardList([
+		'4 Lightning Bolt (m10) 146 foil pt nm altered',
+		'2 Counterspell pt nm',
+		'1 Foil',
+		'3 Llanowar Elves dom 168 jp',
+		'1 Sol Ring [scryfall: 0afa0e33-4804-4b00-b625-c2d6b61090fc]',
+		'1 Delver of Secrets (isd) 51 pt [verso: Insectile Aberration (isd) 51]',
+		'2 Brainstorm [want: {"cardName":"Brainstorm","quantity":2,"printing":null,"acceptedLanguages":["en","pt"]}]',
+		'1 Ponder (lrw) 79 [want: {"cardName":"Ponder","quantity":1,"printing":{"setCode":"m12","collectorNumber":"73"},"language":"pt"}]',
+	].join('\n'))
+
+	assert.deepEqual(cards.map(({ name, set, collectorNumber, language, scryfallId }) => [name, set, collectorNumber, language, scryfallId]), [
+		['Lightning Bolt', 'm10', '146', 'pt', undefined],
+		['Counterspell', undefined, undefined, 'pt', undefined],
+		['Foil', undefined, undefined, undefined, undefined],
+		['Llanowar Elves', 'dom', '168', 'ja', undefined],
+		['Sol Ring', undefined, undefined, undefined, '0afa0e33-4804-4b00-b625-c2d6b61090fc'],
+		['Delver of Secrets', 'isd', '51', 'pt', undefined],
+		['Brainstorm', undefined, undefined, 'pt', undefined],
+		['Ponder', 'm12', '73', 'pt', undefined],
+	])
+	assert.equal(serializeCardList(cards.slice(0, 2)), '4 Lightning Bolt (m10) 146 pt\n2 Counterspell pt\n')
+
+	assert.equal(
+		importScannerCsv('Name,Set code,Collector number,Scryfall ID,Quantity,Language\nSol Ring,c21,263,0afa0e33-4804-4b00-b625-c2d6b61090fc,2,portuguese\n'),
+		'2 Sol Ring pt [scryfall: 0afa0e33-4804-4b00-b625-c2d6b61090fc]'
+	)
+	assert.equal(importScannerCsv('a,b\n1,2\n'), null)
+	const liga = 'Edicao (PT),Edicao (EN),Edicao (Sigla),Card (PT),Card (EN),Quantidade,Qualidade (M/NM/SP/MP/HP/D),Idioma (BR/EN),Extras,Card #\n' +
+		'Magic 2010,Magic 2010,m10,Choque,Lightning Bolt,4,NM,BR,,146\n' +
+		'Desconhecida,Unknown Set,zzz,X,Opt,1,NM,EN,,1\n'
+	assert.equal(importLigaMagicCsv(liga, new Map([['magic 2010', ['m10']]])), '4 Lightning Bolt (m10) 146 pt\n1 Opt en')
+	assert.throws(() => importLigaMagicCsv('a,b\n1,2\n', new Map()), /Unrecognised CSV/)
+})

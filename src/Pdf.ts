@@ -239,6 +239,13 @@ async function pdfBlob(pdf: PDFDocument): Promise<Blob> {
 	})
 }
 
+// "Lightning Bolt (M10) 146 · PT": the printing and, when not English, the language.
+export function deckListLine(card: Pick<ScryfallCard, 'name' | 'set' | 'collector_number' | 'lang'>): string {
+	if (card.set === 'custom') return card.name
+	const language = card.lang && card.lang !== 'en' ? ` · ${card.lang.toUpperCase()}` : ''
+	return `${card.name} (${card.set.toUpperCase()}) ${card.collector_number}${language}`
+}
+
 function addDeckList(
 	pdf: PDFDocument,
 	cards: PrintableCard[],
@@ -249,7 +256,8 @@ function addDeckList(
 	const quantities = new Map<string, number>()
 
 	for (const { quantity, card } of cards) {
-		quantities.set(card.name, (quantities.get(card.name) ?? 0) + quantity)
+		const line = deckListLine(card)
+		quantities.set(line, (quantities.get(line) ?? 0) + quantity)
 	}
 
 	const lines = [...quantities.entries()]
